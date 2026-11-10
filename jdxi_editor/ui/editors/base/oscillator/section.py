@@ -289,7 +289,9 @@ class BaseOscillatorSection(SectionBaseWidget):
             if hasattr(self, "_on_waveform_selected") and callable(
                 getattr(self, "_on_waveform_selected", None)
             ):
-                self._on_waveform_selected(mode)
+                # The group below already sends OSC_WAVEFORM; the editor
+                # callback only updates the UI, or the JD-Xi gets it twice
+                self._on_waveform_selected(mode, send_midi=False)
 
         def _waveform_icon_factory(icon_name):
             key = getattr(icon_name, "value", icon_name)

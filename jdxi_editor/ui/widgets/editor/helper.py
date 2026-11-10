@@ -413,9 +413,16 @@ def create_centered_layout(spacing: Optional[int]= None) -> QLayout:
 
 
 def create_centered_layout_with_widgets(widgets: list[QWidget]) -> QLayout:
-    """create centered layout with stretch either side to squish in widgets"""
-    layout = create_layout_with_items(items=widgets, vertical=True)
+    """
+    The widgets stacked in a column, centred horizontally by a stretch either side.
+
+    (It used to add the layout to itself, which Qt refuses with "Cannot add
+    layout to itself", so nothing was centred.)
+    """
+    column = create_layout_with_items(items=widgets, vertical=True)
+    layout = QHBoxLayout()
+    layout.setContentsMargins(0, 0, 0, 0)
     layout.addStretch()
-    layout.addLayout(layout)
+    layout.addLayout(column)
     layout.addStretch()
     return layout

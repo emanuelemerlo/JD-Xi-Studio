@@ -345,14 +345,15 @@ class BaseSynthEditor(SynthEditor):
                 scope=self.__class__.__name__,
             )
 
-    def _on_waveform_selected(self, waveform: AnalogWaveOsc):
+    def _on_waveform_selected(self, waveform: AnalogWaveOsc, send_midi: bool = True):
         """
         Handle waveform button selection
 
         :param waveform: AnalogOscWave value
+        :param send_midi: False when the caller has already sent OSC_WAVEFORM
         :return: None
         """
-        if self.midi_helper:
+        if send_midi and self.midi_helper:
             sysex_message = self.sysex_composer.compose_message(
                 address=self.address,
                 param=self.SYNTH_SPEC.Param.OSC_WAVEFORM,

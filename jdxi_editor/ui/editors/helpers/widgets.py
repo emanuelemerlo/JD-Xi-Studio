@@ -19,6 +19,7 @@ from PySide6.QtWidgets import (
 
 from jdxi_editor.ui.common import JDXi, QWidget
 from jdxi_editor.ui.style import JDXiUIDimensions, JDXiUIStyle
+from jdxi_editor.ui.widgets.label_click import make_label_clickable
 from picoui.specs.widgets import ButtonSpec
 
 
@@ -49,12 +50,18 @@ def get_icon_pixmap(icon_name) -> QPixmap | None:
 
 
 def create_jdxi_button_with_label_from_spec(
-    spec: ButtonSpec, checkable: bool = True
+    spec: ButtonSpec, checkable: bool = False
 ) -> tuple[QWidget, QPushButton]:
-    """create jdxi button from spec"""
+    """
+    A round JD-Xi button and its icon + label row; a click on the row clicks the button.
+
+    Action buttons (Load, Save, ...) are not checkable unless asked for, so they
+    do not stay lit after the action.
+    """
     button = create_jdxi_button_from_spec(spec, checkable=checkable)
-    classify_tracks_icon_pixmap = get_icon_pixmap(icon_name=spec.icon)
-    row, _ = create_jdxi_row(spec.label, icon_pixmap=classify_tracks_icon_pixmap)
+    icon_pixmap = get_icon_pixmap(icon_name=spec.icon)
+    row, _ = create_jdxi_row(spec.label, icon_pixmap=icon_pixmap)
+    make_label_clickable(row, button)
     return row, button
 
 
@@ -117,6 +124,8 @@ def create_jdxi_row(
     label = QLabel(label)
     label.setStyleSheet(JDXi.UI.Style.STYLE_FOREGROUND)
     label_layout.addWidget(label)
+    # A click on the label clicks the round button beside it, if there is one
+    make_label_clickable(label_row)
     return label_row, label
 
 

@@ -245,7 +245,7 @@ class EffectsCommonEditor(BasicEditor):
             effect12_icon = JDXi.UI.Icon.get_icon(
                 JDXi.UI.Icon.DISTORTION, color=JDXi.UI.Style.GREY
             )
-            self.tabs.addTab(efx12_widget, effect12_icon, "Effects 1 & 2")
+            self.tabs.addTab(efx12_widget, effect12_icon, "Effects 1 && 2")  # "&&": a single & is a Qt shortcut marker
 
             # Tab 2: Delay & Reverb (2-column: Delay | Reverb)
             dlyrev_widget = QWidget()
@@ -263,7 +263,7 @@ class EffectsCommonEditor(BasicEditor):
             delay_icon = JDXi.UI.Icon.get_icon(
                 JDXi.UI.Icon.DELAY, color=JDXi.UI.Style.GREY
             )
-            self.tabs.addTab(dlyrev_widget, delay_icon, "Delay & Reverb")
+            self.tabs.addTab(dlyrev_widget, delay_icon, "Delay && Reverb")
 
         # Add base widget to editor's layout
         if not hasattr(self, "main_layout") or self.main_layout is None:
@@ -786,7 +786,7 @@ class EffectsCommonEditor(BasicEditor):
                     ),
                     SliderSpec(
                         Effect2Param.EFX2_PARAM_5_FLANGER_FEEDBACK,
-                        "Feedback (0=Chorus)",
+                        "Feedback (0 = chorus)",
                         vertical=False,
                     ),
                     SliderSpec(
@@ -795,7 +795,7 @@ class EffectsCommonEditor(BasicEditor):
                         vertical=False,
                     ),
                     SliderSpec(
-                        Effect2Param.EFX2_PARAM_7, "Balance [dry->wet]", vertical=False
+                        Effect2Param.EFX2_PARAM_7, "Balance (D:W)", vertical=False
                     ),
                     SliderSpec(
                         Effect2Param.EFX2_PARAM_8_FLANGER_LEVEL, "Level", vertical=False
@@ -841,10 +841,10 @@ class EffectsCommonEditor(BasicEditor):
                 sliders=[
                     SliderSpec(Effect2Param.EFX2_PARAM_1, "Frequency", vertical=False),
                     SliderSpec(
-                        Effect2Param.EFX2_PARAM_2, "Sensitivity", vertical=False
+                        Effect2Param.EFX2_PARAM_2, "Sens", vertical=False
                     ),
                     SliderSpec(
-                        Effect2Param.EFX2_PARAM_3, "Balance [dry->wet]", vertical=False
+                        Effect2Param.EFX2_PARAM_3, "Balance (D:W)", vertical=False
                     ),
                     SliderSpec(Effect2Param.EFX2_PARAM_4, "Level", vertical=False),
                 ],
@@ -855,13 +855,13 @@ class EffectsCommonEditor(BasicEditor):
                 switches=[],
                 sliders=[
                     SliderSpec(
-                        Effect2Param.EFX2_PARAM_1, "Timing pattern", vertical=False
+                        Effect2Param.EFX2_PARAM_1, "Timing Ptn", vertical=False
                     ),
                     SliderSpec(
-                        Effect2Param.EFX2_PARAM_2, "Rate [Note]", vertical=False
+                        Effect2Param.EFX2_PARAM_2, "Rate (note)", vertical=False
                     ),
                     SliderSpec(
-                        Effect2Param.EFX2_PARAM_3, "Attack Time", vertical=False
+                        Effect2Param.EFX2_PARAM_3, "Attack", vertical=False
                     ),
                     SliderSpec(
                         Effect2Param.EFX2_PARAM_4, "Trigger Level", vertical=False
@@ -949,9 +949,9 @@ class EffectsCommonEditor(BasicEditor):
                 "Reverb Send",
                 vertical=False,
             ),
-            SliderSpec(DelayParam.DELAY_TIME_MS, "Time [ms]", vertical=False),
-            SliderSpec(DelayParam.DELAY_TAP_TIME, "Tap Time [%]", vertical=False),
-            SliderSpec(DelayParam.DELAY_FEEDBACK, "Feedback [%]", vertical=False),
+            SliderSpec(DelayParam.DELAY_TIME_MS, "Time (ms)", vertical=False),
+            SliderSpec(DelayParam.DELAY_TAP_TIME, "Tap Time (%)", vertical=False),
+            SliderSpec(DelayParam.DELAY_FEEDBACK, "Feedback (%)", vertical=False),
             SliderSpec(DelayParam.DELAY_EFFECT_LEVEL, "Effect Level", vertical=False),
         ]
         return WidgetLayoutSpec(switches=switches, sliders=sliders, combos=combos)

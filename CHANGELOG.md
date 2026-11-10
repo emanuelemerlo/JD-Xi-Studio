@@ -21,6 +21,14 @@ MIDI Implementation (parameter address map).
 - Removed `midi/data/parameter/program/controller.py`, which raised `TypeError` on import (`ArpeggioParam` covers Program Controller)
 - **No MIDI backend**: without a MIDI API (Linux with no ALSA sequencer, containers, WSL) the editor crashed at startup; it now runs offline on null ports and says so in a message and in the status bar
 - **MIDI configuration dialog**: opened without blocking (`open()` instead of `exec()`), after the main window is shown; the port indicators update when it closes, and asking again brings the open dialog forward
+- **Sliders sent every change twice**: `Slider.valueChanged` was connected twice, so each move sent its SysEx twice. It is sent once, and while the handle is dragged at most every 25 ms (first move and release at once), so the JD-Xi keeps up with a fast drag
+- **Analog waveform sent twice**: the waveform buttons and the editor callback both sent OSC_WAVEFORM; `ModeButtonGroup` also re-entered itself when re-checking its buttons
+- **Round buttons**: a click on the icon and label next to a round button now clicks it (it used to react only on the 30 px circle); action buttons built from a ButtonSpec are no longer checkable by default, so they do not stay lit
+- **Program page**: the program picker was recreated on load and inserted at the wrong place, so two pickers were drawn on top of each other; it is now refilled in place (`SearchableFilterableComboBox.set_banks`, `always_show_filters`)
+- `create_centered_layout_with_widgets` added the layout to itself (12 "QLayout: Cannot add layout to itself" warnings), so nothing was centred
+- Tab titles showed "Effects 1_2", "Delay_Reverb", "Programs _Presets": a single "&" is a Qt shortcut marker
+- Effects labels follow the Parameter Guide ("Level", "Delay Send Level", "Balance (D:W)" … instead of "Efx1 Level", "EFX1 Delay Send Level (0-127)")
+- Removed the decorative pictures (Jupiter-8, TR-909, effects artwork) beside the preset panels and in the simple editors
 - EFX1 Delay Send Level label; missing `SysExSection` import in two test scripts; `imp` (removed in Python 3.12) in the py2app includes
 
 ### Added
@@ -33,6 +41,7 @@ MIDI Implementation (parameter address map).
 - `doc/midi_parameters.txt`: Program Common rows corrected against the MIDI Implementation (the rest of the file already matched); the vocal-effects address map, gap analyses and migration plan updated to match
 - Installation docs and READMEs: Windows installer and portable zip, SmartScreen note, Python 3.10+ (3.13 added to the classifiers)
 - `pyproject.toml`: `audio` extra (soundfile, librosa) and both in `dev`, since the audio-evidence tests import them; `build-windows` extra (PyInstaller)
+- `tests/test_ui_responsiveness.py`: one MIDI message per control change, slider drag throttling, clickable labels, centred layout
 - Tests run on in-memory MIDI ports (`tests/conftest.py`) that show a "JD-Xi" port, so they no longer need a MIDI driver or hardware; `pytest -m hardware` or `JDXI_TEST_REAL_MIDI=1` uses the real ports. `test_channel_edit_applies_after_delay` waits for the result instead of a fixed 500 ms, which was too short after other Qt-heavy tests
 - Tests that need `tests/sheep.mid` (not in the repository) are marked `slow`, like the others that use it, so the default run no longer fails on them
 - `python -m building.buildsys` on Windows passes the version to Inno Setup; removed the outdated copy `building/windows/jdxi_editor.iss` (0.9.2)

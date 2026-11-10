@@ -81,7 +81,8 @@ class TestEffectsCommonEditor(unittest.TestCase):
         self.assertIsNotNone(tabs)
         tab_count = tabs.count()
         self.assertGreaterEqual(tab_count, 2, "Expected at least 2 tabs")
-        tab_labels = [tabs.tabText(i) for i in range(tab_count)]
+        # "&&" in a tab text is how Qt shows a single "&" (one "&" marks a shortcut)
+        tab_labels = [tabs.tabText(i).replace("&&", "&") for i in range(tab_count)]
         self.assertIn("Effects 1 & 2", tab_labels)
         self.assertIn("Delay & Reverb", tab_labels)
 

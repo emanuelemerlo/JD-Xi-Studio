@@ -150,14 +150,19 @@ class ProgramGroup(QGroupBox):
             search_placeholder="Search programs...",
             category_label="Genre:",
             bank_label="Bank:",
+            # Genres arrive with the program list; keep the selector so the
+            # list can be filled in place (see ProgramEditor._update_program_combo_box)
+            always_show_filters=True,
         )
         program_vlayout.addWidget(self.program_number_combo_box)
 
         self.program_midi_info_bar = MidiSelectionInfoBar()
         program_vlayout.addWidget(self.program_midi_info_bar)
 
-        # Store reference to actual program list for use in filtering
+        # Store reference to actual program list for use in filtering. The list
+        # object is kept and refilled in place: the MIDI info binding reads it
         self._program_list_data = []
+        self._program_midi_info_bound = False
         # Load Program (round button + icon + label, centered)
         load_program_row = QHBoxLayout()
         load_program_row.addStretch()
@@ -268,9 +273,12 @@ class ProgramGroup(QGroupBox):
             self.mixer_widget.update_program_name(program_name)
 
     def bind_program_midi_info(self) -> None:
-        """Connect program combo selection to the MIDI info readout."""
+        """Connect program combo selection to the MIDI info readout (once)."""
         if not self.program_number_combo_box or not self.program_midi_info_bar:
             return
+        if self._program_midi_info_bound:
+            return
+        self._program_midi_info_bound = True
         bind_program_midi_info(
             self.program_number_combo_box,
             self.program_midi_info_bar,

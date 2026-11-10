@@ -174,14 +174,21 @@ class ModeButtonGroup(QWidget):
         if btn is None:
             return
 
-        # Reset all first (match Digital Filter section mode buttons)
-        for b in self._buttons.values():
-            b.setChecked(False)
-            JDXi.UI.Theme.apply_button_rect(b, analog=self._analog)
+        # Re-check the buttons with the group's signals blocked: otherwise
+        # setChecked(True) below fires idToggled again, re-enters set_mode and
+        # the parameter was sent to the JD-Xi twice per click
+        blocked = self._group.blockSignals(True)
+        try:
+            # Reset all first (match Digital Filter section mode buttons)
+            for b in self._buttons.values():
+                b.setChecked(False)
+                JDXi.UI.Theme.apply_button_rect(b, analog=self._analog)
 
-        # Apply active style to selected
-        btn.setChecked(True)
-        JDXi.UI.Theme.apply_button_active(btn, analog=self._analog)
+            # Apply active style to selected
+            btn.setChecked(True)
+            JDXi.UI.Theme.apply_button_active(btn, analog=self._analog)
+        finally:
+            self._group.blockSignals(blocked)
 
         # MIDI send
         if send_midi and self._send_midi_parameter and self._midi_param is not None:

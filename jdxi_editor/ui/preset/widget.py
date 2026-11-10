@@ -140,9 +140,14 @@ class InstrumentPresetWidget(QWidget):
             self.instrument_selection_combo.set_value(current_value)
 
     def add_image_group(self, group: QGroupBox):
-        """add the image beside the preset panel; the pair stays centred"""
-        group.setMinimumWidth(JDXi.UI.Style.INSTRUMENT_IMAGE_WIDTH)
-        self.hlayout.addWidget(group, 0, Qt.AlignmentFlag.AlignTop)
+        """
+        The instrument picture is no longer shown: photos of other synths
+        (Jupiter-8, TR-909...) took half the page and had nothing to do with the
+        sound. The group stays out of the layout, hidden, because
+        update_instrument_image() still writes to its label.
+        """
+        group.setParent(self)  # kept as a hidden child, never a stray window
+        group.hide()
         self.hlayout.addStretch(1)
 
     def add_preset_group(self, group: QGroupBox):

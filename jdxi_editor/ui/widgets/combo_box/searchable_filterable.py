@@ -69,6 +69,7 @@ class SearchableFilterableComboBox(QWidget):
         bank_label: str = "Bank:",
         search_label: str = "Search:",
         use_analog_style: bool = False,
+        always_show_filters: bool = False,
         parent: Optional[QWidget] = None,
     ):
         """
@@ -94,6 +95,8 @@ class SearchableFilterableComboBox(QWidget):
         :param bank_label: Label text for bank selector
         :param search_label: Label text for search box
         :param use_analog_style: If True, use blue (analog) accent for search QLineEdit
+        :param always_show_filters: Build the category and bank selectors even when
+            their lists start empty, so set_options / set_banks can fill them later
         :param parent: Parent widget
         """
         super().__init__(parent)
@@ -127,10 +130,10 @@ class SearchableFilterableComboBox(QWidget):
         layout = create_form_layout(parent=self)
         top_bar, self.label_widget = create_header_row(label, show_label, spacing=4)
         layout.addRow(top_bar)
-        if show_category and self._categories:
+        if show_category and (self._categories or always_show_filters):
             category_bar = self.add_categories(category_label)
             layout.addRow(category_bar)
-        if show_bank and self._banks:
+        if show_bank and (self._banks or always_show_filters):
             bank_bar = self.add_banks(bank_label)
             layout.addRow(bank_bar)
         if show_search:
@@ -434,6 +437,31 @@ class SearchableFilterableComboBox(QWidget):
         # Force UI update
         self.combo_box.update()
         self.update()
+
+    def set_banks(
+        self,
+        banks: List[str],
+        bank_filter_func: Optional[Callable[[str, str], bool]] = None,
+    ) -> None:
+        """
+        Replace the bank list (and optionally its filter) and refill the combo.
+
+        :param banks: bank names offered in the bank selector
+        :param bank_filter_func: (option, bank) -> bool; keeps the current one if None
+        """
+        self._banks = list(banks)
+        if bank_filter_func is not None:
+            self._bank_filter_func = bank_filter_func
+        if self.bank_combo:
+            self.bank_combo.blockSignals(True)
+            self.bank_combo.clear()
+            self.bank_combo.addItem("All Banks")
+            for bank in self._banks:
+                self.bank_combo.addItem(bank)
+            self.bank_combo.setCurrentIndex(0)
+            self.bank_combo.blockSignals(False)
+            self._current_bank = ""
+        self._populate_combo()
 
     def set_value(self, value: int) -> None:
         """Alias for setValue for consistency."""
