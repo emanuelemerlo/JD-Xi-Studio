@@ -70,6 +70,9 @@ Usage:
     # Arpeggiator/sequencer figures: start, stop, notes, rests, velocity, errors
     python scripts/classify_midi_parts.py cycles "... - patterns.mid" --track SeqSynth1 [--repair]
 
+    # Repeated multi-bar phrases on one track (a report; the MIDI is not changed)
+    python scripts/classify_midi_parts.py phrases file.mid --track SeqSynth1 --from-bar 20 --min-bars 2 --max-bars 8 --allow-transposition --min-similarity 0.75
+
     # Musical fidelity: harmony, rhythm, dynamics, texture and form against the recording
     python scripts/classify_midi_parts.py musicality OxygeneV.wav a.mid b.mid [--plot dir] [--sections sections.json]
 
@@ -125,6 +128,7 @@ from midi_parts.key import (
     run_key,
 )
 from midi_parts.patterns import run_patterns
+from midi_parts.phrases import run_phrases
 from midi_parts.cycles import MIN_CONFIDENCE, run_cycles
 from midi_parts.merge import run_merge
 from midi_parts.refine import run_arpeggio_refine, run_arpeggio_trial
@@ -541,6 +545,18 @@ def main(argv: Optional[list[str]] = None) -> int:
     cy.add_argument("--out-dir", type=Path)
     cy.set_defaults(func=run_cycles)
 
+    ph = sub.add_parser("phrases", help="find repeated multi-bar phrases on one 4/4 track and write a report")
+    ph.add_argument("midi", type=Path, help="a quantized file")
+    ph.add_argument("--track", required=True, help="the one track to search")
+    ph.add_argument("--from-bar", type=int, help="start of the gridded section (default: the last tempo change)")
+    ph.add_argument("--min-bars", type=int, default=2, help="shortest phrase, in bars")
+    ph.add_argument("--max-bars", type=int, default=8, help="longest phrase, in bars")
+    ph.add_argument("--allow-transposition", action="store_true", help="a later copy may sit in another key")
+    ph.add_argument("--min-similarity", type=float, default=0.75, help="how close two bars must be to count as the same")
+    ph.add_argument("--exclude", default=GHOST)
+    ph.add_argument("--out-dir", type=Path)
+    ph.set_defaults(func=run_phrases)
+
     ar = sub.add_parser("arpeggio-refine", help="check each repeated figure's missing notes against the recording; --repair fills the confirmed ones")
     ar.add_argument("wav", type=Path, help="the recording (WAV or FLAC; the mix works better than a Demucs stem for synth bass)")
     ar.add_argument("midi", type=Path, help="a quantized file")
@@ -579,6 +595,9 @@ def main(argv: Optional[list[str]] = None) -> int:
     at.add_argument("--negatives", choices=("pitches", "repeats"), default="pitches",
                     help="negatives for each pitch's model: the figure's other pitches at the step (default), or its own absences")
     at.add_argument("--template", action="store_true", help="also judge empty steps outside the figures, from the track's context and the audio")
+    at.add_argument("--local", type=int, help="repetition prior from this many repeats either side only (local consensus; default: the whole figure)")
+    at.add_argument("--harmony", action="store_true", help="hold back inserts and corrections whose pitch class the bar does not use")
+    at.add_argument("--lines", action="store_true", help="monophonic tracks: remove extra notes a semitone, tone or octave from the main note, and move octave errors (audio-checked)")
     at.add_argument("--no-plot", action="store_true")
     at.add_argument("--out-dir", type=Path)
     at.set_defaults(func=run_arpeggio_trial)
