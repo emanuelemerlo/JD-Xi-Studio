@@ -36,7 +36,6 @@ OPTIONS = {
     'argv_emulation': False,
     'iconfile': 'jdxi_icon_512.icns',  # Path to the .icns file
     'includes': ['PySide6',
-                 "imp",
                  "rtmidi._rtmidi",
                  'mido',
                  'mido.backends',

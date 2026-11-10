@@ -1,0 +1,106 @@
+name: Windows build
+
+# Builds the Windows app (PyInstaller, one folder) and its installer (Inno Setup),
+# opens it for a smoke test, and uploads both as artifacts. On a v* tag the
+# files are also attached to a GitHub pre-release.
+on:
+  push:
+    branches: ["fix/**", "release/**"]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: windows-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Version
+        id: version
+        shell: pwsh
+        run: |
+          $v = (Select-String -Path jdxi_editor/project.py -Pattern '__version__ = "([^"]+)"').Matches[0].Groups[1].Value
+          $sha = "${{ github.sha }}".Substring(0, 7)
+          "version=$v" >> $env:GITHUB_OUTPUT
+          "label=$v-$sha" >> $env:GITHUB_OUTPUT
+
+      # Not editable: the wheel build puts the scaled-down resources inside the
+      # package (jdxi_editor/_bundle/resources), which the spec bundles
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install ".[soundfont]" pyinstaller pytest
+
+      - name: Test
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: python -m pytest tests/test_preset_tables_match_manual.py tests/test_program_common_addresses.py -q
+
+      - name: PyInstaller
+        run: pyinstaller --noconfirm --clean building/windows/jdxi_editor.spec
+
+      # The app must still be running after 30 s: an import error or a missing
+      # resource makes a windowed PyInstaller app exit straight away
+      - name: Smoke test
+        shell: pwsh
+        run: |
+          $exe = Resolve-Path dist/jdxi_editor/jdxi_editor.exe
+          $p = Start-Process -FilePath $exe -PassThru
+          Start-Sleep -Seconds 30
+          if ($p.HasExited) {
+            Write-Error "jdxi_editor.exe exited with code $($p.ExitCode)"
+            Get-ChildItem -Recurse $env:USERPROFILE -Filter *.log -ErrorAction SilentlyContinue |
+              Where-Object { $_.FullName -match 'jdxi' } |
+              ForEach-Object { Write-Host "== $($_.FullName)"; Get-Content $_.FullName -Tail 80 }
+            exit 1
+          }
+          Stop-Process -Id $p.Id -Force
+          Write-Host "jdxi_editor.exe started and kept running"
+
+      - name: Portable zip
+        shell: pwsh
+        run: |
+          $name = "JDXI-Editor-${{ steps.version.outputs.label }}-win64-portable.zip"
+          Compress-Archive -Path dist/jdxi_editor -DestinationPath "dist/$name"
+          "PORTABLE=dist/$name" >> $env:GITHUB_ENV
+
+      - name: Installer
+        shell: pwsh
+        run: |
+          if (-not (Get-Command iscc -ErrorAction SilentlyContinue)) {
+            $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+            if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress }
+            $env:PATH += ";${env:ProgramFiles(x86)}\Inno Setup 6"
+          }
+          iscc /DMyAppVersion=${{ steps.version.outputs.version }} jdxi_editor.iss
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: JDXI-Editor-${{ steps.version.outputs.label }}-windows
+          path: |
+            ${{ env.PORTABLE }}
+            dist/installer/*.exe
+          if-no-files-found: error
+
+      - name: Pre-release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          prerelease: true
+          generate_release_notes: true
+          files: |
+            ${{ env.PORTABLE }}
+            dist/installer/*.exe
