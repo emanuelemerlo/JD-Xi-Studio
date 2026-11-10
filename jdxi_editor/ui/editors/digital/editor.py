@@ -32,6 +32,7 @@ Dependencies:
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from decologr import Decologr as log
+from jdxi_editor.i18n import tr
 
 if TYPE_CHECKING:
     from jdxi_editor.ui.windows.jdxi.instrument import JDXiInstrument
@@ -374,8 +375,8 @@ class DigitalSynthEditor(BaseSynthEditor):
 
             QMessageBox.warning(
                 self,
-                "Paste Partial",
-                "Clipboard is empty or not a Digital partial. Copy a partial first.",
+                tr("Paste Partial"),
+                tr("Clipboard is empty or not a Digital partial. Copy a partial first."),
             )
             return
         apply_controls_to_editor(panel, controls)

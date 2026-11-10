@@ -4,6 +4,11 @@ JDXI-Editor
 .. image:: ./resources/jdxi_cartoon_600.png
    :alt: Roland JD-Xi Cartoon
 
+.. note::
+   This is an independent fork of `JDXI-Editor <https://github.com/markxbrooks/JDXI-Editor>`_ by
+   Mark Brooks. See README.md for what is different, how to install it and how to choose the
+   interface language (English, Italiano).
+
 **JDXI-Editor**: A powerful MIDI editor for the **Roland JD-Xi synthesizer**, built with **Python**, **Qt Framework**, and **RtMidi**. Simplify MIDI editing, preset selection, and sound design without hardware menus. Perfect for musicians and sound designers!
 
 It's designed to implement as many features as possible from Roland's MIDI implementation—without the need to dive through hardware menus. 
@@ -40,13 +45,13 @@ Watch how **JDXI-Editor** simplifies sound design and MIDI editing for the **Rol
 Getting Started
 ===============
 
-MacOS 
----------
-There is a new build for MacOS Sequoia. See the `releases page <https://github.com/markxbrooks/JDXI-Editor/releases/tag/v0.0.8>`_
+MacOS and Linux
+---------------
+This fork does not publish macOS or Linux packages yet: run it with Python (below).
 
 Windows 
 ----------
-There is a new build for Windows. See the `releases page <https://github.com/markxbrooks/JDXI-Editor/releases>`_
+Builds are on the `releases page <https://github.com/emanuelemerlo/JDXI-Editor/releases>`_
 
 Each release offers an installer (``jdxi_editor-<version>_setup_win_x86-64.exe``, installs for the
 current user, no administrator rights) and a portable zip (unzip and run ``jdxi_editor\jdxi_editor.exe``).
@@ -58,11 +63,11 @@ If you're a Python developer, you may wish to run the program from a Python envi
 
 .. code-block:: bash
 
-   $ git clone https://github.com/markxbrooks/JDXI-Editor.git
+   $ git clone https://github.com/emanuelemerlo/JDXI-Editor.git
    $ cd JDXI-Editor
    $ python -m venv venv
    $ source venv/bin/activate
-   $ python -m pip install -r requirements.txt
+   $ python -m pip install -e ".[dev]"
    $ python -m jdxi_editor.main
 
 Documentation
@@ -74,7 +79,7 @@ Available Formats:
 
 HTML Documentation:
 ~~~~~~~~~~~~~~~~~~~
-https://markxbrooks.github.io/JDXI-Editor/
+https://markxbrooks.github.io/JDXI-Editor/ (the original project; changes of this fork are in CHANGELOG.md)
 
 PDF Documentation:
 ~~~~~~~~~~~~~~~~~~
@@ -183,7 +188,7 @@ Contribute and Share Feedback
 =============================
 JDXI-Editor is a growing project! 
 -  Star this repository to support its development.
--  Contribute features or report issues via `GitHub Issues <https://github.com/markxbrooks/JDXI-Editor/issues>`_.
+-  Contribute features or report issues via `GitHub Issues <https://github.com/emanuelemerlo/JDXI-Editor/issues>`_.
 
 Credits
 =======

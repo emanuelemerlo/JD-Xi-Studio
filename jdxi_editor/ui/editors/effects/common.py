@@ -104,6 +104,7 @@ from jdxi_editor.ui.widgets.layout import WidgetLayoutSpec
 from jdxi_editor.ui.widgets.spec import ComboBoxSpec, SliderSpec, SwitchSpec
 from picomidi.constant import Midi
 from picomidi.sysex.parameter.address import AddressParameter
+from jdxi_editor.i18n import tr
 
 
 class EffectsCommonEditor(BasicEditor):
@@ -211,7 +212,7 @@ class EffectsCommonEditor(BasicEditor):
             Effect2Param.EFX2_PARAM_2,
             Effect2Param.EFX2_PARAM_32,
         ]
-        self.setWindowTitle("Effects")
+        self.setWindowTitle(tr("Effects"))
 
         # Use EditorBaseWidget for consistent scrollable layout structure
         self.base_widget = EditorBaseWidget(parent=self, analog=False)
@@ -245,7 +246,7 @@ class EffectsCommonEditor(BasicEditor):
             effect12_icon = JDXi.UI.Icon.get_icon(
                 JDXi.UI.Icon.DISTORTION, color=JDXi.UI.Style.GREY
             )
-            self.tabs.addTab(efx12_widget, effect12_icon, "Effects 1 && 2")  # "&&": a single & is a Qt shortcut marker
+            self.tabs.addTab(efx12_widget, effect12_icon, tr("Effects 1 && 2"))  # "&&": a single & is a Qt shortcut marker
 
             # Tab 2: Delay & Reverb (2-column: Delay | Reverb)
             dlyrev_widget = QWidget()
@@ -263,7 +264,7 @@ class EffectsCommonEditor(BasicEditor):
             delay_icon = JDXi.UI.Icon.get_icon(
                 JDXi.UI.Icon.DELAY, color=JDXi.UI.Style.GREY
             )
-            self.tabs.addTab(dlyrev_widget, delay_icon, "Delay && Reverb")
+            self.tabs.addTab(dlyrev_widget, delay_icon, tr("Delay && Reverb"))
 
         # Add base widget to editor's layout
         if not hasattr(self, "main_layout") or self.main_layout is None:

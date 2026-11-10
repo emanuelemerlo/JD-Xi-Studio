@@ -214,3 +214,37 @@ def test_dialog_skip_and_pip_instructions(app, settings):
 
     mac = UpdateDialog(upd.pick_release(RELEASES, upd.MACOS), upd.MACOS, settings=settings)
     assert "Download" in [b.text() for b in mac.findChildren(QPushButton)]
+
+
+@pytest.mark.parametrize(
+    "candidate, current, newer",
+    [
+        ("v0.10.0-beta.1", "0.9.9", True),
+        ("v0.10.0-beta.2", "0.10.0b1", True),
+        ("v0.10.0", "0.10.0b1", True),  # the final release follows its betas
+        ("v0.10.0-rc.1", "0.10.0b3", True),
+        ("v1.0.0-alpha.1", "0.10.0", True),
+        ("v0.10.0-beta.1", "0.10.0b1", False),
+        ("v0.10.0-alpha.3", "0.10.0b1", False),
+        ("v0.10.0-beta.1", "0.10.0", False),
+    ],
+)
+def test_pre_release_versions_compare_in_release_order(candidate, current, newer):
+    assert upd.is_newer(candidate, current) is newer
+
+
+def test_pre_releases_are_offered_only_to_pre_release_copies():
+    exe = [_asset("jdxi_editor-setup.exe")]
+    releases = [
+        {"tag_name": "v0.10.0-beta.2", "prerelease": True, "assets": exe},
+        {"tag_name": "v0.9.9", "assets": exe},
+    ]
+    assert upd.pick_release(releases, upd.WINDOWS).version == "0.9.9"
+    beta = upd.pick_release(releases, upd.WINDOWS, include_prereleases=True)
+    assert beta.version == "0.10.0-beta.2"
+    assert upd.is_prerelease("0.10.0b1") and not upd.is_prerelease("0.10.0")
+
+
+def test_the_fork_checks_its_own_releases():
+    assert upd.REPOSITORY == "emanuelemerlo/JDXI-Editor"
+    assert "emanuelemerlo/JDXI-Editor" in upd.RELEASES_API_URL

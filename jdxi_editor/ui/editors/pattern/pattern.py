@@ -112,6 +112,7 @@ from picoui.specs.widgets import (
 )
 from picoui.widget.helper import get_file_path_from_spec
 from picoui.widget.setters import set_spinbox_value
+from jdxi_editor.i18n import tr
 
 
 def copy_note_attrs_from_event(button: SequencerButton, event: PatternLearnerEvent):
@@ -555,7 +556,7 @@ class PatternSequenceEditor(PatternUI):
     def _copy_section(self):
         """Copy a section of notes from the current bar"""
         if self.current_measure_index >= len(self.measure_widgets):
-            QMessageBox.warning(self, "Copy", "No bar selected")
+            QMessageBox.warning(self, tr("Copy"), tr("No bar selected"))
             return
 
         # The range is shown 1-16; steps are indexed from 0
@@ -563,7 +564,7 @@ class PatternSequenceEditor(PatternUI):
         end_step = self.end_step_spinbox.value() - 1
 
         if start_step > end_step:
-            QMessageBox.warning(self, "Copy", "Start step must be <= end step")
+            QMessageBox.warning(self, tr("Copy"), tr("Start step must be <= end step"))
             return
 
         self.clipboard = self.pattern_widget.copy_measure_section(
@@ -580,12 +581,12 @@ class PatternSequenceEditor(PatternUI):
         """Paste copied section to the current bar"""
         if self.clipboard is None:
             QMessageBox.warning(
-                self, "Paste", "Nothing copied. Use Copy Section first."
+                self, tr("Paste"), tr("Nothing copied. Use Copy Section first.")
             )
             return
 
         if self.current_measure_index >= len(self.measure_widgets):
-            QMessageBox.warning(self, "Paste", "No bar selected")
+            QMessageBox.warning(self, tr("Paste"), tr("No bar selected"))
             return
 
         start_step = self.start_step_spinbox.value() - 1
@@ -593,7 +594,7 @@ class PatternSequenceEditor(PatternUI):
             self.current_measure_index, start_step, self.clipboard
         )
         if not ok:
-            QMessageBox.warning(self, "Paste", "Invalid clipboard data")
+            QMessageBox.warning(self, tr("Paste"), tr("Invalid clipboard data"))
             return
 
         num_steps = self.clipboard["end_step"] - self.clipboard["start_step"] + 1
@@ -634,8 +635,7 @@ class PatternSequenceEditor(PatternUI):
             names = ", ".join(self._note_label(row, n.note) for n in notes)
             label = "Notes" if len(notes) > 1 else "Note"
             sequencer_button.setToolTip(
-                f"{label}: {names}\nShift+click: add/remove the selected note · "
-                "Right-click: edit notes"
+                tr('{label}: {names}\nShift+click: add/remove the selected note · Right-click: edit notes').format(label=label, names=names)
             )
         else:
             sequencer_button.setToolTip("")
@@ -1069,7 +1069,7 @@ class PatternSequenceEditor(PatternUI):
                     message=f"Error saving pattern: {ex}", scope=self.__class__.__name__
                 )
                 QMessageBox.critical(
-                    self, "Error", f"Could not save pattern: {str(ex)}"
+                    self, tr("Error"), tr('Could not save pattern: {value1}').format(value1=str(ex))
                 )
 
     def load_pattern_dialog(self):
@@ -1090,7 +1090,7 @@ class PatternSequenceEditor(PatternUI):
                 )
                 if self.last_import and self.last_import.dropped_total:
                     QMessageBox.information(
-                        self, "Pattern Loaded", self.last_import.summary()
+                        self, tr("Pattern Loaded"), self.last_import.summary()
                     )
             except Exception as ex:
                 log.error(
@@ -1098,7 +1098,7 @@ class PatternSequenceEditor(PatternUI):
                     scope=self.__class__.__name__,
                 )
                 QMessageBox.critical(
-                    self, "Error", f"Could not load pattern: {str(ex)}"
+                    self, tr("Error"), tr('Could not load pattern: {value1}').format(value1=str(ex))
                 )
 
     def set_tempo(self, bpm: int):
@@ -1442,9 +1442,9 @@ class PatternSequenceEditor(PatternUI):
         """Ask whether to clear the current measure or the whole pattern."""
         box = QMessageBox(self)
         box.setIcon(QMessageBox.Icon.Warning)
-        box.setWindowTitle("Clear")
-        box.setText("What do you want to clear?")
-        box.setInformativeText("Cleared steps cannot be restored.")
+        box.setWindowTitle(tr("Clear"))
+        box.setText(tr("What do you want to clear?"))
+        box.setInformativeText(tr("Cleared steps cannot be restored."))
         measure_button = box.addButton(
             f"Clear Measure {self.current_measure_index + 1}",
             QMessageBox.ButtonRole.DestructiveRole,
@@ -1485,7 +1485,7 @@ class PatternSequenceEditor(PatternUI):
             log.error(
                 message=f"Error loading pattern: {ex}", scope=self.__class__.__name__
             )
-            QMessageBox.critical(self, "Error", f"Could not load pattern: {str(ex)}")
+            QMessageBox.critical(self, tr("Error"), tr('Could not load pattern: {value1}').format(value1=str(ex)))
         self.schedule_recompile()
 
     def _add_button_with_label_from_spec(

@@ -21,6 +21,7 @@ from PySide6.QtWidgets import (
 )
 
 from jdxi_editor.core.jdxi import JDXi
+from jdxi_editor.i18n import tr
 
 # Shortest range that can be kept
 MIN_LENGTH_SECONDS = 0.01
@@ -78,7 +79,7 @@ class TrimDialog(QDialog):
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
         self.ok_button = buttons.button(QDialogButtonBox.StandardButton.Ok)
-        self.ok_button.setText("Trim")
+        self.ok_button.setText(tr("Trim"))
 
         layout = QVBoxLayout(self)
         layout.addWidget(description_label)
@@ -100,8 +101,8 @@ class TrimDialog(QDialog):
         spin.setSingleStep(0.1)
         spin.setSuffix(" s")
         position = QLabel()
-        playhead = QPushButton("Playhead")
-        playhead.setToolTip("Use the playback position")
+        playhead = QPushButton(tr("Playhead"))
+        playhead.setToolTip(tr("Use the playback position"))
         playhead.clicked.connect(lambda: spin.setValue(self._playhead()))
         row = QHBoxLayout()
         row.addWidget(spin)
@@ -116,7 +117,7 @@ class TrimDialog(QDialog):
             (self.end_spin, self.end_position),
         ):
             bar, beat = self._bar_beat(spin.value())
-            label.setText(f"bar {bar}.{beat}")
+            label.setText(tr('bar {bar}.{beat}').format(bar=bar, beat=beat))
         valid = end - start >= MIN_LENGTH_SECONDS
         self.ok_button.setEnabled(valid)
         self.length_label.setText(

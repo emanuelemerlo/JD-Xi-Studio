@@ -65,6 +65,7 @@ from jdxi_editor.ui.windows.jdxi.helpers.port import (
     is_excluded_port,
 )
 from picoui.specs.widgets import ButtonSpec
+from jdxi_editor.i18n import tr
 
 # In-app FluidSynth defaults
 HW_PORT_HINT = "Roland JDXi"  # adjust if your port name differs
@@ -125,7 +126,7 @@ def _get_output_devices() -> list[tuple[str, str]]:
 class MIDIConfigDialog(QDialog):
     def __init__(self, midi_helper=MidiIOHelper, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("MIDI Configuration")
+        self.setWindowTitle(tr("MIDI Configuration"))
         self.setMinimumSize(
             JDXiUIDimensions.Config.WIDTH, JDXiUIDimensions.Config.HEIGHT
         )
@@ -178,7 +179,7 @@ class MIDIConfigDialog(QDialog):
         layout = self.panel.layout()
 
         # Input port selection
-        input_group = QGroupBox("MIDI Input")
+        input_group = QGroupBox(tr("MIDI Input"))
         input_layout = QVBoxLayout(input_group)
 
         self.input_display = DigitalTitle(
@@ -207,7 +208,7 @@ class MIDIConfigDialog(QDialog):
         layout.addWidget(input_group)
 
         # Output port selection
-        output_group = QGroupBox("MIDI Output")
+        output_group = QGroupBox(tr("MIDI Output"))
         output_layout = QVBoxLayout(output_group)
 
         self.output_display = DigitalTitle(
@@ -235,20 +236,20 @@ class MIDIConfigDialog(QDialog):
         layout.addWidget(output_group)
 
         # Software Synth (FluidSynth)
-        synth_group = QGroupBox("Software Synth (FluidSynth)")
+        synth_group = QGroupBox(tr("Software Synth (FluidSynth)"))
         synth_layout = QVBoxLayout(synth_group)
 
-        self.fluidsynth_enable = QCheckBox("Enable FluidSynth for local playback")
+        self.fluidsynth_enable = QCheckBox(tr("Enable FluidSynth for local playback"))
         JDXi.UI.Theme.apply_button_mini_style(self.fluidsynth_enable)
         self.fluidsynth_enable.toggled.connect(self._toggle_fluidsynth_controls)
         synth_layout.addWidget(self.fluidsynth_enable)
 
-        self.use_soundfont_list = QCheckBox("Use SoundFont List")
+        self.use_soundfont_list = QCheckBox(tr("Use SoundFont List"))
         JDXi.UI.Theme.apply_button_mini_style(self.use_soundfont_list)
         self.use_soundfont_list.setToolTip(
-            "List the SoundFont's presets in the Digital, Analog and Drums "
+            tr("List the SoundFont's presets in the Digital, Analog and Drums "
             "preset lists (and GM percussion names in the Pattern editor) "
-            "instead of the built-in JD-Xi presets. Needs the sf2utils package."
+            "instead of the built-in JD-Xi presets. Needs the sf2utils package.")
         )
         self.use_soundfont_list.setChecked(get_use_soundfont_list())
         self.use_soundfont_list.toggled.connect(self._on_soundfont_list_toggled)
@@ -256,18 +257,18 @@ class MIDIConfigDialog(QDialog):
 
         # Hardware Interface (audio output device for FluidSynth)
         hw_row = QHBoxLayout()
-        hw_row.addWidget(QLabel("Hardware Interface:"))
+        hw_row.addWidget(QLabel(tr("Hardware Interface:")))
         self.hardware_interface_combo = QComboBox()
         self.hardware_interface_combo.setToolTip(
-            "Audio output device for FluidSynth playback. "
-            "Requires sounddevice (pip install sounddevice)."
+            tr("Audio output device for FluidSynth playback. "
+            "Requires sounddevice (pip install sounddevice).")
         )
         self._refresh_hardware_devices()
         hw_row.addWidget(self.hardware_interface_combo)
         synth_layout.addLayout(hw_row)
 
         sf_row = QHBoxLayout()
-        sf_row.addWidget(QLabel("SoundFont (SF2/SF3):"))
+        sf_row.addWidget(QLabel(tr("SoundFont (SF2/SF3):")))
         self.sf2_edit = QLineEdit()
         self.sf2_edit.setPlaceholderText("FluidR3_GM.sf2")  # default SoundFont
         sf_row.addWidget(self.sf2_edit)
@@ -284,7 +285,7 @@ class MIDIConfigDialog(QDialog):
 
         # Available SoundFonts selector
         combo_row = QHBoxLayout()
-        combo_row.addWidget(QLabel("Available:"))
+        combo_row.addWidget(QLabel(tr("Available:")))
         self.sf2_combo = QComboBox()
         self.sf2_combo.currentIndexChanged.connect(self._on_sf2_combo_changed)
         combo_row.addWidget(self.sf2_combo)
@@ -456,17 +457,17 @@ class MIDIConfigDialog(QDialog):
             log.warning(scope="MIDIConfigDialog", message=f"SoundFont list unavailable: {problem}")
             QMessageBox.warning(
                 self,
-                "SoundFont List",
-                f"{problem}\n\nThe preset lists will stay as JD-Xi until this is fixed.",
+                tr("SoundFont List"),
+                tr('{problem}\n\nThe preset lists will stay as JD-Xi until this is fixed.').format(problem=problem),
             )
 
     def _browse_sf2(self) -> None:
         start_dir = os.path.expanduser("~/SoundFonts")
         file_path, _ = QFileDialog.getOpenFileName(
             self,
-            "Select SoundFont",
+            tr("Select SoundFont"),
             start_dir if os.path.isdir(start_dir) else "",
-            "SoundFonts (*.sf2 *.sf3)",
+            tr("SoundFonts (*.sf2 *.sf3)"),
         )
         if file_path:
             self.sf2_edit.setText(file_path)
@@ -485,7 +486,7 @@ class MIDIConfigDialog(QDialog):
         try:
             sf_path = self.sf2_edit.text().strip()
             if not sf_path:
-                self.fs_status.setText("Please select a SoundFont first.")
+                self.fs_status.setText(tr("Please select a SoundFont first."))
                 return
 
             fs = getattr(self.midi_helper, "soundfont_synth", None)
@@ -529,10 +530,10 @@ class MIDIConfigDialog(QDialog):
             self.sfid = fs.sfload(sf_path)
             self.midi_helper.soundfont_sfid = self.sfid
             fs.program_select(0, self.sfid, 0, 0)
-            self.fs_status.setText("FluidSynth: started")
+            self.fs_status.setText(tr("FluidSynth: started"))
 
         except Exception as ex:
-            self.fs_status.setText(f"FluidSynth error: {ex}")
+            self.fs_status.setText(tr('FluidSynth error: {ex}').format(ex=ex))
             log.error(f"FluidSynth error: {ex}")
 
     def _stop_fluidsynth(self) -> None:
@@ -544,23 +545,23 @@ class MIDIConfigDialog(QDialog):
                 self.midi_helper.soundfont_sfid = None
                 self.fs = None
                 self.sfid = None
-                self.fs_status.setText("FluidSynth: stopped")
+                self.fs_status.setText(tr("FluidSynth: stopped"))
         except Exception as ex:
-            self.fs_status.setText(f"Stop error: {ex}")
+            self.fs_status.setText(tr('Stop error: {ex}').format(ex=ex))
             log.error(f"FluidSynth stop error: {ex}")
 
     def _test_fluidsynth(self) -> None:
         try:
             fs = getattr(self.midi_helper, "soundfont_synth", None)
             if fs is None:
-                self.fs_status.setText("Start FluidSynth first.")
+                self.fs_status.setText(tr("Start FluidSynth first."))
                 return
             # Middle C test
             fs.noteon(0, 60, 110)
             fs.noteoff(0, 60)
-            self.fs_status.setText("Test note triggered.")
+            self.fs_status.setText(tr("Test note triggered."))
         except Exception as ex:
-            self.fs_status.setText(f"Test error: {ex}")
+            self.fs_status.setText(tr('Test error: {ex}').format(ex=ex))
             log.error(f"FluidSynth test error: {ex}")
 
     def _populate_sf2_combo(self) -> None:

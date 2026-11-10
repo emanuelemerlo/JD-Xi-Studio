@@ -35,6 +35,7 @@ from jdxi_editor.ui.common import JDXi, QVBoxLayout, QWidget
 from jdxi_editor.ui.widgets.editor import IconType
 from jdxi_editor.ui.widgets.editor.helper import transfer_layout_items
 from jdxi_editor.ui.widgets.editor.section_base import SectionBaseWidget
+from jdxi_editor.i18n import tr
 
 
 class DrumCommonSection(SectionBaseWidget):
@@ -95,7 +96,7 @@ class DrumCommonSection(SectionBaseWidget):
         scrolled_layout.addLayout(icon_row_container)
 
         # Common controls
-        common_group = QGroupBox("Common")
+        common_group = QGroupBox(tr("Common"))
         common_layout = QFormLayout()
 
         # Kit Level control

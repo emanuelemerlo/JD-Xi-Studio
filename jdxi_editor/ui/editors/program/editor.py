@@ -85,6 +85,7 @@ from jdxi_editor.ui.widgets.combo_box.searchable_filterable import (
 from jdxi_editor.ui.widgets.editor.base import EditorBaseWidget
 from picomidi.constant import Midi
 from picomidi.sysex.parameter.address import AddressParameter
+from jdxi_editor.i18n import tr
 
 
 class ProgramEditorDimensions(Dimensions):
@@ -248,7 +249,7 @@ class ProgramEditor(BasicEditor):
                 JDXi.UI.Icon.MUSIC, color=JDXi.UI.Style.GREY
             )
         self.main_tab_widget.addTab(
-            self.base_widget, programs_presets_icon, "Programs && Presets"  # "&&" shows one &
+            self.base_widget, programs_presets_icon, tr("Programs && Presets")  # "&&" shows one &
         )
 
         # Add User Programs tab to main tab widget
@@ -267,7 +268,7 @@ class ProgramEditor(BasicEditor):
                 "mdi.account-music", color=JDXi.UI.Style.GREY
             )
             self.main_tab_widget.addTab(
-                self.user_programs_widget, user_programs_icon, "User Programs"
+                self.user_programs_widget, user_programs_icon, tr("User Programs")
             )
             log.message(
                 f"✅ Added 'User Programs' tab to main window (total tabs: {self.main_tab_widget.count()})",
@@ -293,7 +294,7 @@ class ProgramEditor(BasicEditor):
                 icon_name="mdi.account-music",
             )
             self.main_tab_widget.addTab(
-                placeholder_widget, user_programs_icon, "User Programs"
+                placeholder_widget, user_programs_icon, tr("User Programs")
             )
             log.message(
                 f"✅ Added 'User Programs' tab (placeholder) (total tabs: {self.main_tab_widget.count()})",
@@ -312,7 +313,7 @@ class ProgramEditor(BasicEditor):
             playlist_icon = JDXi.UI.Icon.get_icon(
                 "mdi.playlist-music", color=JDXi.UI.Style.GREY
             )
-            self.main_tab_widget.addTab(self.playlist_widget, playlist_icon, "Playlist")
+            self.main_tab_widget.addTab(self.playlist_widget, playlist_icon, tr("Playlist"))
             log.message(
                 f"✅ Added 'Playlist' tab to main window (total tabs: {self.main_tab_widget.count()})",
                 scope=self.__class__.__name__,
@@ -329,7 +330,7 @@ class ProgramEditor(BasicEditor):
                 error_message="Error loading playlists: ",
                 icon_name="mdi.playlist-music",
             )
-            self.main_tab_widget.addTab(placeholder_widget, playlist_icon, "Playlist")
+            self.main_tab_widget.addTab(placeholder_widget, playlist_icon, tr("Playlist"))
             log.message(
                 f"✅ Added 'Playlist' tab (placeholder) (total tabs: {self.main_tab_widget.count()})",
                 scope=self.__class__.__name__,
@@ -353,7 +354,7 @@ class ProgramEditor(BasicEditor):
                 "mdi.playlist-edit", color=JDXi.UI.Style.GREY
             )
             self.main_tab_widget.addTab(
-                self.playlist_editor_widget, playlist_editor_icon, "Playlist Editor"
+                self.playlist_editor_widget, playlist_editor_icon, tr("Playlist Editor")
             )
             log.message(
                 f"✅ Added 'Playlist Editor' tab to main window (total tabs: {self.main_tab_widget.count()})",
@@ -374,7 +375,7 @@ class ProgramEditor(BasicEditor):
                 icon_name="mdi.playlist-edit",
             )
             self.main_tab_widget.addTab(
-                placeholder_widget, playlist_editor_icon, "Playlist Editor"
+                placeholder_widget, playlist_editor_icon, tr("Playlist Editor")
             )
             log.message(
                 f"✅Added 'Playlist Editor' tab (placeholder) (total tabs: {self.main_tab_widget.count()})",
@@ -411,7 +412,7 @@ class ProgramEditor(BasicEditor):
                 JDXi.UI.Icon.MUSIC, color=JDXi.UI.Style.GREY
             )
         self.program_group_widget.program_preset_tab_widget.addTab(
-            self.program_group_widget.preset, presets_icon, "Presets"
+            self.program_group_widget.preset, presets_icon, tr("Presets")
         )
         log.message(
             f"📑Added 'Presets' tab to program_preset_tab_widget (total tabs: {self.program_group_widget.program_preset_tab_widget.count()})",

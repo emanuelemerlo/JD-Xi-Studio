@@ -31,6 +31,7 @@ from jdxi_editor.ui.widgets.midi.track import MidiTrackWidget
 from jdxi_editor.ui.widgets.midi.utils import build_tick_to_seconds, get_first_channel
 from picomidi.constant import Midi
 from picomidi.message.type import MidoMetaMessageType, MidoMessageType
+from jdxi_editor.i18n import tr
 
 
 class MidiTrackViewer(QWidget):
@@ -105,7 +106,7 @@ class MidiTrackViewer(QWidget):
         # Add Mute Buttons for channels 1-16
         self.mute_buttons = {}
         mute_layout = QHBoxLayout()
-        mute_layout.addWidget(QLabel("Mute Channels:"))
+        mute_layout.addWidget(QLabel(tr("Mute Channels:")))
 
         for ch in range(1, 17):
             btn = QPushButton(f"{ch}")
@@ -145,7 +146,7 @@ class MidiTrackViewer(QWidget):
         self.update_track_zoom(self.track_zoom_slider.value())
 
         # Add zoom slider to layout
-        main_layout.addWidget(QLabel("Track Zoom"))
+        main_layout.addWidget(QLabel(tr("Track Zoom")))
         main_layout.addWidget(self.track_zoom_slider)
 
         self.setLayout(main_layout)
@@ -462,7 +463,7 @@ class MidiTrackViewer(QWidget):
             raise IndexError("Invalid track index")
         if len(self.midi_file.tracks) == 1:
             QMessageBox.information(
-                self, "Delete Track", "A MIDI file needs at least one track."
+                self, tr("Delete Track"), tr("A MIDI file needs at least one track.")
             )
             return
 
@@ -471,8 +472,8 @@ class MidiTrackViewer(QWidget):
 
         reply = QMessageBox.question(
             self,
-            "Delete Track?",
-            f"Are you sure you want to delete '{track_name}'?",
+            tr("Delete Track?"),
+            tr("Are you sure you want to delete '{track_name}'?").format(track_name=track_name),
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
         if reply != QMessageBox.StandardButton.Yes:
@@ -857,8 +858,8 @@ class MidiTrackViewer(QWidget):
             track_name_line_edit = QLineEdit()
             track_name_line_edit.setText(track_name.strip())
             track_name_line_edit.setCursorPosition(0)  # show the start of long names
-            track_name_line_edit.setPlaceholderText("Unnamed")
-            track_name_line_edit.setToolTip("Track name (applied on Enter or when you click away)")
+            track_name_line_edit.setPlaceholderText(tr("Unnamed"))
+            track_name_line_edit.setToolTip(tr("Track name (applied on Enter or when you click away)"))
             track_name_line_edit.editingFinished.connect(
                 lambda tr=i, le=track_name_line_edit: self._on_name_edited(tr, le.text())
             )
@@ -872,7 +873,7 @@ class MidiTrackViewer(QWidget):
             )
             mute_button = QPushButton()
             mute_button.setIcon(mute_icon)
-            mute_button.setToolTip("Mute Track")
+            mute_button.setToolTip(tr("Mute Track"))
             mute_button.setFixedSize(control_size, control_size)
             mute_button.setCheckable(True)
             mute_button.setStyleSheet(mp.track_toggle_stylesheet(mp.ACCENT))
@@ -889,7 +890,7 @@ class MidiTrackViewer(QWidget):
             )
             solo_button = QPushButton()
             solo_button.setIcon(solo_icon)
-            solo_button.setToolTip("Solo Track (mute all other tracks)")
+            solo_button.setToolTip(tr("Solo Track (mute all other tracks)"))
             solo_button.setFixedSize(control_size, control_size)
             solo_button.setCheckable(True)
             solo_button.setStyleSheet(mp.track_toggle_stylesheet(mp.SOLO))
@@ -905,7 +906,7 @@ class MidiTrackViewer(QWidget):
             bottom_row.addSpacing(mp.TRACK_NUMBER_WIDTH + 4)
             if has_channel:
                 spin = MidiSpinBox()
-                spin.setToolTip("MIDI channel of the track (changes apply immediately)")
+                spin.setToolTip(tr("MIDI channel of the track (changes apply immediately)"))
                 spin.setValue(first_channel)
                 spin.valueChanged.connect(
                     lambda value, tr=i: self._on_channel_edited(tr, value)

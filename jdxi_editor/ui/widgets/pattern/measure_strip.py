@@ -19,6 +19,7 @@ from PySide6.QtGui import QColor, QMouseEvent, QPainter, QPaintEvent, QPen
 from PySide6.QtWidgets import QHBoxLayout, QScrollArea, QSizePolicy, QWidget
 
 from jdxi_editor.ui.style.midi_player import PatternEditorStyle as Style
+from jdxi_editor.i18n import tr
 
 TILE_WIDTH = 60
 TILE_HEIGHT = 48
@@ -43,7 +44,7 @@ class MeasureTile(QWidget):
         self.playing = False
         self.setFixedSize(TILE_WIDTH, TILE_HEIGHT)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.setToolTip(f"Measure {index + 1}")
+        self.setToolTip(tr('Measure {value1}').format(value1=index + 1))
         # Redraw whenever a step of this measure changes
         for row in measure_widget.buttons:
             for button in row:
@@ -117,7 +118,7 @@ class AddMeasureTile(QWidget):
         super().__init__(parent)
         self.setFixedSize(TILE_WIDTH, TILE_HEIGHT)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.setToolTip("Add a measure")
+        self.setToolTip(tr("Add a measure"))
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.button() == Qt.MouseButton.LeftButton:
@@ -188,7 +189,7 @@ class MeasureStrip(QScrollArea):
         self._discard(self.tiles.pop(index))
         for i, remaining in enumerate(self.tiles):  # renumber
             remaining.index = i
-            remaining.setToolTip(f"Measure {i + 1}")
+            remaining.setToolTip(tr('Measure {value1}').format(value1=i + 1))
             remaining.update()
         if self._current is not None and self._current >= len(self.tiles):
             self.set_current(len(self.tiles) - 1 if self.tiles else None)

@@ -13,6 +13,9 @@ license = { file = "LICENSE" }
 authors = [
     { name = "Mark Brooks", email = "mark.x.brooks@gmail.com" }
 ]
+maintainers = [
+    { name = "emanuelemerlo" }  # this fork
+]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: X11 Applications :: Qt",
@@ -60,9 +63,10 @@ dev = ["pytest>=8", "mypy", "black", "isort", "flake8", "soundfile", "librosa"]
 build-windows = ["pyinstaller>=6"]
 
 [project.urls]
-Homepage = "https://github.com/markxbrooks/JDXI-Editor"
-Repository = "https://github.com/markxbrooks/JDXI-Editor.git"
-Issues = "https://github.com/markxbrooks/JDXI-Editor/issues"
+Homepage = "https://github.com/emanuelemerlo/JDXI-Editor"
+"Original project" = "https://github.com/markxbrooks/JDXI-Editor"
+Repository = "https://github.com/emanuelemerlo/JDXI-Editor.git"
+Issues = "https://github.com/emanuelemerlo/JDXI-Editor/issues"
 
 [project.scripts]
 jdxi_manager = "jdxi_editor.main:main"
@@ -103,6 +107,7 @@ addopts = "-ra -q -m 'not slow and not hardware'"
 testpaths = [
     "tests",
 ]
+pythonpath = ["."]  # tests import building.i18n from the checkout
 markers = [
     "slow: needs local files or plays in real time (run with -m slow)",
     "hardware: needs a connected JD-Xi (run with -m hardware)",

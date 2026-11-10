@@ -11,9 +11,9 @@
 
 name: Upload Python Package
 
+# This fork is not published on PyPI (the JDXI-Editor name belongs to the
+# original project), so the workflow only runs by hand, for TestPyPI checks.
 on:
-  release:
-    types: [published]
   workflow_dispatch:
 
 permissions:

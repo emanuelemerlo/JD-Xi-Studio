@@ -19,6 +19,7 @@ from jdxi_editor.ui.widgets.editor.helper import (
 from jdxi_editor.ui.widgets.jdxi.midi_group import JDXiMidiGroup
 from picoui.helpers import create_layout_with_items
 from picoui.specs.widgets import ButtonSpec, CheckBoxSpec
+from jdxi_editor.i18n import tr
 
 if TYPE_CHECKING:
     from jdxi_editor.ui.editors.midi_player.editor import MidiFilePlayer
@@ -80,14 +81,14 @@ class EventSuppressionGroup(JDXiMidiGroup):
         return {
             "midi_suppress_pc_spec": CheckBoxSpec(
                 label="PC",
-                tooltip="Suppress MIDI Program Changes",
+                tooltip=tr("Suppress MIDI Program Changes"),
                 checked_state=self.midi_state.suppress_program_changes,
                 slot=self.parent.on_suppress_program_changes_toggled,
                 style=JDXiUIStyle.PARTIAL_SWITCH,
             ),
             "midi_suppress_cc_spec": CheckBoxSpec(
                 label="CC",
-                tooltip="Suppress MIDI Control Changes",
+                tooltip=tr("Suppress MIDI Control Changes"),
                 checked_state=self.midi_state.suppress_control_changes,
                 slot=self.parent.on_suppress_control_changes_toggled,
                 style=JDXiUIStyle.PARTIAL_SWITCH,

@@ -74,6 +74,7 @@ from jdxi_editor.ui.widgets.editor.helper import (
     create_group_with_layout,
     create_layout_with_items,
 )
+from jdxi_editor.i18n import tr
 
 
 class PresetEditor(BasicEditor):
@@ -134,7 +135,7 @@ class PresetEditor(BasicEditor):
 
     def setup_ui(self):
         """set up UI elements"""
-        self.setWindowTitle("Preset Editor")
+        self.setWindowTitle(tr("Preset Editor"))
         self.setMinimumSize(400, 400)
         # center_widget = QWidget()
         main_vlayout = QVBoxLayout()
@@ -142,7 +143,7 @@ class PresetEditor(BasicEditor):
         self.setLayout(main_vlayout)
         JDXi.UI.Theme.apply_editor_style(self)
 
-        self.title_label = QLabel("Presets:")
+        self.title_label = QLabel(tr("Presets:"))
         self.title_label.setStyleSheet(
             """
                 font-size: 16px;
@@ -174,7 +175,7 @@ class PresetEditor(BasicEditor):
         )
         self.digital_synth_1_hlayout.addWidget(self.digital_synth_1_icon)
 
-        self.digital_synth_1_title = QLabel("Digital Synth 1")
+        self.digital_synth_1_title = QLabel(tr("Digital Synth 1"))
         self.digital_synth_1_hlayout.addWidget(self.digital_synth_1_title)
         self.digital_synth_1_title.setStyleSheet(
             f"""
@@ -183,7 +184,7 @@ class PresetEditor(BasicEditor):
                 color: {JDXi.UI.Style.ACCENT};
             """
         )
-        self.digital_synth_1_current_label = QLabel("Current Tone:")
+        self.digital_synth_1_current_label = QLabel(tr("Current Tone:"))
         self.digital_synth_1_hlayout.addWidget(self.digital_synth_1_current_label)
         self.digital_synth_1_current_label.setStyleSheet(
             f"""
@@ -203,7 +204,7 @@ class PresetEditor(BasicEditor):
         )
         self.digital_synth_2_hlayout.addWidget(self.digital_synth_2_icon)
 
-        self.digital_synth_2_title = QLabel("Digital Synth 2")
+        self.digital_synth_2_title = QLabel(tr("Digital Synth 2"))
         self.digital_synth_2_hlayout.addWidget(self.digital_synth_2_title)
         self.digital_synth_2_title.setStyleSheet(
             f"""
@@ -212,7 +213,7 @@ class PresetEditor(BasicEditor):
                 color: {JDXi.UI.Style.ACCENT};
             """
         )
-        self.digital_synth_2_current_label = QLabel("Current Tone:")
+        self.digital_synth_2_current_label = QLabel(tr("Current Tone:"))
         self.digital_synth_2_hlayout.addWidget(self.digital_synth_2_current_label)
         self.digital_synth_2_current_label.setStyleSheet(
             f"""
@@ -232,7 +233,7 @@ class PresetEditor(BasicEditor):
         )
         self.drum_kit_hlayout.addWidget(self.drum_kit_icon)
 
-        self.drum_kit_title = QLabel("Drums")
+        self.drum_kit_title = QLabel(tr("Drums"))
         self.drum_kit_hlayout.addWidget(self.drum_kit_title)
         self.drum_kit_title.setStyleSheet(
             f"""
@@ -241,7 +242,7 @@ class PresetEditor(BasicEditor):
                 color: {JDXi.UI.Style.ACCENT};
             """
         )
-        self.drum_kit_current_label = QLabel("Current Tone:")
+        self.drum_kit_current_label = QLabel(tr("Current Tone:"))
         self.drum_kit_hlayout.addWidget(self.drum_kit_current_label)
         self.drum_kit_current_label.setStyleSheet(
             f"""
@@ -262,7 +263,7 @@ class PresetEditor(BasicEditor):
 
         main_vlayout.addLayout(self.analog_synth_hlayout)
 
-        self.analog_synth_title = QLabel("Analog Synth")
+        self.analog_synth_title = QLabel(tr("Analog Synth"))
         self.analog_synth_hlayout.addWidget(self.analog_synth_title)
         self.analog_synth_title.setStyleSheet(
             f"""
@@ -271,7 +272,7 @@ class PresetEditor(BasicEditor):
                 color: {JDXi.UI.Style.ACCENT_ANALOG};
             """
         )
-        self.analog_synth_current_label = QLabel("Current Tone:")
+        self.analog_synth_current_label = QLabel(tr("Current Tone:"))
         self.analog_synth_hlayout.addWidget(self.analog_synth_current_label)
         self.analog_synth_current_label.setStyleSheet(
             f"""
@@ -339,20 +340,20 @@ class PresetEditor(BasicEditor):
         # Search Box
 
         self.search_box = QLineEdit()
-        search_row = create_layout_with_items([QLabel("Search:"), self.search_box])
+        search_row = create_layout_with_items([QLabel(tr("Search:")), self.search_box])
         self.search_box.setStyleSheet(JDXi.UI.Style.QLINEEDIT)
-        self.search_box.setPlaceholderText("Search presets...")
+        self.search_box.setPlaceholderText(tr("Search presets..."))
         self.search_box.textChanged.connect(self._populate_presets)
         search_row.addWidget(self.search_box)
         preset_vlayout.addLayout(search_row)
-        self.digital_preset_label = QLabel("Preset")
+        self.digital_preset_label = QLabel(tr("Preset"))
         preset_vlayout.addWidget(self.digital_preset_label)
         # --- Program number selection combo box
         self.preset_combo_box = QComboBox()
         self.preset_combo_box.addItems([f"{i:02}" for i in range(1, 65)])
         self.preset_combo_box.currentIndexChanged.connect(self.on_preset_number_changed)
         preset_vlayout.addWidget(self.preset_combo_box)
-        self.genre_label = QLabel("Category")
+        self.genre_label = QLabel(tr("Category"))
         preset_vlayout.addWidget(self.genre_label)
         # --- Category selection combo box
         self.category_combo_box = QComboBox()
@@ -622,10 +623,10 @@ class PresetEditor(BasicEditor):
                 f"Program details missing required keys: {program_details}",
                 scope=self.__class__.__name__,
             )
-            self.digital_synth_1_current_label.setText("Unknown")
-            self.digital_synth_2_current_label.setText("Unknown")
-            self.drum_kit_current_label.setText("Unknown")
-            self.analog_synth_current_label.setText("Unknown")
+            self.digital_synth_1_current_label.setText(tr("Unknown"))
+            self.digital_synth_2_current_label.setText(tr("Unknown"))
+            self.drum_kit_current_label.setText(tr("Unknown"))
+            self.analog_synth_current_label.setText(tr("Unknown"))
 
     def _update_preset_list(self) -> None:
         """Update the preset list with available presets."""

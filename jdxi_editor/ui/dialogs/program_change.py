@@ -31,6 +31,7 @@ from jdxi_editor.ui.widgets.combo_box.searchable_filterable import (
     SearchableFilterableComboBox,
 )
 from jdxi_editor.ui.widgets.midi.selection_info_bar import MidiSelectionInfoBar
+from jdxi_editor.i18n import tr
 
 # 0-based channel -> preset type to offer when the current program is not a preset
 DEFAULT_SOURCE_FOR_CHANNEL = {2: PresetSource.ANALOG, 9: PresetSource.DRUMS}
@@ -60,7 +61,7 @@ class ProgramChangeDialog(QDialog):
         :param parent: Parent widget
         """
         super().__init__(parent)
-        self.setWindowTitle("Edit Program Change")
+        self.setWindowTitle(tr("Edit Program Change"))
         self.setMinimumWidth(420)
         self._presets: list[Preset] = []
         self._channel = channel
@@ -96,7 +97,7 @@ class ProgramChangeDialog(QDialog):
         )
         self.info_bar = MidiSelectionInfoBar()
         current = QLabel(
-            f"Current: CC#0 {bank.msb} · CC#32 {bank.lsb} · PC {program}"
+            tr('Current: CC#0 {msb} · CC#32 {lsb} · PC {program}').format(msb=bank.msb, lsb=bank.lsb, program=program)
         )
 
         form = QFormLayout()

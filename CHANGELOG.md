@@ -2,7 +2,38 @@
 
 All notable changes to JDXI-Editor are documented in this file.
 
-# [Unreleased]
+# [0.10.0b1] — tag `v0.10.0-beta.1` (beta, not released yet)
+
+First version of this repository as an **independent fork** of
+[markxbrooks/JDXI-Editor](https://github.com/markxbrooks/JDXI-Editor) (last
+release there: 0.9.9). Versions continue from 0.9.9: 0.10.x betas with the
+current interface, 1.0 with the new one.
+
+### Fork
+
+- **Update check** (Help › Check for Updates) asks this repository's releases, not the original's.
+  A beta copy is told about newer betas; a final release only about final releases. Versions such as
+  `v0.10.0-beta.2`, `0.10.0b2` and `v0.10.0-rc.1` now compare in release order (before, `0.10.0b1`
+  counted as `0.10.0`)
+- **pip installs** are upgraded from GitHub (`pip install -U git+https://github.com/emanuelemerlo/JDXI-Editor.git`):
+  the `JDXI-Editor` package on PyPI is the original project. The PyPI publishing workflow only runs by hand
+- **About** and **Help › Documentation** link to this repository and credit the original project;
+  `pyproject.toml` URLs and maintainer updated
+- **README, README.rst and doc/installation.rst** describe the fork, its Windows builds and how to install
+  it from GitHub
+
+### Languages
+
+- **Interface in English and Italian**, chosen in Help › Preferences › Interface language
+  ("Same as the system", English, Italiano); it applies at the next start. `JDXI_LANGUAGE=it` overrides it
+- Menus, dialogs, messages, tooltips and editor titles go through `jdxi_editor.i18n.tr()` (372 strings);
+  Qt's own buttons and file dialogs use Qt's catalogue for the same language. Parameter names stay as on
+  the JD-Xi display, as in Roland's manuals
+- `python -m building.i18n update | compile | check` keeps the Qt Linguist catalogues
+  (`jdxi_editor/i18n/*.ts` and `.qm`) in step with the code; `tests/test_i18n.py` fails on an
+  untranslated string, a lost placeholder or a stale `.qm`
+
+## Checked against the manuals
 
 Checked against Roland's JD-Xi Parameter Guide (preset lists, pp. 44–47) and
 MIDI Implementation (parameter address map).

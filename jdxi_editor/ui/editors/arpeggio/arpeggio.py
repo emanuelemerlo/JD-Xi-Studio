@@ -43,6 +43,7 @@ from PySide6.QtGui import QShowEvent
 
 from jdxi_editor.midi.data.address.address import JDXiSysExAddress
 from picomidi.sysex.parameter.address import AddressParameter
+from jdxi_editor.i18n import tr
 
 if TYPE_CHECKING:
     from jdxi_editor.ui.windows.jdxi.instrument import JDXiInstrument
@@ -100,7 +101,7 @@ class ArpeggioEditor(BasicEditor):
         :param preset_helper: JDXIPresetHelper
         :param parent: QWidget
         """
-        self.setWindowTitle("Arpeggio Editor")
+        self.setWindowTitle(tr("Arpeggio Editor"))
         self.midi_helper = midi_helper
         self.preset_helper = preset_helper
         self.address = create_arp_address()
@@ -327,7 +328,7 @@ class ArpeggioEditor(BasicEditor):
             switch = Switch(
                 label=f"{label} Arpeggio",
                 values=values,
-                tooltip=f"Enable arpeggiator for {label} zone",
+                tooltip=tr('Enable arpeggiator for {label} zone').format(label=label),
             )
             switch.valueChanged.connect(
                 lambda v, p=param, addr=zone_addr: self._on_parameter_changed(

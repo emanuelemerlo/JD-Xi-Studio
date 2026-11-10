@@ -6,6 +6,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 
 from jdxi_editor.core.jdxi import JDXi
+from jdxi_editor.i18n import tr
 
 
 def add_program_container(central_widget, create_program_buttons_row):
@@ -22,7 +23,7 @@ def add_program_container(central_widget, create_program_buttons_row):
 
     program_label_layout = QHBoxLayout()
     program_label_layout.setSpacing(1)
-    program_label = QLabel("Program")
+    program_label = QLabel(tr("Program"))
     program_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
     program_label.setStyleSheet(JDXi.UI.Style.TRANSPARENT)
     program_label_layout.addWidget(program_label)
@@ -44,12 +45,12 @@ def create_program_buttons_row():
     # create program up button
     program_up_button.setFixedSize(25, 25)
     program_up_button.setStyleSheet(JDXi.UI.Style.BUTTON_ROUND_SMALL)
-    program_up_button.setToolTip("Program Up: Navigate to the next program")
+    program_up_button.setToolTip(tr("Program Up: Navigate to the next program"))
 
     # create program down button
     program_down_button.setFixedSize(25, 25)
     program_down_button.setStyleSheet(JDXi.UI.Style.BUTTON_ROUND_SMALL)
-    program_down_button.setToolTip("Program Down: Navigate to the previous program")
+    program_down_button.setToolTip(tr("Program Down: Navigate to the previous program"))
 
     # create program layout
     program_layout = QHBoxLayout()

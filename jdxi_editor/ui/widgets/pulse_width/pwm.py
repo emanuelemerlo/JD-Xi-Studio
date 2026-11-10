@@ -25,6 +25,7 @@ from jdxi_editor.ui.widgets.pulse_width.slider_spinbox import PWMSliderSpinbox
 from picomidi.constant import Midi
 from picomidi.sysex.parameter.address import AddressParameter
 from picomidi.utils.conversion import midi_value_to_ms, ms_to_midi_value
+from jdxi_editor.i18n import tr
 
 
 class PWMWidget(EnvelopeWidgetBase):
@@ -53,7 +54,7 @@ class PWMWidget(EnvelopeWidgetBase):
             parent=parent,
         )
         self.plot = None
-        self.setWindowTitle("PWM Widget")
+        self.setWindowTitle(tr("PWM Widget"))
         self.address = address
         self.midi_helper = midi_helper
         self._create_parameter_slider = create_parameter_slider

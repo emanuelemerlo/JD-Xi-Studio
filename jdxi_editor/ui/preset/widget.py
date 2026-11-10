@@ -35,6 +35,7 @@ from jdxi_editor.ui.widgets.editor.helper import (
 from picoui.helpers.layout import create_group
 from picoui.specs.widgets import ComboBoxSpec
 from picoui.widget.helper import create_combo_box, create_combo_row
+from jdxi_editor.i18n import tr
 
 if TYPE_CHECKING:
     from jdxi_editor.ui.editors.synth.editor import SynthEditor
@@ -236,7 +237,7 @@ class InstrumentPresetWidget(QWidget):
         :return: QGroupBox
         """
         self._synth_type = synth_type  # Store for refresh
-        instrument_preset_group = QGroupBox(f"{synth_type} Synth")
+        instrument_preset_group = QGroupBox(tr('{synth_type} Synth').format(synth_type=synth_type))
         instrument_title_group_layout = QVBoxLayout(instrument_preset_group)
         instrument_title_group_layout.setSpacing(3)  # Reduced spacing
         instrument_title_group_layout.setContentsMargins(5, 5, 5, 5)  # Reduced margins
@@ -265,7 +266,7 @@ class InstrumentPresetWidget(QWidget):
                     JDXi.UI.Icon.MUSIC, color=JDXi.UI.Style.GREY
                 )
             preset_tabs.addTab(
-                normal_preset_widget, analog_presets_icon, "Analog Presets"
+                normal_preset_widget, analog_presets_icon, tr("Analog Presets")
             )
 
             # === Tab 2: Cheat Presets (Digital Synth presets on Analog channel) ===
@@ -274,7 +275,7 @@ class InstrumentPresetWidget(QWidget):
             cheat_presets_icon = JDXi.UI.Icon.get_icon(
                 JDXi.UI.Icon.CODE_BRACES, color=JDXi.UI.Style.GREY
             )
-            preset_tabs.addTab(cheat_preset_widget, cheat_presets_icon, "Cheat Presets")
+            preset_tabs.addTab(cheat_preset_widget, cheat_presets_icon, tr("Cheat Presets"))
         else:
             # For Digital/Drums, create simple layout without tabs
             self._add_normal_preset_content(instrument_title_group_layout, synth_type)

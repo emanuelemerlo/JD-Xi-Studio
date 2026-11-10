@@ -38,23 +38,24 @@ from PySide6.QtWidgets import (
 )
 
 from jdxi_editor.core.jdxi import JDXi
+from jdxi_editor.i18n import tr
 
 
 class PatchNameEditor(QDialog):
     def __init__(self, current_name="", parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Edit Patch Name")
+        self.setWindowTitle(tr("Edit Patch Name"))
         self.setModal(True)
 
         main_layout = QVBoxLayout(self)
-        group = QGroupBox("Patch Name")
+        group = QGroupBox(tr("Patch Name"))
 
         # Set up layout
         layout = QVBoxLayout(group)
 
         # Add name input
         name_layout = QHBoxLayout()
-        name_label = QLabel("Name:")
+        name_label = QLabel(tr("Name:"))
         self.tone_name_input = QLineEdit(current_name)
         self.tone_name_input.setMaxLength(12)  # JD-Xi patch names are max 12 chars
         name_layout.addWidget(name_label)
@@ -63,8 +64,8 @@ class PatchNameEditor(QDialog):
 
         # Add buttons
         button_layout = QHBoxLayout()
-        save_button = QPushButton("Save")
-        cancel_button = QPushButton("Cancel")
+        save_button = QPushButton(tr("Save"))
+        cancel_button = QPushButton(tr("Cancel"))
         save_button.clicked.connect(self.accept)
         cancel_button.clicked.connect(self.reject)
         button_layout.addWidget(save_button)
@@ -102,18 +103,18 @@ class PatchNameEditor(QDialog):
 class PatchNameEditorOld(QDialog):
     def __init__(self, current_name="", parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Edit Patch Name")
+        self.setWindowTitle(tr("Edit Patch Name"))
         self.setModal(True)
 
         main_layout = QVBoxLayout(self)
-        group = QGroupBox("Patch Name")
+        group = QGroupBox(tr("Patch Name"))
 
         # Set up layout
         layout = QVBoxLayout(group)
 
         # Add name input
         name_layout = QHBoxLayout()
-        name_label = QLabel("Name:")
+        name_label = QLabel(tr("Name:"))
         self.name_input = QLineEdit(current_name)
         self.name_input.setMaxLength(12)  # JD-Xi patch names are max 12 chars
         name_layout.addWidget(name_label)
@@ -122,8 +123,8 @@ class PatchNameEditorOld(QDialog):
 
         # Add buttons
         button_layout = QHBoxLayout()
-        save_button = QPushButton("Save")
-        cancel_button = QPushButton("Cancel")
+        save_button = QPushButton(tr("Save"))
+        cancel_button = QPushButton(tr("Cancel"))
         save_button.clicked.connect(self.accept)
         cancel_button.clicked.connect(self.reject)
         button_layout.addWidget(save_button)

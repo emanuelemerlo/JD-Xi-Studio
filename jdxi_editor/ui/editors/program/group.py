@@ -17,6 +17,7 @@ from jdxi_editor.ui.common import JDXi, QVBoxLayout, QWidget
 from jdxi_editor.ui.editors.helpers.widgets import create_jdxi_button, create_jdxi_row
 from jdxi_editor.ui.style import JDXiUIDimensions, JDXiUIStyle
 from jdxi_editor.ui.widgets.editor.helper import transfer_layout_items
+from jdxi_editor.i18n import tr
 
 if TYPE_CHECKING:
     from jdxi_editor.ui.editors.program.editor import ProgramEditor
@@ -92,7 +93,7 @@ class ProgramGroup(QGroupBox):
             programs_icon = JDXi.UI.Icon.get_icon(
                 JDXi.UI.Icon.MUSIC, color=JDXi.UI.Style.GREY
             )
-        self.program_preset_tab_widget.addTab(program_widget, programs_icon, "Programs")
+        self.program_preset_tab_widget.addTab(program_widget, programs_icon, tr("Programs"))
 
         # System Settings tab (System Common + System Controller)
         prog_editor = self.parent if hasattr(self, "parent") else parent
@@ -113,7 +114,7 @@ class ProgramGroup(QGroupBox):
                 JDXi.UI.Icon.MUSIC, color=JDXi.UI.Style.GREY
             )
         self.program_preset_tab_widget.addTab(
-            system_settings, settings_icon, "System Settings"
+            system_settings, settings_icon, tr("System Settings")
         )
         self.system_settings_widget = system_settings
 

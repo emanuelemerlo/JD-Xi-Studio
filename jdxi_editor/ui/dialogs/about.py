@@ -17,6 +17,7 @@ from PySide6.QtWidgets import (
 from jdxi_editor.project import __package_name__, __program__, __version__
 from jdxi_editor.resources import resource_path
 from jdxi_editor.ui.common import JDXi, QVBoxLayout, QWidget
+from jdxi_editor.i18n import tr
 
 
 class UiAboutDialog(QDialog):
@@ -33,7 +34,7 @@ class UiAboutDialog(QDialog):
         :return: None
         """
         self.resize(508, 300)
-        self.setWindowTitle(f"about {__program__}")
+        self.setWindowTitle(tr('about {program}').format(program=__program__))
         self.setStyleSheet(
             JDXi.UI.Style.SPLASH_SCREEN + JDXi.UI.Style.CREDITS_LABEL_STYLE
         )
@@ -59,7 +60,7 @@ class UiAboutDialog(QDialog):
         image_layout.addWidget(image_label, alignment=Qt.AlignHCenter)
 
         version_label = QLabel()
-        version_label.setText(f"{__program__}\nversion:\t{__version__}")
+        version_label.setText(tr('{program}\nversion:\t{version}').format(program=__program__, version=__version__))
         image_layout.addWidget(version_label)
 
         button_box = QDialogButtonBox(self)
@@ -71,17 +72,18 @@ class UiAboutDialog(QDialog):
         credits_label = QLabel()
         credits_label.setTextFormat(Qt.RichText)
         credits_label.setText(
-            "<br><b>Credits:</b><br>"
+            tr("<br><b>Credits:</b><br>"
             "This application uses the following libraries:<br>"
             "&bull; <a style='color: blue' href='https://mido.readthedocs.io/'>Mido</a> – MIDI message parsing and sending<br>"
             "&bull; <a style='color: blue' href='https://www.music.mcgill.ca/~gary/rtmidi/'>RtMidi</a> – Low-level MIDI communication<br>"
             "&bull; <a style='color: blue' href='https://www.qt.io/'>Qt</a> – Cross-platform application framework<br>"
-            "Source code available on <a style='color: blue' href='https://github.com/markxbrooks/jdxi-editor'>GitHub</a><br>"
+            "Source code available on <a style='color: blue' href='https://github.com/emanuelemerlo/JDXI-Editor'>GitHub</a><br>"
+            "An independent fork of <a style='color: blue' href='https://github.com/markxbrooks/JDXI-Editor'>JDXI-Editor</a> by Mark Brooks<br>"
             "Licensed under the <a style='color: blue' href='https://opensource.org/licenses/MIT'>MIT License</a><br>"
             "'Roland' and 'JD-Xi' are Trademarks of the Roland Corporation <br> in the United States and/or other countries<br>"
             "This app is an independent, unofficial companion tool for the Roland JDXi synthesizer<br>"
             "This app is not affiliated with, endorsed by, or sponsored by Roland Corporation in any way<br>"
-            "All product names, trademarks, and logos are the property of their respective owners.<br>"
+            "All product names, trademarks, and logos are the property of their respective owners.<br>")
         )
         credits_label.setStyleSheet(JDXi.UI.Style.CREDITS_LABEL_STYLE)
         credits_label.setOpenExternalLinks(True)

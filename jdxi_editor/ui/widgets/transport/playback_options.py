@@ -25,6 +25,7 @@ from jdxi_editor.ui.editors.midi_player.utils import format_time
 from jdxi_editor.ui.widgets.editor.helper import create_group_with_layout
 from jdxi_editor.ui.widgets.jdxi.midi_group import JDXiMidiGroup
 from picomidi.ui.widget.transport.spec import TransportSpec
+from jdxi_editor.i18n import tr
 
 if TYPE_CHECKING:
     from jdxi_editor.ui.editors.midi_player.editor import MidiFilePlayer
@@ -54,7 +55,7 @@ class PlaybackOptionsWidget(JDXiMidiGroup):
             "loop": TransportSpec(
                 label="Loop",
                 icon="mdi.repeat",
-                tooltip="Loop the A–B range, or the whole song if none is set (L)",
+                tooltip=tr("Loop the A–B range, or the whole song if none is set (L)"),
                 slot=self.parent.midi_loop_toggled,
                 name="loop",
                 text="Loop",
@@ -62,7 +63,7 @@ class PlaybackOptionsWidget(JDXiMidiGroup):
             "loop_a": TransportSpec(
                 label="Set A",
                 icon="mdi.alpha-a-box-outline",
-                tooltip="Set the loop start to the playback position",
+                tooltip=tr("Set the loop start to the playback position"),
                 slot=self.parent.midi_loop_set_a,
                 checkable=False,
                 name="loop_a",
@@ -71,7 +72,7 @@ class PlaybackOptionsWidget(JDXiMidiGroup):
             "loop_b": TransportSpec(
                 label="Set B",
                 icon="mdi.alpha-b-box-outline",
-                tooltip="Set the loop end to the playback position (turns Loop on)",
+                tooltip=tr("Set the loop end to the playback position (turns Loop on)"),
                 slot=self.parent.midi_loop_set_b,
                 checkable=False,
                 name="loop_b",
@@ -80,7 +81,7 @@ class PlaybackOptionsWidget(JDXiMidiGroup):
             "loop_clear": TransportSpec(
                 label="Clear A–B",
                 icon="mdi.repeat-off",
-                tooltip="Clear the A–B range so Loop repeats the whole song",
+                tooltip=tr("Clear the A–B range so Loop repeats the whole song"),
                 slot=self.parent.midi_loop_clear,
                 checkable=False,
                 name="loop_clear",
@@ -89,8 +90,8 @@ class PlaybackOptionsWidget(JDXiMidiGroup):
             "trim": TransportSpec(
                 label="Trim",
                 icon="mdi.content-cut",
-                tooltip="Keep only part of the file (the A–B range, if set); "
-                "right-click a track to trim just that track",
+                tooltip=tr("Keep only part of the file (the A–B range, if set); "
+                "right-click a track to trim just that track"),
                 slot=self.parent.midi_trim_file,
                 checkable=False,
                 name="trim",
@@ -116,7 +117,7 @@ class PlaybackOptionsWidget(JDXiMidiGroup):
         self.set_loop_points(None, None)
 
         options = QHBoxLayout()
-        speed_label = QLabel("Speed")
+        speed_label = QLabel(tr("Speed"))
         speed_label.setStyleSheet(JDXi.UI.Style.STYLE_FOREGROUND)
         options.addWidget(speed_label)
         self.speed_spin = QSpinBox()
@@ -124,25 +125,25 @@ class PlaybackOptionsWidget(JDXiMidiGroup):
         self.speed_spin.setSingleStep(SPEED_PERCENT_STEP)
         self.speed_spin.setValue(100)
         self.speed_spin.setSuffix(" %")
-        self.speed_spin.setToolTip("Playback speed (pitch is unchanged)")
+        self.speed_spin.setToolTip(tr("Playback speed (pitch is unchanged)"))
         self.speed_spin.valueChanged.connect(self.parent.on_playback_speed_changed)
         options.addWidget(self.speed_spin)
 
-        self.snap_checkbox = QCheckBox("Snap to bar")
+        self.snap_checkbox = QCheckBox(tr("Snap to bar"))
         self.snap_checkbox.setChecked(True)
         self.snap_checkbox.setToolTip(
-            "Snap loop points and inserted or moved Program Changes to the nearest bar line"
+            tr("Snap loop points and inserted or moved Program Changes to the nearest bar line")
         )
         JDXi.UI.Theme.apply_button_mini_style(self.snap_checkbox)
         options.addWidget(self.snap_checkbox)
 
-        self.clock_checkbox = QCheckBox("Send MIDI Clock")
+        self.clock_checkbox = QCheckBox(tr("Send MIDI Clock"))
         self.clock_checkbox.setChecked(False)
         self.clock_checkbox.setToolTip(
-            "Send MIDI Clock, Start/Stop/Continue and Song Position so the JD-Xi "
+            tr("Send MIDI Clock, Start/Stop/Continue and Song Position so the JD-Xi "
             "arpeggio and tempo-synced effects follow the file.\n"
             "Note: if the JD-Xi Sync setting is MIDI or AUTO, Start also starts "
-            "its pattern sequencer."
+            "its pattern sequencer.")
         )
         JDXi.UI.Theme.apply_button_mini_style(self.clock_checkbox)
         self.clock_checkbox.toggled.connect(self.parent.on_send_clock_toggled)

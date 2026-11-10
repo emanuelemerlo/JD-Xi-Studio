@@ -23,6 +23,13 @@ from jdxi_editor.project import (
     __program__,
 )
 from jdxi_editor.ui.common import JDXi, QVBoxLayout, QWidget
+from jdxi_editor.i18n import (
+    LANGUAGES,
+    SYSTEM,
+    language_setting,
+    set_language_setting,
+    tr,
+)
 
 
 def log_settings() -> None:
@@ -50,9 +57,9 @@ class UiPreferencesDialog(QDialog):
         else:
             theme = "dark"""
         log_settings()
-        self.resize(508, 360)
+        self.resize(508, 400)
 
-        self.setWindowTitle("JD-XI Editor settings")
+        self.setWindowTitle(tr("JD-XI Editor settings"))
         main_layout = QVBoxLayout(self)
 
         # Create a QComboBox
@@ -84,14 +91,14 @@ class UiPreferencesDialog(QDialog):
         self.log_icon.setPixmap(
             JDXi.UI.Icon.get_icon(JDXi.UI.Icon.REPORT).pixmap(self.icon_size)
         )
-        self.log_level_label = QLabel("Log file error reporting level:")
+        self.log_level_label = QLabel(tr("Log file error reporting level:"))
         self.log_level_layout.addWidget(self.log_icon)
         self.log_level_layout.addWidget(self.log_level_label)
         self.log_level_layout.addWidget(self.log_level_combo)
 
         self.logging_layout = QHBoxLayout(self)
         self.logging_icon = QLabel()
-        self.logging_checkbox = QCheckBox("Enable Logging?")
+        self.logging_checkbox = QCheckBox(tr("Enable Logging?"))
         self.logging_checkbox.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.logging_checkbox.setChecked(
             bool(self.settings.value("logging", type=bool))
@@ -99,7 +106,7 @@ class UiPreferencesDialog(QDialog):
         self.logging_icon.setPixmap(
             JDXi.UI.Icon.get_icon(JDXi.UI.Icon.REPORT).pixmap(self.icon_size)
         )
-        self.logging_label = QLabel("Logging On or Off:")
+        self.logging_label = QLabel(tr("Logging On or Off:"))
         self.logging_layout.addWidget(self.logging_icon)
         self.logging_layout.addWidget(self.logging_label)
         self.logging_layout.addWidget(self.logging_checkbox)
@@ -110,7 +117,7 @@ class UiPreferencesDialog(QDialog):
         self.silence_midi_notes_layout = QHBoxLayout(self)
         self.silence_midi_notes_icon = QLabel()
         self.silence_midi_notes_checkbox = QCheckBox(
-            "Silence MIDI note logging (note on/off)"
+            tr("Silence MIDI note logging (note on/off)")
         )
         self.silence_midi_notes_checkbox.setLayoutDirection(QtCore.Qt.RightToLeft)
         _val = self.settings.value(SILENCE_MIDI_NOTE_LOGGING_KEY, True)
@@ -123,7 +130,7 @@ class UiPreferencesDialog(QDialog):
         self.silence_midi_notes_icon.setPixmap(
             JDXi.UI.Icon.get_icon(JDXi.UI.Icon.REPORT).pixmap(self.icon_size)
         )
-        self.silence_midi_notes_label = QLabel("Reduce log volume from MIDI notes:")
+        self.silence_midi_notes_label = QLabel(tr("Reduce log volume from MIDI notes:"))
         self.silence_midi_notes_layout.addWidget(self.silence_midi_notes_icon)
         self.silence_midi_notes_layout.addWidget(self.silence_midi_notes_label)
         self.silence_midi_notes_layout.addWidget(self.silence_midi_notes_checkbox)
@@ -133,7 +140,7 @@ class UiPreferencesDialog(QDialog):
         self.midi_validation_layout = QHBoxLayout(self)
         self.midi_validation_icon = QLabel()
         self.midi_validation_checkbox = QCheckBox(
-            "Validate MIDI sends against combo selection (log only)"
+            tr("Validate MIDI sends against combo selection (log only)")
         )
         self.midi_validation_checkbox.setLayoutDirection(QtCore.Qt.RightToLeft)
         _val_mv = self.settings.value(MIDI_SELECTION_VALIDATION_KEY, False)
@@ -146,7 +153,7 @@ class UiPreferencesDialog(QDialog):
         self.midi_validation_icon.setPixmap(
             JDXi.UI.Icon.get_icon(JDXi.UI.Icon.REPORT).pixmap(self.icon_size)
         )
-        self.midi_validation_label = QLabel("MIDI selection cross-validation:")
+        self.midi_validation_label = QLabel(tr("MIDI selection cross-validation:"))
         self.midi_validation_layout.addWidget(self.midi_validation_icon)
         self.midi_validation_layout.addWidget(self.midi_validation_label)
         self.midi_validation_layout.addWidget(self.midi_validation_checkbox)
@@ -164,9 +171,9 @@ class UiPreferencesDialog(QDialog):
             JDXi.UI.Icon.get_icon(JDXi.UI.Icon.SETTINGS).pixmap(self.icon_size)
         )
         self.update_check_label = QLabel(
-            "Check GitHub for new releases once a day (on by default):"
+            tr("Check GitHub for new releases once a day (on by default):")
         )
-        self.update_check_checkbox = QCheckBox("Check for updates automatically")
+        self.update_check_checkbox = QCheckBox(tr("Check for updates automatically"))
         self.update_check_checkbox.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.update_check_checkbox.setChecked(
             settings_bool(self.settings, AUTO_CHECK_KEY, AUTO_CHECK_DEFAULT)
@@ -174,6 +181,31 @@ class UiPreferencesDialog(QDialog):
         self.update_check_layout.addWidget(self.update_check_icon)
         self.update_check_layout.addWidget(self.update_check_label)
         self.update_check_layout.addWidget(self.update_check_checkbox)
+
+        # --- Interface language: applies at the next start
+        self.language_layout = QHBoxLayout()
+        self.language_icon = QLabel()
+        self.language_icon.setPixmap(
+            JDXi.UI.Icon.get_icon(JDXi.UI.Icon.SETTINGS).pixmap(self.icon_size)
+        )
+        self.language_label = QLabel(tr("Interface language:"))
+        self.language_combo = QComboBox()
+        self.language_combo.setObjectName("language_combo")
+        self.language_combo.addItem(tr("Same as the system"), SYSTEM)
+        for code, name in LANGUAGES.items():
+            self.language_combo.addItem(name, code)  # each in its own language
+        index = self.language_combo.findData(language_setting(self.settings))
+        self.language_combo.setCurrentIndex(max(index, 0))
+        self.language_note = QLabel(tr("The new language is used from the next start."))
+        self.language_note.setVisible(False)
+        self.language_combo.currentIndexChanged.connect(
+            lambda _: self.language_note.setVisible(
+                self.language_combo.currentData() != language_setting(self.settings)
+            )
+        )
+        self.language_layout.addWidget(self.language_icon)
+        self.language_layout.addWidget(self.language_label)
+        self.language_layout.addWidget(self.language_combo)
 
         self.buttonBox = QtWidgets.QDialogButtonBox(self)
         self.buttonBox.setGeometry(QtCore.QRect(150, 250, 341, 32))
@@ -196,6 +228,8 @@ class UiPreferencesDialog(QDialog):
         main_content_layout.addLayout(self.silence_midi_notes_layout)
         main_content_layout.addLayout(self.midi_validation_layout)
         main_content_layout.addLayout(self.update_check_layout)
+        main_content_layout.addLayout(self.language_layout)
+        main_content_layout.addWidget(self.language_note)
         main_widget.setLayout(main_content_layout)
         main_layout.addWidget(self.buttonBox)
         self.setLayout(main_layout)
@@ -281,6 +315,7 @@ class UiPreferencesDialog(QDialog):
             settings.setValue(
                 AUTO_CHECK_KEY, bool(self.update_check_checkbox.isChecked())
             )
+            set_language_setting(self.language_combo.currentData(), settings)
             settings.sync()
             log_settings()
         except Exception as ex:

@@ -30,6 +30,7 @@ from jdxi_editor.ui.editors.drum.mixer.spec import DRUM_MIXER_LANE_ROWS
 from jdxi_editor.ui.editors.drum.partial.partial import note_name
 from jdxi_editor.ui.style.editor_style import AppEditorStyle as Style
 from jdxi_editor.ui.widgets.switch.lit_button import LitButton
+from jdxi_editor.i18n import tr
 
 PAD_WIDTH = 50
 PAD_HEIGHT = 26
@@ -92,7 +93,7 @@ class DrumPadGrid(QWidget):
             pad.setStyleSheet(pad.styleSheet() + "QPushButton { padding: 0px; }")
             pad.setFixedSize(PAD_WIDTH + (24 if name == COMMON else 0), PAD_HEIGHT)
             if name == COMMON:
-                pad.setToolTip("Kit common: name, level, tuning")
+                pad.setToolTip(tr("Kit common: name, level, tuning"))
             else:
                 pad.setToolTip(f"{name} · {note_name(FIRST_DRUM_NOTE + index)}")
             self._group.addButton(pad, index)

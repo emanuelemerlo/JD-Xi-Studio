@@ -4,6 +4,7 @@ Wave selector test class
 
 from decologr import Decologr as log
 from PySide6.QtWidgets import QApplication, QComboBox, QVBoxLayout, QWidget
+from jdxi_editor.i18n import tr
 
 
 class WaveSelector(QWidget):
@@ -12,7 +13,7 @@ class WaveSelector(QWidget):
     def __init__(self, wave_list: list[dict[str, str]]) -> None:
         super().__init__()
 
-        self.setWindowTitle("Wave Selector")
+        self.setWindowTitle(tr("Wave Selector"))
         layout = QVBoxLayout(self)
 
         self.category_combo = QComboBox()

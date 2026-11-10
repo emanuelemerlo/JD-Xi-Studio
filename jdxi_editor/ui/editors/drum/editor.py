@@ -60,6 +60,7 @@ To use the `DrumEditor`, instantiate it with an optional `MIDIHelper` instance:
 from typing import TYPE_CHECKING, Dict, Optional
 
 from decologr import Decologr as log
+from jdxi_editor.i18n import tr
 
 if TYPE_CHECKING:
     from jdxi_editor.ui.windows.jdxi.instrument import JDXiInstrument
@@ -165,7 +166,7 @@ class DrumCommonEditor(SynthEditor):
             JDXi.UI.Icon.MUSIC_NOTES, color=JDXi.UI.Style.GREY
         )
         self.presets_parts_tab_widget.addTab(
-            instrument_widget, drum_kit_presets_icon, "Drum Kit Presets"
+            instrument_widget, drum_kit_presets_icon, tr("Drum Kit Presets")
         )
 
         # --- Use EditorBaseWidget for consistent scrollable layout structure
@@ -182,7 +183,7 @@ class DrumCommonEditor(SynthEditor):
             "mdi.puzzle", color=JDXi.UI.Style.GREY
         )
         self.presets_parts_tab_widget.addTab(
-            self.base_widget, drum_kit_parts_icon, "Drum Kit Parts"
+            self.base_widget, drum_kit_parts_icon, tr("Drum Kit Parts")
         )
 
         self._setup_partial_editors()
@@ -195,7 +196,7 @@ class DrumCommonEditor(SynthEditor):
             address=self.address,
         )
         common_icon = JDXi.UI.Icon.get_icon("mdi.cog-outline", color=JDXi.UI.Style.GREY)
-        self.partial_tab_widget.addTab(self.common_section, common_icon, "Common")
+        self.partial_tab_widget.addTab(self.common_section, common_icon, tr("Common"))
 
         # Create and add the mixer tab
         from jdxi_editor.ui.editors.drum.mixer.section import DrumKitMixerSection
@@ -211,7 +212,7 @@ class DrumCommonEditor(SynthEditor):
             mixer_icon = JDXi.UI.Icon.get_icon(
                 "ph.sliders-bold", color=JDXi.UI.Style.GREY
             )
-        self.presets_parts_tab_widget.addTab(mixer_widget, mixer_icon, "Drum Kit Mixer")
+        self.presets_parts_tab_widget.addTab(mixer_widget, mixer_icon, tr("Drum Kit Mixer"))
 
         self._add_pad_grid(container_layout)
         self.update_instrument_image()
@@ -252,7 +253,7 @@ class DrumCommonEditor(SynthEditor):
 
         if splash and splash_progress and splash_status:
             # Update splash screen
-            splash_status.setText(f"Loading drum kit parts ({total} parts)...")
+            splash_status.setText(tr('Loading drum kit parts ({total} parts)...').format(total=total))
             splash_progress.setValue(60)  # Start at 60% for drum kit loading
             from PySide6.QtWidgets import QApplication
 
@@ -269,7 +270,7 @@ class DrumCommonEditor(SynthEditor):
         ):
             if splash and splash_progress and splash_status:
                 # Update splash screen
-                splash_status.setText(f"Loading {partial_name} ({count} of {total})")
+                splash_status.setText(tr('Loading {partial_name} ({count} of {total})').format(partial_name=partial_name, count=count, total=total))
                 # Progress from 60% to 90% for drum kit loading
                 progress_value = 60 + int((count / total) * 30)
                 splash_progress.setValue(progress_value)
@@ -299,7 +300,7 @@ class DrumCommonEditor(SynthEditor):
         elif splash_progress:
             # Complete drum kit loading
             splash_progress.setValue(90)
-            splash_status.setText("Drum kit loaded successfully")
+            splash_status.setText(tr("Drum kit loaded successfully"))
             from PySide6.QtWidgets import QApplication
 
             QApplication.processEvents()
@@ -377,8 +378,8 @@ class DrumCommonEditor(SynthEditor):
         if controls is None:
             QMessageBox.warning(
                 self,
-                "Paste Partial",
-                "Clipboard is empty or not a Drum partial. Copy a partial first.",
+                tr("Paste Partial"),
+                tr("Clipboard is empty or not a Drum partial. Copy a partial first."),
             )
             return
         apply_controls_to_editor(panel, controls)

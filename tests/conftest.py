@@ -21,6 +21,10 @@ from __future__ import annotations
 import os
 from typing import Callable, Optional
 
+# The tests check English texts: run in English whatever the machine's
+# language or Preferences (tests of the translations set it themselves)
+os.environ.setdefault("JDXI_LANGUAGE", "en")
+
 import rtmidi
 
 FAKE_JDXI_PORT = "JD-Xi (test)"

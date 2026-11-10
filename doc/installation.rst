@@ -6,6 +6,12 @@
 Installation
 ============
 
+.. note::
+   This is the guide of the independent fork https://github.com/emanuelemerlo/JDXI-Editor
+   (version 0.10.0 beta). The fork publishes Windows builds only for now; on macOS and Linux
+   use Method 2 or 3, or build a package yourself. The macOS and Linux packages below are
+   produced by ``python -m building.buildsys``.
+
 Welcome to the comprehensive installation guide for **JDXI-Editor**! This guide will walk you through multiple installation methods, from simple pre-built packages to advanced development setups. Choose the method that best suits your needs and technical comfort level.
 
 System Requirements
@@ -56,7 +62,7 @@ The simplest way to install JDXI-Editor is using our pre-built packages. These i
    .. code-block:: console
 
       # Download the DMG file from the releases page
-      # https://github.com/markxbrooks/JDXI-Editor/releases
+      # https://github.com/emanuelemerlo/JDXI-Editor/releases
       
       # Mount the DMG file (version may vary; check releases page)
       $ open JD-Xi-Editor-0.9.dmg
@@ -76,7 +82,7 @@ The simplest way to install JDXI-Editor is using our pre-built packages. These i
 
 **Windows Installation**
    Download the installer or the portable zip from the releases page
-   (https://github.com/markxbrooks/JDXI-Editor/releases):
+   (https://github.com/emanuelemerlo/JDXI-Editor/releases):
 
    - ``jdxi_editor-<version>_setup_win_x86-64.exe``: run it and follow the wizard (English or
      Italian). It installs for the current user in ``%LOCALAPPDATA%\Programs\jdxi_editor``,
@@ -92,7 +98,9 @@ The simplest way to install JDXI-Editor is using our pre-built packages. These i
    - Both packages include Python, Qt, the MIDI libraries and FluidSynth; nothing else is needed
    - The files are not signed: if SmartScreen warns, choose "More info" → "Run anyway"
    - Connect the JD-Xi by USB before starting the editor, then choose its MIDI ports in the
-     MIDI configuration dialog
+     MIDI configuration dialog. Without a JD-Xi the editor opens anyway (offline mode)
+   - The interface language is chosen in Help › Preferences › Interface language
+     (English, Italiano, or the system's); it applies at the next start
 
 **Linux Installation**
    Download and install the AppImage package:
@@ -100,7 +108,7 @@ The simplest way to install JDXI-Editor is using our pre-built packages. These i
    .. code-block:: console
 
       # Download the AppImage from the releases page
-      # https://github.com/markxbrooks/JDXI-Editor/releases
+      # https://github.com/emanuelemerlo/JDXI-Editor/releases
       
       # Make the AppImage executable (version may vary; check releases page)
       $ chmod +x JD-Xi-Editor-0.9-x86_64.AppImage
@@ -148,11 +156,9 @@ For users who prefer pip-based installation or want to integrate JDXI-Editor int
    2. **Install JDXI-Editor**
       .. code-block:: console
 
-         # Install from PyPI (when available)
-         $ pip install jdxi-editor
-         
-         # Or install from GitHub
-         $ pip install git+https://github.com/markxbrooks/JDXI-Editor.git
+         # Install this fork from GitHub (the JDXI-Editor package on PyPI is
+         # the original project, not this fork)
+         $ pip install git+https://github.com/emanuelemerlo/JDXI-Editor.git
 
    3. **Run the Application**
       .. code-block:: console
@@ -193,7 +199,7 @@ For users who want to install from source code, modify the application, or get t
       .. code-block:: console
 
          # Clone the repository
-         $ git clone https://github.com/markxbrooks/JDXI-Editor.git
+         $ git clone https://github.com/emanuelemerlo/JDXI-Editor.git
          $ cd JDXI-Editor
 
    2. **Create Virtual Environment**
@@ -259,7 +265,7 @@ For developers who want to contribute to JDXI-Editor or work on advanced feature
          $ cd JDXI-Editor
          
          # Add upstream remote
-         $ git remote add upstream https://github.com/markxbrooks/JDXI-Editor.git
+         $ git remote add upstream https://github.com/emanuelemerlo/JDXI-Editor.git
 
    2. **Set Up Development Environment**
       .. code-block:: console
@@ -360,7 +366,7 @@ Troubleshooting
    - **Qt issues**: Install Qt5 libraries: ``sudo apt install qt5-default``
 
 **Python Installation Issues**
-   - **Permission denied**: Use ``--user`` flag: ``pip install --user jdxi-editor``
+   - **Permission denied**: Use ``--user`` flag: ``pip install --user git+https://github.com/emanuelemerlo/JDXI-Editor.git``
    - **Virtual environment issues**: Ensure you're using Python 3.10 or later
    - **Dependency conflicts**: Use a fresh virtual environment
 

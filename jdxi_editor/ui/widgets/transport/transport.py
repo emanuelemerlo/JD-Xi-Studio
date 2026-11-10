@@ -25,6 +25,7 @@ from jdxi_editor.ui.widgets.editor.helper import create_group_with_layout
 from jdxi_editor.ui.widgets.jdxi.midi_group import JDXiMidiGroup
 from picomidi.playback.engine import TransportState
 from picomidi.ui.widget.transport.spec import TransportSpec
+from jdxi_editor.i18n import tr
 
 if TYPE_CHECKING:
     from jdxi_editor.ui.editors.midi_player.editor import MidiFilePlayer
@@ -64,7 +65,7 @@ class TransportWidget(JDXiMidiGroup):
             "play": TransportSpec(
                 label="Play",
                 icon=JDXi.UI.Icon.PLAY,
-                tooltip="Play",
+                tooltip=tr("Play"),
                 slot=self.parent.midi_playback_start,
                 grouped=True,
                 name="play",
@@ -73,7 +74,7 @@ class TransportWidget(JDXiMidiGroup):
             "stop": TransportSpec(
                 label="Stop",
                 icon=JDXi.UI.Icon.STOP,
-                tooltip="Stop",
+                tooltip=tr("Stop"),
                 slot=self.parent.midi_playback_stop,
                 grouped=True,
                 name="stop",
@@ -82,7 +83,7 @@ class TransportWidget(JDXiMidiGroup):
             "pause": TransportSpec(
                 label="Pause",
                 icon=JDXi.UI.Icon.PAUSE,
-                tooltip="Pause (Space toggles play/pause)",
+                tooltip=tr("Pause (Space toggles play/pause)"),
                 slot=self.parent.midi_playback_pause_toggle,
                 grouped=False,
                 name="pause",
@@ -91,7 +92,7 @@ class TransportWidget(JDXiMidiGroup):
             "panic": TransportSpec(
                 label="Panic",
                 icon="mdi.alert-octagon-outline",
-                tooltip="Silence everything: note-offs plus All Sound Off / All Notes Off on all channels",
+                tooltip=tr("Silence everything: note-offs plus All Sound Off / All Notes Off on all channels"),
                 slot=self.parent.midi_playback_panic,
                 grouped=False,
                 checkable=False,
@@ -160,7 +161,7 @@ class PatternTransportWidget(TransportWidget):
             "play": TransportSpec(
                 label="Play",
                 icon=JDXi.UI.Icon.PLAY,
-                tooltip="Play",
+                tooltip=tr("Play"),
                 slot=self.parent.pattern_transport_play,
                 grouped=True,
                 name="play",
@@ -169,7 +170,7 @@ class PatternTransportWidget(TransportWidget):
             "stop": TransportSpec(
                 label="Stop",
                 icon=JDXi.UI.Icon.STOP,
-                tooltip="Stop",
+                tooltip=tr("Stop"),
                 slot=self.parent.pattern_transport_stop,
                 grouped=True,
                 name="stop",
@@ -178,7 +179,7 @@ class PatternTransportWidget(TransportWidget):
             "pause": TransportSpec(
                 label="Pause",
                 icon=JDXi.UI.Icon.PAUSE,
-                tooltip="Pause",
+                tooltip=tr("Pause"),
                 slot=self.parent.pattern_transport_pause_toggle,
                 grouped=False,
                 name="pause",
@@ -187,7 +188,7 @@ class PatternTransportWidget(TransportWidget):
             "shuffle": TransportSpec(
                 label="Shuffle Play",
                 icon=JDXi.UI.Icon.SHUFFLE,
-                tooltip="Shuffle Play",
+                tooltip=tr("Shuffle Play"),
                 slot=self.parent.pattern_shuffle_play,
                 grouped=True,
                 name="shuffle",
@@ -207,7 +208,7 @@ class PlaylistTransportWidget(TransportWidget):
             "play": TransportSpec(
                 label="Play",
                 icon=JDXi.UI.Icon.PLAY,
-                tooltip="Play",
+                tooltip=tr("Play"),
                 slot=self.parent.playlist_transport_play,
                 grouped=True,
                 name="play",
@@ -216,7 +217,7 @@ class PlaylistTransportWidget(TransportWidget):
             "stop": TransportSpec(
                 label="Stop",
                 icon=JDXi.UI.Icon.STOP,
-                tooltip="Stop",
+                tooltip=tr("Stop"),
                 slot=self.parent.playlist_transport_stop,
                 grouped=True,
                 name="stop",
@@ -225,7 +226,7 @@ class PlaylistTransportWidget(TransportWidget):
             "pause": TransportSpec(
                 label="Pause",
                 icon=JDXi.UI.Icon.PAUSE,
-                tooltip="Pause",
+                tooltip=tr("Pause"),
                 slot=self.parent.playlist_transport_pause_toggle,
                 grouped=False,
                 name="pause",
@@ -234,7 +235,7 @@ class PlaylistTransportWidget(TransportWidget):
             "shuffle": TransportSpec(
                 label="Shuffle Play",
                 icon=JDXi.UI.Icon.SHUFFLE,
-                tooltip="Shuffle Play",
+                tooltip=tr("Shuffle Play"),
                 slot=self.parent.playlist_shuffle_play,
                 grouped=True,
                 name="shuffle",

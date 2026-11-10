@@ -10,6 +10,7 @@ from jdxi_editor.midi.playback.state import MidiPlaybackState
 from jdxi_editor.ui.editors.midi_player.utils import format_time
 from jdxi_editor.ui.widgets.midi.track_viewer import MidiTrackViewer
 from picoui.helpers.layout import create_layout_with_items, create_widget_with_layout
+from jdxi_editor.i18n import tr
 
 
 class MidiFileViewer(QWidget):
@@ -57,7 +58,7 @@ class MidiFileViewer(QWidget):
 
     def init_midi_file_position_label(self):
         """Midi File position label"""
-        self.position_label = QLabel("Playback Position: 0:00 / 0:00")
+        self.position_label = QLabel(tr("Playback Position: 0:00 / 0:00"))
         self.midi_track_viewer = MidiTrackViewer()
         self.position_label.setFixedWidth(
             self.midi_track_viewer.get_track_controls_width()
@@ -74,5 +75,5 @@ class MidiFileViewer(QWidget):
         """
         if time_seconds is None:
             self.position_label.setText(
-                f"Playback Position: 0:00 / {format_time(self.midi_state.file_duration_seconds)}"
+                tr('Playback Position: 0:00 / {value1}').format(value1=format_time(self.midi_state.file_duration_seconds))
             )

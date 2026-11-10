@@ -38,6 +38,7 @@ from jdxi_editor.ui.widgets.digital.title import DigitalTitle
 from jdxi_editor.ui.widgets.editor.section_base import SectionBaseWidget
 from jdxi_editor.ui.widgets.slider import Slider
 from picomidi.sysex.parameter.address import AddressParameter
+from jdxi_editor.i18n import tr
 
 # Kit layout: lane names from DRUM_MIXER_LANE_ROWS
 KIT_CENTRE_ROWS = (("Hi-Hat", "Cymbals"), ("Snare", "Toms"), ("Kick",))
@@ -212,7 +213,7 @@ class DrumKitMixerSection(SectionBaseWidget):
             midi_helper=self.midi_helper,
             vertical=True,
             show_value_label=True,
-            tooltip=f"Level for {partial_name} (0 to 127)",
+            tooltip=tr('Level for {partial_name} (0 to 127)').format(partial_name=partial_name),
         )
         slider.valueChanged.connect(
             lambda v, addr=address, pidx=partial_index: self._on_partial_level_changed(
@@ -251,7 +252,7 @@ class DrumKitMixerSection(SectionBaseWidget):
             midi_helper=self.midi_helper,
             vertical=True,
             show_value_label=True,
-            tooltip="Master level for the entire drum kit",
+            tooltip=tr("Master level for the entire drum kit"),
         )
         slider.valueChanged.connect(
             lambda v, addr=address: self._on_master_level_changed(v, addr)

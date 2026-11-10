@@ -67,6 +67,7 @@ from jdxi_editor.ui.editors.midi_player.editor import MidiFilePlayer
 from jdxi_editor.ui.editors.pattern.pattern import PatternSequenceEditor
 from jdxi_editor.ui.style import JDXiUIDimensions
 from picoui.specs.widgets import FileSelectionMode, FileSelectionSpec
+from jdxi_editor.i18n import tr
 
 
 def zip_directory(folder_path, zip_path):
@@ -111,8 +112,8 @@ class PatchManager(QMainWindow):
         # Create file path row
         path_layout = QHBoxLayout()
         self.path_input = QLineEdit()
-        self.path_input.setPlaceholderText("Select file location...")
-        browse_button = QPushButton("Browse")
+        self.path_input.setPlaceholderText(tr("Select file location..."))
+        browse_button = QPushButton(tr("Browse"))
         browse_button.clicked.connect(self._browse_file)
         path_layout.addWidget(self.path_input)
         path_layout.addWidget(browse_button)
@@ -124,15 +125,15 @@ class PatchManager(QMainWindow):
         self.read_button: Optional[QPushButton] = None
         self.read_then_save_button: Optional[QPushButton] = None
         if save_mode:
-            self.read_status_label = QLabel("Hardware read: not run")
+            self.read_status_label = QLabel(tr("Hardware read: not run"))
             layout.addWidget(self.read_status_label)
             self.read_status_list = QListWidget()
             self.read_status_list.setMinimumHeight(120)
             layout.addWidget(self.read_status_list)
             read_row = QHBoxLayout()
-            self.read_button = QPushButton("Read from JD-Xi")
+            self.read_button = QPushButton(tr("Read from JD-Xi"))
             self.read_button.clicked.connect(self._on_read_from_jdxi)
-            self.read_then_save_button = QPushButton("Read then Save")
+            self.read_then_save_button = QPushButton(tr("Read then Save"))
             self.read_then_save_button.clicked.connect(self._on_read_then_save)
             read_row.addWidget(self.read_button)
             read_row.addWidget(self.read_then_save_button)
@@ -142,7 +143,7 @@ class PatchManager(QMainWindow):
         button_layout = QHBoxLayout()
         self.action_button = QPushButton("Save" if save_mode else "Load")
         self.action_button.clicked.connect(self._handle_action)
-        cancel_button = QPushButton("Cancel")
+        cancel_button = QPushButton(tr("Cancel"))
         cancel_button.clicked.connect(self.close)
         button_layout.addWidget(self.action_button)
         button_layout.addWidget(cancel_button)
@@ -210,21 +211,21 @@ class PatchManager(QMainWindow):
     def _on_read_then_save(self) -> None:
         """Read from hardware, then run save if a path is set."""
         if not self.path_input.text():
-            QMessageBox.warning(self, "Save Patch", "Select a file path before Read then Save.")
+            QMessageBox.warning(self, tr("Save Patch"), tr("Select a file path before Read then Save."))
             return
         self._pending_save_after_read = True
         self._start_hardware_read()
 
     def _start_hardware_read(self) -> None:
         if self.midi_helper is None:
-            QMessageBox.warning(self, "Read from JD-Xi", "MIDI helper is not available.")
+            QMessageBox.warning(self, tr("Read from JD-Xi"), tr("MIDI helper is not available."))
             return
         pairs = self._collect_read_pairs()
         if not pairs:
             QMessageBox.warning(
                 self,
-                "Read from JD-Xi",
-                "No editors with MIDI requests are registered.",
+                tr("Read from JD-Xi"),
+                tr("No editors with MIDI requests are registered."),
             )
             return
         labels = [p[0] for p in pairs]
@@ -234,7 +235,7 @@ class PatchManager(QMainWindow):
         if self.read_then_save_button:
             self.read_then_save_button.setEnabled(False)
         if self.read_status_label:
-            self.read_status_label.setText("Hardware read: in progress…")
+            self.read_status_label.setText(tr("Hardware read: in progress…"))
         self._update_read_status_list(
             ReadResult(sections=sections_from_requests(requests, labels=labels))
         )
@@ -260,7 +261,7 @@ class PatchManager(QMainWindow):
         self._update_read_status_list(result)
         if self.read_status_label:
             self.read_status_label.setText(
-                f"Hardware read: {result.ok_count}/{len(result.sections)} sections ok"
+                tr('Hardware read: {ok_count}/{value2} sections ok').format(ok_count=result.ok_count, value2=len(result.sections))
             )
 
     def _on_read_finished(self, result: ReadResult) -> None:
@@ -273,7 +274,7 @@ class PatchManager(QMainWindow):
         if self.read_status_label:
             status = "complete" if result.complete else "partial / timed out"
             self.read_status_label.setText(
-                f"Hardware read: {status} ({result.ok_count}/{len(result.sections)})"
+                tr('Hardware read: {status} ({ok_count}/{value3})').format(status=status, ok_count=result.ok_count, value3=len(result.sections))
             )
         if self._pending_save_after_read:
             self._pending_save_after_read = False
@@ -292,7 +293,7 @@ class PatchManager(QMainWindow):
         ]
         reply = QMessageBox.question(
             self,
-            "Incomplete hardware read",
+            tr("Incomplete hardware read"),
             "Some sections did not respond:\n\n"
             + "\n".join(missing)
             + "\n\nSave anyway using current UI values?",

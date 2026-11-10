@@ -61,6 +61,7 @@ from jdxi_editor.ui.widgets.group import WidgetGroups
 from jdxi_editor.ui.widgets.layout import WidgetLayoutSpec
 from jdxi_editor.ui.widgets.spec import ComboBoxSpec, SliderSpec, SwitchSpec
 from picomidi.sysex.parameter.address import AddressParameter
+from jdxi_editor.i18n import tr
 
 
 class VocalFXEditor(BasicEditor):
@@ -73,7 +74,7 @@ class VocalFXEditor(BasicEditor):
         parent: Optional[QWidget] = None,
     ):
         super().__init__(midi_helper=midi_helper, parent=parent)
-        self.setWindowTitle("Vocal FX")
+        self.setWindowTitle(tr("Vocal FX"))
         self.preset_helper = preset_helper
         self.address = create_vocal_fx_address()
 
@@ -99,19 +100,19 @@ class VocalFXEditor(BasicEditor):
         common_icon = JDXi.UI.Icon.get_icon(
             JDXi.UI.Icon.COG_OUTLINE, color=JDXi.UI.Style.GREY
         )
-        self.tab_widget.addTab(self._create_common_section(), common_icon, "Common")
+        self.tab_widget.addTab(self._create_common_section(), common_icon, tr("Common"))
         vocal_fx_icon = JDXi.UI.Icon.get_icon(
             JDXi.UI.Icon.MICROPHONE, color=JDXi.UI.Style.GREY
         )
         self.tab_widget.addTab(
             self._create_vocal_effect_stack_section(),
             vocal_fx_icon,
-            "Vocoder & Auto Pitch",
+            tr("Vocoder & Auto Pitch"),
         )
         mixer_icon = JDXi.UI.Icon.get_icon(
             JDXi.UI.Icon.EQUALIZER, color=JDXi.UI.Style.GREY
         )
-        self.tab_widget.addTab(self._create_mixer_section(), mixer_icon, "Mixer")
+        self.tab_widget.addTab(self._create_mixer_section(), mixer_icon, tr("Mixer"))
 
         # Connect Vocal Effect combo to switch stack page
         vocal_effect_ctrl = self.controls.get(ProgramCommonParam.VOCAL_EFFECT)
@@ -328,7 +329,7 @@ class VocalFXEditor(BasicEditor):
         off_page = QWidget()
         off_layout = QVBoxLayout(off_page)
         off_label = QLabel(
-            "Vocal Effect is OFF. Select VOCODER or AUTO-PITCH in Common to configure."
+            tr("Vocal Effect is OFF. Select VOCODER or AUTO-PITCH in Common to configure.")
         )
         off_label.setWordWrap(True)
         off_layout.addWidget(off_label)
@@ -393,7 +394,7 @@ class VocalFXEditor(BasicEditor):
         for w in groups.switches:
             layout.addWidget(w)
 
-        vocoder_group = QGroupBox("Vocoder Settings")
+        vocoder_group = QGroupBox(tr("Vocoder Settings"))
         vocoder_form = QFormLayout()
         vocoder_group.setLayout(vocoder_form)
         for w in groups.combos + groups.sliders:
