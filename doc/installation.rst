@@ -278,11 +278,22 @@ For developers who want to contribute to JDXI-Editor or work on advanced feature
    3. **Run Tests**
       .. code-block:: console
 
-         # Run the test suite
+         # Run the test suite (install the dev extra first: pip install -e ".[dev]")
          $ pytest
-         
+
          # Run with coverage
          $ pytest --cov=jdxi_editor
+
+         # Tests that need local files or play in real time
+         $ pytest -m slow
+
+         # Tests against a connected JD-Xi, on the real MIDI ports
+         $ pytest -m hardware
+
+      The default run needs no MIDI hardware or driver: ``tests/conftest.py`` replaces
+      rtmidi's ports with in-memory ones that show a port named "JD-Xi", so the editor
+      connects to it as if a JD-Xi were plugged in. ``pytest -m hardware`` (or
+      ``JDXI_TEST_REAL_MIDI=1``) keeps the real ports.
 
    4. **Build Documentation**
       .. code-block:: console
@@ -342,6 +353,10 @@ Troubleshooting
 **Linux Issues**
    - **AppImage won't run**: Install FUSE: ``sudo apt install fuse``
    - **MIDI permissions**: Add your user to the audio group: ``sudo usermod -a -G audio $USER``
+   - **"MIDI not available" at startup**: the system has no ALSA sequencer, so the editor
+     runs offline (patches can be edited, opened and saved, nothing is sent to the JD-Xi).
+     Load it with ``sudo modprobe snd-seq`` and restart the editor; containers, VMs and
+     WSL often lack it
    - **Qt issues**: Install Qt5 libraries: ``sudo apt install qt5-default``
 
 **Python Installation Issues**

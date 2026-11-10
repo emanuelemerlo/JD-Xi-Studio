@@ -148,14 +148,20 @@ class JDXiInstrument(JDXiWindow):
             JDXi.UI.Theme.apply_transparent(self)
             JDXi.UI.Theme.apply_adsr_disabled(self)
         # Try to auto-connect to JD-Xi
+        self._midi_config_dialog = None
         self.midi_helper.auto_connect_jdxi()
-        if (
+        if not getattr(self.midi_helper, "midi_available", True):
+            # No MIDI API on this system: start offline and say so once the
+            # window is up, instead of offering ports that cannot exist
+            QTimer.singleShot(0, self._show_midi_unavailable)
+        elif (
             not self.midi_helper.current_in_port
             or not self.midi_helper.current_out_port
         ):
-            self._show_midi_config()
-        self.midi_in_indicator.set_state(self.midi_helper.is_input_open)
-        self.midi_out_indicator.set_state(self.midi_helper.is_output_open)
+            # Opened from the event loop, after the window is shown, so the
+            # constructor does not block waiting for the dialog
+            QTimer.singleShot(0, self._show_midi_config)
+        self._update_midi_indicators()
         self.sysex_composer = JDXiSysExComposer()
         self.program_helper = JDXiProgramHelper(self.midi_helper, MidiChannel.PROGRAM)
         self.settings = QSettings("mabsoft", __package_name__)
@@ -1113,6 +1119,9 @@ class JDXiInstrument(JDXiWindow):
                 exception=ex,
             )
 
+    def _forget_midi_config_dialog(self, *_args) -> None:
+        self._midi_config_dialog = None
+
     def _show_log_viewer(self) -> None:
         """Show log viewer window"""
         if not self.log_viewer:
@@ -1121,11 +1130,55 @@ class JDXiInstrument(JDXiWindow):
         self.log_viewer.raise_()
         log.message(scope="JDXiInstrument", message="Showing LogViewer window")
 
+    def _update_midi_indicators(self, *_args) -> None:
+        """Show whether the MIDI input and output ports are open."""
+        self.midi_in_indicator.set_state(self.midi_helper.is_input_open)
+        self.midi_out_indicator.set_state(self.midi_helper.is_output_open)
+
+    def _show_midi_unavailable(self) -> None:
+        """Tell the user the editor is running without MIDI (no MIDI API on this system)."""
+        reason = getattr(self.midi_helper, "midi_backend_error", None) or ""
+        log.warning(
+            scope="JDXiInstrument", message=f"Running offline, no MIDI backend: {reason}"
+        )
+        self.statusBar().showMessage("Offline: no MIDI backend available", 0)
+        box = QMessageBox(
+            QMessageBox.Icon.Warning,
+            "MIDI not available",
+            "The system has no MIDI interface that the editor can open, so it runs "
+            "offline: you can edit, open and save patches, but nothing is sent to "
+            "or received from the JD-Xi.\n\n"
+            "On Linux, load the ALSA sequencer (sudo modprobe snd-seq) and restart "
+            "the editor.",
+            QMessageBox.StandardButton.Ok,
+            self,
+        )
+        box.setDetailedText(reason)
+        box.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        box.open()
+
     def _show_midi_config(self) -> None:
-        """Show MIDI configuration dialog"""
+        """
+        Show the MIDI configuration dialog.
+
+        The dialog is window-modal but non-blocking (open(), not exec()): the
+        caller returns at once and the indicators update when it closes.
+        """
         try:
+            if self._midi_config_dialog is not None:
+                self._midi_config_dialog.raise_()
+                self._midi_config_dialog.activateWindow()
+                return
             dialog = MIDIConfigDialog(self.midi_helper, parent=self)
-            dialog.exec()
+            dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+            # MIDIConfigDialog.accept() reopens the ports after finished is
+            # emitted, so read the port state once that has returned
+            dialog.finished.connect(
+                lambda *_: QTimer.singleShot(0, self._update_midi_indicators)
+            )
+            dialog.destroyed.connect(self._forget_midi_config_dialog)
+            self._midi_config_dialog = dialog
+            dialog.open()
 
         except Exception as ex:
             log.error(

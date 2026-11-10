@@ -19,6 +19,8 @@ MIDI Implementation (parameter address map).
 - **Last preset name**: a stored preset number of 0 showed the last preset instead of "INIT PATCH"
 - **Drum partials**: removed "C#5"; the JD-Xi has 37 partials, keys 36–72
 - Removed `midi/data/parameter/program/controller.py`, which raised `TypeError` on import (`ArpeggioParam` covers Program Controller)
+- **No MIDI backend**: without a MIDI API (Linux with no ALSA sequencer, containers, WSL) the editor crashed at startup; it now runs offline on null ports and says so in a message and in the status bar
+- **MIDI configuration dialog**: opened without blocking (`open()` instead of `exec()`), after the main window is shown; the port indicators update when it closes, and asking again brings the open dialog forward
 - EFX1 Delay Send Level label; missing `SysExSection` import in two test scripts; `imp` (removed in Python 3.12) in the py2app includes
 
 ### Added
@@ -31,6 +33,7 @@ MIDI Implementation (parameter address map).
 - `doc/midi_parameters.txt`: Program Common rows corrected against the MIDI Implementation (the rest of the file already matched); the vocal-effects address map, gap analyses and migration plan updated to match
 - Installation docs and READMEs: Windows installer and portable zip, SmartScreen note, Python 3.10+ (3.13 added to the classifiers)
 - `pyproject.toml`: `audio` extra (soundfile, librosa) and both in `dev`, since the audio-evidence tests import them; `build-windows` extra (PyInstaller)
+- Tests run on in-memory MIDI ports (`tests/conftest.py`) that show a "JD-Xi" port, so they no longer need a MIDI driver or hardware; `pytest -m hardware` or `JDXI_TEST_REAL_MIDI=1` uses the real ports. `test_channel_edit_applies_after_delay` waits for the result instead of a fixed 500 ms, which was too short after other Qt-heavy tests
 - Tests that need `tests/sheep.mid` (not in the repository) are marked `slow`, like the others that use it, so the default run no longer fails on them
 - `python -m building.buildsys` on Windows passes the version to Inno Setup; removed the outdated copy `building/windows/jdxi_editor.iss` (0.9.2)
 

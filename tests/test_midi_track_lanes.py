@@ -104,10 +104,20 @@ def test_channel_edit_applies_in_place(viewer):
 
 
 def test_channel_edit_applies_after_delay(viewer):
-    viewer.track_channel_spins[1].setValue(10)
+    import time
+
     from PySide6.QtTest import QTest
 
-    QTest.qWait(viewer.CHANNEL_EDIT_DELAY_MS + 200)
+    viewer.track_channel_spins[1].setValue(10)
+    # Nothing changes before the merge delay
+    QTest.qWait(viewer.CHANNEL_EDIT_DELAY_MS // 2)
+    assert viewer._pending_channels == {1: 9}
+    # The timer fires once the event loop gets to it; after other Qt-heavy
+    # tests that can be well past CHANNEL_EDIT_DELAY_MS, so wait for the
+    # result (up to 5 s) rather than for a fixed time
+    deadline = time.monotonic() + 5
+    while viewer._pending_channels and time.monotonic() < deadline:
+        QTest.qWait(20)
     assert {m.channel for m in viewer.midi_file.tracks[1] if hasattr(m, "channel")} == {9}
     assert viewer._track_part_labels[1].text() == "Drums"
 
