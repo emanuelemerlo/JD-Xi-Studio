@@ -40,37 +40,59 @@ jobs:
       # Not editable: the wheel build puts the scaled-down resources inside the
       # package (jdxi_editor/_bundle/resources), which the spec bundles
       - name: Install
+        id: install
+        shell: bash
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install ".[soundfont]" pyinstaller pytest
+          set -o pipefail; mkdir -p logs
+          { python -m pip install --upgrade pip &&
+            python -m pip install ".[soundfont]" pyinstaller pytest; } 2>&1 | tee logs/install.log
 
       - name: Test
+        id: test
         env:
           QT_QPA_PLATFORM: offscreen
-        run: python -m pytest tests/test_preset_tables_match_manual.py tests/test_program_common_addresses.py -q
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m pytest tests/test_preset_tables_match_manual.py tests/test_program_common_addresses.py -q 2>&1 | tee logs/test.log
 
       - name: PyInstaller
-        run: pyinstaller --noconfirm --clean building/windows/jdxi_editor.spec
+        id: pyinstaller
+        shell: bash
+        run: |
+          set -o pipefail
+          # Run from outside the checkout so the spec imports the installed
+          # package (with _bundle/resources), not the source tree
+          cd "$RUNNER_TEMP"
+          pyinstaller --noconfirm --clean \
+            --distpath "$GITHUB_WORKSPACE/dist" --workpath "$RUNNER_TEMP/pyi-build" \
+            "$GITHUB_WORKSPACE/building/windows/jdxi_editor.spec" 2>&1 | tee "$GITHUB_WORKSPACE/logs/pyinstaller.log"
 
       # The app must still be running after 30 s: an import error or a missing
       # resource makes a windowed PyInstaller app exit straight away
       - name: Smoke test
+        id: smoke
         shell: pwsh
         run: |
           $exe = Resolve-Path dist/jdxi_editor/jdxi_editor.exe
           $p = Start-Process -FilePath $exe -PassThru
           Start-Sleep -Seconds 30
           if ($p.HasExited) {
-            Write-Error "jdxi_editor.exe exited with code $($p.ExitCode)"
+            "jdxi_editor.exe exited with code $($p.ExitCode)" | Out-File logs/smoke.log
             Get-ChildItem -Recurse $env:USERPROFILE -Filter *.log -ErrorAction SilentlyContinue |
               Where-Object { $_.FullName -match 'jdxi' } |
-              ForEach-Object { Write-Host "== $($_.FullName)"; Get-Content $_.FullName -Tail 80 }
+              ForEach-Object { "== $($_.FullName)"; Get-Content $_.FullName -Tail 60 } |
+              Out-File -Append logs/smoke.log
+            # Run the console Python entry point for the traceback
+            & dist/jdxi_editor/jdxi_editor.exe 2>&1 | Select-Object -First 60 | Out-File -Append logs/smoke.log
+            Get-Content logs/smoke.log
             exit 1
           }
           Stop-Process -Id $p.Id -Force
           Write-Host "jdxi_editor.exe started and kept running"
 
       - name: Portable zip
+        id: zip
         shell: pwsh
         run: |
           $name = "JDXI-Editor-${{ steps.version.outputs.label }}-win64-portable.zip"
@@ -78,6 +100,7 @@ jobs:
           "PORTABLE=dist/$name" >> $env:GITHUB_ENV
 
       - name: Installer
+        id: installer
         shell: pwsh
         run: |
           if (-not (Get-Command iscc -ErrorAction SilentlyContinue)) {
@@ -85,7 +108,22 @@ jobs:
             if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress }
             $env:PATH += ";${env:ProgramFiles(x86)}\Inno Setup 6"
           }
-          iscc /DMyAppVersion=${{ steps.version.outputs.version }} jdxi_editor.iss
+          iscc /DMyAppVersion=${{ steps.version.outputs.version }} jdxi_editor.iss *>&1 | Tee-Object -FilePath logs/installer.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      # The tail of each log as an annotation, readable without opening the run
+      - name: Report failure
+        if: failure()
+        shell: bash
+        env:
+          STEPS: ${{ toJSON(steps) }}
+        run: |
+          echo "::error title=steps::$(echo "$STEPS" | python -c "import json,sys; print(' '.join(f'{k}={v[\"outcome\"]}' for k,v in json.load(sys.stdin).items()))")"
+          for f in logs/*.log; do
+            [ -f "$f" ] || continue
+            body=$(tail -n 40 "$f" | sed -e 's/%/%25/g' -e 's/\r//g' | awk 'BEGIN{ORS="%0A"} {print}')
+            echo "::error title=$(basename "$f")::${body}"
+          done
 
       - uses: actions/upload-artifact@v4
         with:
