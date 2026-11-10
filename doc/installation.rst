@@ -13,7 +13,7 @@ System Requirements
 
 **Minimum System Requirements**
    - **Operating System**: macOS 10.14+, Windows 10+, or Linux (Ubuntu 18.04+)
-   - **Python**: Version 3.8 or higher (for source installation)
+   - **Python**: Version 3.10 or higher (for source installation)
    - **Memory**: 4GB RAM minimum, 8GB recommended
    - **Storage**: 500MB available space for application and presets
    - **MIDI Interface**: USB connection to Roland JD-Xi synthesizer
@@ -75,28 +75,24 @@ The simplest way to install JDXI-Editor is using our pre-built packages. These i
    - The app includes all necessary Qt6 and MIDI libraries
 
 **Windows Installation**
-   Download and run the Windows installer:
+   Download the installer or the portable zip from the releases page
+   (https://github.com/markxbrooks/JDXI-Editor/releases):
 
-   .. code-block:: console
-
-      # Download the NSIS installer from the releases page
-      # https://github.com/markxbrooks/JDXI-Editor/releases
-      
-      # Run the installer as Administrator (version may vary; check releases page)
-      $ jdxi-editor-0.9_windows_setup.exe
-      
-      # Follow the installation wizard
-      # The application will be installed in your chosen directory
+   - ``jdxi_editor-<version>_setup_win_x86-64.exe``: run it and follow the wizard (English or
+     Italian). It installs for the current user in ``%LOCALAPPDATA%\Programs\jdxi_editor``,
+     without administrator rights, and adds a Start menu entry (desktop icon optional).
+   - ``JDXI-Editor-<version>-win64-portable.zip``: unzip it to a folder and run
+     ``jdxi_editor\jdxi_editor.exe``. Nothing is installed; delete the folder to remove it.
 
    **Windows Requirements:**
-   - Windows 10 or later (64-bit)
+   - Windows 10 or 11 (64-bit)
    - 4GB RAM minimum, 8GB recommended
-   - Visual C++ Redistributable (included in installer)
 
    **Windows Installation Notes:**
-   - The installer includes all necessary dependencies
-   - You may need to allow the app through Windows Defender
-   - The app will create shortcuts in your Start Menu and Desktop
+   - Both packages include Python, Qt, the MIDI libraries and FluidSynth; nothing else is needed
+   - The files are not signed: if SmartScreen warns, choose "More info" → "Run anyway"
+   - Connect the JD-Xi by USB before starting the editor, then choose its MIDI ports in the
+     MIDI configuration dialog
 
 **Linux Installation**
    Download and install the AppImage package:
@@ -123,13 +119,13 @@ Method 2: Python Package Installation
 For users who prefer pip-based installation or want to integrate JDXI-Editor into their Python environment.
 
 **Prerequisites**
-   Ensure you have Python 3.8 or higher installed:
+   Ensure you have Python 3.10 or higher installed:
 
    .. code-block:: console
 
       # Check Python version
       $ python --version
-      # Should show Python 3.8 or higher
+      # Should show Python 3.10 or higher
       
       # Check pip version
       $ pip --version
@@ -187,7 +183,7 @@ Method 3: Source Code Installation
 For users who want to install from source code, modify the application, or get the latest development features.
 
 **Prerequisites**
-   - Python 3.8 or higher
+   - Python 3.10 or higher
    - Git (for cloning the repository)
    - Development tools for your platform
 
@@ -248,7 +244,7 @@ Method 4: Development Setup
 For developers who want to contribute to JDXI-Editor or work on advanced features.
 
 **Prerequisites**
-   - Python 3.8 or higher
+   - Python 3.10 or higher
    - Git
    - Development tools for your platform
    - Optional: IDE (VS Code, PyCharm, etc.)
@@ -338,7 +334,8 @@ Troubleshooting
    - **MIDI not working**: Ensure your JD-Xi is connected and powered on
 
 **Windows Issues**
-   - **Missing DLLs**: Install Visual C++ Redistributable
+   - **Missing DLLs**: Install the Microsoft Visual C++ Redistributable (x64)
+   - **"Windows protected your PC"**: the build is not signed; choose "More info" → "Run anyway"
    - **Antivirus blocking**: Add JDXI-Editor to your antivirus exceptions
    - **MIDI not detected**: Check Device Manager for MIDI devices
 
@@ -349,7 +346,7 @@ Troubleshooting
 
 **Python Installation Issues**
    - **Permission denied**: Use ``--user`` flag: ``pip install --user jdxi-editor``
-   - **Virtual environment issues**: Ensure you're using Python 3.8+
+   - **Virtual environment issues**: Ensure you're using Python 3.10 or later
    - **Dependency conflicts**: Use a fresh virtual environment
 
 **MIDI Connection Issues**

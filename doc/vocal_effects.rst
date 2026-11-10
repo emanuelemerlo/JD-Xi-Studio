@@ -26,7 +26,8 @@ Core Structure
 **SysEx Sync**
    - On show, the editor requests PROGRAM_COMMON and PROGRAM_VOCAL_EFFECT
    - Incoming SysEx updates the controls (COMMON and VOCAL_EFFECT)
-   - Parameter addresses: VOCAL_EFFECT 0x16→0x1C (per JD-Xi guide)
+   - Program Common addresses (MIDI Implementation p. 9): Program Tempo ``00 11`` (4 nibbled bytes),
+     Vocal Effect ``00 16``, Vocal Effect Number ``00 1C``, Vocal Effect Part ``00 1D``, Auto Note Switch ``00 1E``
 
 Key Parameters
 =============

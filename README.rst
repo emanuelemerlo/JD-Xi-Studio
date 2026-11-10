@@ -46,7 +46,11 @@ There is a new build for MacOS Sequoia. See the `releases page <https://github.c
 
 Windows 
 ----------
-There is a new build for Windows See the `releases page <https://github.com/markxbrooks/JDXI-Editor/releases/tag/v0.0.8>`_
+There is a new build for Windows. See the `releases page <https://github.com/markxbrooks/JDXI-Editor/releases>`_
+
+Each release offers an installer (``jdxi_editor-<version>_setup_win_x86-64.exe``, installs for the
+current user, no administrator rights) and a portable zip (unzip and run ``jdxi_editor\jdxi_editor.exe``).
+Windows 10 or 11, 64-bit.
 
 Python 
 ---------
@@ -160,9 +164,9 @@ What is JDXI-Editor?
 --------------------
 JDXI-Editor is a Python-based MIDI editor for the Roland JD-Xi synthesizer, built with the Qt Framework and RtMidi.
 
-Does JDXI-Editor work on MacOS and Windows?
---------------------------------------------
-Yes, JDXI-Editor supports MacOS, and a Windows version is coming soon!
+Does JDXI-Editor work on MacOS, Linux and Windows?
+---------------------------------------------------
+Yes, JDXI-Editor supports MacOS, Linux and Windows (10 and 11, 64-bit).
 
 What features does JDXI-Editor offer?
 -------------------------------------

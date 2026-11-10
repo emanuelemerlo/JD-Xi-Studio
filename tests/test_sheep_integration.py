@@ -22,6 +22,11 @@ from jdxi_editor.ui.editors.midi_player.editor import MidiFilePlayer
 from jdxi_editor.midi.io.helper import MidiIOHelper
 from jdxi_editor.ui.preset.helper import JDXiPresetHelper
 
+import pytest
+
+# Needs tests/sheep.mid (not in the repository), like the other sheep.mid tests
+pytestmark = pytest.mark.slow
+
 # Create QApplication for tests if it doesn't exist
 _app = None
 if not QApplication.instance():

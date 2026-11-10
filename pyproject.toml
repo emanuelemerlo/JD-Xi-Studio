@@ -23,6 +23,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Multimedia :: Sound/Audio :: MIDI",
 ]
 # What the application imports (checked by starting the main window with
@@ -52,7 +53,11 @@ dependencies = [
 [project.optional-dependencies]
 soundfont = ["sf2utils>=1.0.0", "sounddevice>=0.4.0"]
 plots = ["matplotlib"]
-dev = ["pytest>=8", "mypy", "black", "isort", "flake8"]
+# soundfile/librosa: the audio-evidence tests (tests/test_refine.py and others)
+# and scripts/midi_parts; PyInstaller: building/windows/jdxi_editor.spec
+audio = ["soundfile", "librosa"]
+dev = ["pytest>=8", "mypy", "black", "isort", "flake8", "soundfile", "librosa"]
+build-windows = ["pyinstaller>=6"]
 
 [project.urls]
 Homepage = "https://github.com/markxbrooks/JDXI-Editor"

@@ -17,6 +17,11 @@ sys.path.insert(0, os.path.abspath('.'))
 
 from picomidi.playback.worker import MidiPlaybackWorker
 
+import pytest
+
+# Needs tests/sheep.mid (not in the repository), like the other sheep.mid tests
+pytestmark = pytest.mark.slow
+
 
 def test_tempo_change_processing():
     """Test that tempo changes are processed at the correct times."""

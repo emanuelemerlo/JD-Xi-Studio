@@ -1,5 +1,10 @@
 """
 JDXi Digital presets
+
+Names, bank select (MSB/LSB) and PC follow the Preset Tone / Drum Kit lists of the
+JD-Xi Parameter Guide (pp. 44-47). tests/fixtures/jdxi_manual_presets.json holds
+those lists and tests/test_preset_tables_match_manual.py checks every table here
+against it: change both together.
 """
 
 

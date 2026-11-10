@@ -25,7 +25,7 @@ This document covers recent changes, patch loading/saving, and SoundFont usage.
 
 ### Vocal Effects (Phases 1–3)
 
-- **Addresses**: VOCAL_EFFECT 0x16→0x1C (per JD-Xi guide)
+- **Addresses** (Program Common, MIDI Implementation p. 9): Program Tempo 0x11 (4 nibbled bytes), Vocal Effect 0x16, Vocal Effect Number 0x1C, Vocal Effect Part 0x1D, Auto Note Switch 0x1E
 - **SysEx routing**: apply_lmb_offset routes ProgramCommonParam to LMB=COMMON
 - **VocalFXParam**: Fixed convert_to_midi/convert_from_midi for Pan, Gender, Octave
 - **Data on show**: Requests PROGRAM_COMMON and PROGRAM_VOCAL_EFFECT; receives COMMON and VOCAL_EFFECT SysEx

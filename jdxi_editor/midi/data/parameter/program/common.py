@@ -197,7 +197,7 @@ class ProgramCommonParam(AddressParameter):
     TONE_NAME_11 = ParameterSpec(0x0A, 32, 127)  # ASCII character 11
     TONE_NAME_12 = ParameterSpec(0x0B, 32, 127)  # ASCII character 12
 
-    # JD-Xi actual layout: Program Level at 0x10 (midi_parameters.txt says 0x16 but hardware uses 0x10)
+    # Program Level at 00 10 (MIDI Implementation p. 9)
     PROGRAM_LEVEL = ParameterSpec(
         0x10,
         0,

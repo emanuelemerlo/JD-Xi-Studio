@@ -14,7 +14,7 @@ From `doc/midi-parameters-gap-analysis.md`, `doc/vocal-effects-migration-plan.md
 | Program Vocal Effect | 18 00 01 00 | 0x18 (24)   |
 
 The Vocal FX tab needs both:
-- **Program Common** — VOCAL_EFFECT (0x1C), VOCAL_EFFECT_PART (0x1D), AUTO_NOTE_SWITCH (0x1E), VOCAL_EFFECT_NUMBER (0x1B)
+- **Program Common** — VOCAL_EFFECT (0x16), VOCAL_EFFECT_NUMBER (0x1C), VOCAL_EFFECT_PART (0x1D), AUTO_NOTE_SWITCH (0x1E)
 - **Program Vocal Effect** — Level, Pan, Delay/Reverb send, Output Assign, Vocoder params, Auto Pitch params (0x00–0x13)
 
 ---

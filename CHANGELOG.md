@@ -2,6 +2,38 @@
 
 All notable changes to JDXI-Editor are documented in this file.
 
+# [Unreleased]
+
+Checked against Roland's JD-Xi Parameter Guide (preset lists, pp. 44–47) and
+MIDI Implementation (parameter address map).
+
+### Fixed
+
+- **Digital presets 070–074** loaded the sounds of 084–088 (wrong name and PC in `PROGRAM_CHANGE` and `LIST`); `LIST` lacked 075–088 and `ENUMERATED` lacked 256 "Init Tone"
+- **Analog presets**: 16 presets (003–006, 010, 013–017, 019–021, 025–027) and 064 "Init Tone" were missing; 002 "Sub Bass 1" and 012 "Dist TB Bs 1" sent PC 6 and 17
+- **Drum kits** 13–25 and 30 were missing from `PROGRAM_CHANGE`
+- **Program Common addresses**: Program Tempo at `00 11` (was the reserved `00 17`), Vocal Effect at `00 16` (was `00 1C`), Vocal Effect Number at `00 1C` (was the reserved `00 1B`). The earlier values came from `doc/midi_parameters.txt`, whose Program Common rows were shifted; that file now matches the manual
+- **Auto Note Switch**: ON was turned into 2 and rejected by the range check
+- **MidiIOHelper**: a failed start (no MIDI backend) no longer leaves a half-initialized singleton that raises "can't initialize QObject twice" on the next attempt
+- **JDXiPresetData.get_preset_details**: bank select and PC come from the preset tables (was MSB `0x10`, LSB `n // 16`)
+- **Last preset name**: a stored preset number of 0 showed the last preset instead of "INIT PATCH"
+- **Drum partials**: removed "C#5"; the JD-Xi has 37 partials, keys 36–72
+- Removed `midi/data/parameter/program/controller.py`, which raised `TypeError` on import (`ArpeggioParam` covers Program Controller)
+- EFX1 Delay Send Level label; missing `SysExSection` import in two test scripts; `imp` (removed in Python 3.12) in the py2app includes
+
+### Added
+
+- `tests/fixtures/jdxi_manual_presets.json`: the preset lists from the Parameter Guide, with tests that keep every preset table in step with it and check the Program Common addresses
+- **Windows build**: `building/windows/jdxi_editor.spec` (PyInstaller, one folder) and the `Windows build` workflow, which builds the app and the Inno Setup installer, checks that the app starts, and attaches both to a pre-release on `v*` tags. `jdxi_editor.iss` takes the version from the build and installs per user, in English or Italian
+
+### Changed
+
+- `doc/midi_parameters.txt`: Program Common rows corrected against the MIDI Implementation (the rest of the file already matched); the vocal-effects address map, gap analyses and migration plan updated to match
+- Installation docs and READMEs: Windows installer and portable zip, SmartScreen note, Python 3.10+ (3.13 added to the classifiers)
+- `pyproject.toml`: `audio` extra (soundfile, librosa) and both in `dev`, since the audio-evidence tests import them; `build-windows` extra (PyInstaller)
+- Tests that need `tests/sheep.mid` (not in the repository) are marked `slow`, like the others that use it, so the default run no longer fails on them
+- `python -m building.buildsys` on Windows passes the version to Inno Setup; removed the outdated copy `building/windows/jdxi_editor.iss` (0.9.2)
+
 # [0.9.9] — 2026-11
 Bumping version for PyPi
 

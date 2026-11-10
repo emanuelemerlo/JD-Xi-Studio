@@ -57,6 +57,8 @@ MANIFEST
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
+# The Windows build spec is part of the project
+!building/windows/jdxi_editor.spec
 
 # Installer logs
 pip-log.txt

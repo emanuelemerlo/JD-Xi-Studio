@@ -143,21 +143,18 @@ So full addresses are: **Base + Offset** (e.g. 19 00 00 00 + 01 00 00 = **19 01 
 | … | … | … | ✓ |
 | 0x0B | Program Name 12 | TONE_NAME_12 @ 0x0B | ✓ |
 | 0x0C–0x0F | (reserve) | — | — |
-| 0x16 | Program Level (0–127) | PROGRAM_LEVEL @ 0x10 | ⚠ Addr: JDXI 0x10 vs Guide 0x16 |
-| 0x17–0x1A | Program Tempo (4 bytes) | PROGRAM_TEMPO @ 0x11 | ⚠ Addr: JDXI 0x11 vs Guide 0x17 |
-| 0x1B | (reserve) | VOCAL_EFFECT_NUMBER @ 0x1B | ⚠ Undocumented |
-| 0x1C | Vocal Effect | VOCAL_EFFECT @ 0x1C | ✓ |
+| 0x10 | Program Level (0–127) | PROGRAM_LEVEL @ 0x10 | ✓ |
+| 0x11–0x14 | Program Tempo (4 nibbled bytes) | PROGRAM_TEMPO @ 0x11 | ✓ |
+| 0x15 | (reserve) | — | — |
+| 0x16 | Vocal Effect (0–2) | VOCAL_EFFECT @ 0x16 | ✓ |
+| 0x17–0x1B | (reserve) | — | — |
+| 0x1C | Vocal Effect Number (0–20) | VOCAL_EFFECT_NUMBER @ 0x1C | ✓ |
 | 0x1D | Vocal Effect Part | VOCAL_EFFECT_PART @ 0x1D | ✓ |
 | 0x1E | Auto Note Switch | AUTO_NOTE_SWITCH @ 0x1E | ✓ |
 
 **Program Name layout:** Roland PDF confirms sequential 0x00–0x0B for names 1–12. JDXI Editor matches. ✓
 
-**Program Level / Tempo:** `midi_parameters.txt` lists Level @ 0x16, Tempo @ 0x17–0x1A. JDXI Editor uses 0x10, 0x11. Confirm with PDF/hardware which is correct.
-
-| Gap | Action |
-|-----|--------|
-| PROGRAM_LEVEL, PROGRAM_TEMPO | If PDF/guide use 0x16, 0x17–0x1A, align JDXI Editor addresses |
-| VOCAL_EFFECT_NUMBER | Guide marks 0x1B reserve; effect preset number not documented |
+**Resolved:** the Program Common rows of `midi_parameters.txt` were shifted (Level @ 0x16, Tempo @ 0x17, Vocal Effect @ 0x1C, no Vocal Effect Number). Checked against the MIDI Implementation PDF (p. 9), the file and the code now use the addresses above.
 
 ---
 

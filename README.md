@@ -67,12 +67,17 @@ There is a new build for MacOS Sequoia. See the [releases page](https://github.c
 ### Windows 📦
 There is a new build for Windows. See the [releases page](https://github.com/markxbrooks/JDXI-Editor/releases/tag/v0.9.6).
 
+Each release offers an installer (`jdxi_editor-<version>_setup_win_x86-64.exe`, installs for the
+current user, no administrator rights) and a portable zip (unzip and run `jdxi_editor\jdxi_editor.exe`).
+Windows 10 or 11, 64-bit. The files are not signed: if SmartScreen warns, choose
+"More info" → "Run anyway".
+
 ### Linux 📦
 There is a new build for Linux. See the [releases page](https://github.com/markxbrooks/JDXI-Editor/releases/tag/v0.9.6).
 
 
 ### Python 🐍
-JD-Xi Editor is on PyPI (Python 3.10 to 3.12). Install it in a virtual environment and start it with `jdxi-editor`:
+JD-Xi Editor is on PyPI (Python 3.10 to 3.13). Install it in a virtual environment and start it with `jdxi-editor`:
 
 ```bash
 $ python -m venv jdxi-env
@@ -259,11 +264,22 @@ Linux .deb or .Appimage
 python3 -m building.buildsys # builds both with no flag
 ```
 
-Windows 
+Windows: the app (PyInstaller, one folder) and the installer (Inno Setup 6)
+```commandline
+python -m pip install ".[soundfont,build-windows]"   # not -e: the spec bundles the installed resources
+cd %TEMP%
+pyinstaller --noconfirm --clean --distpath <repo>\dist <repo>\building\windows\jdxi_editor.spec
+cd <repo>
+iscc /DMyAppVersion=<version> jdxi_editor.iss                # -> dist\installer\
+```
+The `Windows build` workflow (`.github/workflows/windows-build.yml`) does the same on every push
+to a `fix/**` or `release/**` branch, starts the app as a smoke test, and uploads the app and the
+installer as artifacts; on a `v*` tag it attaches them to a pre-release.
+The older builder is still available:
 ```commandline
 python -m building.buildsys
 ```
-or ]
+or
 ```
 .\building\scripts\build.ps1
 ```
