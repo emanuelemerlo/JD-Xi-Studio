@@ -31,6 +31,13 @@ on the JD-Xi display.
   .syx, random tone) stays on the right
 - The original Analog editor (`AnalogSynthEditor`) is still in the code; the app opens the new one
 
+### Start-up and CI
+
+- **The USB recorder starts PortAudio only when it is used**, not when the MIDI file player and the
+  pattern editor are created: starting it lists every audio driver (seconds on some Windows machines)
+  and failed on machines without an audio system, which broke 59 tests on the GitHub runners. Its device
+  list is filled when the recorder is first shown; without an audio system it is simply empty
+
 ### Instrument window
 
 - **Minimise, maximise and close** buttons at the right of the menu bar, in the panel's colours; the

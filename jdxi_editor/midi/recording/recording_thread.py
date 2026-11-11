@@ -267,7 +267,7 @@ class WavRecordingThread(QThread):
             log.error(error_msg)
             self.recording_error.emit(error_msg)
 
-        self.recorder.p.terminate()
+        self.recorder.close()
 
     def stop_recording(self):
         """

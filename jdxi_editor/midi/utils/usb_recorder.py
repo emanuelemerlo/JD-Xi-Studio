@@ -22,8 +22,13 @@ class USBRecorder:
     ):
         """
         Initializes the recorder with the specified settings.
+
+        PortAudio starts on first use (see ``p``), not here: initialising it
+        enumerates every audio driver, which takes seconds on some Windows
+        machines and fails where there is no audio system (CI, servers).
         """
-        self.p = pyaudio.PyAudio()
+        self._p = None
+        self.error: str = ""
         self.input_device_index = input_device_index
         self.channels = channels
         self.rate = rate
@@ -32,11 +37,24 @@ class USBRecorder:
         self.usb_port_input_device_index = None
         self.usb_recording_rates = {"16bit": pyaudio.paInt16, "32bit": pyaudio.paInt32}
 
+    @property
+    def p(self) -> "pyaudio.PyAudio":
+        """The PyAudio instance, created on first use (may raise OSError)."""
+        if self._p is None:
+            self._p = pyaudio.PyAudio()
+        return self._p
+
     def list_devices(self):
-        """Prints a list of available audio input devices."""
+        """Prints a list of available audio input devices ([] without an audio system)."""
         log.message("[USBRecorder] Available audio input devices:")
         device_list = []
-        for i in range(self.p.get_device_count()):
+        try:
+            count = self.p.get_device_count()
+        except Exception as ex:  # no audio system: nothing to record from
+            self.error = str(ex)
+            log.warning(f"[USBRecorder] Audio system unavailable: {ex}")
+            return device_list
+        for i in range(count):
             info = self.p.get_device_info_by_index(i)
             device_info = (
                 f"{i}: {info['name']} (input channels: {info['maxInputChannels']})"
@@ -92,8 +110,10 @@ class USBRecorder:
         print(f"[USBRecorder] File successfully saved to {output_file}")
 
     def close(self):
-        """Closes the PyAudio instance."""
-        self.p.terminate()
+        """Closes the PyAudio instance, if it was started."""
+        if self._p is not None:
+            self._p.terminate()
+            self._p = None
 
     def stop_recording(self):
         """

@@ -95,6 +95,7 @@ class TestUSBRecorder(unittest.TestCase):
         mock_pyaudio_class.return_value = mock_pyaudio_instance
 
         recorder = USBRecorder()
+        recorder.p  # PortAudio starts on first use
         recorder.close()
 
         mock_pyaudio_instance.terminate.assert_called_once()
@@ -521,3 +522,20 @@ class TestRecordingHelpers(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def test_recorder_starts_portaudio_only_when_used(monkeypatch):
+    """Creating the recorder (at app start) must not start PortAudio, which is
+    slow on some Windows machines and fails where there is no audio system."""
+    import pyaudio
+
+    from jdxi_editor.midi.utils.usb_recorder import USBRecorder
+
+    def no_audio_system():
+        raise OSError(-9999, "Unanticipated host error")
+
+    monkeypatch.setattr(pyaudio, "PyAudio", no_audio_system)
+    recorder = USBRecorder(channels=1)  # does not raise
+    assert recorder.list_devices() == []
+    assert "host error" in recorder.error
+    recorder.close()  # nothing to close
