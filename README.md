@@ -36,6 +36,8 @@
 - **MIDI Debugger**: Monitor and debug MIDI messages efficiently.
 - **New Analog editor** (1.0): all 46 parameters on one screen, filter curve and envelopes to drag,
   drawn waveforms, and an information panel that explains the parameter under the pointer.
+- **New Digital Synth editor** (1.0), for Digital 1 and 2: every SuperNATURAL synth parameter, the
+  three partials with drawn waveforms, filter curves, envelopes and LFOs.
 - **New Program editor** (1.0): program name, level, tempo and the four parts side by side (main,
   pitch, offsets, velocity range, scale tune, MIDI receive) with every Program Part parameter.
 - **New Effects editor** (1.0): Effect 1, Effect 2, Delay and Reverb with every parameter of the

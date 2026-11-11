@@ -62,7 +62,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          python -m pytest tests/test_preset_tables_match_manual.py tests/test_program_common_addresses.py tests/test_i18n.py tests/test_update_checker.py tests/test_v2_analog.py tests/test_v2_effects.py tests/test_v2_program.py -q 2>&1 | tee logs/test.log
+          python -m pytest tests/test_preset_tables_match_manual.py tests/test_program_common_addresses.py tests/test_i18n.py tests/test_update_checker.py tests/test_v2_analog.py tests/test_v2_effects.py tests/test_v2_program.py tests/test_v2_digital.py -q 2>&1 | tee logs/test.log
 
       - name: PyInstaller
         id: pyinstaller

@@ -31,6 +31,24 @@ on the JD-Xi display.
   .syx, random tone) stays on the right
 - The original Analog editor (`AnalogSynthEditor`) is still in the code; the app opens the new one
 
+### Digital Synth editor (new), for Digital 1 and Digital 2
+
+- **Every parameter of the SuperNATURAL synth tone**: Common, Modify and the three Partials of the
+  MIDI Implementation, with the explanations of the Parameter Guide (p. 15-19)
+- Tone common settings on top (name, level, category, octave, bend range, mono/poly, legato,
+  portamento, unison, ring modulator, wave shape, analog feel); the three partials switched on and
+  off and selected for the panel knobs in a strip, as with the [01]-[07] buttons, and edited one at
+  a time: **OSC** (waveforms drawn, PCM wave list and gain, pitch envelope), **FILTER** (response
+  curve for LPF1-4/HPF/BPF/PKG and -12/-24 dB, drag cutoff and resonance; envelope), **AMP**
+  (envelope, level, pan, key follow, aftertouch), **LFO** and **MODULATION LFO** (drawn), **MISC**
+  (interval sensitivities, envelope loop, chromatic portamento)
+- Settings without effect greyed out: pulse width only with PW-SQR (and not on partials 1-2 with the
+  ring modulator on), Super Saw detune only with SP-SAW, wave number and gain only with PCM,
+  variation not with SP-SAW/PCM, wave shape not with PW-SQR/SP-SAW on partial 1, legato only with
+  MONO, unison size only with unison on, rate or sync note by tempo sync, filter settings with BYPASS
+- The tone preset panel (presets, read from JD-Xi, .syx import/export) is the existing one, on the side
+- Key Follow -100..+100 in steps of 10, Ring Switch sent as 0/2, wave number as 4 nibbles: checked by tests
+
 ### Program editor (new): common settings and the four parts
 
 - **Parts → Program: common and parts** (Ctrl+Shift+P): program name, level and tempo (5.00-300.00),

@@ -360,7 +360,7 @@ def _wave_path(name: str, rect: QRectF, duty: float = 0.5) -> QPainterPath:
             path.lineTo(b + cw * duty, top)
             path.lineTo(b + cw * duty, bottom)
             path.lineTo(b + cw, bottom)
-    elif name == "SIN":
+    elif name in ("SIN", "SINE"):
         steps = 48
         for s in range(steps + 1):
             x = x0 + w * s / steps
@@ -385,6 +385,33 @@ def _wave_path(name: str, rect: QRectF, duty: float = 0.5) -> QPainterPath:
             f = f * f * (3 - 2 * f)
             y = pts[i] * (1 - f) + pts[i + 1] * f
             x = x0 + w * s / steps
+            path.lineTo(x, y) if s else path.moveTo(x, y)
+    elif name == "NOISE":
+        rnd = random.Random(3)
+        steps = 40
+        for s in range(steps + 1):
+            x, y = x0 + w * s / steps, top + rnd.random() * (bottom - top)
+            path.lineTo(x, y) if s else path.moveTo(x, y)
+    elif name in ("SUPER-SAW", "SP-SAW"):
+        for shift in (0.0, 0.3, 0.6):  # detuned saws on top of each other
+            steps = 60
+            previous = None
+            for k in range(steps + 1):
+                x = x0 + w * k / steps
+                phase = ((x - x0) / cw + shift) % 1.0
+                y = bottom - (bottom - top) * phase
+                if previous is None or phase < previous:
+                    path.moveTo(x, y)
+                else:
+                    path.lineTo(x, y)
+                previous = phase
+    elif name == "PCM":
+        steps = 60
+        for s in range(steps + 1):
+            t = s / steps
+            env = math.exp(-2.2 * t)
+            y = mid - (bottom - top) / 2 * env * (0.65 * math.sin(2 * math.pi * 5 * t) + 0.35 * math.sin(2 * math.pi * 13 * t))
+            x = x0 + w * t
             path.lineTo(x, y) if s else path.moveTo(x, y)
     return path
 
@@ -744,7 +771,8 @@ class LfoView(_Graph):
         super().__init__(accent, hub, 90, parent)
         self.shape, self.rate, self.fade, self.sync, self.note = shape, rate, fade, sync, note
         for pv in (shape, rate, fade, sync, note):
-            pv.watch(lambda _v: self.update())
+            if pv is not None:  # the Modulation LFO has no fade
+                pv.watch(lambda _v: self.update())
 
     def paintEvent(self, event) -> None:
         p = QPainter(self)
@@ -758,7 +786,7 @@ class LfoView(_Graph):
         else:
             cycles = 1.0 + self.rate.value() / 127 * 9
             speed = tr("Rate {rate}").format(rate=self.rate.value())
-        fade = self.fade.value() / 127 * 0.6
+        fade = self.fade.value() / 127 * 0.6 if self.fade is not None else 0.0
         path = QPainterPath()
         steps = 240
         rnd = random.Random(5)

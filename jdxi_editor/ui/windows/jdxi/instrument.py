@@ -121,6 +121,7 @@ from jdxi_editor.ui.windows.jdxi.recent_files import RecentFilesManager
 from jdxi_editor.ui.windows.jdxi.ui import JDXiWindow
 from jdxi_editor.ui.windows.jdxi.utils import show_message_box_from_spec
 from jdxi_editor.ui.v2.analog import AnalogToneEditor
+from jdxi_editor.ui.v2.digital import Digital2ToneEditor, DigitalToneEditor
 from jdxi_editor.ui.v2.effects import EffectsEditor
 from jdxi_editor.ui.v2.program import ProgramPartsEditor
 from jdxi_editor.ui.windows.midi.config_dialog import MIDIConfigDialog
@@ -189,7 +190,7 @@ class JDXiInstrument(JDXiWindow):
             ),
             "digital1": EditorConfig(
                 title="Digital Synth 1",
-                editor_class=DigitalSynthEditor,
+                editor_class=DigitalToneEditor,  # new interface (1.0)
                 synth_type=JDXiSynth.DIGITAL_SYNTH_1,
                 midi_channel=MidiChannel.DIGITAL_SYNTH_1,
                 kwargs={"synth_number": 1},
@@ -197,7 +198,7 @@ class JDXiInstrument(JDXiWindow):
             ),
             "digital2": EditorConfig(
                 title="Digital Synth 2",
-                editor_class=DigitalSynth2Editor,
+                editor_class=Digital2ToneEditor,  # new interface (1.0)
                 synth_type=JDXiSynth.DIGITAL_SYNTH_2,
                 midi_channel=MidiChannel.DIGITAL_SYNTH_2,
                 kwargs={"synth_number": 2},
@@ -924,6 +925,8 @@ class JDXiInstrument(JDXiWindow):
                     EffectsCommonEditor,
                     EffectsEditor,
                     ProgramPartsEditor,
+                    DigitalToneEditor,
+                    Digital2ToneEditor,
                 }
                 else None
             )
@@ -1094,6 +1097,8 @@ class JDXiInstrument(JDXiWindow):
                     EffectsCommonEditor,
                     EffectsEditor,
                     ProgramPartsEditor,
+                    DigitalToneEditor,
+                    Digital2ToneEditor,
                 ]
                 else None
             )

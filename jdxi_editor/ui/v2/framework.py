@@ -19,6 +19,7 @@ the information panel. Subclasses lay out the panels.
 
 from __future__ import annotations
 
+import functools
 import json
 from dataclasses import dataclass, field
 from typing import Callable, Optional, Sequence
@@ -27,6 +28,7 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
+    QLineEdit,
     QPushButton,
     QScrollArea,
     QVBoxLayout,
@@ -43,6 +45,7 @@ from jdxi_editor.ui.v2.widgets import (
     InfoPanel,
     Knob,
     NoteCombo,
+    report_to,
 )
 
 SEND_INTERVAL_MS = 25
@@ -85,6 +88,7 @@ class PSpec:
     raw_offset: int = 0  # raw = display + raw_offset (e.g. 64 for -63..+63)
     nibbled: bool = False  # 4 nibbles, raw = 32768 + display
     size: int = 0  # bytes it takes when not 1 or "nibbled": 2 or 4 nibbles, raw as is
+    factor: int = 1  # display = (raw - raw_offset) * factor (Key Follow: -100..+100 in steps of 10)
     choices: Sequence[str] = ()  # labels for display values lo..hi
     values: Optional[Sequence[int]] = None  # raw values of the choices, when not lo..hi
     unit: str = ""
@@ -123,7 +127,7 @@ class PSpec:
         if self.values is not None:
             index = max(0, min(len(self.values) - 1, display - self.lo))
             return int(self.values[index])
-        raw = display + self.raw_offset
+        raw = int(round(display / self.factor)) + self.raw_offset
         return raw + NIBBLE_ZERO if self.nibbled else raw
 
     def convert_from_midi(self, raw: int) -> int:
@@ -133,7 +137,7 @@ class PSpec:
             return self.lo + (values.index(raw) if raw in values else 0)
         if self.nibbled:
             raw -= NIBBLE_ZERO
-        return raw - self.raw_offset
+        return (raw - self.raw_offset) * self.factor
 
     def info(self, group: str, area: str = "PROGRAM") -> ParamInfo:
         return ParamInfo(
@@ -177,6 +181,44 @@ class Block:
         return [a.msb, a.umb, a.lmb, a.lsb]
 
 
+class NameField(QLineEdit):
+    """A program or tone name: 12 ASCII characters, sent as one message when edited."""
+
+    def __init__(self, editor: "V2Editor", pvs: list[ParamValue], address, tooltip: str = ""):
+        super().__init__()
+        self.editor, self.pvs, self.address = editor, pvs, address
+        self.setMaxLength(12)
+        self.setFixedWidth(170)
+        self.setStyleSheet(
+            "QLineEdit { background: #121214; color: #ffffff; border: 1px solid #3a3d44; border-radius: 5px;"
+            " padding: 3px 6px; font-family: monospace; font-size: 13px; }"
+        )
+        self.setToolTip(tooltip)
+        for pv in pvs:
+            pv.watch(lambda _v: self._show())
+        report_to(editor.info_hub, self, pvs[0])
+        self.editingFinished.connect(self._send)
+
+    def text_from_values(self) -> str:
+        return "".join(chr(pv.value()) if 32 <= pv.value() <= 126 else " " for pv in self.pvs).rstrip()
+
+    def _show(self) -> None:
+        if not self.hasFocus():
+            self.setText(self.text_from_values())
+
+    def _send(self) -> None:
+        text = "".join(ch if 32 <= ord(ch) <= 126 else "?" for ch in self.text())[:12].ljust(12)
+        if text.rstrip() == self.text_from_values():
+            return
+        codes = [ord(ch) for ch in text]
+        for pv, code in zip(self.pvs, codes):
+            pv.blockSignals(True)
+            pv.setValue(code)
+            pv.blockSignals(False)
+        self.editor.send_bytes(self.address, codes)
+
+
+
 class V2Editor(SynthBase):
     """Base of the new editors: values, sending, receiving, information."""
 
@@ -186,6 +228,7 @@ class V2Editor(SynthBase):
 
     def __init__(self, blocks: list[Block], midi_helper=None, parent=None, title: str = ""):
         super().__init__(midi_helper=midi_helper, parent=parent)
+        self.before_frame()
         self.blocks = blocks
         self.values: dict[PSpec, ParamValue] = {}
         self.block_of: dict[PSpec, Block] = {}
@@ -207,10 +250,18 @@ class V2Editor(SynthBase):
         self.midi_requests = [b.request for b in blocks if b.request is not None]
         self._build_frame()
         self.build_panels()
-        if midi_helper is not None and hasattr(midi_helper, "midi_sysex_json"):
-            midi_helper.midi_sysex_json.connect(self.dispatch_sysex_to_area)
-        if midi_helper is not None and hasattr(midi_helper, "midi_message_incoming"):
-            midi_helper.midi_message_incoming.connect(self.receive_message)
+        helper = midi_helper if midi_helper is not None else getattr(self, "midi_helper", None)
+        if helper is not None and hasattr(helper, "midi_sysex_json"):
+            helper.midi_sysex_json.connect(self.dispatch_sysex_to_area)
+        if helper is not None and hasattr(helper, "midi_message_incoming"):
+            helper.midi_message_incoming.connect(self.receive_message)
+
+    def before_frame(self) -> None:
+        """Called after the base class is set up, before the panels are built."""
+
+    def side_widgets(self) -> list:
+        """Widgets shown above the information panel (e.g. the tone presets)."""
+        return []
 
     # ------------------------------------------------------------- lookups
     def spec(self, name: str, block_key: Optional[str] = None) -> PSpec:
@@ -262,9 +313,29 @@ class V2Editor(SynthBase):
         left.addWidget(self.scroll, 1)
         root.addLayout(left, 1)
         self.info_panel = InfoPanel(self.ACCENT)
-        self.info_panel.setFixedWidth(320)
         self.info_hub.shown.connect(self.info_panel.show_param)
-        root.addWidget(self.info_panel)
+        above = self.side_widgets()
+        if not above:
+            self.info_panel.setFixedWidth(320)
+            root.addWidget(self.info_panel)
+        else:  # presets and information, scrolling on short screens
+            side_host = QWidget()
+            side_host.setStyleSheet("background: transparent;")
+            side = QVBoxLayout(side_host)
+            side.setContentsMargins(0, 0, 0, 0)
+            side.setSpacing(12)
+            for widget in above:
+                side.addWidget(widget)
+            self.info_panel.setFixedWidth(340)
+            self.info_panel.setMinimumHeight(260)
+            side.addWidget(self.info_panel, 1)
+            side_scroll = QScrollArea()
+            side_scroll.setWidgetResizable(True)
+            side_scroll.setFrameShape(QScrollArea.Shape.NoFrame)
+            side_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+            side_scroll.setFixedWidth(356)
+            side_scroll.setWidget(side_host)
+            root.addWidget(side_scroll)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self.setStyleSheet(f"{type(self).__name__} {{ background: #121214; }}")
 
@@ -420,3 +491,55 @@ class V2Editor(SynthBase):
 
     def get_controls_as_dict(self) -> dict:
         return {spec.name: pv.value() for spec, pv in self.values.items()}
+
+    def send_bytes(self, address, data: Sequence[int]) -> bool:
+        """Send several bytes in one DT1 (a name)."""
+        helper = getattr(self, "_midi_helper", None)
+        if helper is None:
+            return False
+        from jdxi_editor.midi.message.roland import JDXiSysEx
+
+        return bool(helper.send_midi_message(JDXiSysEx(sysex_address=address, value=list(data))))
+
+
+@functools.lru_cache(maxsize=None)
+def tone_editor_base():
+    """V2Editor with the tone machinery of the existing editors (presets, tone name, .syx)."""
+    from jdxi_editor.ui.editors.synth.editor import SynthEditor
+
+    class V2ToneEditor(V2Editor, SynthEditor):
+        """A tone editor (Digital, Drums): adds the existing tone preset panel on the side."""
+
+        AREA = "TONE"
+        TEMPORARY_AREA = None  # values come from the DT1 messages
+        SYNTH_TYPE = None  # JDXiSynth.DIGITAL_SYNTH_1 ...
+        PRESET_KIND = "Digital"  # the preset panel's list: "Digital", "Drums"
+
+        def before_frame(self) -> None:
+            if self.SYNTH_TYPE is not None:
+                self._init_synth_data(self.SYNTH_TYPE)
+
+        def side_widgets(self) -> list:
+            from jdxi_editor.core.jdxi import JDXi
+            from jdxi_editor.ui.preset.widget import InstrumentPresetWidget
+
+            self.instrument_preset = InstrumentPresetWidget(parent=self)
+            self.instrument_preset.setup_header_layout()
+            self.instrument_preset.setup()
+            self.instrument_preset_group = self.instrument_preset.create_instrument_preset_group(
+                synth_type=self.PRESET_KIND
+            )
+            self.instrument_preset.add_preset_group(self.instrument_preset_group)
+            (
+                self.instrument_image_group,
+                self.instrument_image_label,
+                self.instrument_group_layout,
+            ) = self.instrument_preset.create_instrument_image_group()
+            self.instrument_preset.add_image_group(self.instrument_image_group)
+            self.instrument_preset.setFixedWidth(340)
+            JDXi.UI.Theme.apply_editor_style(self.instrument_preset)
+            self.update_instrument_image()
+            self.read_button.hide()  # the preset panel has its own "Read from JD-Xi"
+            return [self.instrument_preset]
+
+    return V2ToneEditor

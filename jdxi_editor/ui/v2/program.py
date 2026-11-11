@@ -23,7 +23,6 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QHBoxLayout,
     QLabel,
-    QLineEdit,
     QPushButton,
     QStackedWidget,
     QVBoxLayout,
@@ -32,8 +31,7 @@ from PySide6.QtWidgets import (
 
 from jdxi_editor.i18n import tr
 from jdxi_editor.midi.data.address.address import JDXiSysExAddress
-from jdxi_editor.midi.message.roland import JDXiSysEx
-from jdxi_editor.ui.v2.framework import Block, PSpec, V2Editor, rq1
+from jdxi_editor.ui.v2.framework import Block, NameField, PSpec, V2Editor, rq1
 from jdxi_editor.ui.v2.params import ParamValue
 from jdxi_editor.ui.v2.widgets import _Graph, report_to
 
@@ -325,43 +323,6 @@ class ScaleView(_Graph):
         p.end()
 
 
-class NameField(QLineEdit):
-    """The program name: 12 ASCII characters, sent as one message when edited."""
-
-    def __init__(self, editor: "ProgramPartsEditor", pvs: list[ParamValue]):
-        super().__init__()
-        self.editor, self.pvs = editor, pvs
-        self.setMaxLength(NAME_LENGTH)
-        self.setFixedWidth(170)
-        self.setStyleSheet(
-            "QLineEdit { background: #121214; color: #ffffff; border: 1px solid #3a3d44; border-radius: 5px;"
-            " padding: 3px 6px; font-family: monospace; font-size: 13px; }"
-        )
-        self.setToolTip(tr("Name of the program (12 characters)."))
-        for pv in pvs:
-            pv.watch(lambda _v: self._show())
-        report_to(editor.info_hub, self, pvs[0])
-        self.editingFinished.connect(self._send)
-
-    def text_from_values(self) -> str:
-        return "".join(chr(pv.value()) if 32 <= pv.value() <= 126 else " " for pv in self.pvs).rstrip()
-
-    def _show(self) -> None:
-        if not self.hasFocus():
-            self.setText(self.text_from_values())
-
-    def _send(self) -> None:
-        text = "".join(ch if 32 <= ord(ch) <= 126 else "?" for ch in self.text())[:NAME_LENGTH].ljust(NAME_LENGTH)
-        if text.rstrip() == self.text_from_values():
-            return
-        codes = [ord(ch) for ch in text]
-        for pv, code in zip(self.pvs, codes):
-            pv.blockSignals(True)
-            pv.setValue(code)
-            pv.blockSignals(False)
-        self.editor.send_bytes(self.editor.blocks[0].address, codes)
-
-
 # ---------------------------------------------------------------- editor
 class ProgramPartsEditor(V2Editor):
     """Program common settings and the four parts, one section at a time."""
@@ -457,7 +418,7 @@ class ProgramPartsEditor(V2Editor):
         label = QLabel(tr("Program Name"))
         label.setStyleSheet("color: #c9cbd1; font-size: 11px; background: transparent;")
         name_box.addWidget(label)
-        self.name_field = NameField(self, names)
+        self.name_field = NameField(self, names, self.blocks[0].address, tr("Name of the program (12 characters)."))
         name_box.addWidget(self.name_field)
         name_box.addStretch()
         row.addLayout(name_box)
@@ -541,11 +502,3 @@ class ProgramPartsEditor(V2Editor):
             # Lower is 1 - UPPER, Upper is LOWER - 127 (MIDI Implementation)
             lower.valueChanged.connect(lambda v, upper=upper: upper.setValue(v) if upper.value() < v else None)
             upper.valueChanged.connect(lambda v, lower=lower: lower.setValue(v) if lower.value() > v else None)
-
-    # --- sending several bytes at once (the name)
-    def send_bytes(self, address: JDXiSysExAddress, data: list[int]) -> bool:
-        helper = getattr(self, "_midi_helper", None)
-        if helper is None:
-            return False
-        message = JDXiSysEx(sysex_address=address, value=list(data))
-        return bool(helper.send_midi_message(message))
