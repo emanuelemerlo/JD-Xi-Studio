@@ -48,7 +48,9 @@
   keyboard window, and move on their own (two screens); the keyboard comes in front with a click or Ctrl+Shift+K,
   or stays always on top.
 - **Programs on one page** (1.0): library table with search, genre and banks A–H, the parts of the
-  program, the mixer; presets, user programs, playlists and system settings below.
+  program, the mixer; presets, user programs and playlists below.
+- **Settings** (1.0): the JD-Xi's system settings, the MIDI connection, files and tools on one page;
+  the editors window shows the editors as a row of buttons, the program and the connection.
 - **Pattern and MIDI file player in the new layout** (1.0): same functions and engine, laid out in
   cards as in the mockups (transport, new steps, measures, sequencer, file, USB recorder; player,
   classification, tracks, playback, automation).

@@ -316,8 +316,7 @@ class ProgramEditor(_program.ProgramEditor):
             (self.user_programs_widget, tr("User Programs")),
             (self.playlist_widget, tr("Playlist")),
             (self.playlist_editor_widget, tr("Playlist Editor")),
-            (group.system_settings_widget, tr("System Settings")),
-        ):
+        ):  # the system settings are in Settings
             if widget is not None:
                 _strip_titles(widget)
                 self.more_tabs.addTab(widget, title)

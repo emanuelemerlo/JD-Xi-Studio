@@ -353,6 +353,14 @@ class JDXiWindow(QMainWindow):
 
         edit_menu.addAction(
             self._menu_action(
+                tr("&Settings…"),
+                lambda: self.show_editor("settings"),
+                "Ctrl+Shift+E",
+                status_tip=tr("The JD-Xi's system settings and the editor's settings, files and tools"),
+            )
+        )
+        edit_menu.addAction(
+            self._menu_action(
                 tr("&MIDI Configuration..."),
                 self._show_midi_config,
                 "Ctrl+Shift+M",

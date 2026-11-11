@@ -288,7 +288,9 @@ class V2Editor(SynthBase):
         super().setWindowTitle(title)
         label = getattr(self, "title_label", None)
         if label is not None:
-            label.setText(title.upper())
+            from jdxi_editor.ui.v2.names import short_name
+
+            label.setText(short_name(title).upper())  # as on its tab, translated
             label.setVisible(bool(title))
 
     # -------------------------------------------------------------- layout

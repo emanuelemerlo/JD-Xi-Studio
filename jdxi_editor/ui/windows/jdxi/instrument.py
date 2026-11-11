@@ -110,6 +110,7 @@ from jdxi_editor.ui.editors.main import MainEditor
 # The pattern sequencer and the MIDI file player in the new look (same editors).
 from jdxi_editor.ui.v2.players import MidiFilePlayer, PatternSequenceEditor
 from jdxi_editor.ui.v2.programs import ProgramEditor  # the Programs page in the new look
+from jdxi_editor.ui.v2.settings import SettingsEditor
 from jdxi_editor.ui.editors.preset.editor import PresetEditor
 from jdxi_editor.ui.preset.button import JDXiPresetButtonData
 from jdxi_editor.ui.preset.helper import JDXiPresetHelper
@@ -257,6 +258,11 @@ class JDXiInstrument(JDXiWindow):
             ),
             "midi_player": EditorConfig(
                 title="MIDI File", editor_class=MidiFilePlayer, icon="mdi.midi-port"
+            ),
+            "settings": EditorConfig(
+                title="Settings",
+                editor_class=SettingsEditor,  # new (1.0): system settings, files, tools
+                icon="mdi.cog-outline",
             ),
         }
 
@@ -1019,6 +1025,7 @@ class JDXiInstrument(JDXiWindow):
                     DrumKitEditor,
                     VocalEffectEditor,
                     ArpeggioV2Editor,
+                    SettingsEditor,
                 }
                 else None
             )
@@ -1078,9 +1085,11 @@ class JDXiInstrument(JDXiWindow):
             )
             editor.setWindowTitle(title)
 
-            tab_index = self.main_editor.editor_tab_widget.addTab(
-                editor, qta.icon(icon, color=JDXi.UI.Style.GREY), title
-            )
+            from jdxi_editor.ui.v2.names import short_name
+
+            # Names only, as in the mockups: every editor fits on one row
+            tab_index = self.main_editor.editor_tab_widget.addTab(editor, short_name(title))
+            self.main_editor.editor_tab_widget.setTabToolTip(tab_index, title)
 
             # Store the tab index for Analog Synth to enable styling
             if title == "Analog Synth":

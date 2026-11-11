@@ -75,6 +75,7 @@ def _line(*widgets, stretch: bool = True) -> QHBoxLayout:
 
 
 class PatternSequenceEditor(_pattern.PatternSequenceEditor):
+    ACCENT = PATTERN_ACCENT
     """The pattern sequencer with the new editors' look."""
 
     def __init__(self, *args, **kwargs):
@@ -228,6 +229,7 @@ class PatternSequenceEditor(_pattern.PatternSequenceEditor):
 
 
 class MidiFilePlayer(_player.MidiFilePlayer):
+    ACCENT = PLAYER_ACCENT
     """The MIDI file player with the new editors' look."""
 
     def __init__(self, *args, **kwargs):
