@@ -133,12 +133,22 @@ jobs:
             echo "::error title=$(basename "$f")::${body}"
           done
 
-      - uses: actions/upload-artifact@v4
+      # Two artifacts, so each download holds only what it says. The portable
+      # one is the app folder itself (GitHub zips it on download: no zip in a
+      # zip); the installer is already compressed, so it is stored as is.
+      - name: Upload portable
+        uses: actions/upload-artifact@v4
         with:
-          name: JDXI-Editor-${{ steps.version.outputs.label }}-windows
-          path: |
-            ${{ env.PORTABLE }}
-            dist/installer/*.exe
+          name: JDXI-Editor-${{ steps.version.outputs.label }}-win64-portable
+          path: dist/jdxi_editor/
+          if-no-files-found: error
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: JDXI-Editor-${{ steps.version.outputs.label }}-win64-setup
+          path: dist/installer/*.exe
+          compression-level: 0
           if-no-files-found: error
 
       # v1.2.3-beta.1 (any tag with a "-") is a pre-release, v1.2.3 a final release
@@ -148,6 +158,7 @@ jobs:
         with:
           prerelease: ${{ contains(github.ref_name, '-') }}
           generate_release_notes: true
+          # Separate assets: the installer (.exe) and the portable app (.zip)
           files: |
             ${{ env.PORTABLE }}
             dist/installer/*.exe

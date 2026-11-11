@@ -75,12 +75,16 @@ Beta versions are marked as pre-releases. The app checks this page for updates (
 a beta is told about the next beta, a final release only about final releases.
 
 ### Windows 📦
-Each release offers an installer (`jdxi_editor-<version>_setup_win_x86-64.exe`, installs for the
-current user, no administrator rights) and a portable zip (unzip and run `jdxi_editor\jdxi_editor.exe`).
+Each release offers two separate downloads; take the one you want:
+- the **installer** `jdxi_editor-<version>_setup_win_x86-64.exe` (installs for the current user,
+  no administrator rights, adds Start menu entries and an uninstaller);
+- the **portable** `JDXI-Editor-<version>-win64-portable.zip` (nothing to install: unzip anywhere,
+  even a USB stick, and run `jdxi_editor\jdxi_editor.exe`).
 Windows 10 or 11, 64-bit. The files are not signed: if SmartScreen warns, choose
 "More info" → "Run anyway". Test builds of every push are in the
 [Windows build](https://github.com/emanuelemerlo/JDXI-Editor/actions/workflows/windows-build.yml) workflow
-(Artifacts at the bottom of a run).
+(Artifacts at the bottom of a run: `…-win64-setup` holds the installer, `…-win64-portable` the
+app folder, ready to run once unzipped).
 
 ### macOS and Linux
 This fork does not publish macOS or Linux packages yet: run it with Python (below), or build a package
@@ -300,8 +304,8 @@ Translations: after changing interface strings run `python -m building.i18n upda
 `.ts` files, then `python -m building.i18n compile` (the tests fail while a string is untranslated).
 
 The `Windows build` workflow (`.github/workflows/windows-build.yml`) does the same on every push
-to a `fix/**` or `release/**` branch, starts the app as a smoke test, and uploads the app and the
-installer as artifacts; on a `v*` tag it attaches them to a release (a pre-release when the tag has a `-`, e.g. `v0.10.0-beta.1`); the tag must match `__version__`.
+to a `fix/**` or `release/**` branch, starts the app as a smoke test, and uploads the portable app and the
+installer as two separate artifacts; on a `v*` tag it attaches them to a release (a pre-release when the tag has a `-`, e.g. `v0.10.0-beta.1`); the tag must match `__version__`.
 The older builder is still available:
 ```commandline
 python -m building.buildsys

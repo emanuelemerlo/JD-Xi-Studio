@@ -19,6 +19,9 @@ current interface, 1.0 with the new one.
   the `JDXI-Editor` package on PyPI is the original project. The PyPI publishing workflow only runs by hand
 - **About** and **Help › Documentation** link to this repository and credit the original project;
   `pyproject.toml` URLs and maintainer updated
+- **Windows build**: the installer and the portable app are two separate downloads, both as CI
+  artifacts (`…-win64-setup`, `…-win64-portable`, the latter the app folder itself, not a zip in a zip)
+  and as release assets
 - **README, README.rst and doc/installation.rst** describe the fork, its Windows builds and how to install
   it from GitHub
 
