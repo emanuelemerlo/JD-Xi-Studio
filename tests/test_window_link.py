@@ -1,4 +1,4 @@
-"""The editor windows follow the keyboard window: minimise, restore, move, line up."""
+"""The editor windows follow the keyboard window: minimise and restore together, move on their own."""
 
 from __future__ import annotations
 
@@ -71,18 +71,12 @@ def test_minimising_an_editor_minimises_everything(windows, app):
     assert editors.isVisible() and not editors.isMinimized() and monitor.isVisible()
 
 
-def test_the_editors_move_with_the_keyboard(windows, app):
+def test_each_window_moves_on_its_own(windows, app):
     link, keyboard, editors, monitor, closed = windows
-    link._remember_pos()
-    start_editors, start_monitor = editors.pos(), monitor.pos()
-    keyboard.move(keyboard.pos() + QPoint(40, -20))
+    start = editors.pos()
+    keyboard.move(keyboard.pos() + QPoint(40, -20))  # to the other screen, say
     _spin(app)
-    assert editors.pos() == start_editors + QPoint(40, -20)
-    assert monitor.pos() == start_monitor + QPoint(40, -20)
-    link.move_together = False
-    keyboard.move(keyboard.pos() + QPoint(30, 0))
-    _spin(app)
-    assert editors.pos() == start_editors + QPoint(40, -20)
+    assert editors.pos() == start
 
 
 def test_line_up_puts_the_editors_above_the_keyboard(windows, app):

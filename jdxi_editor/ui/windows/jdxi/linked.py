@@ -6,17 +6,14 @@ The editor windows stay separate windows, but follow the keyboard window:
 - minimising either the keyboard or an editor window minimises all of them,
   and restoring the keyboard (from the taskbar too) brings back the editors
   that were open;
-- dragging the keyboard window moves the open editor windows with it (can be
-  switched off from the Window menu);
+- each window is moved on its own (working on two screens, say);
 - line_up() places the editors right above the keyboard (or below it when
   there is no room), aligned on its left edge.
 """
 
 from __future__ import annotations
 
-from typing import Optional
-
-from PySide6.QtCore import QEvent, QObject, QPoint, Qt, QTimer
+from PySide6.QtCore import QEvent, QObject, Qt, QTimer
 from PySide6.QtWidgets import QDialog, QMenu, QWidget
 
 
@@ -26,8 +23,6 @@ class WindowLink(QObject):
     def __init__(self, keyboard: QWidget):
         super().__init__(keyboard)
         self.keyboard = keyboard
-        self.move_together = True
-        self._last_pos: Optional[QPoint] = None
         self._hidden: list[QWidget] = []
         self._watched: set[int] = set()
         keyboard.installEventFilter(self)
@@ -67,8 +62,6 @@ class WindowLink(QObject):
                 QTimer.singleShot(0, self, self.followers)
             elif kind == QEvent.Type.WindowStateChange:
                 self._keyboard_state_changed()
-            elif kind == QEvent.Type.Move:
-                self._keyboard_moved()
             elif kind == QEvent.Type.Show and self._hidden and not self.keyboard.isMinimized():
                 self._restore_followers()
         elif kind == QEvent.Type.WindowStateChange and isinstance(obj, QWidget) and obj.isMinimized():
@@ -77,14 +70,12 @@ class WindowLink(QObject):
         return False
 
     def _keyboard_state_changed(self) -> None:
-        self._last_pos = None
         if self.keyboard.isMinimized():
             self._hidden = self.visible_followers()
             for widget in self._hidden:
                 widget.hide()
         else:
             self._restore_followers()
-            QTimer.singleShot(0, self._remember_pos)
 
     def _restore_followers(self) -> None:
         hidden, self._hidden = self._hidden, []
@@ -101,32 +92,6 @@ class WindowLink(QObject):
                 self._hidden.append(widget)
             return
         self.keyboard.showMinimized()  # hides and remembers the open editors, this one too
-
-    def _remember_pos(self) -> None:
-        if self._movable():
-            self._last_pos = self.keyboard.pos()
-
-    def _movable(self) -> bool:
-        state = self.keyboard.windowState()
-        return self.keyboard.isVisible() and not (
-            state & (Qt.WindowState.WindowMinimized | Qt.WindowState.WindowMaximized | Qt.WindowState.WindowFullScreen)
-        )
-
-    def _keyboard_moved(self) -> None:
-        if not self._movable():
-            self._last_pos = None
-            return
-        pos = self.keyboard.pos()
-        last, self._last_pos = self._last_pos, pos
-        if last is None or not self.move_together:
-            return
-        delta = pos - last
-        if delta.isNull():
-            return
-        for widget in self.visible_followers():
-            if widget.isMaximized() or widget.isFullScreen():
-                continue
-            widget.move(widget.pos() + delta)
 
     # --- placing
 
@@ -148,4 +113,3 @@ class WindowLink(QObject):
             self.keyboard.move(frame.left(), min(screen.bottom() - frame.height(), y + height))
             frame = self.keyboard.frameGeometry()
         editor.move(x, y)
-        self._last_pos = self.keyboard.pos() if self._movable() else None

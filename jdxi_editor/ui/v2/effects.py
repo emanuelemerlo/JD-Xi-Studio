@@ -30,7 +30,7 @@ from jdxi_editor.ui.v2.framework import Block, PSpec, V2Editor
 from jdxi_editor.ui.v2.params import ParamValue
 from jdxi_editor.ui.v2.widgets import ChoiceButtons, _Graph
 
-ACCENT = "#f2994a"
+ACCENT = "#2dd4bf"  # teal: orange is Digital 2
 
 NOTES = [
     "1/96", "1/64", "1/48", "1/32", "1/24", "3/64", "1/16", "1/12", "3/32", "1/8", "1/6",
@@ -373,7 +373,7 @@ class DelayView(_Graph):
                 break
             x = r.left() + r.width() * t / span
             left = pan and k % 2 == 1
-            color = QColor("#56ccf2") if left else QColor(ACCENT)
+            color = QColor("#f2c94c") if left else QColor(ACCENT)
             p.setPen(QPen(color, 2))
             p.drawLine(QPointF(x, r.bottom()), QPointF(x, r.bottom() - r.height() * amp))
             amp *= fb if fb > 0 else 0

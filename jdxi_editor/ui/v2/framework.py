@@ -284,6 +284,13 @@ class V2Editor(SynthBase):
     def pv(self, name: str, block_key: Optional[str] = None) -> ParamValue:
         return self.values[self.spec(name, block_key)]
 
+    def setWindowTitle(self, title: str) -> None:  # noqa: N802 (Qt name)
+        super().setWindowTitle(title)
+        label = getattr(self, "title_label", None)
+        if label is not None:
+            label.setText(title.upper())
+            label.setVisible(bool(title))
+
     # -------------------------------------------------------------- layout
     def _build_frame(self) -> None:
         self.setMinimumSize(960, 600)
@@ -293,10 +300,14 @@ class V2Editor(SynthBase):
         left = QVBoxLayout()
         left.setSpacing(10)
         bar = QHBoxLayout()
-        self.title_label = QLabel(self.windowTitle())
+        # The editor's name as a badge in its colour: Digital 1 and 2, say, tell apart at a glance
+        self.title_label = QLabel(self.windowTitle().upper())
+        self.title_label.setObjectName("v2Title")
         self.title_label.setStyleSheet(
-            f"color: {self.ACCENT}; font-size: 15px; font-weight: 700; letter-spacing: 1px;"
+            f"QLabel#v2Title {{ background: {self.ACCENT}; color: #0e0f11; border-radius: 6px;"
+            " padding: 3px 12px; font-size: 16px; font-weight: 800; letter-spacing: 2px; }"
         )
+        self.title_label.setVisible(bool(self.windowTitle()))
         bar.addWidget(self.title_label)
         bar.addStretch()
         self.read_status = QLabel("")

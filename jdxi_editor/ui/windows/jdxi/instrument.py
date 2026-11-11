@@ -831,7 +831,7 @@ class JDXiInstrument(JDXiWindow):
         self.main_editor.setUpdatesEnabled(True)
         self.main_editor.show()
 
-    # --- Window menu: the editor windows follow the keyboard window
+    # --- Window menu: the editor windows minimise and come back with the keyboard
 
     def _init_window_layout(self) -> None:
         """The Window menu and the link between the keyboard and the editor windows."""
@@ -845,40 +845,18 @@ class JDXiInstrument(JDXiWindow):
                 status_tip=tr("Place the editors window right above the keyboard"),
             )
         )
-        menu.addSeparator()
-        self.move_together_action = self._menu_action(
-            tr("&Move the editors with the keyboard"),
-            lambda: self.set_move_together(self.move_together_action.isChecked()),
-            status_tip=tr("Dragging the keyboard window moves the open editor windows too"),
-        )
-        self.move_together_action.setCheckable(True)
-        menu.addAction(self.move_together_action)
         self.menuBar().insertMenu(self.help_menu.menuAction(), menu)
         self.window_menu = menu
+        # The editors where they were left
         settings = getattr(self, "settings", None)
-        value = settings.value("window/move_together", True) if settings is not None else True
-        self.set_move_together(str(value).lower() != "false")
-        # The editors where they were left; the first time, right above the keyboard
         geometry = settings.value("window/editors_geometry") if settings is not None else None
         if geometry:
             self.main_editor.restoreGeometry(geometry)
-        else:
-            QTimer.singleShot(0, self, lambda: self.window_link.line_up(self.main_editor))
-
-    def set_move_together(self, on: bool) -> None:
-        self.window_link.move_together = bool(on)
-        self.move_together_action.setChecked(bool(on))
-        settings = getattr(self, "settings", None)
-        if settings is not None:
-            settings.setValue("window/move_together", bool(on))
 
     def _save_window_layout(self) -> None:
         settings = getattr(self, "settings", None)
-        link = getattr(self, "window_link", None)
-        if settings is not None and link is not None:
-            settings.setValue("window/move_together", link.move_together)
-            if self.main_editor is not None and self.main_editor.isVisible():
-                settings.setValue("window/editors_geometry", self.main_editor.saveGeometry())
+        if settings is not None and self.main_editor is not None and self.main_editor.isVisible():
+            settings.setValue("window/editors_geometry", self.main_editor.saveGeometry())
 
     def show_editor(self, editor_type: str, **kwargs) -> None:
         """

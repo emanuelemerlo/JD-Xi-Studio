@@ -39,7 +39,7 @@ from jdxi_editor.ui.v2.params import ParamValue
 from jdxi_editor.ui.v2.program import VelocityView, pan_parse, pan_text
 from jdxi_editor.ui.v2.widgets import _Graph
 
-ACCENT = "#eb5757"
+ACCENT = "#a78bfa"  # Drums purple, as on the JD-Xi panel
 NAME_LENGTH = 12
 FIRST_KEY, KEYS = 36, 37
 SECTIONS = ["COMMON", "WAVE", "PITCH", "TVF", "TVA"]

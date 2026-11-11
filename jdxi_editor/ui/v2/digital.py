@@ -42,7 +42,8 @@ from jdxi_editor.ui.v2.widgets import (
     WaveButtons,
 )
 
-ACCENT = "#56ccf2"
+ACCENT = "#eb5757"  # Digital 1 red, as on the JD-Xi panel
+ACCENT_2 = "#f2994a"  # Digital 2 orange
 NAME_LENGTH = 12
 WAVES = ("SAW", "SQR", "PW-SQR", "TRI", "SINE", "NOISE", "SP-SAW", "PCM")  # SP-SAW: SUPER SAW
 FILTERS = ("BYPASS", "LPF1", "HPF", "BPF", "PKG", "LPF2", "LPF3", "LPF4")  # as sent (MIDI Implementation)
@@ -279,6 +280,7 @@ class DigitalToneEditor(tone_editor_base()):
 
     def __init__(self, midi_helper=None, preset_helper=None, parent=None, synth_number: int = 1):
         self.SYNTH_TYPE = JDXiSynth.DIGITAL_SYNTH_1 if synth_number == 1 else JDXiSynth.DIGITAL_SYNTH_2
+        self.synth_number = synth_number  # before the frame: the preset panel shows it
         blocks = [common_block(synth_number), modify_block(synth_number)] + [partial_block(synth_number, i) for i in range(3)]
         super().__init__(blocks, midi_helper=midi_helper, parent=parent,
                          title=tr("Digital Synth {n}").format(n=synth_number))
@@ -342,14 +344,14 @@ class DigitalToneEditor(tone_editor_base()):
             button.setStyleSheet(
                 "QPushButton { background: #1b1c1f; color: #c9cbd1; border: 1px solid #3a3d44; border-radius: 6px;"
                 " padding: 6px 18px; font-weight: 700; letter-spacing: 1px; }"
-                f"QPushButton:checked {{ background: {ACCENT}; color: #0e0f11; border-color: {ACCENT}; }}"
+                f"QPushButton:checked {{ background: {self.ACCENT}; color: #0e0f11; border-color: {self.ACCENT}; }}"
             )
             button.setToolTip(tr("Edit partial {n}").format(n=n))
             self.partial_buttons.addButton(button, partial)
             box.addWidget(button)
             line = QHBoxLayout()
-            line.addWidget(ChoiceButtons(self.pv(f"PARTIAL{n}_SWITCH"), ACCENT, self.info_hub))
-            line.addWidget(ChoiceButtons(self.pv(f"PARTIAL{n}_SELECT"), ACCENT, self.info_hub))
+            line.addWidget(ChoiceButtons(self.pv(f"PARTIAL{n}_SWITCH"), self.ACCENT, self.info_hub))
+            line.addWidget(ChoiceButtons(self.pv(f"PARTIAL{n}_SELECT"), self.ACCENT, self.info_hub))
             line.addStretch()
             box.addLayout(line)
             row.addLayout(box)
@@ -380,13 +382,13 @@ class DigitalToneEditor(tone_editor_base()):
         top = Qt.AlignmentFlag.AlignTop
 
         osc = self.card("OSC", tr("Parameter Guide, p. 16-17"))
-        osc.body.addWidget(WaveButtons(v("OSC_WAVE"), ACCENT, self.info_hub, pulse_width=v("OSC_PULSE_WIDTH"), button_width=44))
+        osc.body.addWidget(WaveButtons(v("OSC_WAVE"), self.ACCENT, self.info_hub, pulse_width=v("OSC_PULSE_WIDTH"), button_width=44))
         osc.body.addWidget(self.control(s("OSC_WAVE_VARIATION")))
         osc.body.addWidget(self.control(s("WAVE_NUMBER")))
         osc.body.addWidget(self.control(s("WAVE_GAIN")))
         osc.body.addLayout(self.knob_row([s("OSC_PITCH"), s("OSC_DETUNE"), s("SUPER_SAW_DETUNE")]))
         osc.body.addLayout(self.knob_row([s("OSC_PULSE_WIDTH"), s("OSC_PULSE_WIDTH_MOD_DEPTH"), s("OSC_PULSE_WIDTH_SHIFT")]))
-        osc.body.addWidget(EnvelopeView(ACCENT, self.info_hub, v("OSC_PITCH_ENV_ATTACK_TIME"), v("OSC_PITCH_ENV_DECAY"),
+        osc.body.addWidget(EnvelopeView(self.ACCENT, self.info_hub, v("OSC_PITCH_ENV_ATTACK_TIME"), v("OSC_PITCH_ENV_DECAY"),
                                         depth=v("OSC_PITCH_ENV_DEPTH")))
         osc.body.addLayout(self.knob_row([s("OSC_PITCH_ENV_ATTACK_TIME"), s("OSC_PITCH_ENV_DECAY"), s("OSC_PITCH_ENV_DEPTH")]))
         grid.addWidget(osc, 0, 0, top)
@@ -394,9 +396,9 @@ class DigitalToneEditor(tone_editor_base()):
         flt = self.card("FILTER", tr("Parameter Guide, p. 17-18"))
         flt.body.addWidget(self.control(s("FILTER_MODE")))
         flt.body.addWidget(self.control(s("FILTER_SLOPE")))
-        flt.body.addWidget(DigitalFilterView(ACCENT, self.info_hub, v("FILTER_CUTOFF"), v("FILTER_RESONANCE"), v("FILTER_MODE"), v("FILTER_SLOPE")))
+        flt.body.addWidget(DigitalFilterView(self.ACCENT, self.info_hub, v("FILTER_CUTOFF"), v("FILTER_RESONANCE"), v("FILTER_MODE"), v("FILTER_SLOPE")))
         flt.body.addLayout(self.knob_row([s("FILTER_CUTOFF"), s("FILTER_RESONANCE"), s("FILTER_CUTOFF_KEYFOLLOW"), s("HPF_CUTOFF")]))
-        flt.body.addWidget(EnvelopeView(ACCENT, self.info_hub, v("FILTER_ENV_ATTACK_TIME"), v("FILTER_ENV_DECAY_TIME"),
+        flt.body.addWidget(EnvelopeView(self.ACCENT, self.info_hub, v("FILTER_ENV_ATTACK_TIME"), v("FILTER_ENV_DECAY_TIME"),
                                         v("FILTER_ENV_SUSTAIN_LEVEL"), v("FILTER_ENV_RELEASE_TIME")))
         flt.body.addLayout(self.knob_row([s("FILTER_ENV_ATTACK_TIME"), s("FILTER_ENV_DECAY_TIME"), s("FILTER_ENV_SUSTAIN_LEVEL"),
                                           s("FILTER_ENV_RELEASE_TIME")]))
@@ -404,22 +406,22 @@ class DigitalToneEditor(tone_editor_base()):
         grid.addWidget(flt, 0, 1, top)
 
         amp = self.card("AMP", tr("Parameter Guide, p. 18"))
-        amp.body.addWidget(EnvelopeView(ACCENT, self.info_hub, v("AMP_ENV_ATTACK_TIME"), v("AMP_ENV_DECAY_TIME"),
+        amp.body.addWidget(EnvelopeView(self.ACCENT, self.info_hub, v("AMP_ENV_ATTACK_TIME"), v("AMP_ENV_DECAY_TIME"),
                                         v("AMP_ENV_SUSTAIN_LEVEL"), v("AMP_ENV_RELEASE_TIME")))
         amp.body.addLayout(self.knob_row([s("AMP_ENV_ATTACK_TIME"), s("AMP_ENV_DECAY_TIME"), s("AMP_ENV_SUSTAIN_LEVEL"),
                                           s("AMP_ENV_RELEASE_TIME")]))
         amp.body.addLayout(self.knob_row([s("AMP_LEVEL"), s("AMP_VELOCITY"), s("AMP_PAN"), s("AMP_LEVEL_KEYFOLLOW")]))
         at = QLabel(tr("AFTERTOUCH"))
-        at.setStyleSheet(f"color: {ACCENT}; font-size: 10px; letter-spacing: 1px; background: transparent;")
+        at.setStyleSheet(f"color: {self.ACCENT}; font-size: 10px; letter-spacing: 1px; background: transparent;")
         amp.body.addWidget(at)
         amp.body.addLayout(self.knob_row([s("CUTOFF_AFTERTOUCH_SENS"), s("LEVEL_AFTERTOUCH_SENS")]))
         grid.addWidget(amp, 0, 2, top)
 
         for col, (title, prefix, fade) in enumerate((("LFO", "LFO_", True), ("MOD LFO", "MOD_LFO_", False))):
             card = self.card(title, tr("Parameter Guide, p. 18") if fade else tr("Parameter Guide, p. 19 (modulation lever)"))
-            card.body.addWidget(LfoView(ACCENT, self.info_hub, v(prefix + "SHAPE"), v(prefix + "RATE"),
+            card.body.addWidget(LfoView(self.ACCENT, self.info_hub, v(prefix + "SHAPE"), v(prefix + "RATE"),
                                         v("LFO_FADE_TIME") if fade else None, v(prefix + "TEMPO_SYNC_SWITCH"), v(prefix + "TEMPO_SYNC_NOTE")))
-            card.body.addWidget(WaveButtons(v(prefix + "SHAPE"), ACCENT, self.info_hub, button_width=44))
+            card.body.addWidget(WaveButtons(v(prefix + "SHAPE"), self.ACCENT, self.info_hub, button_width=44))
             card.body.addWidget(self.control(s(prefix + "TEMPO_SYNC_SWITCH")))
             card.body.addWidget(self.control(s(prefix + "TEMPO_SYNC_NOTE")))
             if fade:
@@ -483,5 +485,7 @@ class DigitalToneEditor(tone_editor_base()):
 
 
 class Digital2ToneEditor(DigitalToneEditor):
+    ACCENT = ACCENT_2
+
     def __init__(self, midi_helper=None, preset_helper=None, parent=None, synth_number: int = 2):
         super().__init__(midi_helper, preset_helper, parent, synth_number=2)

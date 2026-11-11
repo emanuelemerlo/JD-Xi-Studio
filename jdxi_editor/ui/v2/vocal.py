@@ -22,7 +22,7 @@ from jdxi_editor.ui.v2.params import ParamValue
 from jdxi_editor.ui.v2.program import pan_parse, pan_text
 from jdxi_editor.ui.v2.widgets import report_to
 
-ACCENT = "#bb6bd9"
+ACCENT = "#e86fb0"  # pink: purple is Drums
 KEYS = ("C", "Db", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B",
         "Cm", "C#m", "Dm", "D#m", "Em", "Fm", "F#m", "Gm", "G#m", "Am", "Bbm", "Bm")
 NOTES = ("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")

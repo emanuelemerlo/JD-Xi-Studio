@@ -37,13 +37,19 @@ on the JD-Xi display.
   needs, so its minimise button and the taskbar work
 - **The editor windows follow the keyboard**: minimising the keyboard or an editor window minimises
   them all; restoring the keyboard (from the taskbar too) brings back the editors that were open
-- **Window → Move the editors with the keyboard** (on by default): dragging the keyboard window
-  moves the open editor windows with it
+- **Each window moves on its own** (two screens work as expected); the editors window opens where
+  it was left
 - **Window → Line up the editors with the keyboard**: the editors window right above the keyboard
-  (below it when there is no room); the first time the app starts it is placed this way, then
-  where it was left
+  (below it when there is no room)
 - **Window → Show the editors** (Ctrl+Shift+W); the panel keeps its size and stays centred when
   the keyboard window is maximised
+
+### Each editor in its own colour
+
+- **The editor's name as a badge in its colour** at the top of each new editor
+- **Digital Synth 1 red, Digital Synth 2 orange**, Drums purple, as on the JD-Xi panel; Effects teal,
+  Vocal Effect pink (they shared colours with the parts before); the preset panel of Digital 2 says
+  DIGITAL SYNTH 2
 
 ### Pattern and MIDI file player (new look)
 
