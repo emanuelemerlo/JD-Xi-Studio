@@ -179,9 +179,17 @@ class Knob(QWidget):
             if text.lower() == choice.lower():
                 self.pv.setValue(index)
                 return
-        number = "".join(ch for ch in text if ch.isdigit() or ch in "+-")
+        if info.parse is not None:
+            parsed = info.parse(text)
+            if parsed is None:
+                self._show(self.pv.value())
+                return
+            self.pv.setValue(parsed)
+            self._show(self.pv.value())
+            return
+        number = "".join(ch for ch in text.replace(",", ".") if ch.isdigit() or ch in "+-.")
         try:
-            value = int(number)
+            value = round(float(number) * info.scale) if info.scale > 1 else int(float(number))
         except ValueError:
             self._show(self.pv.value())
             return
@@ -819,7 +827,7 @@ class InfoPanel(QFrame):
         self.long.setWordWrap(True)
         self.value = QLabel()
         self.value.setStyleSheet(
-            "color: #ffb347; font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 22px; font-weight: 600;"
+            f"color: {accent}; font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 22px; font-weight: 600;"
         )
         self.range = QLabel()
         self.range.setStyleSheet("color: #a3a6ad; font-size: 11px;")

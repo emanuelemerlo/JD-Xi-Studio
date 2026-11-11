@@ -354,6 +354,14 @@ class JDXiWindow(QMainWindow):
                 tr("&Analog Synth"), lambda: self.show_editor("analog"), "Ctrl+5"
             )
         )
+        self.parts_menu.addSeparator()
+        self.parts_menu.addAction(
+            self._menu_action(
+                tr("Program: &common and parts"),
+                lambda: self.show_editor("program_parts"),
+                "Ctrl+Shift+P",
+            )
+        )
 
     def _create_effects_menu(self) -> None:
         """Create editors menu"""

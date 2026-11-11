@@ -31,6 +31,23 @@ on the JD-Xi display.
   .syx, random tone) stays on the right
 - The original Analog editor (`AnalogSynthEditor`) is still in the code; the app opens the new one
 
+### Program editor (new): common settings and the four parts
+
+- **Parts → Program: common and parts** (Ctrl+Shift+P): program name, level and tempo (5.00-300.00),
+  vocal effect selection, and **every Program Part and Zone parameter** of the MIDI Implementation for
+  Digital 1, Digital 2, Analog and Drums: the 52 part parameters the app could not edit before
+- The four parts side by side, like a mixer, one section at a time as on the display: **MAIN** (level,
+  mute, pan L64-63R, Part Output, sends, mono/poly, legato), **PITCH** (octave, coarse/fine tune, bend
+  range, portamento with TONE), **OFFSET** (cutoff, resonance, envelope and vibrato offsets),
+  **KEYBOARD** (velocity range and fades with a draggable graph, velocity sensitivity, zone octave,
+  arpeggio on/off), **SCALE** (scale tune type, key and the twelve notes, drag the bars), **MIDI**
+  (part on/off, receive channel, tone bank/number, the ten receive switches)
+- Sends greyed out when Part Output makes them useless (REV, DIR, KIT); velocity lower/upper kept in order
+- The program name is sent as one message (12 characters)
+- **Values from the JD-Xi are read straight from its DT1 messages** (whole blocks and single
+  parameters turned on the panel), for this and the Effects editor; 2-nibble parameters (Part
+  Portamento Time) are now sent and read correctly
+
 ### Effects editor (new)
 
 - **Effect 1, Effect 2, Delay and Reverb on one screen**, with every parameter of the Parameter Guide

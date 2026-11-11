@@ -230,3 +230,16 @@ def test_the_chain_follows_output_assign(editor):
     assert not image.isNull()
     names = [b[1] for b in editor.chain.boxes()]
     assert names == ["EFX1", "EFX2", "DELAY", "REVERB", "OUT"]
+
+
+def test_a_single_parameter_from_the_jdxi(editor):
+    """The JD-Xi sends one DT1 when a knob is turned on the panel."""
+    editor.pv("EFX1_TYPE").blockSignals(True)
+    editor.pv("EFX1_TYPE").setValue(1)
+    editor.pv("EFX1_TYPE").blockSignals(False)
+    assert editor.receive_dt1(dt1([0x18, 0x00, 0x02, 0x15], nibbles(32768 + 77))) == 4  # P2 of 4 types
+    drive = next(s for s in editor.type_specs("EFFECT_1", "Distortion") if s.label == "Drive")
+    assert editor.values[drive].value() == 77
+    editor.receive_dt1(dt1([0x18, 0x00, 0x08, 0x0F], nibbles(32768 + 90)))  # Reverb level
+    assert editor.pv("REVERB_EFFECT_LEVEL").value() == 90
+    assert editor.helper.sent == []

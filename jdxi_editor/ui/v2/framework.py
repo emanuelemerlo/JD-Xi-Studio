@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
-from typing import Optional, Sequence
+from typing import Callable, Optional, Sequence
 
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import (
@@ -46,6 +46,28 @@ from jdxi_editor.ui.v2.widgets import (
 )
 
 SEND_INTERVAL_MS = 25
+ROLAND_DT1 = (0x41, 0x10, 0x00, 0x00, 0x00, 0x0E, 0x12)  # after F0: Roland, device 10h, JD-Xi, DT1
+
+
+def seven_bit(value: int) -> int:
+    """01 0D (written 0x010D) -> 141: Roland addresses use 7 bits per byte."""
+    return ((value >> 8) & 0x7F) * 128 + (value & 0x7F)
+
+
+def address_number(address: Sequence[int]) -> int:
+    number = 0
+    for byte in address:
+        number = number * 128 + (byte & 0x7F)
+    return number
+
+
+def rq1(address: Sequence[int], size: int) -> str:
+    """The RQ1 message (as the request queue takes it) that reads *size* bytes from *address*."""
+    size_bytes = [(size >> 21) & 0x7F, (size >> 14) & 0x7F, (size >> 7) & 0x7F, size & 0x7F]
+    body = list(address) + size_bytes
+    checksum = (128 - sum(body) % 128) % 128
+    data = [0xF0, 0x41, 0x10, 0x00, 0x00, 0x00, 0x0E, 0x11] + body + [checksum, 0xF7]
+    return " ".join(f"{b:02X}" for b in data)
 NIBBLE_ZERO = 32768  # 4-nibble parameters: 32768 is 0
 
 
@@ -62,6 +84,7 @@ class PSpec:
     hi: int = 127
     raw_offset: int = 0  # raw = display + raw_offset (e.g. 64 for -63..+63)
     nibbled: bool = False  # 4 nibbles, raw = 32768 + display
+    size: int = 0  # bytes it takes when not 1 or "nibbled": 2 or 4 nibbles, raw as is
     choices: Sequence[str] = ()  # labels for display values lo..hi
     values: Optional[Sequence[int]] = None  # raw values of the choices, when not lo..hi
     unit: str = ""
@@ -72,6 +95,9 @@ class PSpec:
     group: str = ""
     kind: str = ""  # "knob", "buttons", "list"; chosen from the data when empty
     source: str = ""  # shown instead of the Parameter Guide page
+    scale: int = 1  # shown divided by this
+    fmt: Optional[Callable[[int], str]] = None
+    parse: Optional[Callable[[str], Optional[int]]] = None
 
     # --- what the composer and the parser need
     @property
@@ -90,7 +116,7 @@ class PSpec:
         return 0, (self.offset >> 8) & 0xFF, self.offset & 0xFF
 
     def get_nibbled_size(self) -> int:
-        return 4 if self.nibbled else 1
+        return 4 if self.nibbled else (self.size or 1)
 
     def convert_to_midi(self, display: int) -> int:
         display = int(display)
@@ -123,6 +149,9 @@ class PSpec:
             signed=self.signed,
             area=area,
             source=self.source,
+            scale=self.scale,
+            fmt=self.fmt,
+            parse=self.parse,
         )
 
     def widget_kind(self) -> str:
@@ -142,6 +171,10 @@ class Block:
     address: object  # JDXiSysExAddress of the block
     params: list[PSpec] = field(default_factory=list)
     request: object = None  # the RQ1 that reads the block
+
+    def address_bytes(self) -> list[int]:
+        a = self.address
+        return [a.msb, a.umb, a.lmb, a.lsb]
 
 
 class V2Editor(SynthBase):
@@ -176,6 +209,8 @@ class V2Editor(SynthBase):
         self.build_panels()
         if midi_helper is not None and hasattr(midi_helper, "midi_sysex_json"):
             midi_helper.midi_sysex_json.connect(self.dispatch_sysex_to_area)
+        if midi_helper is not None and hasattr(midi_helper, "midi_message_incoming"):
+            midi_helper.midi_message_incoming.connect(self.receive_message)
 
     # ------------------------------------------------------------- lookups
     def spec(self, name: str, block_key: Optional[str] = None) -> PSpec:
@@ -302,6 +337,46 @@ class V2Editor(SynthBase):
             if block.key != tone:
                 continue
             self.apply_values(block, data)
+
+    def receive_message(self, message) -> int:
+        """A DT1 from the JD-Xi (a whole block or one parameter): show the values it carries."""
+        if getattr(message, "type", None) != "sysex":
+            return 0
+        return self.receive_dt1(list(message.data))
+
+    def receive_dt1(self, data: Sequence[int]) -> int:
+        """*data*: the bytes between F0 and F7."""
+        data = list(data)
+        if data[:1] == [0xF0]:
+            data = data[1:]
+        if data[-1:] == [0xF7]:
+            data = data[:-1]
+        if tuple(data[:7]) != ROLAND_DT1 or len(data) < 13:
+            return 0
+        start = address_number(data[7:11])
+        payload = data[11:-1]  # without the checksum
+        shown = 0
+        for block in self.blocks:
+            first = start - address_number(block.address_bytes())
+            if first < 0 or first > 0x3FF:
+                continue
+            for spec in block.params:
+                pos = seven_bit(spec.offset) - first
+                size = spec.get_nibbled_size()
+                if pos < 0 or pos + size > len(payload):
+                    continue
+                raw = 0
+                for byte in payload[pos : pos + size]:
+                    raw = (raw << 4 | (byte & 0x0F)) if size > 1 else byte
+                self._show_raw(spec, raw)
+                shown += 1
+        return shown
+
+    def _show_raw(self, spec: PSpec, raw: int) -> None:
+        pv = self.values[spec]
+        pv.blockSignals(True)
+        pv.setValue(spec.convert_from_midi(raw))
+        pv.blockSignals(False)
 
     def apply_values(self, block: Block, data: dict) -> int:
         """Show the values of *block* found in *data* (raw MIDI), without sending."""
