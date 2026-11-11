@@ -356,6 +356,9 @@ class JDXiWindow(QMainWindow):
         )
         self.parts_menu.addSeparator()
         self.parts_menu.addAction(
+            self._menu_action(tr("&Recipes…"), lambda: self.show_editor("recipes"), "Ctrl+Shift+R")
+        )
+        self.parts_menu.addAction(
             self._menu_action(
                 tr("Program: &common and parts"),
                 lambda: self.show_editor("program_parts"),

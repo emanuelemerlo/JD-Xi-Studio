@@ -51,6 +51,9 @@ dependencies = [
     # playback, sysex, ...); 0.1.2 contains the top-level package only
     "picomidi>=0.2.0",
     "pyfluidsynth",
+    # recipes: the .xlsx template and recipes read from PDF files
+    "openpyxl",
+    "pypdf",
 ]
 
 [project.optional-dependencies]

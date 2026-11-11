@@ -125,6 +125,7 @@ from jdxi_editor.ui.v2.digital import Digital2ToneEditor, DigitalToneEditor
 from jdxi_editor.ui.v2.drums import DrumKitEditor
 from jdxi_editor.ui.v2.vocal import VocalEffectEditor
 from jdxi_editor.ui.v2.arpeggio import ArpeggioEditor as ArpeggioV2Editor
+from jdxi_editor.ui.v2.recipes import RecipesEditor
 from jdxi_editor.ui.v2.effects import EffectsEditor
 from jdxi_editor.ui.v2.program import ProgramPartsEditor
 from jdxi_editor.ui.windows.midi.config_dialog import MIDIConfigDialog
@@ -235,6 +236,11 @@ class JDXiInstrument(JDXiWindow):
                 title="Program: common and parts",
                 editor_class=ProgramPartsEditor,  # new interface (1.0)
                 icon="mdi.tune-vertical",
+            ),
+            "recipes": EditorConfig(
+                title="Recipes",
+                editor_class=RecipesEditor,  # new (1.0)
+                icon="mdi.clipboard-list-outline",
             ),
             "pattern": EditorConfig(
                 title="Pattern",

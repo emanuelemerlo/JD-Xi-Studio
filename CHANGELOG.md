@@ -31,6 +31,28 @@ on the JD-Xi display.
   .syx, random tone) stays on the right
 - The original Analog editor (`AnalogSynthEditor`) is still in the code; the app opens the new one
 
+### Recipes (new)
+
+- **Parts → Recipes…** (Ctrl+Shift+R): step-by-step instructions to make a sound, as in the mockups
+- **New recipe** three ways: the template (.xlsx with menus, or .csv; saved from the app), **import a
+  file** (.xlsx, .csv, .md, .txt, .pdf) or a **table pasted** from a document or web page, or the
+  **recipe editor** (menus offer only valid parts, groups and parameters; checked while you write)
+- **Check** before use, row by row: recognized, to confirm (a similar name, a row with several
+  parameters split, a default wave), to fix (out of range, unknown parameter, missing part or Su;
+  with the closest name or value to use), by ear; text that is not a row is kept as notes; rows
+  without a part take the starting tone's part
+- **Guide**: one step at a time, the recipe's value next to the JD-Xi's with its state (done, in
+  range, to set, by ear); set one row or all the missing values of a step (sent exactly as when the
+  control is moved), go to the control, read the JD-Xi again; how to keep the sound with [Menu/Write]
+- Values as on the display: numbers with sign or unit, option names, ranges (55–65), pan L20/20R,
+  D50:50W, note values, tempo 120.5, PCM/drum waves and arpeggio styles by number, HF Damp in Hz
+  (the nearest of the JD-Xi's values); "Su" chooses the partial (1-3, all when empty), the drum
+  instrument and wave (SD1/W2) or the part (D1, AN...)
+- **Library** of saved recipes (~/.jdxi_editor/recipes); **export** to the template .xlsx, .csv or
+  Markdown; take the values of a recipe's rows from the JD-Xi
+- Every name of the template is matched to a parameter of the new editors: checked by tests
+- New dependencies: openpyxl (the .xlsx template) and pypdf (recipes in PDF files)
+
 ### Vocal Effect editor (new)
 
 - **AutoPitch and Vocoder** with every parameter of Program Vocal Effect (MIDI Implementation) and the

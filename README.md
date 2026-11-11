@@ -36,6 +36,8 @@
 - **MIDI Debugger**: Monitor and debug MIDI messages efficiently.
 - **New Analog editor** (1.0): all 46 parameters on one screen, filter curve and envelopes to drag,
   drawn waveforms, and an information panel that explains the parameter under the pointer.
+- **Recipes** (1.0): import a recipe (template .xlsx/.csv, Markdown, text, PDF or a pasted table),
+  check it row by row, then follow it step by step with the JD-Xi's values next to the recipe's.
 - **New Vocal Effect and Arpeggio editors** (1.0): AutoPitch and Vocoder with every parameter; the
   arpeggio with its timing drawn and the parts it plays.
 - **New Drum Kit editor** (1.0): the 37 drum partials as pads, each with its four waves, pitch,

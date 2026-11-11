@@ -130,7 +130,7 @@ def partial_block(partial: int, t: _Texts) -> Block:
           description=tr("Amount of delay applied to this partial (the MIDI Implementation calls it Chorus Send Level).")),
         p("REVERB_SEND_LEVEL", 0x1A, "Rev Send Lev", "COMMON", page=9, long=tr("Reverb Send Level"),
           description=tr("Amount of reverb applied to this partial.")),
-        p("RELATIVE_LEVEL", 0x0142, "Relative Level", "COMMON", lo=-64, hi=63, raw_offset=64, signed=True, page=24,
+        p("RELATIVE_LEVEL", 0x0142, "Relative Level", "TVA", lo=-64, hi=63, raw_offset=64, signed=True, page=24,
           description=tr("Volume correction of the partial, normally 0; set by the key-based controller messages.")),
         # WAVE (p. 21)
         p("WMT_VELOCITY_CONTROL", 0x20, "WMT Vel Ctrl", "WAVE", hi=2, choices=("OFF", "ON", "RANDOM"), page=21,
@@ -488,7 +488,7 @@ class DrumKitEditor(tone_editor_base()):
         common.body.addLayout(box)
         for key in ("ASSIGN_TYPE", "ENV_MODE", "ONE_SHOT_MODE", "OUTPUT_ASSIGN", "RECEIVE_EXPRESSION", "RECEIVE_HOLD_1"):
             common.body.addWidget(self.control(s(key)))
-        common.body.addLayout(self.knob_row([s("MUTE_GROUP"), s("PITCH_BEND_RANGE"), s("RELATIVE_LEVEL")]))
+        common.body.addLayout(self.knob_row([s("MUTE_GROUP"), s("PITCH_BEND_RANGE")]))
         sends = self.card(tr("OUTPUT"), tr("Parameter Guide, p. 9"))
         sends.body.addLayout(self.knob_row([s("OUTPUT_LEVEL"), s("CHORUS_SEND_LEVEL"), s("REVERB_SEND_LEVEL")]))
         section(common, sends)
@@ -555,7 +555,7 @@ class DrumKitEditor(tone_editor_base()):
         # TVA
         tva = self.card(f"{name}: TVA", tr("Parameter Guide, p. 24"))
         tva.body.addWidget(self.control(s("TVA_LEVEL_VELOCITY_CURVE")))
-        tva.body.addLayout(self.knob_row([s("PARTIAL_LEVEL"), s("TVA_LEVEL_VELOCITY_SENS")]))
+        tva.body.addLayout(self.knob_row([s("PARTIAL_LEVEL"), s("TVA_LEVEL_VELOCITY_SENS"), s("RELATIVE_LEVEL")]))
         tva.body.addLayout(self.knob_row([s("PARTIAL_PAN"), s("PARTIAL_RANDOM_PAN_DEPTH"), s("PARTIAL_ALTERNATE_PAN_DEPTH")]))
         env = self.card(tr("TVA ENVELOPE"), tr("Parameter Guide, p. 24"))
         env.body.addWidget(StepEnvelopeView(self.info_hub, [v(f"TVA_ENV_TIME_{i}") for i in range(1, 5)],
