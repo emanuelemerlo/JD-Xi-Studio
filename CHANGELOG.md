@@ -57,6 +57,19 @@ on the JD-Xi display.
   Vocal Effect pink (they shared colours with the parts before); the preset panel of Digital 2 says
   DIGITAL SYNTH 2
 
+### Programs on one page (new layout)
+
+- **Library**: every program (A–D preset, E–H user) in one table with number, name, genre and the
+  four tones; search by name or number, genre, bank buttons A–H; a double click (or Load program)
+  loads it, and the MIDI line shows its bank select and program change
+- **Parts of the program**: the tone of Digital 1, Digital 2, Drums and Analog with their channels,
+  updated when a program loads or a tone changes; a double click opens the part's editor
+- **Mixer**: the original level strips and mutes on the same page
+- **Rename…** and **Parts and advanced settings…** (opens Program: common and parts: level, pan,
+  offsets, scale, receive switches, zones) next to the display
+- **Below, in tabs**: Presets, User Programs, Playlist, Playlist Editor, System Settings (the same
+  widgets as before)
+
 ### Pattern and MIDI file player (new layout)
 
 - **Same editors, same engine**: the sequencer, learning, measures, copy/paste, USB recorder,
