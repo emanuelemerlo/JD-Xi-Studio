@@ -316,12 +316,12 @@ class JDXiInstrument(JDXiWindow):
 
     def _on_up_to_date(self, latest: str, manual: bool) -> None:
         if manual:
-            from jdxi_editor.project import __program__, __version__
+            from jdxi_editor.project import __display_name__, __version__
 
             QMessageBox.information(
                 self,
                 tr("Check for Updates"),
-                tr("You're up to date: {program} {version} is the newest release.").format(program=__program__, version=__version__),
+                tr("You're up to date: {program} {version} is the newest release.").format(program=__display_name__, version=__version__),
             )
 
     def _on_update_check_failed(self, message: str, manual: bool) -> None:

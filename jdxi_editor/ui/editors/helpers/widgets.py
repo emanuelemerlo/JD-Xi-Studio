@@ -2,6 +2,7 @@
 Helpers for editors
 """
 
+from jdxi_editor.i18n import tr
 from typing import Any
 
 from PySide6.QtGui import QPixmap
@@ -73,7 +74,7 @@ def create_jdxi_button_from_spec(
     tooltip = getattr(spec, "tooltip", "") or ""
     if not isinstance(tooltip, str):
         tooltip = ""
-    button.setToolTip(tooltip)
+    button.setToolTip(tr(tooltip) if tooltip else "")
     button.setCheckable(checkable)
     if getattr(spec, "slot", None) is not None:
         button.clicked.connect(spec.slot)
@@ -121,7 +122,7 @@ def create_jdxi_row(
         icon_label = QLabel()
         icon_label.setPixmap(icon_pixmap)
         label_layout.addWidget(icon_label)
-    label = QLabel(label)
+    label = QLabel(tr(label) if label else "")  # labels from specs: translated here
     label.setStyleSheet(JDXi.UI.Style.STYLE_FOREGROUND)
     label_layout.addWidget(label)
     # A click on the label clicks the round button beside it, if there is one

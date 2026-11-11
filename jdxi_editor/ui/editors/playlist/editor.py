@@ -129,7 +129,7 @@ class PlaylistEditor(QWidget):
         # Initialize with empty options - will be populated by populate_playlist_combo()
         self.playlist_editor_combo = SearchableFilterableComboBox(
             label="",
-            options=["-- Select a Playlist --"],
+            options=[tr("-- Select a Playlist --")],
             values=[0],  # Use 0 as placeholder value for "no selection"
             categories=None,
             category_filter_func=None,
@@ -187,7 +187,7 @@ class PlaylistEditor(QWidget):
         self.playlist_programs_table = QTableWidget()
         self.playlist_programs_table.setColumnCount(6)
         self.playlist_programs_table.setHorizontalHeaderLabels(
-            ["Bank", "Number", "Program Name", "MIDI File Name", "Cheat Preset", "Play"]
+            [tr(h) for h in ("Bank", "Number", "Program Name", "MIDI File Name", "Cheat Preset", "Play")]
         )
 
         # Apply custom styling
@@ -370,7 +370,7 @@ class PlaylistEditor(QWidget):
                 header = QTableWidgetItem()
                 table.setVerticalHeaderItem(row, header)
             header.setText("▶" if is_playing else str(row + 1))
-            header.setToolTip("Playing" if is_playing else "")
+            header.setToolTip(tr("Playing") if is_playing else "")
             for column in range(table.columnCount()):
                 item = table.item(row, column)
                 if item is not None and item.font().bold() != is_playing:
@@ -452,7 +452,7 @@ class PlaylistEditor(QWidget):
             playlists = db.get_all_playlists()
 
             # Build options and values lists for SearchableFilterableComboBox
-            playlist_options = ["-- Select a Playlist --"]
+            playlist_options = [tr("-- Select a Playlist --")]
             playlist_values = [0]  # 0 = no selection
             # Store mapping of value to playlist_id for lookup
             self._playlist_value_to_id = {0: None}
@@ -652,7 +652,7 @@ class PlaylistEditor(QWidget):
         layout.setSpacing(2)
 
         cheat_preset_combo = QComboBox()
-        cheat_preset_combo.addItem("None", None)
+        cheat_preset_combo.addItem(tr("None"), None)
         for preset in JDXi.UI.Preset.Digital.LIST:
             preset_id_int = int(preset["id"])
             cheat_preset_combo.addItem(

@@ -1,3 +1,4 @@
+from jdxi_editor.i18n import tr
 from typing import Union
 
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout
@@ -8,13 +9,13 @@ from picoui.specs.widgets import ButtonSpec
 
 # Fallback tooltips when not using ButtonSpec
 _TOOLTIP_MAP = {
-    "Digital Synth 1": "Digital Synth 1: Open the Digital Synth 1 editor",
-    "Digital Synth 2": "Digital Synth 2: Open the Digital Synth 2 editor",
-    "Drums": "Drums: Open the Drums editor",
-    "Analog Synth": "Analog Synth: Open the Analog Synth editor",
-    "Arpeggiator": "Arpeggiator: Open the Arpeggiator editor",
-    "Vocoder": "Vocoder: Open the Vocal Effects editor",
-    "Effects": "Effects: Open the Effects editor",
+    "Digital Synth 1": tr("Digital Synth 1: Open the Digital Synth 1 editor"),
+    "Digital Synth 2": tr("Digital Synth 2: Open the Digital Synth 2 editor"),
+    "Drums": tr("Drums: Open the Drums editor"),
+    "Analog Synth": tr("Analog Synth: Open the Analog Synth editor"),
+    "Arpeggiator": tr("Arpeggiator: Open the Arpeggiator editor"),
+    "Vocoder": tr("Vocoder: Open the Vocal Effects editor"),
+    "Effects": tr("Effects: Open the Effects editor"),
 }
 
 
@@ -33,10 +34,10 @@ def create_button_row(
         spec = text_or_spec
         text = spec.label or ""
         slot = spec.slot
-        tooltip = spec.tooltip or _TOOLTIP_MAP.get(text, f"{text}: Click to open")
+        tooltip = tr(spec.tooltip) if spec.tooltip else _TOOLTIP_MAP.get(text, text)
     else:
         text = text_or_spec
-        tooltip = _TOOLTIP_MAP.get(text, f"{text}: Click to open")
+        tooltip = _TOOLTIP_MAP.get(text, text)
 
     if not vertical:
         row = QHBoxLayout()

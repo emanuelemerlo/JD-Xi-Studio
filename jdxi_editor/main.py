@@ -88,7 +88,7 @@ def main() -> None:
         load_translations(app)
 
         # --- Set application metadata
-        app.setApplicationName(__program__)
+        app.setApplicationName(__program__)  # settings key: kept
         app.setApplicationVersion(__version__)
         app.setOrganizationName("mabsoft")
         app.setOrganizationDomain("com.mabsoft")
@@ -128,6 +128,14 @@ def main() -> None:
                 icon.addPixmap(pixmap)
                 app.setWindowIcon(icon)
                 log_message("Using fallback icon")
+
+        # --- JD-Xi Studio's own mark on the windows (the exe keeps its icon)
+        try:
+            from jdxi_editor.ui.v2.brand import icon as studio_icon
+
+            app.setWindowIcon(studio_icon())
+        except Exception:  # the mark is a nicety
+            pass
 
         splash, progress_bar, status_label = setup_splash_screen(app)
 
@@ -206,21 +214,21 @@ def setup_splash_screen(
     content_layout.setContentsMargins(0, 0, 0, 0)
     content_layout.setSpacing(10)
 
-    # --- Logo on the left; title and trademark notice on the right
-    image_path = resource_path((Path("resources") / "JDXI-Editor_logo_640.png"))
-    pixmap = QPixmap(image_path)
-    if not pixmap.isNull():
-        pixmap = pixmap.scaled(
-            JDXiUIDimensions.SPLASH.IMAGE_WIDTH,
-            JDXiUIDimensions.SPLASH.IMAGE_HEIGHT,
-            Qt.KeepAspectRatio,
-            Qt.SmoothTransformation,
-        )
-    logo = create_icon_label_with_pixmap(pixmap)
+    # --- JD-Xi Studio's mark on the left; name, origin and trademark notice on the right
+    # (its own mark and name: an independent edition of JDXI-Editor, not to be confused with it)
+    from jdxi_editor.project import __display_name__
+    from jdxi_editor.ui.v2.brand import draw_mark, origin_line, title_font
 
-    title = DigitalTitle(__program__, show_upper_text=False)
+    side = min(JDXiUIDimensions.SPLASH.IMAGE_WIDTH, JDXiUIDimensions.SPLASH.IMAGE_HEIGHT, 220)
+    logo = create_icon_label_with_pixmap(draw_mark(side))
+
+    title = QLabel(__display_name__)
     title.setObjectName("TitleLabel")
-    title.setStyleSheet(JDXi.UI.Style.INSTRUMENT_TITLE_LABEL)
+    title.setFont(title_font(34))
+    title.setStyleSheet("color: #f3f3f3; background: transparent;")
+    origin = QLabel(origin_line())
+    origin.setObjectName("SubtitleLabel")
+    origin.setStyleSheet("color: #a3a6ad; font-size: 14px; background: transparent;")
 
     notice = QLabel(
         tr("'Roland' and 'JD-Xi' are trademarks of the Roland Corporation "
@@ -238,6 +246,7 @@ def setup_splash_screen(
     side_layout.setContentsMargins(0, 12, 12, 0)
     side_layout.setSpacing(16)
     side_layout.addWidget(title)
+    side_layout.addWidget(origin)
     side_layout.addWidget(notice)
     side_layout.addStretch()
 
@@ -257,8 +266,13 @@ def setup_splash_screen(
     content_layout.addWidget(status_label)
 
     # --- Footer credits
+    from jdxi_editor.project import __home_url__
+
     credits = QLabel(
-        tr('{program}  •  Version {version}\nDeveloped by mabsoft.com — Inspired by modern instrument editors').format(program=__program__, version=__version__)
+        tr("{program}  •  Version {version}  •  {home}\nAn independent edition of JDXI-Editor by Mark Brooks "
+           "(mabsoft.com), MIT licence").format(
+            program=__display_name__, version=__version__, home=__home_url__.replace("https://", "")
+        )
     )
     credits.setObjectName("CreditLabel")
     credits.setAlignment(Qt.AlignCenter)

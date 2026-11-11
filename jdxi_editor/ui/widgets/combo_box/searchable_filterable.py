@@ -130,17 +130,17 @@ class SearchableFilterableComboBox(QWidget):
         self.search_box: Optional[QLineEdit] = None
 
         layout = create_form_layout(parent=self)
-        top_bar, self.label_widget = create_header_row(label, show_label, spacing=4)
+        top_bar, self.label_widget = create_header_row(tr(label) if label else label, show_label, spacing=4)
         layout.addRow(top_bar)
         if show_category and (self._categories or always_show_filters):
-            category_bar = self.add_categories(category_label or tr("Category:"))
+            category_bar = self.add_categories(tr(category_label) if category_label else tr("Category:"))
             layout.addRow(category_bar)
         if show_bank and (self._banks or always_show_filters):
-            bank_bar = self.add_banks(bank_label)
+            bank_bar = self.add_banks(tr(bank_label))
             layout.addRow(bank_bar)
         if show_search:
             search_row = self.add_search(
-                search_label or tr("Search:"), search_placeholder, use_analog_style
+                tr(search_label) if search_label else tr("Search:"), tr(search_placeholder), use_analog_style
             )
             layout.addRow(search_row)
 
@@ -166,7 +166,7 @@ class SearchableFilterableComboBox(QWidget):
         """add categories"""
         category_bar, self.category_combo = create_combo_row(
             label=category_label,
-            all_items_label="All Categories",
+            all_items_label=tr("All Categories"),
             items=self._categories,
             slot=self._on_category_changed,
         )
@@ -177,7 +177,7 @@ class SearchableFilterableComboBox(QWidget):
         """add banks"""
         bank_bar, self.bank_combo = create_combo_row(
             label=bank_label,
-            all_items_label="All Banks",
+            all_items_label=tr("All Banks"),
             items=self._banks,
             slot=self._on_bank_changed,
         )
@@ -240,12 +240,12 @@ class SearchableFilterableComboBox(QWidget):
 
     def _on_category_changed(self, category: str) -> None:
         """Handle category selection change."""
-        self._current_category = category if category != "All Categories" else ""
+        self._current_category = category if category not in ("All Categories", tr("All Categories")) else ""
         self._populate_combo()
 
     def _on_bank_changed(self, bank: str) -> None:
         """Handle bank selection change."""
-        self._current_bank = bank if bank != "All Banks" else ""
+        self._current_bank = bank if bank not in ("All Banks", tr("All Banks")) else ""
         self._populate_combo()
 
     def _populate_combo(self) -> None:
@@ -391,7 +391,7 @@ class SearchableFilterableComboBox(QWidget):
 
     def setLabel(self, label: str) -> None:
         """Set the main label text."""
-        self.label_widget.setText(label)
+        self.label_widget.setText(tr(label) if label else label)
 
     def set_options(
         self,
@@ -423,7 +423,7 @@ class SearchableFilterableComboBox(QWidget):
             if self.category_combo:
                 self.category_combo.blockSignals(True)
                 self.category_combo.clear()
-                self.category_combo.addItem("All Categories")
+                self.category_combo.addItem(tr("All Categories"))
                 for cat in self._categories:
                     self.category_combo.addItem(cat)
                 self.category_combo.setCurrentIndex(0)
@@ -457,7 +457,7 @@ class SearchableFilterableComboBox(QWidget):
         if self.bank_combo:
             self.bank_combo.blockSignals(True)
             self.bank_combo.clear()
-            self.bank_combo.addItem("All Banks")
+            self.bank_combo.addItem(tr("All Banks"))
             for bank in self._banks:
                 self.bank_combo.addItem(bank)
             self.bank_combo.setCurrentIndex(0)

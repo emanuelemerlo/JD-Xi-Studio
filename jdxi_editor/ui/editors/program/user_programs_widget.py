@@ -96,7 +96,7 @@ class UserProgramsWidget(QWidget):
         self.user_programs_table = QTableWidget()
         self.user_programs_table.setColumnCount(12)
         self.user_programs_table.setHorizontalHeaderLabels(
-            [
+            [tr(h) for h in (
                 "ID",
                 "Name",
                 "Genre",
@@ -109,7 +109,7 @@ class UserProgramsWidget(QWidget):
                 "Analog",
                 "Drums",
                 "Play",
-            ]
+            )]
         )
 
         # Apply custom styling

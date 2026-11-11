@@ -4,7 +4,372 @@
     <context>
         <name>JDXi</name>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="226" />
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="13" />
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="26" />
+            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="68" />
+            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="166" />
+            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="213" />
+            <source>Play</source>
+            <translation>Play</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="13" />
+            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="77" />
+            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="175" />
+            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="222" />
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="325" />
+            <source>Stop</source>
+            <translation>Stop</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="13" />
+            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="126" />
+            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="184" />
+            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="231" />
+            <source>Pause</source>
+            <translation>Pausa</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="13" />
+            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="126" />
+            <source>Resume</source>
+            <translation>Riprendi</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="13" />
+            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="193" />
+            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="240" />
+            <source>Shuffle Play</source>
+            <translation>Riproduzione casuale</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="13" />
+            <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="54" />
+            <source>Load</source>
+            <translation>Carica</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="13" />
+            <location filename="../../jdxi_editor/ui/widgets/usb/recording.py" line="116" />
+            <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="67" />
+            <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="126" />
+            <source>Save</source>
+            <translation>Salva</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="14" />
+            <source>Refresh</source>
+            <translation>Aggiorna</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="14" />
+            <source>Clear…</source>
+            <translation>Svuota…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="14" />
+            <source>Add Measure</source>
+            <translation>Aggiungi misura</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="14" />
+            <source>Copy Section</source>
+            <translation>Copia sezione</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="14" />
+            <source>Paste Section</source>
+            <translation>Incolla sezione</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="14" />
+            <source>Tap</source>
+            <translation>Tap</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="15" />
+            <source>Vel:</source>
+            <translation>Vel:</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="15" />
+            <source>BPM:</source>
+            <translation>BPM:</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="15" />
+            <source>Port</source>
+            <translation>Porta</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="15" />
+            <source>Loop</source>
+            <translation>Loop</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="15" />
+            <source>Set A</source>
+            <translation>Imposta A</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="15" />
+            <source>Set B</source>
+            <translation>Imposta B</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="15" />
+            <source>Clear A–B</source>
+            <translation>Cancella A–B</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="15" />
+            <location filename="../../jdxi_editor/ui/dialogs/trim.py" line="82" />
+            <source>Trim</source>
+            <translation>Ritaglia</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="16" />
+            <source>Panic</source>
+            <translation>Panic</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="16" />
+            <source>Automation:</source>
+            <translation>Automazione:</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="16" />
+            <source>Insert Program Change Here</source>
+            <translation>Inserisci program change qui</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="16" />
+            <source>Detect Drums</source>
+            <translation>Rileva batteria</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="17" />
+            <source>Classify Tracks</source>
+            <translation>Classifica tracce</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="17" />
+            <source>Apply Presets</source>
+            <translation>Applica preset</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="17" />
+            <source>Track Classification</source>
+            <translation>Classificazione tracce</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="17" />
+            <source>Mute Channels</source>
+            <translation>Canali in mute</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="18" />
+            <source>MIDI Event Suppression</source>
+            <translation>Filtro eventi MIDI</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="18" />
+            <source>Keys/Guitars</source>
+            <translation>Tastiere/Chitarre</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="18" />
+            <source>Strings</source>
+            <translation>Archi</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="18" />
+            <source>Bass</source>
+            <translation>Basso</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="18" />
+            <source>Misc</source>
+            <translation>Altro</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="18" />
+            <source>Modes</source>
+            <translation>Modalità</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="19" />
+            <location filename="../../jdxi_editor/ui/v2/players.py" line="161" />
+            <source>Transport</source>
+            <translation>Trasporto</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="19" />
+            <location filename="../../jdxi_editor/ui/v2/players.py" line="176" />
+            <source>File</source>
+            <translation>File</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="21" />
+            <source>Edit Program Name</source>
+            <translation>Modifica nome programma</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="21" />
+            <source>Load Program</source>
+            <translation>Carica programma</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="21" />
+            <location filename="../../jdxi_editor/ui/preset/widget.py" line="522" />
+            <source>Load Preset</source>
+            <translation>Carica preset</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="21" />
+            <location filename="../../jdxi_editor/ui/editors/program/group.py" line="55" />
+            <source>Load a program</source>
+            <translation>Carica un programma</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="22" />
+            <source>Add to Playlist</source>
+            <translation>Aggiungi alla playlist</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="22" />
+            <source>Delete from Playlist</source>
+            <translation>Togli dalla playlist</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="22" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/table.py" line="260" />
+            <source>New Playlist</source>
+            <translation>Nuova playlist</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="22" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/table.py" line="309" />
+            <source>Delete Playlist</source>
+            <translation>Elimina playlist</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="23" />
+            <source>Refresh Playlist</source>
+            <translation>Aggiorna playlist</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="23" />
+            <source>Save Changes</source>
+            <translation>Salva modifiche</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="23" />
+            <source>Mixer Level Settings</source>
+            <translation>Livelli del mixer</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="23" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/program.py" line="26" />
+            <source>Program</source>
+            <translation>Programma</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="23" />
+            <location filename="../../jdxi_editor/ui/editors/preset/editor.py" line="349" />
+            <location filename="../../jdxi_editor/ui/preset/widget.py" line="487" />
+            <source>Preset</source>
+            <translation>Preset</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="24" />
+            <source>Genre:</source>
+            <translation>Genere:</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="24" />
+            <source>Bank:</source>
+            <translation>Banco:</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="24" />
+            <source>Search programs...</source>
+            <translation>Cerca programmi…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="24" />
+            <location filename="../../jdxi_editor/ui/editors/preset/editor.py" line="345" />
+            <location filename="../../jdxi_editor/ui/preset/widget.py" line="353" />
+            <location filename="../../jdxi_editor/ui/preset/widget.py" line="495" />
+            <location filename="../../jdxi_editor/ui/widgets/preset/combo_box.py" line="48" />
+            <source>Search presets...</source>
+            <translation>Cerca preset...</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="24" />
+            <source>Search playlists...</source>
+            <translation>Cerca playlist…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="25" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="455" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="132" />
+            <source>-- Select a Playlist --</source>
+            <translation>-- Scegli una playlist --</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="25" />
+            <location filename="../../jdxi_editor/ui/v2/program.py" line="419" />
+            <source>Program Name</source>
+            <translation>Nome del programma</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="25" />
+            <source>MIDI File Name</source>
+            <translation>File MIDI</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="25" />
+            <source>Cheat Preset</source>
+            <translation>Preset di riserva</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="25" />
+            <source>Number</source>
+            <translation>Numero</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="26" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="653" />
+            <source>Description</source>
+            <translation>Descrizione</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="26" />
+            <location filename="../../jdxi_editor/ui/editors/program/group.py" line="96" />
+            <location filename="../../jdxi_editor/ui/v2/names.py" line="18" />
+            <source>Programs</source>
+            <translation>Programmi</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="26" />
+            <source>Bank</source>
+            <translation>Banco</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="26" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="125" />
+            <source>Name</source>
+            <translation>Nome</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="26" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="125" />
+            <source>Genre</source>
+            <translation>Genere</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/main.py" line="234" />
             <source>'Roland' and 'JD-Xi' are trademarks of the Roland Corporation in the United States and/or other countries.
 
 This app is an independent, unofficial companion tool for the Roland JD-Xi synthesizer. It is not affiliated with, endorsed by, or sponsored by Roland Corporation in any way.
@@ -17,16 +382,16 @@ Questa app è uno strumento indipendente e non ufficiale per il sintetizzatore R
 Tutti i nomi di prodotti, i marchi e i loghi appartengono ai rispettivi proprietari.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="135" />
+            <location filename="../../jdxi_editor/main.py" line="143" />
             <source>Initializing MIDI subsystem…</source>
             <translation>Avvio del sistema MIDI…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="261" />
-            <source>{program}  •  Version {version}
-Developed by mabsoft.com — Inspired by modern instrument editors</source>
-            <translation>{program}  •  Versione {version}
-Sviluppato da mabsoft.com — Ispirato ai moderni editor per strumenti</translation>
+            <location filename="../../jdxi_editor/main.py" line="272" />
+            <source>{program}  •  Version {version}  •  {home}
+An independent edition of JDXI-Editor by Mark Brooks (mabsoft.com), MIT licence</source>
+            <translation>{program}  •  Versione {version}  •  {home}
+Edizione indipendente di JDXI-Editor di Mark Brooks (mabsoft.com), licenza MIT</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/recipes/check.py" line="183" />
@@ -115,17 +480,17 @@ Sviluppato da mabsoft.com — Ispirato ai moderni editor per strumenti</translat
             <translation>Simili: {names}.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="75" />
-            <source>&lt;br&gt;&lt;b&gt;Credits:&lt;/b&gt;&lt;br&gt;This application uses the following libraries:&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://mido.readthedocs.io/'&gt;Mido&lt;/a&gt; – MIDI message parsing and sending&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.music.mcgill.ca/~gary/rtmidi/'&gt;RtMidi&lt;/a&gt; – Low-level MIDI communication&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.qt.io/'&gt;Qt&lt;/a&gt; – Cross-platform application framework&lt;br&gt;Source code available on &lt;a style='color: blue' href='https://github.com/emanuelemerlo/JDXI-Editor'&gt;GitHub&lt;/a&gt;&lt;br&gt;An independent fork of &lt;a style='color: blue' href='https://github.com/markxbrooks/JDXI-Editor'&gt;JDXI-Editor&lt;/a&gt; by Mark Brooks&lt;br&gt;Licensed under the &lt;a style='color: blue' href='https://opensource.org/licenses/MIT'&gt;MIT License&lt;/a&gt;&lt;br&gt;'Roland' and 'JD-Xi' are Trademarks of the Roland Corporation &lt;br&gt; in the United States and/or other countries&lt;br&gt;This app is an independent, unofficial companion tool for the Roland JDXi synthesizer&lt;br&gt;This app is not affiliated with, endorsed by, or sponsored by Roland Corporation in any way&lt;br&gt;All product names, trademarks, and logos are the property of their respective owners.&lt;br&gt;</source>
-            <translation>&lt;br&gt;&lt;b&gt;Riconoscimenti:&lt;/b&gt;&lt;br&gt;Questa applicazione usa le seguenti librerie:&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://mido.readthedocs.io/'&gt;Mido&lt;/a&gt; – lettura e invio dei messaggi MIDI&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.music.mcgill.ca/~gary/rtmidi/'&gt;RtMidi&lt;/a&gt; – comunicazione MIDI di basso livello&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.qt.io/'&gt;Qt&lt;/a&gt; – framework per applicazioni multipiattaforma&lt;br&gt;Codice sorgente su &lt;a style='color: blue' href='https://github.com/emanuelemerlo/JDXI-Editor'&gt;GitHub&lt;/a&gt;&lt;br&gt;Fork indipendente di &lt;a style='color: blue' href='https://github.com/markxbrooks/JDXI-Editor'&gt;JDXI-Editor&lt;/a&gt; di Mark Brooks&lt;br&gt;Distribuito con &lt;a style='color: blue' href='https://opensource.org/licenses/MIT'&gt;licenza MIT&lt;/a&gt;&lt;br&gt;'Roland' e 'JD-Xi' sono marchi di Roland Corporation &lt;br&gt; negli Stati Uniti e/o in altri paesi&lt;br&gt;Questa app è uno strumento indipendente e non ufficiale per il sintetizzatore Roland JD-Xi&lt;br&gt;Non è affiliata, approvata o sponsorizzata in alcun modo da Roland Corporation&lt;br&gt;Tutti i nomi di prodotti, i marchi e i loghi appartengono ai rispettivi proprietari.&lt;br&gt;</translation>
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="79" />
+            <source>&lt;br&gt;&lt;b&gt;Credits:&lt;/b&gt;&lt;br&gt;This application uses the following libraries:&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://mido.readthedocs.io/'&gt;Mido&lt;/a&gt; – MIDI message parsing and sending&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.music.mcgill.ca/~gary/rtmidi/'&gt;RtMidi&lt;/a&gt; – Low-level MIDI communication&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.qt.io/'&gt;Qt&lt;/a&gt; – Cross-platform application framework&lt;br&gt;Source code available on &lt;a style='color: blue' href='https://github.com/emanuelemerlo/JDXI-Editor'&gt;GitHub&lt;/a&gt;&lt;br&gt;JD-Xi Studio is an independent edition of &lt;a style='color: blue' href='https://github.com/markxbrooks/JDXI-Editor'&gt;JDXI-Editor&lt;/a&gt; by Mark Brooks&lt;br&gt;Licensed under the &lt;a style='color: blue' href='https://opensource.org/licenses/MIT'&gt;MIT License&lt;/a&gt;&lt;br&gt;'Roland' and 'JD-Xi' are Trademarks of the Roland Corporation &lt;br&gt; in the United States and/or other countries&lt;br&gt;This app is an independent, unofficial companion tool for the Roland JDXi synthesizer&lt;br&gt;This app is not affiliated with, endorsed by, or sponsored by Roland Corporation in any way&lt;br&gt;All product names, trademarks, and logos are the property of their respective owners.&lt;br&gt;</source>
+            <translation>&lt;br&gt;&lt;b&gt;Riconoscimenti:&lt;/b&gt;&lt;br&gt;Questa applicazione usa le seguenti librerie:&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://mido.readthedocs.io/'&gt;Mido&lt;/a&gt; – lettura e invio dei messaggi MIDI&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.music.mcgill.ca/~gary/rtmidi/'&gt;RtMidi&lt;/a&gt; – comunicazione MIDI di basso livello&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.qt.io/'&gt;Qt&lt;/a&gt; – framework per applicazioni multipiattaforma&lt;br&gt;Codice sorgente su &lt;a style='color: blue' href='https://github.com/emanuelemerlo/JDXI-Editor'&gt;GitHub&lt;/a&gt;&lt;br&gt;JD-Xi Studio è un'edizione indipendente di &lt;a style='color: blue' href='https://github.com/markxbrooks/JDXI-Editor'&gt;JDXI-Editor&lt;/a&gt; di Mark Brooks&lt;br&gt;Distribuito con &lt;a style='color: blue' href='https://opensource.org/licenses/MIT'&gt;licenza MIT&lt;/a&gt;&lt;br&gt;'Roland' e 'JD-Xi' sono marchi di Roland Corporation &lt;br&gt; negli Stati Uniti e/o in altri paesi&lt;br&gt;Questa app è uno strumento indipendente e non ufficiale per il sintetizzatore Roland JD-Xi&lt;br&gt;Non è affiliata, approvata o sponsorizzata in alcun modo da Roland Corporation&lt;br&gt;Tutti i nomi di prodotti, i marchi e i loghi appartengono ai rispettivi proprietari.&lt;br&gt;</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="37" />
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="38" />
             <source>about {program}</source>
             <translation>Informazioni su {program}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="63" />
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="65" />
             <source>{program}
 version:	{version}</source>
             <translation>{program}
@@ -142,74 +507,69 @@ versione:	{version}</translation>
             <translation>Attuale: CC#0 {msb} · CC#32 {lsb} · PC {program}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="62" />
-            <source>JD-XI Editor settings</source>
-            <translation>Impostazioni di JD-Xi Editor</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="94" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="95" />
             <source>Log file error reporting level:</source>
             <translation>Livello di dettaglio del file di log:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="101" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="102" />
             <source>Enable Logging?</source>
             <translation>Attivare il log?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="109" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="110" />
             <source>Logging On or Off:</source>
             <translation>Log attivo o spento:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="120" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="121" />
             <source>Silence MIDI note logging (note on/off)</source>
             <translation>Non registrare le note MIDI (note on/off)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="133" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="134" />
             <source>Reduce log volume from MIDI notes:</source>
             <translation>Riduci il log delle note MIDI:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="143" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="144" />
             <source>Validate MIDI sends against combo selection (log only)</source>
             <translation>Confronta gli invii MIDI con la voce scelta (solo nel log)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="156" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="157" />
             <source>MIDI selection cross-validation:</source>
             <translation>Verifica incrociata della selezione MIDI:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="174" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="175" />
             <source>Check GitHub for new releases once a day (on by default):</source>
             <translation>Cerca nuove versioni su GitHub una volta al giorno (attivo di serie):</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="176" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="177" />
             <source>Check for updates automatically</source>
             <translation>Cerca aggiornamenti automaticamente</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="191" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="192" />
             <source>Interface language:</source>
             <translation>Lingua dell'interfaccia:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="194" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="195" />
             <source>Same as the system</source>
             <translation>Come il sistema</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="199" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="200" />
             <source>The new language is used from the next start.</source>
             <translation>La nuova lingua si applica dal prossimo avvio.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/trim.py" line="82" />
-            <source>Trim</source>
-            <translation>Ritaglia</translation>
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="63" />
+            <source>{program} preferences</source>
+            <translation>Preferenze di {program}</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/dialogs/trim.py" line="104" />
@@ -439,7 +799,7 @@ versione:	{version}</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="29" />
-            <location filename="../../jdxi_editor/ui/v2/framework.py" line="316" />
+            <location filename="../../jdxi_editor/ui/v2/framework.py" line="318" />
             <location filename="../../jdxi_editor/ui/windows/patch/manager.py" line="134" />
             <location filename="../../jdxi_editor/ui/windows/patch/manager.py" line="221" />
             <location filename="../../jdxi_editor/ui/windows/patch/manager.py" line="227" />
@@ -448,7 +808,7 @@ versione:	{version}</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="32" />
-            <location filename="../../jdxi_editor/ui/v2/framework.py" line="317" />
+            <location filename="../../jdxi_editor/ui/v2/framework.py" line="319" />
             <source>Request current parameters from the synthesizer (RQ1)</source>
             <translation>Chiedi al synth i parametri attuali (RQ1)</translation>
         </message>
@@ -461,11 +821,6 @@ versione:	{version}</translation>
             <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="51" />
             <source>Previous preset</source>
             <translation>Preset precedente</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="54" />
-            <source>Load</source>
-            <translation>Carica</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="57" />
@@ -748,6 +1103,61 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Durata delle nuove note</translation>
         </message>
         <message>
+            <location filename="../../jdxi_editor/ui/editors/pattern/ui.py" line="694" />
+            <source>16 steps</source>
+            <translation>16 passi</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/pattern/ui.py" line="694" />
+            <source>12 steps</source>
+            <translation>12 passi</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/pattern/ui.py" line="700" />
+            <source>16th (1 step)</source>
+            <translation>Sedicesimo (1 passo)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/pattern/ui.py" line="701" />
+            <source>8th (2 steps)</source>
+            <translation>Ottavo (2 passi)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/pattern/ui.py" line="702" />
+            <source>Dotted 8th (3 steps)</source>
+            <translation>Ottavo puntato (3 passi)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/pattern/ui.py" line="703" />
+            <source>Quarter (4 steps)</source>
+            <translation>Quarto (4 passi)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/pattern/ui.py" line="704" />
+            <source>Dotted Quarter (6 steps)</source>
+            <translation>Quarto puntato (6 passi)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/pattern/ui.py" line="705" />
+            <source>Half (8 steps)</source>
+            <translation>Metà (8 passi)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/pattern/ui.py" line="706" />
+            <source>Dotted Half (12 steps)</source>
+            <translation>Metà puntata (12 passi)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/pattern/ui.py" line="707" />
+            <source>Whole (16 steps)</source>
+            <translation>Intero (16 passi)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="655" />
+            <source>None</source>
+            <translation>Nessuno</translation>
+        </message>
+        <message>
             <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="837" />
             <source>Add Programs to Playlist</source>
             <translation>Aggiungi programmi alla playlist</translation>
@@ -795,6 +1205,12 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="965" />
             <source>Please select at least one program to delete.</source>
             <translation>Scegli almeno un programma da eliminare.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="373" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/progress.py" line="235" />
+            <source>Playing</source>
+            <translation>In riproduzione</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="913" />
@@ -847,24 +1263,66 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
 {value1}</translation>
         </message>
         <message>
+            <location filename="../../jdxi_editor/ui/editors/playlist/progress.py" line="135" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/progress.py" line="201" />
+            <source>Stopped</source>
+            <translation>Fermo</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/playlist/progress.py" line="137" />
             <location filename="../../jdxi_editor/ui/editors/playlist/progress.py" line="220" />
             <source>No song playing</source>
             <translation>Nessun brano in riproduzione</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/table.py" line="260" />
-            <source>New Playlist</source>
-            <translation>Nuova playlist</translation>
+            <location filename="../../jdxi_editor/ui/editors/playlist/progress.py" line="205" />
+            <source>Playlist finished</source>
+            <translation>Playlist finita</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/playlist/progress.py" line="235" />
+            <source>Paused</source>
+            <translation>In pausa</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/playlist/progress.py" line="222" />
+            <source>No songs with a MIDI file</source>
+            <translation>Nessun brano con un file MIDI</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/playlist/progress.py" line="242" />
+            <source>Last song</source>
+            <translation>Ultimo brano</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/playlist/progress.py" line="237" />
+            <source>Song {n} of {count} · {state}</source>
+            <translation>Brano {n} di {count} · {state}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/playlist/progress.py" line="218" />
+            <source>{status} · 1 song</source>
+            <translation>{status} · 1 brano</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/playlist/progress.py" line="218" />
+            <source>{status} · {count} songs</source>
+            <translation>{status} · {count} brani</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/playlist/progress.py" line="222" />
+            <source>First: {title}</source>
+            <translation>Primo: {title}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/playlist/progress.py" line="242" />
+            <source>Up next: {title}</source>
+            <translation>Prossimo: {title}</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/playlist/table.py" line="260" />
             <source>Enter playlist name:</source>
             <translation>Nome della playlist:</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/table.py" line="309" />
-            <source>Delete Playlist</source>
-            <translation>Elimina playlist</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/playlist/table.py" line="291" />
@@ -919,20 +1377,6 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <location filename="../../jdxi_editor/ui/editors/preset/editor.py" line="266" />
             <source>Analog Synth</source>
             <translation>Analog Synth</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/editors/preset/editor.py" line="345" />
-            <location filename="../../jdxi_editor/ui/preset/widget.py" line="353" />
-            <location filename="../../jdxi_editor/ui/preset/widget.py" line="495" />
-            <location filename="../../jdxi_editor/ui/widgets/preset/combo_box.py" line="48" />
-            <source>Search presets...</source>
-            <translation>Cerca preset...</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/editors/preset/editor.py" line="349" />
-            <location filename="../../jdxi_editor/ui/preset/widget.py" line="487" />
-            <source>Preset</source>
-            <translation>Preset</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/preset/editor.py" line="356" />
@@ -994,12 +1438,6 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Editor playlist</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/program/group.py" line="96" />
-            <location filename="../../jdxi_editor/ui/v2/names.py" line="18" />
-            <source>Programs</source>
-            <translation>Programmi</translation>
-        </message>
-        <message>
             <location filename="../../jdxi_editor/ui/editors/program/group.py" line="117" />
             <source>System Settings</source>
             <translation>Impostazioni di sistema</translation>
@@ -1035,11 +1473,6 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <location filename="../../jdxi_editor/ui/preset/widget.py" line="301" />
             <source>Edit Tone Name</source>
             <translation>Modifica nome del tono</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/preset/widget.py" line="522" />
-            <source>Load Preset</source>
-            <translation>Carica preset</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/preset/widget.py" line="269" />
@@ -1357,6 +1790,11 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="64" />
             <source>Arpeggio for {part}</source>
             <translation>Arpeggio per {part}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/brand.py" line="71" />
+            <source>based on {project} by {author}</source>
+            <translation>basato su {project} di {author}</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/digital.py" line="137" />
@@ -3072,12 +3510,12 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Numeri dei parametri presi da JD-Xi Manager, da verificare sullo strumento: {which}.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/framework.py" line="492" />
+            <location filename="../../jdxi_editor/ui/v2/framework.py" line="494" />
             <source>Reading from JD-Xi…</source>
             <translation>Lettura dal JD-Xi…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/framework.py" line="493" />
+            <location filename="../../jdxi_editor/ui/v2/framework.py" line="495" />
             <source>Read complete</source>
             <translation>Lettura completata</translation>
         </message>
@@ -3392,19 +3830,9 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Nella MIDI Implementation; il display del JD-Xi non lo mostra.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="161" />
-            <source>Transport</source>
-            <translation>Trasporto</translation>
-        </message>
-        <message>
             <location filename="../../jdxi_editor/ui/v2/players.py" line="163" />
             <source>New steps</source>
             <translation>Nuovi passi</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="176" />
-            <source>File</source>
-            <translation>File</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/players.py" line="195" />
@@ -3562,11 +3990,6 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <location filename="../../jdxi_editor/ui/v2/program.py" line="411" />
             <source>Parameter Guide, p. 11</source>
             <translation>Parameter Guide, p. 11</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/program.py" line="419" />
-            <source>Program Name</source>
-            <translation>Nome del programma</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/program.py" line="422" />
@@ -3924,16 +4347,6 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <location filename="../../jdxi_editor/ui/v2/programs.py" line="125" />
             <source>No.</source>
             <translation>N.</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="125" />
-            <source>Name</source>
-            <translation>Nome</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="125" />
-            <source>Genre</source>
-            <translation>Genere</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/programs.py" line="125" />
@@ -4331,11 +4744,6 @@ TONE: FILTER	Cutoff KF	+50</translation>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="647" />
             <source>User program</source>
             <translation>Programma utente</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="653" />
-            <source>Description</source>
-            <translation>Descrizione</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="665" />
@@ -5041,6 +5449,20 @@ TONE: FILTER	Cutoff KF	+50</translation>
             <translation>Inserisci un preset JD-Xi per canale: can. 1→Picked Bass, can. 2→Piano, can. 3→JP8 Strings</translation>
         </message>
         <message>
+            <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="169" />
+            <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="243" />
+            <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="426" />
+            <source>All Categories</source>
+            <translation>Tutte le categorie</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="180" />
+            <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="460" />
+            <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="248" />
+            <source>All Banks</source>
+            <translation>Tutti i banchi</translation>
+        </message>
+        <message>
             <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="136" />
             <source>Category:</source>
             <translation>Categoria:</translation>
@@ -5273,19 +5695,9 @@ Nota: se il Sync del JD-Xi è MIDI o AUTO, Start avvia anche il suo pattern sequ
             <translation>Tieni solo una parte del file (il tratto A–B, se impostato); clic destro su una traccia per ritagliare solo quella</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="68" />
-            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="164" />
-            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="211" />
-            <source>Play</source>
-            <translation>Play</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="77" />
-            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="173" />
-            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="220" />
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="325" />
-            <source>Stop</source>
-            <translation>Stop</translation>
+            <location filename="../../jdxi_editor/ui/widgets/transport/playback_options.py" line="173" />
+            <source>Whole song</source>
+            <translation>Tutto il brano</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="86" />
@@ -5298,28 +5710,9 @@ Nota: se il Sync del JD-Xi è MIDI o AUTO, Start avvia anche il suo pattern sequ
             <translation>Silenzia tutto: note off più All Sound Off / All Notes Off su tutti i canali</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="182" />
-            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="229" />
-            <source>Pause</source>
-            <translation>Pausa</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="191" />
-            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="238" />
-            <source>Shuffle Play</source>
-            <translation>Riproduzione casuale</translation>
-        </message>
-        <message>
             <location filename="../../jdxi_editor/ui/widgets/usb/recording.py" line="110" />
             <source>No File Selected</source>
             <translation>Nessun file scelto</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/widgets/usb/recording.py" line="116" />
-            <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="67" />
-            <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="126" />
-            <source>Save</source>
-            <translation>Salva</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/widgets/usb/recording.py" line="126" />
@@ -5359,14 +5752,29 @@ Nota: se il Sync del JD-Xi è MIDI o AUTO, Start avvia anche il suo pattern sequ
             <translation>Scelta dell'onda</translation>
         </message>
         <message>
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/arpeggiator.py" line="61" />
+            <source>Octave Down: Lower the keyboard pitch by one octave</source>
+            <translation>Octave Down: abbassa la tastiera di un'ottava</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/arpeggiator.py" line="66" />
+            <source>Octave Up: Raise the keyboard pitch by one octave</source>
+            <translation>Octave Up: alza la tastiera di un'ottava</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/arpeggiator.py" line="71" />
+            <source>Arpeggiator On/Off: Enable or disable the arpeggiator</source>
+            <translation>Arpeggio On/Off: accende o spegne l'arpeggiatore</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/arpeggiator.py" line="75" />
+            <source>Key Hold: Hold arpeggiator notes when enabled</source>
+            <translation>Key Hold: tiene le note dell'arpeggio quando è acceso</translation>
+        </message>
+        <message>
             <location filename="../../jdxi_editor/ui/windows/jdxi/containers/parts.py" line="33" />
             <source>Parts Select</source>
             <translation>Scelta parti</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/program.py" line="26" />
-            <source>Program</source>
-            <translation>Programma</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/windows/jdxi/containers/program.py" line="48" />
@@ -5467,6 +5875,41 @@ Nota: se il Sync del JD-Xi è MIDI o AUTO, Start avvia anche il suo pattern sequ
             <location filename="../../jdxi_editor/ui/windows/jdxi/containers/tone.py" line="55" />
             <source>Tone Down: Navigate to the previous preset/tone</source>
             <translation>Tono giù: passa al preset/tono precedente</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/jdxi/helpers/button_row.py" line="12" />
+            <source>Digital Synth 1: Open the Digital Synth 1 editor</source>
+            <translation>Digital Synth 1: apre l'editor del Digital Synth 1</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/jdxi/helpers/button_row.py" line="13" />
+            <source>Digital Synth 2: Open the Digital Synth 2 editor</source>
+            <translation>Digital Synth 2: apre l'editor del Digital Synth 2</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/jdxi/helpers/button_row.py" line="14" />
+            <source>Drums: Open the Drums editor</source>
+            <translation>Drums: apre l'editor della batteria</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/jdxi/helpers/button_row.py" line="15" />
+            <source>Analog Synth: Open the Analog Synth editor</source>
+            <translation>Analog Synth: apre l'editor dell'Analog Synth</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/jdxi/helpers/button_row.py" line="16" />
+            <source>Arpeggiator: Open the Arpeggiator editor</source>
+            <translation>Arpeggiator: apre l'editor dell'arpeggio</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/jdxi/helpers/button_row.py" line="17" />
+            <source>Vocoder: Open the Vocal Effects editor</source>
+            <translation>Vocoder: apre l'editor dell'effetto voce</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/jdxi/helpers/button_row.py" line="18" />
+            <source>Effects: Open the Effects editor</source>
+            <translation>Effects: apre l'editor degli effetti</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="296" />
@@ -6228,9 +6671,24 @@ Esempio: F0 41 10 00 00 00 0E 12 19 01 20 00 01 F7</translation>
             <translation>Canale</translation>
         </message>
         <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="219" />
+            <source>Channel:</source>
+            <translation>Canale:</translation>
+        </message>
+        <message>
             <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="224" />
             <source>Control Change</source>
             <translation>Control Change</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="233" />
+            <source>Controller:</source>
+            <translation>Controller:</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="234" />
+            <source>Value:</source>
+            <translation>Valore:</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="235" />
@@ -6243,6 +6701,12 @@ Esempio: F0 41 10 00 00 00 0E 12 19 01 20 00 01 F7</translation>
             <translation>Program Change</translation>
         </message>
         <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="265" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="287" />
+            <source>Program:</source>
+            <translation>Programma:</translation>
+        </message>
+        <message>
             <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="266" />
             <source>Send PC</source>
             <translation>Invia PC</translation>
@@ -6251,6 +6715,16 @@ Esempio: F0 41 10 00 00 00 0E 12 19 01 20 00 01 F7</translation>
             <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="273" />
             <source>Bank Select + Program Change</source>
             <translation>Bank Select + Program Change</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="285" />
+            <source>Bank MSB:</source>
+            <translation>Bank MSB:</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="286" />
+            <source>Bank LSB:</source>
+            <translation>Bank LSB:</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="288" />
@@ -6343,6 +6817,24 @@ Esempio: F0 41 10 00 00 00 0E 12 19 01 20 00 01 F7</translation>
             <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="106" />
             <source>Edit Patch Name</source>
             <translation>Modifica il nome della patch</translation>
+        </message>
+        <message>
+            <source>based on {origin}</source>
+            <translation type="vanished">basato su {origin}</translation>
+        </message>
+        <message>
+            <source>{program}  •  Version {version}
+Developed by mabsoft.com — Inspired by modern instrument editors</source>
+            <translation type="vanished">{program}  •  Versione {version}
+Sviluppato da mabsoft.com — Ispirato ai moderni editor per strumenti</translation>
+        </message>
+        <message>
+            <source>&lt;br&gt;&lt;b&gt;Credits:&lt;/b&gt;&lt;br&gt;This application uses the following libraries:&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://mido.readthedocs.io/'&gt;Mido&lt;/a&gt; – MIDI message parsing and sending&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.music.mcgill.ca/~gary/rtmidi/'&gt;RtMidi&lt;/a&gt; – Low-level MIDI communication&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.qt.io/'&gt;Qt&lt;/a&gt; – Cross-platform application framework&lt;br&gt;Source code available on &lt;a style='color: blue' href='https://github.com/emanuelemerlo/JDXI-Editor'&gt;GitHub&lt;/a&gt;&lt;br&gt;An independent fork of &lt;a style='color: blue' href='https://github.com/markxbrooks/JDXI-Editor'&gt;JDXI-Editor&lt;/a&gt; by Mark Brooks&lt;br&gt;Licensed under the &lt;a style='color: blue' href='https://opensource.org/licenses/MIT'&gt;MIT License&lt;/a&gt;&lt;br&gt;'Roland' and 'JD-Xi' are Trademarks of the Roland Corporation &lt;br&gt; in the United States and/or other countries&lt;br&gt;This app is an independent, unofficial companion tool for the Roland JDXi synthesizer&lt;br&gt;This app is not affiliated with, endorsed by, or sponsored by Roland Corporation in any way&lt;br&gt;All product names, trademarks, and logos are the property of their respective owners.&lt;br&gt;</source>
+            <translation type="vanished">&lt;br&gt;&lt;b&gt;Riconoscimenti:&lt;/b&gt;&lt;br&gt;Questa applicazione usa le seguenti librerie:&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://mido.readthedocs.io/'&gt;Mido&lt;/a&gt; – lettura e invio dei messaggi MIDI&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.music.mcgill.ca/~gary/rtmidi/'&gt;RtMidi&lt;/a&gt; – comunicazione MIDI di basso livello&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.qt.io/'&gt;Qt&lt;/a&gt; – framework per applicazioni multipiattaforma&lt;br&gt;Codice sorgente su &lt;a style='color: blue' href='https://github.com/emanuelemerlo/JDXI-Editor'&gt;GitHub&lt;/a&gt;&lt;br&gt;Fork indipendente di &lt;a style='color: blue' href='https://github.com/markxbrooks/JDXI-Editor'&gt;JDXI-Editor&lt;/a&gt; di Mark Brooks&lt;br&gt;Distribuito con &lt;a style='color: blue' href='https://opensource.org/licenses/MIT'&gt;licenza MIT&lt;/a&gt;&lt;br&gt;'Roland' e 'JD-Xi' sono marchi di Roland Corporation &lt;br&gt; negli Stati Uniti e/o in altri paesi&lt;br&gt;Questa app è uno strumento indipendente e non ufficiale per il sintetizzatore Roland JD-Xi&lt;br&gt;Non è affiliata, approvata o sponsorizzata in alcun modo da Roland Corporation&lt;br&gt;Tutti i nomi di prodotti, i marchi e i loghi appartengono ai rispettivi proprietari.&lt;br&gt;</translation>
+        </message>
+        <message>
+            <source>JD-XI Editor settings</source>
+            <translation type="vanished">Impostazioni di JD-Xi Editor</translation>
         </message>
         <message>
             <source>&amp;Move the editors with the keyboard</source>

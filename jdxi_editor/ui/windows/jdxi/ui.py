@@ -33,7 +33,7 @@ from jdxi_editor.core.synth.type import JDXiSynth
 from jdxi_editor.midi.channel.channel import MidiChannel
 from jdxi_editor.midi.io.helper import MidiIOHelper
 from jdxi_editor.midi.sysex.request.midi_requests import MidiRequests
-from jdxi_editor.project import __package_name__, __program__
+from jdxi_editor.project import __display_name__, __package_name__, __program__
 from jdxi_editor.resources import resource_path
 from jdxi_editor.ui.common import JDXi, QVBoxLayout, QWidget
 from jdxi_editor.ui.editors.helpers.preset import get_preset_list_number_by_name
@@ -102,7 +102,7 @@ class JDXiWindow(QMainWindow):
             | Qt.WindowType.WindowCloseButtonHint
             | Qt.WindowType.WindowSystemMenuHint
         )
-        self.setWindowTitle(__program__)
+        self.setWindowTitle(__display_name__)
         self.setMinimumSize(
             JDXi.UI.Dimensions.INSTRUMENT.WIDTH, JDXi.UI.Dimensions.INSTRUMENT.HEIGHT
         )
@@ -517,7 +517,7 @@ class JDXiWindow(QMainWindow):
                 self.on_documentation,
                 QKeySequence.StandardKey.HelpContents,
                 JDXi.UI.Icon.get_icon(JDXi.UI.Icon.HELP_RHOMBUS),
-                tr('Show {program} documentation').format(program=__program__),
+                tr('Show {program} documentation').format(program=__display_name__),
             )
         )
 

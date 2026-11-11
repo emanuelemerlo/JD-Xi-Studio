@@ -57,6 +57,25 @@ on the JD-Xi display.
   Vocal Effect pink (they shared colours with the parts before); the preset panel of Digital 2 says
   DIGITAL SYNTH 2
 
+### JD-Xi Studio: a name of its own
+
+- **The interface is called JD-Xi Studio**, an independent edition of JDXI-Editor by Mark Brooks,
+  so the two are not confused: splash screen, window titles, the keyboard panel, the editors
+  window, About, Preferences and the update messages; the origin is always shown ("based on
+  JDXI-Editor by Mark Brooks" on the splash and in About, with the MIT licence)
+- **Its own mark**, drawn in code: the four part colours as a step row over three keys (splash,
+  About, window icon); the original logo stays with the original project
+- The installer, the exe, the settings folder and the saved settings keep the original names, so
+  nothing is lost when updating
+
+### One language in the windows
+
+- Buttons, labels, lists, table headers, placeholders and tooltips built by the shared widget
+  helpers now go through the translation (Pattern, MIDI file player, Programs, playlists, presets,
+  MIDI debugger, keyboard tooltips); in Italian there are no more half-English windows
+- Parameter names (Cutoff, Porta Time, Rx Bank Sel...), the JD-Xi's own values (OFF/ON, LIGHT,
+  MEDIUM, HEAVY), tone categories and the labels printed on the instrument stay as on the JD-Xi
+
 ### Editors window header and Settings (new)
 
 - **The editors as a row of buttons** with short, translated names (Programs, Digital 1, Digital 2,

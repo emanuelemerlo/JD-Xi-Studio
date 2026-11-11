@@ -170,5 +170,5 @@ class PlaybackOptionsWidget(JDXiMidiGroup):
         elif b is not None:
             text = f"B {format_time(b)} (set A)"
         else:
-            text = "Whole song"
+            text = tr("Whole song")
         self.loop_label.setText(text)

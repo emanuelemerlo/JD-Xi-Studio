@@ -29,7 +29,7 @@ def test_header_program_connection_and_accent(app):
     keyboard.midi_helper = MagicMock(is_input_open=True, is_output_open=True)
     editors = MainEditor(keyboard)
     tabs = editors.editor_tab_widget
-    assert tabs.cornerWidget(Qt.Corner.TopLeftCorner).text() == "JD-Xi Editor"
+    assert tabs.cornerWidget(Qt.Corner.TopLeftCorner).text() == "JD-Xi Studio"
     editors.set_program_name("A11 CARONDO")
     editors.set_tone_name("Springer")
     assert editors.program_chip.text() == "A11 CARONDO  ·  Springer"

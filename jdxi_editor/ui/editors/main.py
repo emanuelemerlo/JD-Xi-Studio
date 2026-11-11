@@ -15,7 +15,7 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QMainWindow, QTabWidget, QWidget
 
 from jdxi_editor.core.jdxi import JDXi
-from jdxi_editor.project import __program__, __version__
+from jdxi_editor.project import __display_name__, __program__, __version__
 
 
 class MainEditor(QMainWindow):
@@ -38,7 +38,7 @@ class MainEditor(QMainWindow):
         self.editor_tab_widget.setTabsClosable(False)
         self.setCentralWidget(self.editor_tab_widget)  # if this is a QMainWindow
         JDXi.UI.Theme.apply_editor_style(self)
-        self.setWindowTitle(f"{__program__} - {__version__}")
+        self.setWindowTitle(f"{__display_name__} {__version__}")
         # Hide status bar to maximize editor space
         self.statusBar().hide()
         self._build_header()
@@ -62,7 +62,7 @@ class MainEditor(QMainWindow):
     def _build_header(self) -> None:
         from jdxi_editor.i18n import tr
 
-        title = QLabel("JD-Xi Editor")
+        title = QLabel(__display_name__)
         title.setStyleSheet("color: #ffffff; font-size: 16px; font-weight: 800; padding: 0 14px 6px 16px;")
         self.editor_tab_widget.setCornerWidget(title, Qt.Corner.TopLeftCorner)
 
