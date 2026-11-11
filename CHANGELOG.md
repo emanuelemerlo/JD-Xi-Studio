@@ -57,6 +57,14 @@ on the JD-Xi display.
   Vocal Effect pink (they shared colours with the parts before); the preset panel of Digital 2 says
   DIGITAL SYNTH 2
 
+### Preset panel, Programs tabs and tool windows in the new look
+
+- **The preset panel** beside the tone editors: a card in the editor's colour, flat buttons with
+  icon and full name (Previous, Load, Next, Read from JD-Xi, Import/Export .syx)
+- **The tabs under Programs** (Presets, User Programs, Playlist, Playlist Editor): flat buttons,
+  dark tables, without the decorative icon rows; the preset form no wider than it needs
+- **Log viewer, MIDI monitor, SysEx debugger and patch manager** in the same dark look
+
 ### JD-Xi Studio: a name of its own
 
 - **The interface is called JD-Xi Studio**, an independent edition of JDXI-Editor by Mark Brooks,

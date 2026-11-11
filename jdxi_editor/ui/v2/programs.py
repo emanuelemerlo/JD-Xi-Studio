@@ -321,6 +321,10 @@ class ProgramEditor(_program.ProgramEditor):
                 _strip_titles(widget)
                 self.more_tabs.addTab(widget, title)
         self.more_tabs.setMinimumHeight(360)
+        # the decorative icon rows of the old pages say nothing: hidden
+        for label in self.more_tabs.findChildren(QLabel, "decorIcon"):
+            label.hide()
+        group.preset.setMaximumWidth(760)  # a form, not a full-width strip
 
         content = QWidget()
         page = QVBoxLayout(content)

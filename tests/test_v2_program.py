@@ -58,7 +58,9 @@ def editor(app):
 
 
 def wait(ms: int) -> None:
-    deadline = time.monotonic() + ms / 1000
+    # At least half a second: slow CI machines (macOS runners) fire the send
+    # timer late; waiting longer changes nothing, nothing else is pending
+    deadline = time.monotonic() + max(ms, 500) / 1000
     while time.monotonic() < deadline:
         QApplication.processEvents()
         time.sleep(0.005)

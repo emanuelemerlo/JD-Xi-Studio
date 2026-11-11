@@ -112,6 +112,7 @@ def _flatten(button: QPushButton, label: tuple[str, QIcon | None] | None) -> Non
         if icon is not None:
             button.setIcon(icon)
             button.setIconSize(QSize(16, 16))
+    button.setMinimumWidth(button.sizeHint().width())  # the whole name, not cut
 
 
 def flatten_round_buttons(root: QWidget) -> int:
