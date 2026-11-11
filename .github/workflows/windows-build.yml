@@ -5,7 +5,7 @@ name: Windows build
 # files are also attached to a GitHub release (a pre-release for v*-beta.N tags).
 on:
   push:
-    branches: ["fix/**", "release/**"]
+    branches: ["fix/**", "feature/**", "release/**"]
     tags: ["v*"]
   workflow_dispatch:
 
@@ -153,12 +153,25 @@ jobs:
 
       # v1.2.3-beta.1 (any tag with a "-") is a pre-release, v1.2.3 a final release
       - name: Release
+        # The workflow creates the release itself, as a draft, attaches the files and only then
+        # publishes it: a published release cannot be changed when immutable releases are on
+        # (that is why attaching files to a release made by hand failed). Do not create the
+        # release by hand: push the tag and the release appears with its files.
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
-        with:
-          prerelease: ${{ contains(github.ref_name, '-') }}
-          generate_release_notes: true
-          # Separate assets: the installer (.exe) and the portable app (.zip)
-          files: |
-            ${{ env.PORTABLE }}
-            dist/installer/*.exe
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" --json isDraft --jq .isDraft > state.txt 2>/dev/null; then
+            if [ "$(cat state.txt)" != "true" ]; then
+              echo "::error::Release $TAG already exists and is published, so files cannot be added. Delete it on GitHub (keep the tag) and re-run this workflow; it will create the release with the files."
+              exit 1
+            fi
+          else
+            pre=""; case "$TAG" in *-*) pre="--prerelease";; esac
+            gh release create "$TAG" --draft $pre --generate-notes --title "$TAG" --verify-tag
+          fi
+          gh release upload "$TAG" "$PORTABLE" dist/installer/*.exe --clobber
+          gh release edit "$TAG" --draft=false
