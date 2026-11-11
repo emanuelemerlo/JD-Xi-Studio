@@ -31,6 +31,176 @@ on the JD-Xi display.
   .syx, random tone) stays on the right
 - The original Analog editor (`AnalogSynthEditor`) is still in the code; the app opens the new one
 
+### Keyboard and editor windows, together
+
+- **Minimise works on Windows**: the keyboard window (frameless) now has the minimise hints Windows
+  needs, so its minimise button and the taskbar work
+- **The editor windows follow the keyboard**: minimising the keyboard or an editor window minimises
+  them all; restoring the keyboard (from the taskbar too) brings back the editors that were open
+- **Each window moves on its own** (two screens work as expected); the editors window opens where
+  it was left
+- **The keyboard can come in front of the editors**: the editors window is no longer owned by the
+  keyboard window (Windows keeps owned windows above their owner), so clicking either brings it in
+  front; **Window → Show the keyboard** (Ctrl+Shift+K, from the editors too) and **Window → Keyboard
+  always on top**; closing the keyboard closes the editors
+- **Window → Line up the editors with the keyboard**: the editors window right above the keyboard
+  (below it when there is no room)
+- **Window → Show the editors** (Ctrl+Shift+W)
+- **A maximised keyboard window keeps the instrument as it is**: panel and keys are one block of
+  fixed size, centred, and the body grows around it (the Parts Select buttons, the wheels and the
+  keyboard no longer come apart from the panel); the status bar shows only while it has a message
+
+### Each editor in its own colour
+
+- **The editor's name as a badge in its colour** at the top of each new editor
+- **Digital Synth 1 red, Digital Synth 2 orange**, Drums purple, as on the JD-Xi panel; Effects teal,
+  Vocal Effect pink (they shared colours with the parts before); the preset panel of Digital 2 says
+  DIGITAL SYNTH 2
+
+### Programs on one page (new layout)
+
+- **Library**: every program (A–D preset, E–H user) in one table with number, name, genre and the
+  four tones; search by name or number, genre, bank buttons A–H; a double click (or Load program)
+  loads it, and the MIDI line shows its bank select and program change
+- **Parts of the program**: the tone of Digital 1, Digital 2, Drums and Analog with their channels,
+  updated when a program loads or a tone changes; a double click opens the part's editor
+- **Mixer**: the original level strips and mutes on the same page
+- **Rename…** and **Parts and advanced settings…** (opens Program: common and parts: level, pan,
+  offsets, scale, receive switches, zones) next to the display
+- **Below, in tabs**: Presets, User Programs, Playlist, Playlist Editor, System Settings (the same
+  widgets as before)
+
+### Pattern and MIDI file player (new layout)
+
+- **Same editors, same engine**: the sequencer, learning, measures, copy/paste, USB recorder,
+  track classification, automation, A/B loop, trim, event suppression and transport work as before
+- **Pattern laid out as in the mockup**: TRANSPORT (display, Play/Stop/Pause/Shuffle, BPM and Tap,
+  steps), NEW STEPS (velocity, duration), MEASURES (add, copy previous, copy/paste a range), the STEP
+  SEQUENCER across the window, FILE and the USB RECORDER always on show
+- **MIDI file player laid out as in the mockup**: PLAYER (display, transport, load/save),
+  CLASSIFICATION (with mute channels), TRACKS (position, timeline, lanes, zoom), PLAYBACK, AUTOMATION,
+  USB RECORDER, EVENT FILTER
+- **The new editors' look**: dark cards with the title in the accent colour (yellow for Pattern,
+  blue for the player), flat buttons with icon and name; a pressed button (Play, Stop, Loop…) takes
+  the accent colour
+- The open editors are still found by class name, so the playlist, the patch manager and the
+  Pattern ↔ player link keep working
+
+### Recipes (new)
+
+- **Parts → Recipes…** (Ctrl+Shift+R): step-by-step instructions to make a sound, as in the mockups
+- **New recipe** three ways: the template (.xlsx with menus, or .csv; saved from the app), **import a
+  file** (.xlsx, .csv, .md, .txt, .pdf) or a **table pasted** from a document or web page, or the
+  **recipe editor** (menus offer only valid parts, groups and parameters; checked while you write)
+- **Check** before use, row by row: recognized, to confirm (a similar name, a row with several
+  parameters split, a default wave), to fix (out of range, unknown parameter, missing part or Su;
+  with the closest name or value to use), by ear; text that is not a row is kept as notes; rows
+  without a part take the starting tone's part
+- **Guide**: one step at a time, the recipe's value next to the JD-Xi's with its state (done, in
+  range, to set, by ear); set one row or all the missing values of a step (sent exactly as when the
+  control is moved), go to the control, read the JD-Xi again; how to keep the sound with [Menu/Write]
+- Values as on the display: numbers with sign or unit, option names, ranges (55–65), pan L20/20R,
+  D50:50W, note values, tempo 120.5, PCM/drum waves and arpeggio styles by number, HF Damp in Hz
+  (the nearest of the JD-Xi's values); "Su" chooses the partial (1-3, all when empty), the drum
+  instrument and wave (SD1/W2) or the part (D1, AN...)
+- **Library** of saved recipes (~/.jdxi_editor/recipes); **export** to the template .xlsx, .csv or
+  Markdown; take the values of a recipe's rows from the JD-Xi
+- Every name of the template is matched to a parameter of the new editors: checked by tests
+- New dependencies: openpyxl (the .xlsx template) and pypdf (recipes in PDF files)
+
+### Vocal Effect editor (new)
+
+- **AutoPitch and Vocoder** with every parameter of Program Vocal Effect (MIDI Implementation) and the
+  vocal effect settings of Program Common (effect, number, part, Auto Note), explained from the
+  Parameter Guide (p. 9, 28); the output shared by both (level, pan, Output Assign, sends) apart
+- Only the selected effect is active; the AutoPitch key on two rows, major and minor; the key only
+  with Scale Maj(Min)
+- Address 00 0F, listed in the MIDI Implementation without a name, is shown as such
+
+### Arpeggio editor (new)
+
+- **Every Program Controller parameter**: on/off, style (the 128 names), grid, duration, motif with
+  the manual's explanation of the selected one, octave range, accent, velocity (REAL or fixed); the
+  program tempo; and which parts the arpeggio plays (Program Zone)
+- A timing view draws two beats of the grid: notes per beat, shuffle, how long and how loud each note is
+
+### Drum Kit editor (new)
+
+- **Every Drum Kit parameter** of the MIDI Implementation: kit name and level, and for each of the
+  37 drum partials (keys 36-72) its name, common settings, the four waves (WMT), pitch, TVF and TVA,
+  with the Parameter Guide explanations (p. 20-24); only WMT Wave Group Type (always 0) is left out
+- The kit as a grid of 37 pads in keyboard order; the selected pad is edited in sections as on the
+  display: **COMMON**, **WAVE** (the four waves side by side, wave lists by name, velocity range and
+  fade drawn and draggable), **PITCH**, **TVF**, **TVA** (each envelope drawn: drag the points for
+  time and level); a pad's page is built the first time it is opened
+- Settings without effect greyed out: a wave's settings when it is off, velocity ranges when WMT Vel
+  Ctrl is not ON, pitch and FXM with Wave Tempo Sync, FXM color/depth with FXM off, resonance with
+  LPF2/LPF3, the filter with OFF, Rx Hold-1 with NO-SUS; velocity lower/upper follow each other (p. 21)
+- Parameters past the 128th byte of a partial (pitch envelope onward, at 01 xx) are addressed in the
+  next LMB, as the MIDI Implementation numbers them: checked by tests
+
+### Patches and .syx with the new editors
+
+- The new editors give each block as one DT1, as the JD-Xi sends it: patch saving, the part .syx
+  export and "send all settings" use those messages (reserved bytes from the copy of the JD-Xi's
+  memory when known)
+
+### Digital Synth editor (new), for Digital 1 and Digital 2
+
+- **Every parameter of the SuperNATURAL synth tone**: Common, Modify and the three Partials of the
+  MIDI Implementation, with the explanations of the Parameter Guide (p. 15-19)
+- Tone common settings on top (name, level, category, octave, bend range, mono/poly, legato,
+  portamento, unison, ring modulator, wave shape, analog feel); the three partials switched on and
+  off and selected for the panel knobs in a strip, as with the [01]-[07] buttons, and edited one at
+  a time: **OSC** (waveforms drawn, PCM wave list and gain, pitch envelope), **FILTER** (response
+  curve for LPF1-4/HPF/BPF/PKG and -12/-24 dB, drag cutoff and resonance; envelope), **AMP**
+  (envelope, level, pan, key follow, aftertouch), **LFO** and **MODULATION LFO** (drawn), **MISC**
+  (interval sensitivities, envelope loop, chromatic portamento)
+- Settings without effect greyed out: pulse width only with PW-SQR (and not on partials 1-2 with the
+  ring modulator on), Super Saw detune only with SP-SAW, wave number and gain only with PCM,
+  variation not with SP-SAW/PCM, wave shape not with PW-SQR/SP-SAW on partial 1, legato only with
+  MONO, unison size only with unison on, rate or sync note by tempo sync, filter settings with BYPASS
+- The tone preset panel (presets, read from JD-Xi, .syx import/export) is the existing one, on the side
+- Key Follow -100..+100 in steps of 10, Ring Switch sent as 0/2, wave number as 4 nibbles: checked by tests
+
+### Program editor (new): common settings and the four parts
+
+- **Parts → Program: common and parts** (Ctrl+Shift+P): program name, level and tempo (5.00-300.00),
+  vocal effect selection, and **every Program Part and Zone parameter** of the MIDI Implementation for
+  Digital 1, Digital 2, Analog and Drums: the 52 part parameters the app could not edit before
+- The four parts side by side, like a mixer, one section at a time as on the display: **MAIN** (level,
+  mute, pan L64-63R, Part Output, sends, mono/poly, legato), **PITCH** (octave, coarse/fine tune, bend
+  range, portamento with TONE), **OFFSET** (cutoff, resonance, envelope and vibrato offsets),
+  **KEYBOARD** (velocity range and fades with a draggable graph, velocity sensitivity, zone octave,
+  arpeggio on/off), **SCALE** (scale tune type, key and the twelve notes, drag the bars), **MIDI**
+  (part on/off, receive channel, tone bank/number, the ten receive switches)
+- Sends greyed out when Part Output makes them useless (REV, DIR, KIT); velocity lower/upper kept in order
+- The program name is sent as one message (12 characters)
+- **Values from the JD-Xi are read straight from its DT1 messages** (whole blocks and single
+  parameters turned on the panel), for this and the Effects editor; 2-nibble parameters (Part
+  Portamento Time) are now sent and read correctly
+
+### Effects editor (new)
+
+- **Effect 1, Effect 2, Delay and Reverb on one screen**, with every parameter of the Parameter Guide
+  (p. 26-27) and the Version 1.50 side-chain compressor (Side Switch, Level, Note, Time, Release, Sync)
+- **Signal chain** at the top: the selected types and how Effect 1 is connected (Output Assign DIR or
+  EFX2, in series); click a block to go to its settings
+- **Only the parameters of the selected type** are shown, as on the display; when the type changes
+  the editor reads the block back, since the JD-Xi loads that type's own settings
+- **Graphs**: the delay echoes over time (time or note, feedback, PAN with Tap Time on the left
+  channel, level) and the compressor curve (drag the threshold)
+- **Right addresses and encoding** from the MIDI Implementation, checked by tests: 4-nibble effect
+  parameters (32768 = 0) at 00 11 + 4(n-1), Effect 2 types sent as 0, 5-8, delay time in ms; the
+  delay and reverb levels the panel knobs set are Delay/Reverb Parameter 8/4, the block levels at 00 01
+  (MIDI only) are shown apart
+- Settings without effect greyed out (Rate or Note, Time or Note, Tap Time only with PAN, side chain
+  with Side Switch OFF); parameter numbers that come from the JD-Xi Manager and not from a Roland
+  document are marked on screen (Phaser Manual/Level, Ring Mod, Slicer, Side Time units)
+- A common base (`jdxi_editor/ui/v2/framework.py`) describes parameters as data (address, encoding,
+  range, explanation): the next editors are built on it
+- The original effects editor (`EffectsCommonEditor`) is still in the code; the app opens the new one
+
 ### Start-up and CI
 
 - **The USB recorder starts PortAudio only when it is used**, not when the MIDI file player and the

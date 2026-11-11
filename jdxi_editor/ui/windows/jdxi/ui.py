@@ -92,7 +92,16 @@ class JDXiWindow(QMainWindow):
         self.current_synth_type = JDXiSynth.DIGITAL_SYNTH_1
         # --- Initialize octave
         self.current_octave = 0  # Initialize octave tracking first
-        self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.FramelessWindowHint)
+        # Frameless, with the minimise/maximise hints: without them Windows
+        # does not minimise the window (showMinimized() does nothing) nor
+        # restore it from the taskbar
+        self.setWindowFlags(
+            Qt.WindowType.Window
+            | Qt.WindowType.FramelessWindowHint
+            | Qt.WindowType.WindowMinMaxButtonsHint
+            | Qt.WindowType.WindowCloseButtonHint
+            | Qt.WindowType.WindowSystemMenuHint
+        )
         self.setWindowTitle(__program__)
         self.setMinimumSize(
             JDXi.UI.Dimensions.INSTRUMENT.WIDTH, JDXi.UI.Dimensions.INSTRUMENT.HEIGHT
@@ -127,18 +136,33 @@ class JDXiWindow(QMainWindow):
 
         # --- Add piano keyboard at bottom
         self.piano_keyboard = PianoKeyboard(parent=self)
-        self.statusBar().addPermanentWidget(self.piano_keyboard)
+        self.keys_layout.addWidget(self.piano_keyboard, 1)
 
         # --- Load saved favorites
         self._load_saved_favorites()
 
     def _create_main_layout(self) -> None:
         """Create the main dashboard"""
-        central = QWidget()
-        self.setCentralWidget(central)
+        # The instrument (panel and keys) is one block of fixed size, centred:
+        # a maximised window grows the body around it, the layout stays as is
+        from jdxi_editor.ui.image.instrument import BODY_COLOR
 
-        # --- Single layout to hold the image and overlays
-        layout = QVBoxLayout(central)
+        dims = JDXi.UI.Dimensions.INSTRUMENT
+        central = QWidget()
+        central.setObjectName("jdxiBodyArea")
+        central.setStyleSheet(f"QWidget#jdxiBodyArea {{ background-color: {BODY_COLOR}; }}")
+        self.setCentralWidget(central)
+        outer = QVBoxLayout(central)
+        outer.setContentsMargins(0, 0, 0, 0)
+        outer.setSpacing(0)
+        self.instrument_stage = QWidget()
+        self.instrument_stage.setFixedSize(dims.WIDTH, dims.HEIGHT)
+        outer.addStretch(1)
+        outer.addWidget(self.instrument_stage, 0, Qt.AlignmentFlag.AlignHCenter)
+        outer.addStretch(1)
+
+        # --- Single layout to hold the image and overlays, and the keys below
+        layout = QVBoxLayout(self.instrument_stage)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
 
@@ -147,6 +171,9 @@ class JDXiWindow(QMainWindow):
         # Fixed panel height: the image is drawn this tall and the controls are
         # placed in its coordinates (no stretching, no cropping)
         container_widget.setFixedHeight(JDXi.UI.Dimensions.INSTRUMENT.PANEL_HEIGHT)
+        # and width: the controls are placed in the image's coordinates, so the
+        # panel stays this size, centred, when the window is wider
+        container_widget.setFixedWidth(JDXi.UI.Dimensions.INSTRUMENT.WIDTH)
         container_widget.setLayout(QVBoxLayout())
         container_widget.layout().setContentsMargins(0, 0, 0, 0)
         container_widget.layout().setSpacing(6)
@@ -165,7 +192,7 @@ class JDXiWindow(QMainWindow):
         )
         add_title_container(container_widget)
         self.parts_container, self.part_buttons = create_parts_container(
-            parent_widget=self,
+            parent_widget=container_widget,
             on_open_d1=lambda: self.show_editor("digital1"),
             on_open_d2=lambda: self.show_editor("digital2"),
             on_open_drums=lambda: self.show_editor("drums"),
@@ -212,7 +239,22 @@ class JDXiWindow(QMainWindow):
         )
         self.favorite_button = add_favorite_button_container(container_widget)
         add_slider_container(container_widget, self.midi_helper)
+        self.panel_container = container_widget
         layout.addWidget(container_widget)
+
+        # --- The keys area: wheels and MIDI lights, the keyboard (added in __init__)
+        self.keys_area = QWidget()
+        self.keys_area.setFixedHeight(dims.HEIGHT - dims.PANEL_HEIGHT)
+        self.keys_area.setObjectName("jdxiKeysArea")
+        # the status bar's look (red labels), on the body colour
+        self.keys_area.setStyleSheet(
+            JDXi.UI.Style.TRANSPARENT + f"QWidget#jdxiKeysArea {{ background-color: {BODY_COLOR}; }}"
+        )
+        self.keys_layout = QHBoxLayout(self.keys_area)
+        self.keys_layout.setContentsMargins(0, 0, 0, 0)
+        self.keys_layout.setSpacing(0)
+        self.keys_layout.addWidget(self.midi_indicator_container)
+        layout.addWidget(self.keys_area)
 
         # --- Initialize current preset index
         self.current_preset_index = 0
@@ -354,6 +396,17 @@ class JDXiWindow(QMainWindow):
                 tr("&Analog Synth"), lambda: self.show_editor("analog"), "Ctrl+5"
             )
         )
+        self.parts_menu.addSeparator()
+        self.parts_menu.addAction(
+            self._menu_action(tr("&Recipes…"), lambda: self.show_editor("recipes"), "Ctrl+Shift+R")
+        )
+        self.parts_menu.addAction(
+            self._menu_action(
+                tr("Program: &common and parts"),
+                lambda: self.show_editor("program_parts"),
+                "Ctrl+Shift+P",
+            )
+        )
 
     def _create_effects_menu(self) -> None:
         """Create editors menu"""
@@ -471,9 +524,10 @@ class JDXiWindow(QMainWindow):
 
         JDXi.UI.Theme.apply_transparent(status_bar)
 
-        midi_indicator_container = QWidget()
-        midi_indicator_container.setLayout(self._build_status_layout())
-        status_bar.addPermanentWidget(midi_indicator_container)
+        # The wheels and MIDI lights go in the keys area beside the keyboard;
+        # the status bar only shows messages
+        self.midi_indicator_container = QWidget()
+        self.midi_indicator_container.setLayout(self._build_status_layout())
 
         # --- Set initial indicator states
         self.midi_in_indicator.set_state(self.midi_helper.is_input_open)
@@ -482,6 +536,9 @@ class JDXiWindow(QMainWindow):
         from jdxi_editor.ui.image.instrument import BODY_COLOR
 
         status_bar.setStyleSheet(f"background-color: {BODY_COLOR};")
+        # shown only while it has a message
+        status_bar.setVisible(False)
+        status_bar.messageChanged.connect(lambda text: status_bar.setVisible(bool(text)))
 
     def _build_status_layout(self) -> None:
         layout = QVBoxLayout()

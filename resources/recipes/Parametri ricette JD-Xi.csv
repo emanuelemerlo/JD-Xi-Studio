@@ -1,0 +1,380 @@
+﻿Parte;Gruppo;Parametro;Nome esteso;Tipo;Min;Max;Scelte ammesse;Unità;Su;Note
+AN;COMMON;Porta Sw;Portamento Switch;scelta;;;OFF, ON;;no;
+AN;COMMON;Porta Time;Portamento Time;numero;0;127;;;no;
+AN;COMMON;Legato Sw;Legato Switch;scelta;;;OFF, ON;;no;
+AN;COMMON;Octave Shift;;numero;-3;3;;;no;
+AN;COMMON;Bend Range U;Pitch Bend Range Up;numero;0;24;;semitoni;no;
+AN;COMMON;Bend Range D;Pitch Bend Range Down;numero;-24;0;;semitoni;no;
+AN;OSC;Waveform;;scelta;;;SAW, TRI, PW-SQR;;no;
+AN;OSC;PWM Depth;Pulse Width Modulation Depth;numero;0;127;;;no;
+AN;OSC;Pulse Width;;numero;0;127;;;no;
+AN;OSC;Sub OSC;Sub Oscillator;scelta;;;OFF, OCT-1, OCT-2;;no;
+AN;PITCH;OSC Pitch;;numero;-24;24;;semitoni;no;
+AN;PITCH;OSC Detune;;numero;-50;50;;cent;no;
+AN;PITCH;Env Attack;Pitch Envelope Attack Time;numero;0;127;;;no;
+AN;PITCH;Env Decay;Pitch Envelope Decay Time;numero;0;127;;;no;
+AN;PITCH;Env Depth;Pitch Envelope Depth;numero;-63;63;;;no;
+AN;FILTER;Type;Filter Type;scelta;;;BYPASS, LPF;;no;
+AN;FILTER;Cutoff;;numero;0;127;;;no;
+AN;FILTER;Cutoff KF;Cutoff Key Follow;numero;-100;100;;;no;
+AN;FILTER;Velo Sens;Filter Envelope Velocity Sense;numero;-63;63;;;no;
+AN;FILTER;Resonance;;numero;0;127;;;no;
+AN;FILTER;Attack;Filter Envelope Attack Time;numero;0;127;;;no;
+AN;FILTER;Decay;Filter Envelope Decay Time;numero;0;127;;;no;
+AN;FILTER;Sustain;Filter Envelope Sustain Level;numero;0;127;;;no;
+AN;FILTER;Release;Filter Envelope Release Time;numero;0;127;;;no;
+AN;FILTER;Depth;Filter Envelope Depth;numero;-63;63;;;no;
+AN;AMP;AMP Level;;numero;0;127;;;no;
+AN;AMP;Level V-Sens;Amp Level Velocity Sense;numero;-63;63;;;no;
+AN;AMP;Level KF;Amp Level Key Follow;numero;-100;100;;;no;
+AN;AMP;Attack;Amp Envelope Attack Time;numero;0;127;;;no;
+AN;AMP;Decay;Amp Envelope Decay Time;numero;0;127;;;no;
+AN;AMP;Sustain;Amp Envelope Sustain Level;numero;0;127;;;no;
+AN;AMP;Release;Amp Envelope Release Time;numero;0;127;;;no;
+AN;LFO;Shape;LFO Shape;scelta;;;TRI, SIN, SAW, SQR, S&H, RND;;no;
+AN;LFO;Rate;LFO Rate;numero;0;127;;;no;
+AN;LFO;Tempo Sync;LFO Tempo Sync Switch;scelta;;;OFF, ON;;no;
+AN;LFO;Sync Note;LFO Tempo Sync Note;scelta;;;16, 12, 8, 4, 2, 1, 3/4, 2/3, 1/2, 3/8, 1/3, 1/4, 3/16, 1/6, 1/8, 3/32, 1/12, 1/16, 1/24, 1/32;;no;
+AN;LFO;Fade Time;LFO Fade Time;numero;0;127;;;no;
+AN;LFO;Key Trigger;LFO Key Trigger;scelta;;;OFF, ON;;no;
+AN;LFO;Pitch Depth;LFO Pitch Depth;numero;-63;63;;;no;
+AN;LFO;Filter Depth;LFO Filter Depth;numero;-63;63;;;no;
+AN;LFO;Amp Depth;LFO Amp Depth;numero;-63;63;;;no;
+AN;LFO;Mod Pitch;Modulation Pitch Depth;numero;-63;63;;;no;Effetto con la modulation wheel
+AN;LFO;Mod Filter;Modulation Filter Depth;numero;-63;63;;;no;Effetto con la modulation wheel
+AN;LFO;Mod Amp;Modulation Amp Depth;numero;-63;63;;;no;Effetto con la modulation wheel
+AN;LFO;Mod Rate;Modulation Rate;numero;-63;63;;;no;Effetto con la modulation wheel
+D1;COMMON;Partial Switch;Accende/spegne un partial (pulsanti 05–07);scelta;;;OFF, ON;;sì;
+D1;COMMON;Tone Level;;numero;0;127;;;no;
+D1;COMMON;RING Switch;Ring Modulator;scelta;;;OFF, ON;;no;
+D1;COMMON;Wave Shape;;numero;0;127;;;no;
+D1;COMMON;Analog Feel;;numero;0;127;;;no;
+D1;COMMON;Unison SW;Unison Switch;scelta;;;OFF, ON;;no;
+D1;COMMON;Unison Size;;scelta;;;2, 4, 6, 8;;no;
+D1;COMMON;Mono/Poly;;scelta;;;POLY, MONO;;no;
+D1;COMMON;Legato SW;Legato Switch;scelta;;;OFF, ON;;no;
+D1;COMMON;Porta SW;Portamento Switch;scelta;;;OFF, ON;;no;
+D1;COMMON;Porta Time;Portamento Time;numero;0;127;;;no;
+D1;COMMON;Porta Mode;Portamento Mode;scelta;;;NORMAL, LEGATO;;no;
+D1;COMMON;Octave Shift;;numero;-3;3;;;no;
+D1;COMMON;Bend Range U;Pitch Bend Range Up;numero;0;24;;semitoni;no;
+D1;COMMON;Bend Range D;Pitch Bend Range Down;numero;-24;0;;semitoni;no;
+D1;OSC;Waveform;;scelta;;;SAW, SQR, PW-SQR, TRI, SINE, NOISE, SUPER-SAW, PCM;;facoltativo;
+D1;OSC;Variation;Wave Variation;scelta;;;A, B, C;;facoltativo;
+D1;OSC;Wave Number;PCM Wave Number;numero;1;160;;;facoltativo;Solo con Waveform PCM
+D1;OSC;PCM Gain;Wave Gain;scelta;;;-6, 0, +6, +12;dB;facoltativo;
+D1;OSC;PWM Depth;Pulse Width Mod Depth;numero;0;127;;;facoltativo;
+D1;OSC;Pulse Width;;numero;0;127;;;facoltativo;
+D1;OSC;PW Shift;Pulse Width Shift;numero;0;127;;;facoltativo;
+D1;OSC;S-Saw Detune;Super Saw Detune;numero;0;127;;;facoltativo;
+D1;PITCH;Pitch;OSC Pitch;numero;-24;24;;semitoni;facoltativo;
+D1;PITCH;Detune;OSC Detune;numero;-50;50;;cent;facoltativo;
+D1;PITCH;Attack;Pitch Env Attack Time;numero;0;127;;;facoltativo;
+D1;PITCH;Decay;Pitch Env Decay Time;numero;0;127;;;facoltativo;
+D1;PITCH;Depth;Pitch Env Depth;numero;-63;63;;;facoltativo;
+D1;FILTER;Type;Filter Mode;scelta;;;BYPASS, LPF1, LPF2, LPF3, LPF4, HPF, BPF, PKG;;facoltativo;
+D1;FILTER;Slope;Filter Slope;scelta;;;-12, -24;dB;facoltativo;
+D1;FILTER;Cutoff;;numero;0;127;;;facoltativo;
+D1;FILTER;Cutoff KF;Cutoff Key Follow;numero;-100;100;;;facoltativo;
+D1;FILTER;Velo Sens;Filter Env Velocity Sens;numero;-63;63;;;facoltativo;
+D1;FILTER;Resonance;;numero;0;127;;;facoltativo;
+D1;FILTER;Attack;Filter Envelope Attack Time;numero;0;127;;;facoltativo;
+D1;FILTER;Decay;Filter Envelope Decay Time;numero;0;127;;;facoltativo;
+D1;FILTER;Sustain;Filter Envelope Sustain Level;numero;0;127;;;facoltativo;
+D1;FILTER;Release;Filter Envelope Release Time;numero;0;127;;;facoltativo;
+D1;FILTER;Depth;Filter Env Depth;numero;-63;63;;;facoltativo;
+D1;FILTER;HPF Cutoff;;numero;0;127;;;facoltativo;
+D1;AMP;Level;Amp Level;numero;0;127;;;facoltativo;
+D1;AMP;Level V-Sens;Amp Level Velocity Sens;numero;-63;63;;;facoltativo;
+D1;AMP;Pan;;pan;-64;63;;;facoltativo;L64 … C … 63R oppure -64 … 63
+D1;AMP;Key Follow;Amp Level Key Follow;numero;-100;100;;;facoltativo;
+D1;AMP;Attack;Amp Envelope Attack Time;numero;0;127;;;facoltativo;
+D1;AMP;Decay;Amp Envelope Decay Time;numero;0;127;;;facoltativo;
+D1;AMP;Sustain;Amp Envelope Sustain Level;numero;0;127;;;facoltativo;
+D1;AMP;Release;Amp Envelope Release Time;numero;0;127;;;facoltativo;
+D1;LFO;Shape;LFO Shape;scelta;;;TRI, SIN, SAW, SQR, S&H, RND;;facoltativo;
+D1;LFO;Rate;LFO Rate;numero;0;127;;;facoltativo;
+D1;LFO;Tempo Sync;LFO Tempo Sync;scelta;;;OFF, ON;;facoltativo;
+D1;LFO;Sync Note;LFO Tempo Sync Note;scelta;;;16, 12, 8, 4, 2, 1, 3/4, 2/3, 1/2, 3/8, 1/3, 1/4, 3/16, 1/6, 1/8, 3/32, 1/12, 1/16, 1/24, 1/32;;facoltativo;
+D1;LFO;Fade Time;LFO Fade Time;numero;0;127;;;facoltativo;
+D1;LFO;Key Trigger;LFO Key Trigger;scelta;;;OFF, ON;;facoltativo;
+D1;LFO;Pitch Depth;LFO Pitch Depth;numero;-63;63;;;facoltativo;
+D1;LFO;Filter Depth;LFO Filter Depth;numero;-63;63;;;facoltativo;
+D1;LFO;Amp Depth;LFO Amp Depth;numero;-63;63;;;facoltativo;
+D1;LFO;Pan Depth;LFO Pan Depth;numero;-63;63;;;facoltativo;
+D1;MOD LFO;Shape;MOD LFO Shape;scelta;;;TRI, SIN, SAW, SQR, S&H, RND;;facoltativo;
+D1;MOD LFO;Rate;MOD LFO Rate;numero;0;127;;;facoltativo;
+D1;MOD LFO;Tempo Sync;MOD LFO Tempo Sync;scelta;;;OFF, ON;;facoltativo;
+D1;MOD LFO;Sync Note;MOD LFO Tempo Sync Note;scelta;;;16, 12, 8, 4, 2, 1, 3/4, 2/3, 1/2, 3/8, 1/3, 1/4, 3/16, 1/6, 1/8, 3/32, 1/12, 1/16, 1/24, 1/32;;facoltativo;
+D1;MOD LFO;Pitch Depth;MOD LFO Pitch Depth;numero;-63;63;;;facoltativo;
+D1;MOD LFO;Filter Depth;MOD LFO Filter Depth;numero;-63;63;;;facoltativo;
+D1;MOD LFO;Amp Depth;MOD LFO Amp Depth;numero;-63;63;;;facoltativo;
+D1;MOD LFO;Pan Depth;MOD LFO Pan Depth;numero;-63;63;;;facoltativo;
+D1;MOD LFO;Rate Control;Mod LFO Rate Control;numero;-63;63;;;facoltativo;Effetto con la modulation wheel
+D1;AFT;Cutoff Sens;Cutoff Aftertouch Sens;numero;-63;63;;;facoltativo;
+D1;AFT;Level Sens;Level Aftertouch Sens;numero;-63;63;;;facoltativo;
+D1;MISC;Attack Time;Attack Time Interval Sens;numero;0;127;;;no;
+D1;MISC;Release Time;Release Time Interval Sens;numero;0;127;;;no;
+D1;MISC;Porta Time;Portamento Time Interval Sens;numero;0;127;;;no;
+D1;MISC;Mode;Envelope Loop Mode;scelta;;;OFF, FREE-RUN, TEMPO-SYNC;;no;
+D1;MISC;Sync Note;Envelope Loop Sync Note;scelta;;;16, 12, 8, 4, 2, 1, 3/4, 2/3, 1/2, 3/8, 1/3, 1/4, 3/16, 1/6, 1/8, 3/32, 1/12, 1/16, 1/24, 1/32;;no;
+D1;MISC;Chroma Porta;Chromatic Portamento;scelta;;;OFF, ON;;no;
+D2;COMMON;Partial Switch;Accende/spegne un partial (pulsanti 05–07);scelta;;;OFF, ON;;sì;
+D2;COMMON;Tone Level;;numero;0;127;;;no;
+D2;COMMON;RING Switch;Ring Modulator;scelta;;;OFF, ON;;no;
+D2;COMMON;Wave Shape;;numero;0;127;;;no;
+D2;COMMON;Analog Feel;;numero;0;127;;;no;
+D2;COMMON;Unison SW;Unison Switch;scelta;;;OFF, ON;;no;
+D2;COMMON;Unison Size;;scelta;;;2, 4, 6, 8;;no;
+D2;COMMON;Mono/Poly;;scelta;;;POLY, MONO;;no;
+D2;COMMON;Legato SW;Legato Switch;scelta;;;OFF, ON;;no;
+D2;COMMON;Porta SW;Portamento Switch;scelta;;;OFF, ON;;no;
+D2;COMMON;Porta Time;Portamento Time;numero;0;127;;;no;
+D2;COMMON;Porta Mode;Portamento Mode;scelta;;;NORMAL, LEGATO;;no;
+D2;COMMON;Octave Shift;;numero;-3;3;;;no;
+D2;COMMON;Bend Range U;Pitch Bend Range Up;numero;0;24;;semitoni;no;
+D2;COMMON;Bend Range D;Pitch Bend Range Down;numero;-24;0;;semitoni;no;
+D2;OSC;Waveform;;scelta;;;SAW, SQR, PW-SQR, TRI, SINE, NOISE, SUPER-SAW, PCM;;facoltativo;
+D2;OSC;Variation;Wave Variation;scelta;;;A, B, C;;facoltativo;
+D2;OSC;Wave Number;PCM Wave Number;numero;1;160;;;facoltativo;Solo con Waveform PCM
+D2;OSC;PCM Gain;Wave Gain;scelta;;;-6, 0, +6, +12;dB;facoltativo;
+D2;OSC;PWM Depth;Pulse Width Mod Depth;numero;0;127;;;facoltativo;
+D2;OSC;Pulse Width;;numero;0;127;;;facoltativo;
+D2;OSC;PW Shift;Pulse Width Shift;numero;0;127;;;facoltativo;
+D2;OSC;S-Saw Detune;Super Saw Detune;numero;0;127;;;facoltativo;
+D2;PITCH;Pitch;OSC Pitch;numero;-24;24;;semitoni;facoltativo;
+D2;PITCH;Detune;OSC Detune;numero;-50;50;;cent;facoltativo;
+D2;PITCH;Attack;Pitch Env Attack Time;numero;0;127;;;facoltativo;
+D2;PITCH;Decay;Pitch Env Decay Time;numero;0;127;;;facoltativo;
+D2;PITCH;Depth;Pitch Env Depth;numero;-63;63;;;facoltativo;
+D2;FILTER;Type;Filter Mode;scelta;;;BYPASS, LPF1, LPF2, LPF3, LPF4, HPF, BPF, PKG;;facoltativo;
+D2;FILTER;Slope;Filter Slope;scelta;;;-12, -24;dB;facoltativo;
+D2;FILTER;Cutoff;;numero;0;127;;;facoltativo;
+D2;FILTER;Cutoff KF;Cutoff Key Follow;numero;-100;100;;;facoltativo;
+D2;FILTER;Velo Sens;Filter Env Velocity Sens;numero;-63;63;;;facoltativo;
+D2;FILTER;Resonance;;numero;0;127;;;facoltativo;
+D2;FILTER;Attack;Filter Envelope Attack Time;numero;0;127;;;facoltativo;
+D2;FILTER;Decay;Filter Envelope Decay Time;numero;0;127;;;facoltativo;
+D2;FILTER;Sustain;Filter Envelope Sustain Level;numero;0;127;;;facoltativo;
+D2;FILTER;Release;Filter Envelope Release Time;numero;0;127;;;facoltativo;
+D2;FILTER;Depth;Filter Env Depth;numero;-63;63;;;facoltativo;
+D2;FILTER;HPF Cutoff;;numero;0;127;;;facoltativo;
+D2;AMP;Level;Amp Level;numero;0;127;;;facoltativo;
+D2;AMP;Level V-Sens;Amp Level Velocity Sens;numero;-63;63;;;facoltativo;
+D2;AMP;Pan;;pan;-64;63;;;facoltativo;L64 … C … 63R oppure -64 … 63
+D2;AMP;Key Follow;Amp Level Key Follow;numero;-100;100;;;facoltativo;
+D2;AMP;Attack;Amp Envelope Attack Time;numero;0;127;;;facoltativo;
+D2;AMP;Decay;Amp Envelope Decay Time;numero;0;127;;;facoltativo;
+D2;AMP;Sustain;Amp Envelope Sustain Level;numero;0;127;;;facoltativo;
+D2;AMP;Release;Amp Envelope Release Time;numero;0;127;;;facoltativo;
+D2;LFO;Shape;LFO Shape;scelta;;;TRI, SIN, SAW, SQR, S&H, RND;;facoltativo;
+D2;LFO;Rate;LFO Rate;numero;0;127;;;facoltativo;
+D2;LFO;Tempo Sync;LFO Tempo Sync;scelta;;;OFF, ON;;facoltativo;
+D2;LFO;Sync Note;LFO Tempo Sync Note;scelta;;;16, 12, 8, 4, 2, 1, 3/4, 2/3, 1/2, 3/8, 1/3, 1/4, 3/16, 1/6, 1/8, 3/32, 1/12, 1/16, 1/24, 1/32;;facoltativo;
+D2;LFO;Fade Time;LFO Fade Time;numero;0;127;;;facoltativo;
+D2;LFO;Key Trigger;LFO Key Trigger;scelta;;;OFF, ON;;facoltativo;
+D2;LFO;Pitch Depth;LFO Pitch Depth;numero;-63;63;;;facoltativo;
+D2;LFO;Filter Depth;LFO Filter Depth;numero;-63;63;;;facoltativo;
+D2;LFO;Amp Depth;LFO Amp Depth;numero;-63;63;;;facoltativo;
+D2;LFO;Pan Depth;LFO Pan Depth;numero;-63;63;;;facoltativo;
+D2;MOD LFO;Shape;MOD LFO Shape;scelta;;;TRI, SIN, SAW, SQR, S&H, RND;;facoltativo;
+D2;MOD LFO;Rate;MOD LFO Rate;numero;0;127;;;facoltativo;
+D2;MOD LFO;Tempo Sync;MOD LFO Tempo Sync;scelta;;;OFF, ON;;facoltativo;
+D2;MOD LFO;Sync Note;MOD LFO Tempo Sync Note;scelta;;;16, 12, 8, 4, 2, 1, 3/4, 2/3, 1/2, 3/8, 1/3, 1/4, 3/16, 1/6, 1/8, 3/32, 1/12, 1/16, 1/24, 1/32;;facoltativo;
+D2;MOD LFO;Pitch Depth;MOD LFO Pitch Depth;numero;-63;63;;;facoltativo;
+D2;MOD LFO;Filter Depth;MOD LFO Filter Depth;numero;-63;63;;;facoltativo;
+D2;MOD LFO;Amp Depth;MOD LFO Amp Depth;numero;-63;63;;;facoltativo;
+D2;MOD LFO;Pan Depth;MOD LFO Pan Depth;numero;-63;63;;;facoltativo;
+D2;MOD LFO;Rate Control;Mod LFO Rate Control;numero;-63;63;;;facoltativo;Effetto con la modulation wheel
+D2;AFT;Cutoff Sens;Cutoff Aftertouch Sens;numero;-63;63;;;facoltativo;
+D2;AFT;Level Sens;Level Aftertouch Sens;numero;-63;63;;;facoltativo;
+D2;MISC;Attack Time;Attack Time Interval Sens;numero;0;127;;;no;
+D2;MISC;Release Time;Release Time Interval Sens;numero;0;127;;;no;
+D2;MISC;Porta Time;Portamento Time Interval Sens;numero;0;127;;;no;
+D2;MISC;Mode;Envelope Loop Mode;scelta;;;OFF, FREE-RUN, TEMPO-SYNC;;no;
+D2;MISC;Sync Note;Envelope Loop Sync Note;scelta;;;16, 12, 8, 4, 2, 1, 3/4, 2/3, 1/2, 3/8, 1/3, 1/4, 3/16, 1/6, 1/8, 3/32, 1/12, 1/16, 1/24, 1/32;;no;
+D2;MISC;Chroma Porta;Chromatic Portamento;scelta;;;OFF, ON;;no;
+DR;COMMON;Kit Level;;numero;0;127;;;no;Vale per tutto il kit
+DR;COMMON;Assign;Assign Type;scelta;;;MULTI, SINGLE;;sì;
+DR;COMMON;Mute Group;;numero o scelta;1;31;OFF;;sì;
+DR;COMMON;Env Mode;;scelta;;;NO-SUS, SUSTAIN;;sì;
+DR;COMMON;Bend Range;Pitch Bend Range;numero;0;48;;;sì;
+DR;COMMON;Rx Expression;Receive Expression;scelta;;;OFF, ON;;sì;
+DR;COMMON;Rx Hold-1;Receive Hold-1;scelta;;;OFF, ON;;sì;
+DR;COMMON;One Shot Mode;;scelta;;;OFF, ON;;sì;
+DR;WAVE;Wave Switch;Accende l'onda (W1–W4);scelta;;;OFF, ON;;sì;Su = strumento/onda, es. SD1/W2
+DR;WAVE;No.L (Mono);Wave Number L (Mono);numero o scelta;1;453;OFF;;sì;Su = strumento/onda, es. SD1/W2
+DR;WAVE;No.R;Wave Number R;numero o scelta;1;453;OFF;;sì;Su = strumento/onda, es. SD1/W2
+DR;WAVE;Gain;Wave Gain;scelta;;;-6, 0, +6, +12;dB;sì;Su = strumento/onda, es. SD1/W2
+DR;WAVE;FXM Switch;;scelta;;;OFF, ON;;sì;Su = strumento/onda, es. SD1/W2
+DR;WAVE;FXM Color;;numero;1;4;;;sì;Su = strumento/onda, es. SD1/W2
+DR;WAVE;FXM Depth;;numero;0;16;;;sì;Su = strumento/onda, es. SD1/W2
+DR;WAVE;Coarse Tune;Wave Coarse Tune;numero;-48;48;;semitoni;sì;Su = strumento/onda, es. SD1/W2
+DR;WAVE;Fine Tune;Wave Fine Tune;numero;-50;50;;cent;sì;Su = strumento/onda, es. SD1/W2
+DR;WAVE;Level;Wave Level;numero;0;127;;;sì;Su = strumento/onda, es. SD1/W2
+DR;WAVE;Pan;Wave Pan;pan;-64;63;;;sì;Su = strumento/onda, es. SD1/W2
+DR;WAVE;Random Pan Sw;Random Pan Switch;scelta;;;OFF, ON;;sì;Su = strumento/onda, es. SD1/W2
+DR;WAVE;Alter Pan Sw;Alternate Pan Switch;scelta;;;OFF, ON, REVERSE;;sì;Su = strumento/onda, es. SD1/W2
+DR;WMT;WMT Vel Ctrl;WMT Velocity Control;scelta;;;OFF, ON, RANDOM;;sì;Su = strumento
+DR;WMT;Vel Fade L;Velo Fade Lower;numero;0;127;;;sì;Su = strumento/onda, es. SD1/W2
+DR;WMT;Vel Range L;Velo Range Lower;numero;1;127;;;sì;Su = strumento/onda, es. SD1/W2
+DR;WMT;Vel Range U;Velo Range Upper;numero;1;127;;;sì;Su = strumento/onda, es. SD1/W2
+DR;WMT;Vel Fade U;Velo Fade Upper;numero;0;127;;;sì;Su = strumento/onda, es. SD1/W2
+DR;PITCH;Coarse Tune;Partial Coarse Tune;nota;;;;;sì;Nota da C-1 a G9, es. C4
+DR;PITCH;Fine Tune;Partial Fine Tune;numero;-50;50;;cent;sì;
+DR;PITCH;Rnd Pch Dpth;Random Pitch Depth;scelta;;;0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200;cent;sì;
+DR;PITCH ENV;Env Depth;Pitch Env Depth;numero;-12;12;;;sì;
+DR;PITCH ENV;Env V-Sens;Pitch Env Velocity Sens;numero;-63;63;;;sì;
+DR;PITCH ENV;Env T1 V-Sens;Pitch Env Time 1 Velocity Sens;numero;-63;63;;;sì;
+DR;PITCH ENV;Env T4 V-Sens;Pitch Env Time 4 Velocity Sens;numero;-63;63;;;sì;
+DR;PITCH ENV;Env Time 1;Pitch Env Time 1;numero;0;127;;;sì;
+DR;PITCH ENV;Env Time 2;Pitch Env Time 2;numero;0;127;;;sì;
+DR;PITCH ENV;Env Time 3;Pitch Env Time 3;numero;0;127;;;sì;
+DR;PITCH ENV;Env Time 4;Pitch Env Time 4;numero;0;127;;;sì;
+DR;PITCH ENV;Env Level 0;Pitch Env Level 0;numero;-63;63;;;sì;
+DR;PITCH ENV;Env Level 1;Pitch Env Level 1;numero;-63;63;;;sì;
+DR;PITCH ENV;Env Level 2;Pitch Env Level 2;numero;-63;63;;;sì;
+DR;PITCH ENV;Env Level 3;Pitch Env Level 3;numero;-63;63;;;sì;
+DR;PITCH ENV;Env Level 4;Pitch Env Level 4;numero;-63;63;;;sì;
+DR;TVF;Filter Type;;scelta;;;OFF, LPF, BPF, HPF, PKG, LPF2, LPF3;;sì;
+DR;TVF;Cutoff;TVF Cutoff Frequency;numero;0;127;;;sì;
+DR;TVF;Resonance;;numero;0;127;;;sì;
+DR;TVF;Cutoff V-Crv;Cutoff Velocity Curve;scelta;;;FIXED, 1, 2, 3, 4, 5, 6, 7;;sì;
+DR;TVF;Cutoff V-Sens;Cutoff Velocity Sens;numero;-63;63;;;sì;
+DR;TVF;Res V-Sens;Resonance Velocity Sens;numero;-63;63;;;sì;
+DR;TVF ENV;Env V-Curve;TVF Env Velocity Curve;scelta;;;FIXED, 1, 2, 3, 4, 5, 6, 7;;sì;
+DR;TVF ENV;Env V-Sens;TVF Env Velocity Sens;numero;-63;63;;;sì;
+DR;TVF ENV;Env T1 V-Sens;;numero;-63;63;;;sì;
+DR;TVF ENV;Env T4 V-Sens;;numero;-63;63;;;sì;
+DR;TVF ENV;Env Depth;TVF Env Depth;numero;-63;63;;;sì;
+DR;TVF ENV;Env Time 1;TVF Env Time 1;numero;0;127;;;sì;
+DR;TVF ENV;Env Time 2;TVF Env Time 2;numero;0;127;;;sì;
+DR;TVF ENV;Env Time 3;TVF Env Time 3;numero;0;127;;;sì;
+DR;TVF ENV;Env Time 4;TVF Env Time 4;numero;0;127;;;sì;
+DR;TVF ENV;Env Level 0;TVF Env Level 0;numero;0;127;;;sì;
+DR;TVF ENV;Env Level 1;TVF Env Level 1;numero;0;127;;;sì;
+DR;TVF ENV;Env Level 2;TVF Env Level 2;numero;0;127;;;sì;
+DR;TVF ENV;Env Level 3;TVF Env Level 3;numero;0;127;;;sì;
+DR;TVF ENV;Env Level 4;TVF Env Level 4;numero;0;127;;;sì;
+DR;TVA;Level;Partial Level;numero;0;127;;;sì;
+DR;TVA;Level V-Curve;;scelta;;;FIXED, 1, 2, 3, 4, 5, 6, 7;;sì;
+DR;TVA;Level V-Sens;;numero;-63;63;;;sì;
+DR;TVA;Pan;Partial Pan;pan;-64;63;;;sì;
+DR;TVA;Rnd Pan Dpth;Random Pan Depth;numero;0;63;;;sì;
+DR;TVA;Alt Pan Dpth;Alternate Pan Depth;pan;-63;63;;;sì;
+DR;TVA;Relative Level;;numero;-64;63;;;sì;
+DR;TVA ENV;Env T1 V-Sens;;numero;-63;63;;;sì;
+DR;TVA ENV;Env T4 V-Sens;;numero;-63;63;;;sì;
+DR;TVA ENV;Env Time 1;TVA Env Time 1;numero;0;127;;;sì;
+DR;TVA ENV;Env Time 2;TVA Env Time 2;numero;0;127;;;sì;
+DR;TVA ENV;Env Time 3;TVA Env Time 3;numero;0;127;;;sì;
+DR;TVA ENV;Env Time 4;TVA Env Time 4;numero;0;127;;;sì;
+DR;TVA ENV;Env Level 1;TVA Env Level 1;numero;0;127;;;sì;
+DR;TVA ENV;Env Level 2;TVA Env Level 2;numero;0;127;;;sì;
+DR;TVA ENV;Env Level 3;TVA Env Level 3;numero;0;127;;;sì;
+DR;OUTPUT;Output Asgn;Output Assign;scelta;;;EFX1, EFX2, DLY, REV, DIR;;sì;Vale se la parte Drums ha Part Output = KIT
+DR;OUTPUT;Output Level;;numero;0;127;;;sì;
+DR;OUTPUT;Dly Send Lev;Delay Send Level;numero;0;127;;;sì;
+DR;OUTPUT;Rev Send Lev;Reverb Send Level;numero;0;127;;;sì;
+PROG;COMMON;Tempo;Program Tempo;numero o scelta;5;300;MIDI;BPM;no;
+PROG;COMMON;ProgramLevel;Program Level;numero;0;127;;;no;
+PROG;MAIN;Level;Part Level;numero;0;127;;;sì;
+PROG;MAIN;Sound Mute;;scelta;;;OFF, MUTE;;sì;
+PROG;MAIN;Pan;Part Pan;pan;-64;63;;;sì;
+PROG;MAIN;Part Output;Part Output Assign;scelta;;;EFX1, EFX2, DLY, REV, DIR, KIT;;sì;KIT solo per la parte Drums
+PROG;MAIN;Dly Send Lev;Part Delay Send Level;numero;0;127;;;sì;
+PROG;MAIN;Rev Send Lev;Part Reverb Send Level;numero;0;127;;;sì;
+PROG;MAIN;Mono/Poly;;scelta;;;MONO, POLY, TONE;;sì;Per la parte AN solo MONO
+PROG;MAIN;Legato Sw;Legato Switch;scelta;;;OFF, ON, TONE;;sì;
+PROG;PITCH;Octave Shift;;numero;-3;3;;;sì;
+PROG;PITCH;Coarse Tune;;numero;-48;48;;semitoni;sì;
+PROG;PITCH;Fine Tune;;numero;-50;50;;cent;sì;
+PROG;PITCH;Bend Range;Pitch Bend Range;numero o scelta;0;24;TONE;;sì;
+PROG;PITCH;Porta Sw;Portamento Switch;scelta;;;OFF, ON, TONE;;sì;
+PROG;PITCH;Porta Time;Portamento Time;numero o scelta;0;127;TONE;;sì;
+PROG;OFFSET;Cutoff Ofst;Cutoff Offset;numero;-64;63;;;sì;
+PROG;OFFSET;Reso Offset;Resonance Offset;numero;-64;63;;;sì;
+PROG;OFFSET;Attack Ofst;Attack Offset;numero;-64;63;;;sì;
+PROG;OFFSET;Decay Offset;;numero;-64;63;;;sì;
+PROG;OFFSET;Release Ofst;Release Offset;numero;-64;63;;;sì;
+PROG;OFFSET;Vibrato Rate;;numero;-64;63;;;sì;
+PROG;OFFSET;Vibrato Depth;;numero;-64;63;;;sì;
+PROG;OFFSET;Vibrato Delay;;numero;-64;63;;;sì;
+EFFETTI;EFFECT1;Type;Effect 1 Type;scelta;;;Thru, Distortion, Fuzz, Compressor, Bit Crusher;;no;
+EFFETTI;EFFECT1;Output Asgn;Effect 1 Output Assign;scelta;;;DIR, EFX2;;no;EFX2 = in serie con Effect 2
+EFFETTI;EFFECT1;Dly Send Lev;Effect 1 Delay Send Level;numero;0;127;;;no;
+EFFETTI;EFFECT1;Rev Send Lev;Effect 1 Reverb Send Level;numero;0;127;;;no;
+EFFETTI;EFFECT1;Level;Livello dell'effetto (tutti i tipi);numero;0;127;;;no;
+EFFETTI;EFFECT1;Dist Type;Type di Distortion / Fuzz;numero;0;5;;;no;Distortion, Fuzz
+EFFETTI;EFFECT1;Drive;;numero;0;127;;;no;Distortion, Fuzz
+EFFETTI;EFFECT1;Presence;;numero;0;127;;;no;Distortion, Fuzz
+EFFETTI;EFFECT1;Threshold;;numero;0;127;;;no;Compressor
+EFFETTI;EFFECT1;Ratio;;testo;;;;;no;Compressor · 1:1 … inf:1
+EFFETTI;EFFECT1;Attack;Compressor Attack;numero;0.05;50;;ms;no;Compressor
+EFFETTI;EFFECT1;Release;Compressor Release;numero;0.05;2000;;ms;no;Compressor
+EFFETTI;EFFECT1;Side Switch;Side Chain Switch;scelta;;;OFF, ON;;no;Compressor · firmware 1.50
+EFFETTI;EFFECT1;Side Level;Side Chain Level;numero;0;127;;;no;Compressor · firmware 1.50
+EFFETTI;EFFECT1;Side Note;Side Chain Note;nota;;;;;no;Compressor · strumento Drums, es. C2
+EFFETTI;EFFECT1;Side Time;;numero;60;1000;;ms;no;Compressor · firmware 1.50
+EFFETTI;EFFECT1;Side Release;;numero;0;127;;;no;Compressor · firmware 1.50
+EFFETTI;EFFECT1;Side Sync Sw;Side Chain Tempo Sync;scelta;;;OFF, ON;;no;Compressor · firmware 1.50
+EFFETTI;EFFECT1;Rate;Sampling rate;numero;0;127;;;no;Bit Crusher
+EFFETTI;EFFECT1;Bit;Bit depth;numero;0;127;;;no;Bit Crusher
+EFFETTI;EFFECT1;Filter;;numero;0;127;;;no;Bit Crusher
+EFFETTI;EFFECT2;Type;Effect 2 Type;scelta;;;Thru, Flanger, Phaser, Ring Mod, Slicer;;no;
+EFFETTI;EFFECT2;Dly Send Lev;Effect 2 Delay Send Level;numero;0;127;;;no;
+EFFETTI;EFFECT2;Rev Send Lev;Effect 2 Reverb Send Level;numero;0;127;;;no;
+EFFETTI;EFFECT2;Level;Livello dell'effetto (tutti i tipi);numero;0;127;;;no;
+EFFETTI;EFFECT2;Rate;;numero o scelta;0;127;16, 12, 8, 4, 2, 1, 3/4, 2/3, 1/2, 3/8, 1/3, 1/4, 3/16, 1/6, 1/8, 3/32, 1/12, 1/16, 1/24, 1/32;;no;"Flanger, Phaser (numero o nota); Slicer (solo nota)"
+EFFETTI;EFFECT2;Depth;;numero;0;127;;;no;Flanger, Phaser
+EFFETTI;EFFECT2;Feedback;;numero;0;127;;;no;Flanger · 0 = chorus
+EFFETTI;EFFECT2;Manual;;numero;0;127;;;no;Flanger, Phaser
+EFFETTI;EFFECT2;Balance;Dry/Wet Balance;D:W;;;;;no;Flanger, Ring Mod · es. D50:50W
+EFFETTI;EFFECT2;Resonance;;numero;0;127;;;no;Phaser
+EFFETTI;EFFECT2;Frequency;;numero;0;127;;;no;Ring Mod
+EFFETTI;EFFECT2;Sens;;numero;0;127;;;no;Ring Mod
+EFFETTI;EFFECT2;Timing Ptn;Timing Pattern;numero;0;15;;;no;Slicer
+EFFETTI;EFFECT2;Attack;;numero;0;127;;;no;Slicer
+EFFETTI;EFFECT2;Trigger Level;;numero;0;127;;;no;Slicer
+EFFETTI;DELAY;Type;Delay Type;scelta;;;SINGLE, PAN;;no;
+EFFETTI;DELAY;Time;Delay Time;numero o scelta;0;2600;16, 12, 8, 4, 2, 1, 3/4, 2/3, 1/2, 3/8, 1/3, 1/4, 3/16, 1/6, 1/8, 3/32, 1/12, 1/16, 1/24, 1/32;ms;no;
+EFFETTI;DELAY;Tap Time;;numero;0;100;;%;no;Solo con Type = PAN
+EFFETTI;DELAY;Feedback;;numero;0;98;;%;no;
+EFFETTI;DELAY;HF Damp;High Frequency Damp;numero o scelta;200;8000;BYPASS;Hz;no;
+EFFETTI;DELAY;Level;Delay Level;numero;0;127;;;no;
+EFFETTI;DELAY;Rev Send Lev;Delay to Reverb Send Level;numero;0;127;;;no;
+EFFETTI;REVERB;Type;Reverb Type;scelta;;;ROOM1, ROOM2, STAGE1, STAGE2, HALL1, HALL2;;no;
+EFFETTI;REVERB;Time;Reverb Time;numero;0;127;;;no;
+EFFETTI;REVERB;HF Damp;High Frequency Damp;numero o scelta;200;8000;BYPASS;Hz;no;
+EFFETTI;REVERB;Level;Reverb Level;numero;0;127;;;no;
+VOCE;COMMON;Vocal Effect;;scelta;;;OFF, VOCODER, AUTO-PITCH;;no;
+VOCE;COMMON;Auto Note;Auto Note Switch;scelta;;;OFF, ON;;no;
+VOCE;AUTO PITCH;Level;;numero;0;127;;;no;
+VOCE;AUTO PITCH;Pan;;pan;-64;63;;;no;
+VOCE;AUTO PITCH;Output Asgn;Output Assign;scelta;;;EFX1, EFX2, DLY, REV, DIR;;no;
+VOCE;AUTO PITCH;Dly Send Lev;Delay Send Level;numero;0;127;;;no;
+VOCE;AUTO PITCH;Rev Send Lev;Reverb Send Level;numero;0;127;;;no;
+VOCE;VOCODER;Level;;numero;0;127;;;no;
+VOCE;VOCODER;Pan;;pan;-64;63;;;no;
+VOCE;VOCODER;Output Asgn;Output Assign;scelta;;;EFX1, EFX2, DLY, REV, DIR;;no;
+VOCE;VOCODER;Dly Send Lev;Delay Send Level;numero;0;127;;;no;
+VOCE;VOCODER;Rev Send Lev;Reverb Send Level;numero;0;127;;;no;
+VOCE;AUTO PITCH;Type;;scelta;;;Soft, Hard, Electric1, Electric2;;no;
+VOCE;AUTO PITCH;Scale;;scelta;;;Chromatic, Maj(Min);;no;
+VOCE;AUTO PITCH;Key;;scelta;;;C, Db, D, Eb, E, F, F#, G, Ab, A, Bb, B, Cm, C#m, Dm, D#m, Em, Fm, F#m, Gm, G#m, Am, Bbm, Bm;;no;
+VOCE;AUTO PITCH;Gender;;numero;-10;10;;;no;
+VOCE;AUTO PITCH;Octave;;numero;-1;1;;;no;
+VOCE;AUTO PITCH;Balance;Dry/Wet Balance;D:W;;;;;no;es. D30:70W
+VOCE;VOCODER;Envelope;;scelta;;;Sharp, Soft, Long;;no;
+VOCE;VOCODER;Mic Sens;;numero;0;127;;;no;
+VOCE;VOCODER;Synth Level;;numero;0;127;;;no;
+VOCE;VOCODER;Mic Mix Level;;numero;0;127;;;no;
+VOCE;VOCODER;Mic HPF;Mic High Pass Filter;numero o scelta;1000;16000;BYPASS;Hz;no;
+ARP;ARPEGGIO;Arpeggio;Arpeggio Switch;scelta;;;OFF, ON;;no;
+ARP;ARPEGGIO;Style;Arpeggio Style;numero;1;128;;;no;
+ARP;ARPEGGIO;Grid;;scelta;;;1/4, 1/8, 1/8L, 1/8H, 1/12, 1/16, 1/16L, 1/16H, 1/24;;no;
+ARP;ARPEGGIO;Duration;;numero o scelta;30;120;FULL;%;no;
+ARP;ARPEGGIO;Motif;;scelta;;;Up(L), Up(L&H), Up(_), Down(L), Down(L&H), Down(_), U/D(L), U/D(L&H), U/D(_), Rand(L), Rand(_), Phrase;;no;
+ARP;ARPEGGIO;Velocity;;numero o scelta;1;127;REAL;;no;
+ARP;ARPEGGIO;Oct Range;Octave Range;numero;-3;3;;;no;
+ARP;ARPEGGIO;Accent;Accent Rate;numero;0;100;;%;no;

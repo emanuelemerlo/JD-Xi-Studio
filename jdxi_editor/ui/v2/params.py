@@ -41,10 +41,21 @@ class ParamInfo:
     page: int = 0  # page of the Parameter Guide
     signed: bool = False  # show "+" before positive values
     show_negative: bool = False  # the display shows the value as negative (Bend Range Down)
+    area: str = "TONE"  # what the group belongs to: TONE, PROGRAM, EFFECTS...
+    source: str = ""  # where the explanation comes from, when not the Parameter Guide
+    scale: int = 1  # the value is shown divided by this (Tempo 12000 -> 120.00)
+    fmt: Optional[Callable[[int], str]] = None  # own way of showing the value (Pan L64 … 63R)
+    parse: Optional[Callable[[str], Optional[int]]] = None  # and of reading it back when typed
 
     def format(self, value: int) -> str:
         if self.choices and 0 <= value < len(self.choices):
             return self.choices[value]
+        if self.fmt is not None:
+            return self.fmt(value)
+        if self.scale > 1:
+            decimals = len(str(self.scale)) - 1
+            text = f"{value / self.scale:.{decimals}f}"
+            return f"{text} {self.unit}".strip() if self.unit else text
         if self.show_negative:
             text = f"-{value}" if value else "0"
         elif self.signed:

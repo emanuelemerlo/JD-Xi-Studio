@@ -19,9 +19,11 @@ def create_parts_container(
 ):
     """Create the Parts Select container widget"""
     parts_container = QWidget(parent_widget)
+    # On the panel (it was placed on the window, so it came apart from the
+    # panel when the window grew); 20 px up: where it sat below the menu bar
     parts_container.setGeometry(
         JDXi.UI.Dimensions.PARTS.X,
-        JDXi.UI.Dimensions.PARTS.Y,
+        JDXi.UI.Dimensions.PARTS.Y - 20,
         JDXi.UI.Dimensions.PARTS.WIDTH,
         JDXi.UI.Dimensions.PARTS.HEIGHT,
     )

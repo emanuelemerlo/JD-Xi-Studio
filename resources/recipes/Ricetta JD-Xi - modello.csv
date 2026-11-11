@@ -1,0 +1,65 @@
+﻿# Titolo: Il lead di Jungle Gardenia
+# Descrizione: Lead scuro e flautato, legato, vibrato con la modulation wheel
+# Autore: Emanuele
+# Tono di partenza: AN 064 Init Tone
+# Programma utente: E01
+# Versione del modello: 1
+Passo;Nome del passo;Parte;Gruppo;Su;Parametro;Tipo di valore;Valore;Da;A;Nota
+1;Oscillatore;AN;OSC;;Waveform;valore;TRI;;;Triangolare: quasi solo armoniche dispari, come l'originale
+1;Oscillatore;AN;OSC;;Sub OSC;valore;OFF;;;
+1;Oscillatore;AN;PITCH;;OSC Pitch;valore;0;;;
+1;Oscillatore;AN;PITCH;;OSC Detune;valore;0;;;
+1;Oscillatore;AN;PITCH;;Env Depth;valore;0;;;Nessuna variazione d'intonazione all'attacco
+1;Oscillatore;AN;COMMON;;Porta Sw;valore;ON;;;
+1;Oscillatore;AN;COMMON;;Porta Time;intervallo;;15;25;Portamento corto per le salite di semitono
+1;Oscillatore;AN;COMMON;;Legato Sw;valore;ON;;;
+1;Oscillatore;AN;COMMON;;Bend Range U;valore;2;;;
+1;Oscillatore;AN;COMMON;;Bend Range D;valore;-2;;;
+2;Filtro;AN;FILTER;;Type;valore;LPF;;;
+2;Filtro;AN;FILTER;;Cutoff;intervallo;;55;65;Parti da 60 sulla nota lunga di 0:10, poi abbassa finché sparisce il ronzio acuto
+2;Filtro;AN;FILTER;;Resonance;intervallo;;0;10;L'originale non ha picchi di risonanza
+2;Filtro;AN;FILTER;;Cutoff KF;valore;+50;;;Il timbro resta simile tra Si4 e Fa#5
+2;Filtro;AN;FILTER;;Velo Sens;valore;0;;;
+2;Filtro;AN;FILTER;;Attack;valore;0;;;
+2;Filtro;AN;FILTER;;Decay;valore;40;;;Con Depth +5: leggerissimo accento iniziale
+2;Filtro;AN;FILTER;;Sustain;valore;100;;;
+2;Filtro;AN;FILTER;;Release;valore;30;;;
+2;Filtro;AN;FILTER;;Depth;valore;+5;;;
+3;Ampiezza;AN;AMP;;AMP Level;valore;127;;;
+3;Ampiezza;AN;AMP;;Attack;valore;10;;;Se senti ancora un clic, sali a 15
+3;Ampiezza;AN;AMP;;Decay;valore;0;;;
+3;Ampiezza;AN;AMP;;Sustain;valore;127;;;Nota lunga e piena
+3;Ampiezza;AN;AMP;;Release;valore;35;;;Piccola coda, la allungano delay e riverbero
+3;Ampiezza;AN;AMP;;Level V-Sens;valore;+10;;;
+4;Vibrato;AN;LFO;;Shape;valore;SIN;;;
+4;Vibrato;AN;LFO;;Rate;a orecchio;;;;Circa 5 Hz: con la mod wheel a metà conta 5 oscillazioni al secondo
+4;Vibrato;AN;LFO;;Tempo Sync;valore;OFF;;;
+4;Vibrato;AN;LFO;;Key Trigger;valore;OFF;;;
+4;Vibrato;AN;LFO;;Fade Time;valore;0;;;Alternativa automatica: Pitch Depth +4 e Fade Time 40
+4;Vibrato;AN;LFO;;Pitch Depth;valore;0;;;
+4;Vibrato;AN;LFO;;Filter Depth;valore;0;;;
+4;Vibrato;AN;LFO;;Amp Depth;valore;0;;;
+4;Vibrato;AN;LFO;;Mod Pitch;intervallo;;8;12;Wheel al massimo: vibrato leggero, circa ±15 cent
+5;Effetti;PROG;MAIN;AN;Part Output;valore;EFX1;;;Passa per EFX1, EFX2, Delay e Reverb
+5;Effetti;PROG;MAIN;AN;Dly Send Lev;valore;40;;;
+5;Effetti;PROG;MAIN;AN;Rev Send Lev;valore;40;;;
+5;Effetti;EFFETTI;EFFECT1;;Type;valore;Distortion;;;
+5;Effetti;EFFETTI;EFFECT1;;Drive;intervallo;;10;25;"Solo un po' di calore; se ronza, abbassa"
+5;Effetti;EFFETTI;EFFECT1;;Presence;intervallo;;0;20;Alta rimetterebbe gli acuti tolti dal filtro
+5;Effetti;EFFETTI;EFFECT1;;Level;a orecchio;;;;Stesso volume con e senza effetto
+5;Effetti;EFFETTI;EFFECT1;;Output Asgn;valore;EFX2;;;In serie con Effect 2
+5;Effetti;EFFETTI;EFFECT2;;Type;valore;Flanger;;;
+5;Effetti;EFFETTI;EFFECT2;;Feedback;valore;0;;;Con Feedback 0 il Flanger fa da chorus
+5;Effetti;EFFETTI;EFFECT2;;Rate;intervallo;;10;20;
+5;Effetti;EFFETTI;EFFECT2;;Depth;intervallo;;40;60;
+5;Effetti;EFFETTI;EFFECT2;;Balance;valore;D50:50W;;;
+5;Effetti;EFFETTI;DELAY;;Type;valore;PAN;;;Dà la larghezza stereo
+5;Effetti;EFFETTI;DELAY;;Time;intervallo;;350;400;
+5;Effetti;EFFETTI;DELAY;;Tap Time;intervallo;;50;75;
+5;Effetti;EFFETTI;DELAY;;Feedback;intervallo;;15;25;
+5;Effetti;EFFETTI;DELAY;;HF Damp;intervallo;;3000;4000;Tiene scure le code
+5;Effetti;EFFETTI;DELAY;;Level;intervallo;;30;40;
+5;Effetti;EFFETTI;REVERB;;Type;valore;HALL1;;;Oppure STAGE1
+5;Effetti;EFFETTI;REVERB;;Time;intervallo;;50;70;
+5;Effetti;EFFETTI;REVERB;;HF Damp;valore;4000;;;
+5;Effetti;EFFETTI;REVERB;;Level;valore;40;;;

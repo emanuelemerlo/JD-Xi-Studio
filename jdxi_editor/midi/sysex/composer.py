@@ -131,6 +131,11 @@ class JDXiSysExComposer:
                         f"MIDI value {midi_value} out of range for 1-byte parameter (0-127)"
                     )
                 data_bytes = midi_value
+            elif size == 2:
+                # 2 nibbles (e.g. Program Part Portamento Time 0-128)
+                if not 0 <= midi_value <= 255:
+                    raise ValueError(f"MIDI value {midi_value} out of range for 2-nibble parameter (0-255)")
+                data_bytes = [(midi_value >> 4) & 0x0F, midi_value & 0x0F]
             elif size == 4:
                 # 4-nibble value can be up to 16 bits (0-65535), but validate it's reasonable
                 if midi_value < 0:

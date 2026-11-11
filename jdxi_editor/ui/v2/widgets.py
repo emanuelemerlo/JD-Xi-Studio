@@ -179,9 +179,17 @@ class Knob(QWidget):
             if text.lower() == choice.lower():
                 self.pv.setValue(index)
                 return
-        number = "".join(ch for ch in text if ch.isdigit() or ch in "+-")
+        if info.parse is not None:
+            parsed = info.parse(text)
+            if parsed is None:
+                self._show(self.pv.value())
+                return
+            self.pv.setValue(parsed)
+            self._show(self.pv.value())
+            return
+        number = "".join(ch for ch in text.replace(",", ".") if ch.isdigit() or ch in "+-.")
         try:
-            value = int(number)
+            value = round(float(number) * info.scale) if info.scale > 1 else int(float(number))
         except ValueError:
             self._show(self.pv.value())
             return
@@ -352,7 +360,7 @@ def _wave_path(name: str, rect: QRectF, duty: float = 0.5) -> QPainterPath:
             path.lineTo(b + cw * duty, top)
             path.lineTo(b + cw * duty, bottom)
             path.lineTo(b + cw, bottom)
-    elif name == "SIN":
+    elif name in ("SIN", "SINE"):
         steps = 48
         for s in range(steps + 1):
             x = x0 + w * s / steps
@@ -377,6 +385,33 @@ def _wave_path(name: str, rect: QRectF, duty: float = 0.5) -> QPainterPath:
             f = f * f * (3 - 2 * f)
             y = pts[i] * (1 - f) + pts[i + 1] * f
             x = x0 + w * s / steps
+            path.lineTo(x, y) if s else path.moveTo(x, y)
+    elif name == "NOISE":
+        rnd = random.Random(3)
+        steps = 40
+        for s in range(steps + 1):
+            x, y = x0 + w * s / steps, top + rnd.random() * (bottom - top)
+            path.lineTo(x, y) if s else path.moveTo(x, y)
+    elif name in ("SUPER-SAW", "SP-SAW"):
+        for shift in (0.0, 0.3, 0.6):  # detuned saws on top of each other
+            steps = 60
+            previous = None
+            for k in range(steps + 1):
+                x = x0 + w * k / steps
+                phase = ((x - x0) / cw + shift) % 1.0
+                y = bottom - (bottom - top) * phase
+                if previous is None or phase < previous:
+                    path.moveTo(x, y)
+                else:
+                    path.lineTo(x, y)
+                previous = phase
+    elif name == "PCM":
+        steps = 60
+        for s in range(steps + 1):
+            t = s / steps
+            env = math.exp(-2.2 * t)
+            y = mid - (bottom - top) / 2 * env * (0.65 * math.sin(2 * math.pi * 5 * t) + 0.35 * math.sin(2 * math.pi * 13 * t))
+            x = x0 + w * t
             path.lineTo(x, y) if s else path.moveTo(x, y)
     return path
 
@@ -436,6 +471,13 @@ class NoteCombo(QWidget):
         name.setMinimumWidth(78)
         name.setStyleSheet("color: #c9cbd1; font-size: 11px; background: transparent;")
         self.combo = QComboBox()
+        self.combo.setStyleSheet(
+            "QComboBox { background: #121214; color: #ffffff; border: 1px solid #3a3d44; border-radius: 5px;"
+            " padding: 2px 6px; font-size: 12px; }"
+            "QComboBox:disabled { color: #6b6e75; }"
+            "QComboBox QAbstractItemView { background: #1b1c1f; color: #e6e6e6;"
+            " selection-background-color: #333333; }"
+        )
         self.combo.addItems(list(value.info.choices))
         self.combo.currentIndexChanged.connect(lambda i: self.pv.setValue(i))
         layout.addWidget(name)
@@ -729,7 +771,8 @@ class LfoView(_Graph):
         super().__init__(accent, hub, 90, parent)
         self.shape, self.rate, self.fade, self.sync, self.note = shape, rate, fade, sync, note
         for pv in (shape, rate, fade, sync, note):
-            pv.watch(lambda _v: self.update())
+            if pv is not None:  # the Modulation LFO has no fade
+                pv.watch(lambda _v: self.update())
 
     def paintEvent(self, event) -> None:
         p = QPainter(self)
@@ -743,7 +786,7 @@ class LfoView(_Graph):
         else:
             cycles = 1.0 + self.rate.value() / 127 * 9
             speed = tr("Rate {rate}").format(rate=self.rate.value())
-        fade = self.fade.value() / 127 * 0.6
+        fade = self.fade.value() / 127 * 0.6 if self.fade is not None else 0.0
         path = QPainterPath()
         steps = 240
         rnd = random.Random(5)
@@ -812,7 +855,7 @@ class InfoPanel(QFrame):
         self.long.setWordWrap(True)
         self.value = QLabel()
         self.value.setStyleSheet(
-            "color: #ffb347; font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 22px; font-weight: 600;"
+            f"color: {accent}; font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 22px; font-weight: 600;"
         )
         self.range = QLabel()
         self.range.setStyleSheet("color: #a3a6ad; font-size: 11px;")
@@ -840,14 +883,17 @@ class InfoPanel(QFrame):
             pv.watch(lambda _v, pv=pv: self._refresh_value(pv))
             pv.watch_enabled(lambda _e, pv=pv: self._refresh_value(pv))
         info = pv.info
-        self.group.setText(f"TONE: {info.group}")
+        self.group.setText(f"{info.area}: {info.group}" if info.area else info.group)
         self.name.setText(info.label)
         self.long.setText(info.long if info.long and info.long != info.label else "")
         self.range.setText(tr("Range: {range}").format(range=pv.range_text))
         self.description.setText(info.description)
-        self.source.setText(
-            tr("Parameter Guide, p. {page}").format(page=info.page) if info.page else tr("MIDI Implementation")
-        )
+        if info.source:
+            self.source.setText(info.source)
+        else:
+            self.source.setText(
+                tr("Parameter Guide, p. {page}").format(page=info.page) if info.page else tr("MIDI Implementation")
+            )
         self._refresh_value(pv)
 
     def _refresh_value(self, pv: ParamValue) -> None:

@@ -134,6 +134,18 @@ class JDXiJSONComposer:
             self.temp_folder = temp_folder
         os.makedirs(temp_folder, exist_ok=True)
 
+        # The new editors (jdxi_editor.ui.v2) give whole blocks as DT1 messages:
+        # written exactly as the sections read from the JD-Xi
+        if hasattr(editor, "export_dt1s"):
+            from jdxi_editor.midi.sysex.patch_bundle import section_file_name, section_from_dt1
+
+            path = None
+            for dt1 in editor.export_dt1s():
+                section = section_from_dt1(dt1)
+                path = Path(temp_folder) / section_file_name(section[SysExSection.ADDRESS])
+                path.write_text(json.dumps(section, indent=2), encoding="utf-8")
+            return path
+
         # Special handling for DigitalSynthEditor: save Common and Modify separately
         from jdxi_editor.midi.data.address.address import (
             JDXiSysExAddress,

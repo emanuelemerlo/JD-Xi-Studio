@@ -56,8 +56,8 @@ def test_panel_image_is_the_panel():
 
 
 def test_proportions_match_the_jdxi(window):
-    panel = window.centralWidget().height()
-    keys = window.statusBar().height()
+    panel = window.panel_container.height()
+    keys = window.keys_area.height()
     assert panel == JDXi.UI.Dimensions.INSTRUMENT.PANEL_HEIGHT
     ratio = window.width() / (panel + keys)
     assert 2.30 <= ratio <= 2.50  # JD-Xi 2.38
@@ -65,7 +65,7 @@ def test_proportions_match_the_jdxi(window):
 
 
 def test_bottom_row_sits_on_the_panel_edge(window):
-    panel = window.centralWidget()
+    panel = window.panel_container
 
     def bottom(widget):
         return widget.mapTo(panel, widget.rect().bottomLeft()).y()
@@ -108,3 +108,20 @@ def test_editor_roots_get_the_body_finish():
         assert editor.property(BODY_PROPERTY) is True
     finally:
         editor.close()
+
+
+def test_a_bigger_window_keeps_the_instrument_as_it_is(window):
+    """Maximised: the body grows around the instrument, which keeps its size and layout."""
+    stage = window.instrument_stage
+    before = {w: w.mapTo(stage, w.rect().topLeft()) for w in (window.parts_container, window.octave_down,
+                                                              window.piano_keyboard, window.sequencer_buttons[0])}
+    size = stage.size()
+    window.resize(window.width() + 600, window.height() + 300)
+    for _ in range(10):
+        _APP.processEvents()
+    assert stage.size() == size
+    for widget, pos in before.items():
+        assert widget.mapTo(stage, widget.rect().topLeft()) == pos, widget
+    centre = stage.mapTo(window, stage.rect().center()).x()
+    assert abs(centre - window.width() // 2) <= 2
+    assert window.parts_container.parentWidget() is window.panel_container

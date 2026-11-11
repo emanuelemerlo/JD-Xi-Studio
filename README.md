@@ -36,6 +36,26 @@
 - **MIDI Debugger**: Monitor and debug MIDI messages efficiently.
 - **New Analog editor** (1.0): all 46 parameters on one screen, filter curve and envelopes to drag,
   drawn waveforms, and an information panel that explains the parameter under the pointer.
+- **Recipes** (1.0): import a recipe (template .xlsx/.csv, Markdown, text, PDF or a pasted table),
+  check it row by row, then follow it step by step with the JD-Xi's values next to the recipe's.
+- **New Vocal Effect and Arpeggio editors** (1.0): AutoPitch and Vocoder with every parameter; the
+  arpeggio with its timing drawn and the parts it plays.
+- **New Drum Kit editor** (1.0): the 37 drum partials as pads, each with its four waves, pitch,
+  filter and amplifier envelopes drawn and draggable.
+- **New Digital Synth editor** (1.0), for Digital 1 and 2: every SuperNATURAL synth parameter, the
+  three partials with drawn waveforms, filter curves, envelopes and LFOs.
+- **Keyboard and editors together** (1.0): the editor windows minimise and come back with the
+  keyboard window, and move on their own (two screens); the keyboard comes in front with a click or Ctrl+Shift+K,
+  or stays always on top.
+- **Programs on one page** (1.0): library table with search, genre and banks A–H, the parts of the
+  program, the mixer; presets, user programs, playlists and system settings below.
+- **Pattern and MIDI file player in the new layout** (1.0): same functions and engine, laid out in
+  cards as in the mockups (transport, new steps, measures, sequencer, file, USB recorder; player,
+  classification, tracks, playback, automation).
+- **New Program editor** (1.0): program name, level, tempo and the four parts side by side (main,
+  pitch, offsets, velocity range, scale tune, MIDI receive) with every Program Part parameter.
+- **New Effects editor** (1.0): Effect 1, Effect 2, Delay and Reverb with every parameter of the
+  manual (side-chain compressor included), the signal chain, the delay echoes and compressor curve.
 - **Languages**: English and Italian, chosen in Preferences (see [Languages](#-languages)).
 - **Offline mode**: opens and edits without a JD-Xi or a MIDI system; it connects when one is available.
 

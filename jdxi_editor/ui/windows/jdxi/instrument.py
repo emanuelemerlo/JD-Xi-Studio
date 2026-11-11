@@ -107,8 +107,9 @@ from jdxi_editor.ui.editors.helpers.program import (
     get_program_id_by_name,
 )
 from jdxi_editor.ui.editors.main import MainEditor
-from jdxi_editor.ui.editors.midi_player.editor import MidiFilePlayer
-from jdxi_editor.ui.editors.pattern.pattern import PatternSequenceEditor
+# The pattern sequencer and the MIDI file player in the new look (same editors).
+from jdxi_editor.ui.v2.players import MidiFilePlayer, PatternSequenceEditor
+from jdxi_editor.ui.v2.programs import ProgramEditor  # the Programs page in the new look
 from jdxi_editor.ui.editors.preset.editor import PresetEditor
 from jdxi_editor.ui.preset.button import JDXiPresetButtonData
 from jdxi_editor.ui.preset.helper import JDXiPresetHelper
@@ -118,9 +119,17 @@ from jdxi_editor.ui.widgets.button import SequencerSquare
 from jdxi_editor.ui.widgets.button.favorite import FavoriteButton
 from jdxi_editor.ui.widgets.viewer.log import LogViewer
 from jdxi_editor.ui.windows.jdxi.recent_files import RecentFilesManager
+from jdxi_editor.ui.windows.jdxi.linked import WindowLink
 from jdxi_editor.ui.windows.jdxi.ui import JDXiWindow
 from jdxi_editor.ui.windows.jdxi.utils import show_message_box_from_spec
 from jdxi_editor.ui.v2.analog import AnalogToneEditor
+from jdxi_editor.ui.v2.digital import Digital2ToneEditor, DigitalToneEditor
+from jdxi_editor.ui.v2.drums import DrumKitEditor
+from jdxi_editor.ui.v2.vocal import VocalEffectEditor
+from jdxi_editor.ui.v2.arpeggio import ArpeggioEditor as ArpeggioV2Editor
+from jdxi_editor.ui.v2.recipes import RecipesEditor
+from jdxi_editor.ui.v2.effects import EffectsEditor
+from jdxi_editor.ui.v2.program import ProgramPartsEditor
 from jdxi_editor.ui.windows.midi.config_dialog import MIDIConfigDialog
 from jdxi_editor.ui.windows.midi.debugger import MIDIDebugger
 from jdxi_editor.ui.windows.midi.monitor import MIDIMessageMonitor
@@ -180,14 +189,14 @@ class JDXiInstrument(JDXiWindow):
         self.editor_registry = {
             "vocal_fx": EditorConfig(
                 title="Vocal Effects",
-                editor_class=VocalFXEditor,
+                editor_class=VocalEffectEditor,  # new interface (1.0)
                 synth_type=JDXiSynth.VOCAL_FX,
                 midi_channel=MidiChannel.VOCAL_FX,
                 icon="mdi.microphone",
             ),
             "digital1": EditorConfig(
                 title="Digital Synth 1",
-                editor_class=DigitalSynthEditor,
+                editor_class=DigitalToneEditor,  # new interface (1.0)
                 synth_type=JDXiSynth.DIGITAL_SYNTH_1,
                 midi_channel=MidiChannel.DIGITAL_SYNTH_1,
                 kwargs={"synth_number": 1},
@@ -195,7 +204,7 @@ class JDXiInstrument(JDXiWindow):
             ),
             "digital2": EditorConfig(
                 title="Digital Synth 2",
-                editor_class=DigitalSynth2Editor,
+                editor_class=Digital2ToneEditor,  # new interface (1.0)
                 synth_type=JDXiSynth.DIGITAL_SYNTH_2,
                 midi_channel=MidiChannel.DIGITAL_SYNTH_2,
                 kwargs={"synth_number": 2},
@@ -210,20 +219,30 @@ class JDXiInstrument(JDXiWindow):
             ),
             "drums": EditorConfig(
                 title="Drums",
-                editor_class=DrumCommonEditor,
+                editor_class=DrumKitEditor,  # new interface (1.0)
                 synth_type=JDXiSynth.DRUM_KIT,
                 midi_channel=MidiChannel.DRUM_KIT,
                 icon="fa5s.drum",
             ),
             "arpeggio": EditorConfig(
                 title="Arpeggiator",
-                editor_class=ArpeggioEditor,
+                editor_class=ArpeggioV2Editor,  # new interface (1.0)
                 icon="ph.music-notes-simple-bold",
             ),
             "effects": EditorConfig(
                 title="Effects",
-                editor_class=EffectsCommonEditor,
+                editor_class=EffectsEditor,  # new interface (1.0)
                 icon="ri.sound-module-fill",
+            ),
+            "program_parts": EditorConfig(
+                title="Program: common and parts",
+                editor_class=ProgramPartsEditor,  # new interface (1.0)
+                icon="mdi.tune-vertical",
+            ),
+            "recipes": EditorConfig(
+                title="Recipes",
+                editor_class=RecipesEditor,  # new (1.0)
+                icon="mdi.clipboard-list-outline",
             ),
             "pattern": EditorConfig(
                 title="Pattern",
@@ -247,6 +266,7 @@ class JDXiInstrument(JDXiWindow):
         # Each editor requests its own data via showEvent() when displayed
         self._show_main_editor()
         self.init_main_editor()
+        self._init_window_layout()
         # Initialize the current preset and synth type
         self.current_synth_type = JDXiSynth.DIGITAL_SYNTH_1
         self.channel = MidiChannel.DIGITAL_SYNTH_1
@@ -393,9 +413,13 @@ class JDXiInstrument(JDXiWindow):
         try:
             # Wait for any USB recording threads to avoid "Destroyed while still running"
             self._wait_for_usb_recording_threads()
+            self._save_window_layout()
             self.midi_helper.close_ports()
             self._save_settings()
             event.accept()
+            link = getattr(self, "window_link", None)
+            if link is not None:  # the editors window is not owned: close it too
+                link.close_all()
         except Exception as ex:
             log.error(
                 scope="JDXiInstrument", message=f" Error during close event: {str(ex)}"
@@ -811,6 +835,76 @@ class JDXiInstrument(JDXiWindow):
         self.main_editor.setUpdatesEnabled(True)
         self.main_editor.show()
 
+    # --- Window menu: the editor windows minimise and come back with the keyboard
+
+    def _init_window_layout(self) -> None:
+        """The Window menu and the link between the keyboard and the editor windows."""
+        self.window_link = WindowLink(self)
+        if self.main_editor is not None:
+            self.window_link.add(self.main_editor)
+        menu = QMenu(tr("&Window"), self)
+        menu.addAction(self._menu_action(tr("Show the &editors"), self._show_main_editor, "Ctrl+Shift+W"))
+        menu.addAction(
+            self._menu_action(
+                tr("Show the &keyboard"),
+                self.bring_keyboard_to_front,
+                "Ctrl+Shift+K",
+                status_tip=tr("Bring the keyboard window in front of the editors"),
+            )
+        )
+        self.on_top_action = self._menu_action(
+            tr("Keyboard always on &top"),
+            lambda: self.set_keyboard_on_top(self.on_top_action.isChecked()),
+            status_tip=tr("Keep the keyboard window in front of the other windows"),
+        )
+        self.on_top_action.setCheckable(True)
+        menu.addAction(self.on_top_action)
+        menu.addSeparator()
+        menu.addAction(
+            self._menu_action(
+                tr("&Line up the editors with the keyboard"),
+                lambda: self.window_link.line_up(self.main_editor),
+                status_tip=tr("Place the editors window right above the keyboard"),
+            )
+        )
+        self.menuBar().insertMenu(self.help_menu.menuAction(), menu)
+        self.window_menu = menu
+        # The editors where they were left
+        settings = getattr(self, "settings", None)
+        geometry = settings.value("window/editors_geometry") if settings is not None else None
+        if geometry:
+            self.main_editor.restoreGeometry(geometry)
+        if settings is not None and str(settings.value("window/keyboard_on_top", False)).lower() == "true":
+            self.set_keyboard_on_top(True)
+
+    def bring_keyboard_to_front(self) -> None:
+        """The keyboard window in front (from an editor window too: Ctrl+Shift+K)."""
+        if self.isMinimized():
+            self.showNormal()
+        self.show()
+        self.raise_()
+        self.activateWindow()
+
+    def set_keyboard_on_top(self, on: bool) -> None:
+        """Keep the keyboard window in front of the other windows (True) or not."""
+        on = bool(on)
+        if bool(self.windowFlags() & Qt.WindowType.WindowStaysOnTopHint) != on:
+            geometry = self.saveGeometry()
+            visible = self.isVisible()
+            self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, on)
+            self.restoreGeometry(geometry)
+            if visible:
+                self.show()  # changing the flags hides the window
+        self.on_top_action.setChecked(on)
+        settings = getattr(self, "settings", None)
+        if settings is not None:
+            settings.setValue("window/keyboard_on_top", on)
+
+    def _save_window_layout(self) -> None:
+        settings = getattr(self, "settings", None)
+        if settings is not None and self.main_editor is not None and self.main_editor.isVisible():
+            settings.setValue("window/editors_geometry", self.main_editor.saveGeometry())
+
     def show_editor(self, editor_type: str, **kwargs) -> None:
         """
         Show editor of given type
@@ -833,6 +927,9 @@ class JDXiInstrument(JDXiWindow):
         self._show_editor_tab(
             config.title, config.editor_class, config.icon, **merged_kwargs
         )
+        # Bring the editors forward (not while the startup editors open)
+        if self.main_editor is not None and self.main_editor.updatesEnabled():
+            self._show_main_editor()
 
     def on_documentation(self):
         """
@@ -915,6 +1012,13 @@ class JDXiInstrument(JDXiWindow):
                     MidiFilePlayer,
                     VocalFXEditor,
                     EffectsCommonEditor,
+                    EffectsEditor,
+                    ProgramPartsEditor,
+                    DigitalToneEditor,
+                    Digital2ToneEditor,
+                    DrumKitEditor,
+                    VocalEffectEditor,
+                    ArpeggioV2Editor,
                 }
                 else None
             )
@@ -1083,6 +1187,13 @@ class JDXiInstrument(JDXiWindow):
                     MidiFilePlayer,
                     VocalFXEditor,
                     EffectsCommonEditor,
+                    EffectsEditor,
+                    ProgramPartsEditor,
+                    DigitalToneEditor,
+                    Digital2ToneEditor,
+                    DrumKitEditor,
+                    VocalEffectEditor,
+                    ArpeggioV2Editor,
                 ]
                 else None
             )
@@ -1241,6 +1352,8 @@ class JDXiInstrument(JDXiWindow):
         """
         if not self.main_editor:
             self.main_editor = MainEditor(self)
+        if self.isMinimized():  # the editors come back with the keyboard
+            self.showNormal()
         self.main_editor.show()
         self.main_editor.raise_()
 
@@ -1533,6 +1646,12 @@ class JDXiInstrument(JDXiWindow):
 
             # Iterate through all registered editors
             for editor in self.editors:
+                # The new editors send their blocks as they are
+                if hasattr(editor, "export_dt1s"):
+                    for dt1 in editor.export_dt1s():
+                        self.midi_helper.send_raw_message(list(dt1))
+                        total_sent += 1
+                    continue
                 # Skip editors that don't have the required attributes
                 if not hasattr(editor, "address") or not hasattr(
                     editor, "get_controls_as_dict"
