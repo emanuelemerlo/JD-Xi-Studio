@@ -6,7 +6,10 @@ The editor windows stay separate windows, but follow the keyboard window:
 - minimising either the keyboard or an editor window minimises all of them,
   and restoring the keyboard (from the taskbar too) brings back the editors
   that were open;
-- each window is moved on its own (working on two screens, say);
+- each window is moved on its own (working on two screens, say), and the
+  editors window is not owned by the keyboard window, so clicking either
+  brings it in front (the keyboard can also be kept always on top);
+- closing the keyboard window closes the linked windows;
 - line_up() places the editors right above the keyboard (or below it when
   there is no room), aligned on its left edge.
 """
@@ -24,15 +27,28 @@ class WindowLink(QObject):
         super().__init__(keyboard)
         self.keyboard = keyboard
         self._hidden: list[QWidget] = []
+        self._extra: list[QWidget] = []  # windows of their own (not owned by the keyboard)
         self._watched: set[int] = set()
         keyboard.installEventFilter(self)
         self.followers()  # watch the windows already there; new ones on ChildAdded
 
     # --- which windows follow
 
+    def add(self, window: QWidget) -> None:
+        """Link a window that is not the keyboard's child (so the keyboard can come in front of it)."""
+        if window not in self._extra:
+            self._extra.append(window)
+            window.installEventFilter(self)
+            self._watched.add(id(window))
+
+    def close_all(self) -> None:
+        """Close the linked windows (the keyboard window is closing)."""
+        for widget in self._extra + self.followers():
+            widget.hide()
+
     def followers(self) -> list[QWidget]:
-        """The keyboard's own windows: editors, the editor tabs, monitors (not menus or modal dialogs)."""
-        out = []
+        """The linked windows and the keyboard's own windows (not menus or modal dialogs)."""
+        out = [w for w in self._extra if w is not None]
         for widget in self.keyboard.findChildren(QWidget):
             if not widget.isWindow() or isinstance(widget, QMenu):
                 continue

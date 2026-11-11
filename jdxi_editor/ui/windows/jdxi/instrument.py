@@ -416,6 +416,9 @@ class JDXiInstrument(JDXiWindow):
             self.midi_helper.close_ports()
             self._save_settings()
             event.accept()
+            link = getattr(self, "window_link", None)
+            if link is not None:  # the editors window is not owned: close it too
+                link.close_all()
         except Exception as ex:
             log.error(
                 scope="JDXiInstrument", message=f" Error during close event: {str(ex)}"
@@ -836,8 +839,26 @@ class JDXiInstrument(JDXiWindow):
     def _init_window_layout(self) -> None:
         """The Window menu and the link between the keyboard and the editor windows."""
         self.window_link = WindowLink(self)
+        if self.main_editor is not None:
+            self.window_link.add(self.main_editor)
         menu = QMenu(tr("&Window"), self)
         menu.addAction(self._menu_action(tr("Show the &editors"), self._show_main_editor, "Ctrl+Shift+W"))
+        menu.addAction(
+            self._menu_action(
+                tr("Show the &keyboard"),
+                self.bring_keyboard_to_front,
+                "Ctrl+Shift+K",
+                status_tip=tr("Bring the keyboard window in front of the editors"),
+            )
+        )
+        self.on_top_action = self._menu_action(
+            tr("Keyboard always on &top"),
+            lambda: self.set_keyboard_on_top(self.on_top_action.isChecked()),
+            status_tip=tr("Keep the keyboard window in front of the other windows"),
+        )
+        self.on_top_action.setCheckable(True)
+        menu.addAction(self.on_top_action)
+        menu.addSeparator()
         menu.addAction(
             self._menu_action(
                 tr("&Line up the editors with the keyboard"),
@@ -852,6 +873,31 @@ class JDXiInstrument(JDXiWindow):
         geometry = settings.value("window/editors_geometry") if settings is not None else None
         if geometry:
             self.main_editor.restoreGeometry(geometry)
+        if settings is not None and str(settings.value("window/keyboard_on_top", False)).lower() == "true":
+            self.set_keyboard_on_top(True)
+
+    def bring_keyboard_to_front(self) -> None:
+        """The keyboard window in front (from an editor window too: Ctrl+Shift+K)."""
+        if self.isMinimized():
+            self.showNormal()
+        self.show()
+        self.raise_()
+        self.activateWindow()
+
+    def set_keyboard_on_top(self, on: bool) -> None:
+        """Keep the keyboard window in front of the other windows (True) or not."""
+        on = bool(on)
+        if bool(self.windowFlags() & Qt.WindowType.WindowStaysOnTopHint) != on:
+            geometry = self.saveGeometry()
+            visible = self.isVisible()
+            self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, on)
+            self.restoreGeometry(geometry)
+            if visible:
+                self.show()  # changing the flags hides the window
+        self.on_top_action.setChecked(on)
+        settings = getattr(self, "settings", None)
+        if settings is not None:
+            settings.setValue("window/keyboard_on_top", on)
 
     def _save_window_layout(self) -> None:
         settings = getattr(self, "settings", None)

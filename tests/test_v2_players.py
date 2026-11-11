@@ -67,3 +67,34 @@ def test_player_keeps_its_controls(app):
         if button.text() in ("Load", "Save") and button.toolTip():
             assert button.text().lower() in button.toolTip().lower(), (button.text(), button.toolTip())
     editor.close()
+
+
+def test_pattern_cards_as_in_the_mockup(app):
+    editor = players.PatternSequenceEditor(midi_helper=_helper(), preset_helper=Mock())
+    editor.resize(1500, 950)
+    editor.show()
+    titles = [g.title() for g in editor.findChildren(QGroupBox) if g.title()]
+    for title in ("TRANSPORT", "NEW STEPS", "PATTERN SEQUENCER", "FILE", "USB RECORDER"):
+        assert title in titles, titles
+    # Transport, tempo, steps and the recorder are on show (not behind a toggle)
+    for widget in (editor.play_button, editor.stop_button, editor.pause_button, editor.shuffle_button,
+                   editor.tempo_spinbox, editor.tap_tempo_button, editor.beats_per_measure_combo,
+                   editor.velocity_spinbox, editor.duration_combo, editor.add_measure_button,
+                   editor.copy_button, editor.paste_button, editor.usb_recorder):
+        assert widget.isVisibleTo(editor), widget
+    # the same engine: the buttons still drive it
+    editor.tempo_spinbox.setValue(96)
+    assert editor.tempo_spinbox.value() == 96
+    editor.close()
+
+
+def test_player_cards_as_in_the_mockup(app):
+    editor = players.MidiFilePlayer(midi_helper=_helper())
+    editor.resize(1500, 950)
+    editor.show()
+    titles = [g.title() for g in editor.findChildren(QGroupBox) if g.title()]
+    for title in ("PLAYER", "CLASSIFICATION", "TRACKS", "PLAYBACK", "AUTOMATION", "USB RECORDER"):
+        assert title in titles, titles
+    assert editor.midi_file.midi_track_viewer.isVisibleTo(editor)
+    assert editor.usb_recorder.isVisibleTo(editor) and editor.automation.isVisibleTo(editor)
+    editor.close()

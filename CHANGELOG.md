@@ -39,6 +39,10 @@ on the JD-Xi display.
   them all; restoring the keyboard (from the taskbar too) brings back the editors that were open
 - **Each window moves on its own** (two screens work as expected); the editors window opens where
   it was left
+- **The keyboard can come in front of the editors**: the editors window is no longer owned by the
+  keyboard window (Windows keeps owned windows above their owner), so clicking either brings it in
+  front; **Window → Show the keyboard** (Ctrl+Shift+K, from the editors too) and **Window → Keyboard
+  always on top**; closing the keyboard closes the editors
 - **Window → Line up the editors with the keyboard**: the editors window right above the keyboard
   (below it when there is no room)
 - **Window → Show the editors** (Ctrl+Shift+W); the panel keeps its size and stays centred when
@@ -51,14 +55,19 @@ on the JD-Xi display.
   Vocal Effect pink (they shared colours with the parts before); the preset panel of Digital 2 says
   DIGITAL SYNTH 2
 
-### Pattern and MIDI file player (new look)
+### Pattern and MIDI file player (new layout)
 
 - **Same editors, same engine**: the sequencer, learning, measures, copy/paste, USB recorder,
   track classification, automation, A/B loop, trim, event suppression and transport work as before
-- **The new editors' look**: dark background, panels as cards with the title in the accent colour
-  (orange for Pattern, light blue for the player), dark fields, lists and sliders
-- **Flat buttons with icon and name** instead of a round button with the label beside it; a pressed
-  button (Play, Stop, Loop…) takes the accent colour
+- **Pattern laid out as in the mockup**: TRANSPORT (display, Play/Stop/Pause/Shuffle, BPM and Tap,
+  steps), NEW STEPS (velocity, duration), MEASURES (add, copy previous, copy/paste a range), the STEP
+  SEQUENCER across the window, FILE and the USB RECORDER always on show
+- **MIDI file player laid out as in the mockup**: PLAYER (display, transport, load/save),
+  CLASSIFICATION (with mute channels), TRACKS (position, timeline, lanes, zoom), PLAYBACK, AUTOMATION,
+  USB RECORDER, EVENT FILTER
+- **The new editors' look**: dark cards with the title in the accent colour (yellow for Pattern,
+  blue for the player), flat buttons with icon and name; a pressed button (Play, Stop, Loop…) takes
+  the accent colour
 - The open editors are still found by class name, so the playlist, the patch manager and the
   Pattern ↔ player link keep working
 

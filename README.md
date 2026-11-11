@@ -45,9 +45,11 @@
 - **New Digital Synth editor** (1.0), for Digital 1 and 2: every SuperNATURAL synth parameter, the
   three partials with drawn waveforms, filter curves, envelopes and LFOs.
 - **Keyboard and editors together** (1.0): the editor windows minimise and come back with the
-  keyboard window, and move on their own (two screens); Window → Line up places them above it.
-- **Pattern and MIDI file player in the new look** (1.0): same functions and engine, with the
-  new editors' dark cards and flat buttons with icon and name.
+  keyboard window, and move on their own (two screens); the keyboard comes in front with a click or Ctrl+Shift+K,
+  or stays always on top.
+- **Pattern and MIDI file player in the new layout** (1.0): same functions and engine, laid out in
+  cards as in the mockups (transport, new steps, measures, sequencer, file, USB recorder; player,
+  classification, tracks, playback, automation).
 - **New Program editor** (1.0): program name, level, tempo and the four parts side by side (main,
   pitch, offsets, velocity range, scale tune, MIDI receive) with every Program Part parameter.
 - **New Effects editor** (1.0): Effect 1, Effect 2, Delay and Reverb with every parameter of the

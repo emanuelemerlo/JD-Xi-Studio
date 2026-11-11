@@ -26,7 +26,10 @@ class MainEditor(QMainWindow):
 
         :param parent: JDXiInstrument
         """
-        super().__init__(parent=parent)
+        # A window of its own, not owned by the keyboard window: Windows keeps
+        # owned windows above their owner, so the keyboard could never come in
+        # front of the editors. The keyboard window links them (minimise, close).
+        super().__init__(parent=None)
         self.jdxi_main_window = parent
         self.editor_registry = None
         self.editors = []

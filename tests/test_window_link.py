@@ -86,3 +86,36 @@ def test_line_up_puts_the_editors_above_the_keyboard(windows, app):
     _spin(app)
     assert editors.frameGeometry().bottom() + 1 == keyboard.frameGeometry().top()
     assert editors.frameGeometry().left() == keyboard.frameGeometry().left()
+
+
+def test_a_window_of_its_own_is_linked_too(app):
+    keyboard = QMainWindow()
+    editors = QMainWindow()  # not owned: the keyboard can come in front of it
+    link = WindowLink(keyboard)
+    link.add(editors)
+    keyboard.show()
+    editors.show()
+    _spin(app)
+    assert editors.parent() is None and editors in link.followers()
+    keyboard.showMinimized()
+    _spin(app)
+    assert not editors.isVisible()
+    keyboard.showNormal()
+    _spin(app)
+    assert editors.isVisible()
+    editors.showMinimized()
+    _spin(app, 10)
+    assert keyboard.isMinimized() and not editors.isVisible()
+    keyboard.showNormal()
+    _spin(app)
+    link.close_all()
+    assert not editors.isVisible()
+    keyboard.close()
+
+
+def test_the_editors_window_is_not_owned_by_the_keyboard(app):
+    from jdxi_editor.ui.editors.main import MainEditor
+
+    keyboard = QMainWindow()
+    editors = MainEditor(keyboard)
+    assert editors.parent() is None and editors.jdxi_main_window is keyboard
