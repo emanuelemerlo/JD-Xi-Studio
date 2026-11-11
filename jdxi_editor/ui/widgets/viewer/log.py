@@ -109,7 +109,7 @@ class LogViewer(QMainWindow):
                 )
         else:
             self.log_text.setPlainText(
-                f"Log file not found.\n\nExpected location: {self.log_file}"
+                tr("Log file not found.\n\nExpected location: {path}").format(path=self.log_file)
             )
 
     def refresh_log_file(self):

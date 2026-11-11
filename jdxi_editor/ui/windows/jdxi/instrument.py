@@ -1249,6 +1249,7 @@ class JDXiInstrument(JDXiWindow):
         """Show log viewer window"""
         if not self.log_viewer:
             self.log_viewer = LogViewer(midi_helper=self.midi_helper, parent=self)
+        self._new_look(self.log_viewer)
         self.log_viewer.show()
         self.log_viewer.raise_()
         log.message(scope="JDXiInstrument", message="Showing LogViewer window")
@@ -1325,6 +1326,7 @@ class JDXiInstrument(JDXiWindow):
             log.message(
                 scope="JDXiInstrument", message="Created new MIDI debugger window"
             )
+        self._new_look(self.midi_debugger)
         self.midi_debugger.show()
         self.midi_debugger.raise_()
 
@@ -1335,6 +1337,7 @@ class JDXiInstrument(JDXiWindow):
                 midi_helper=self.midi_helper, parent=self
             )
             self.midi_message_monitor.setAttribute(Qt.WA_DeleteOnClose)
+        self._new_look(self.midi_message_monitor)
         self.midi_message_monitor.show()
         self.midi_message_monitor.raise_()
 
@@ -1352,6 +1355,16 @@ class JDXiInstrument(JDXiWindow):
         about_dialog.setup_ui(about_dialog)
         about_dialog.setAttribute(Qt.WA_DeleteOnClose)
         about_dialog.exec()
+
+    @staticmethod
+    def _new_look(window) -> None:
+        """The new editors' look for a tool window (once): dark cards, flat buttons."""
+        if window is None or window.property("v2Look"):
+            return
+        from jdxi_editor.ui.v2.restyle import restyle
+
+        restyle(window, "#a3a6ad")
+        window.setProperty("v2Look", True)
 
     def _show_main_editor(self) -> None:
         """
@@ -1597,6 +1610,7 @@ class JDXiInstrument(JDXiWindow):
                 save_mode=False,
                 editors=self.editors,
             )
+            self._new_look(patch_manager)
             patch_manager.show()
         except Exception as ex:
             log.error(
@@ -1612,6 +1626,7 @@ class JDXiInstrument(JDXiWindow):
                 save_mode=True,
                 editors=self.editors,
             )
+            self._new_look(patch_manager)
             patch_manager.show()
         except Exception as ex:
             log.error(
