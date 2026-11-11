@@ -331,6 +331,7 @@ class JDXiUIIconRegistry:
             "mdi.piano",
         ]:
             icon_label = QLabel()
+            icon_label.setObjectName("decorIcon")  # decoration: the new pages hide it
             icon = qta.icon(icon_name, color=JDXiUIStyle.GREY)
             pixmap = icon.pixmap(24, 24)  # Using fixed icon size
             icon_label.setPixmap(pixmap)

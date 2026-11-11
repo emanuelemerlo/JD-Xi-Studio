@@ -599,6 +599,10 @@ def tone_editor_base():
             self.instrument_preset.add_image_group(self.instrument_image_group)
             self.instrument_preset.setFixedWidth(340)
             JDXi.UI.Theme.apply_editor_style(self.instrument_preset)
+            # The new look: a card in the editor's colour, flat buttons with icon and name
+            from jdxi_editor.ui.v2.restyle import restyle
+
+            restyle(self.instrument_preset, self.ACCENT)
             self.update_instrument_image()
             self.read_button.hide()  # the preset panel has its own "Read from JD-Xi"
             return [self.instrument_preset]
