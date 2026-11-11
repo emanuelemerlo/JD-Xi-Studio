@@ -63,4 +63,5 @@ def resource_path(relative_path: str | Path) -> str:
     :param relative_path: Path relative to the repository root (e.g. ``resources/foo.png``).
     :return: Absolute path string.
     """
-    return os.path.join(_resource_base_path(), str(relative_path))
+    # normpath: "resources/foo.png" uses the platform's separator (\\ on Windows)
+    return os.path.normpath(os.path.join(_resource_base_path(), str(relative_path)))

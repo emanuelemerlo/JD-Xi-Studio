@@ -17,6 +17,7 @@ from jdxi_editor.ui.widgets.editor.helper import create_group_with_layout
 from jdxi_editor.ui.widgets.jdxi.midi_group import JDXiMidiGroup
 from picoui.helpers import create_layout_with_items
 from picoui.specs.widgets import ButtonSpec
+from jdxi_editor.i18n import tr
 
 if TYPE_CHECKING:
     from jdxi_editor.ui.editors.midi_player.editor import MidiFilePlayer
@@ -82,21 +83,21 @@ class ClassificationGroup(JDXiMidiGroup):
         return {
             "detect_drums": ButtonSpec(
                 label="Detect Drums",
-                tooltip="Analyze MIDI file and assign Channel 10 to detected drum tracks",
+                tooltip=tr("Analyze MIDI file and assign Channel 10 to detected drum tracks"),
                 icon=JDXi.UI.Icon.DRUM,
                 slot=self.parent.detect_and_assign_drum_tracks,
                 checkable=False
             ),
             "classify_tracks": ButtonSpec(
                 label="Classify Tracks",
-                tooltip="Classify non-drum tracks into Bass (Ch 1), Keys/Guitars (Ch 2), and Strings (Ch 3)",
+                tooltip=tr("Classify non-drum tracks into Bass (Ch 1), Keys/Guitars (Ch 2), and Strings (Ch 3)"),
                 icon=JDXi.UI.Icon.MUSIC_NOTES,
                 slot=self.parent.classify_and_assign_tracks,
                 checkable=False
             ),
             "apply_presets": ButtonSpec(
                 label="Apply Presets",
-                tooltip="Insert JD-Xi presets per channel: Ch 1→Picked Bass, Ch 2→Piano, Ch 3→JP8 Strings",
+                tooltip=tr("Insert JD-Xi presets per channel: Ch 1→Picked Bass, Ch 2→Piano, Ch 3→JP8 Strings"),
                 icon=JDXi.UI.Icon.MUSIC_NOTES,
                 slot=self._on_apply_presets_clicked,
                 checkable=False

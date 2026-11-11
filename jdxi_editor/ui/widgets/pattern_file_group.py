@@ -18,6 +18,7 @@ from jdxi_editor.ui.widgets.jdxi.midi_group import JDXiMidiGroup
 from picoui.helpers import create_layout_with_items
 from picoui.specs.widgets import ButtonSpec
 from picoui.widget.helper import create_combo_box
+from jdxi_editor.i18n import tr
 
 if TYPE_CHECKING:
     from jdxi_editor.ui.editors.pattern.ui import PatternUI
@@ -78,19 +79,19 @@ class PatternFileGroup(JDXiMidiGroup):
             "load": ButtonSpec(
                 label="Load",
                 icon=JDXi.UI.Icon.MUSIC,
-                tooltip="Load pattern from file",
+                tooltip=tr("Load pattern from file"),
                 slot=self.parent.load_pattern_dialog,
             ),
             "save": ButtonSpec(
                 label="Save",
                 icon=JDXi.UI.Icon.SAVE,
-                tooltip="Save pattern to file",
+                tooltip=tr("Save pattern to file"),
                 slot=self.parent.save_pattern_dialog,
             ),
             "clear_learn": ButtonSpec(
                 label="Clear…",
                 icon=JDXi.UI.Icon.CLEAR,
-                tooltip="Clear the current measure or the whole pattern (asks first)",
+                tooltip=tr("Clear the current measure or the whole pattern (asks first)"),
                 slot=self.parent.confirm_clear,
             ),
         }

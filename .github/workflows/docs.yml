@@ -1,45 +1,57 @@
 # .github/workflows/docs.yml
 name: Build and Deploy Documentation
 
+# Pull requests only build the documentation. Deploying needs the
+# github-pages environment, which accepts main only: with the environment on
+# the whole job, every pull request waited on it and its check never ended.
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     permissions:
       contents: read
-      pages: write
-      id-token: write
-    
     steps:
-    - uses: actions/checkout@v3
-    
+    - uses: actions/checkout@v4
+
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.10'
-    
+
     - name: Install dependencies
       run: |
         pip install -r requirements-docs.txt
-    
+
     - name: Build documentation
       run: |
         cd doc
         sphinx-build -b html . _build/html
-    
+
     - name: Upload artifact
+      if: github.event_name != 'pull_request'
       uses: actions/upload-pages-artifact@v3
       with:
         path: ./doc/_build/html
 
+  deploy:
+    # Only from main, and only where GitHub Pages is switched on (Settings > Pages)
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
     - name: Deploy to GitHub Pages
+      id: deployment
       uses: actions/deploy-pages@v4
-      if: github.ref == 'refs/heads/main' 

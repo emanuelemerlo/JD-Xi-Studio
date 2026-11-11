@@ -85,6 +85,7 @@ from jdxi_editor.ui.widgets.combo_box.searchable_filterable import (
 from jdxi_editor.ui.widgets.editor.base import EditorBaseWidget
 from picomidi.constant import Midi
 from picomidi.sysex.parameter.address import AddressParameter
+from jdxi_editor.i18n import tr
 
 
 class ProgramEditorDimensions(Dimensions):
@@ -248,7 +249,7 @@ class ProgramEditor(BasicEditor):
                 JDXi.UI.Icon.MUSIC, color=JDXi.UI.Style.GREY
             )
         self.main_tab_widget.addTab(
-            self.base_widget, programs_presets_icon, "Programs & Presets"
+            self.base_widget, programs_presets_icon, tr("Programs && Presets")  # "&&" shows one &
         )
 
         # Add User Programs tab to main tab widget
@@ -267,7 +268,7 @@ class ProgramEditor(BasicEditor):
                 "mdi.account-music", color=JDXi.UI.Style.GREY
             )
             self.main_tab_widget.addTab(
-                self.user_programs_widget, user_programs_icon, "User Programs"
+                self.user_programs_widget, user_programs_icon, tr("User Programs")
             )
             log.message(
                 f"✅ Added 'User Programs' tab to main window (total tabs: {self.main_tab_widget.count()})",
@@ -293,7 +294,7 @@ class ProgramEditor(BasicEditor):
                 icon_name="mdi.account-music",
             )
             self.main_tab_widget.addTab(
-                placeholder_widget, user_programs_icon, "User Programs"
+                placeholder_widget, user_programs_icon, tr("User Programs")
             )
             log.message(
                 f"✅ Added 'User Programs' tab (placeholder) (total tabs: {self.main_tab_widget.count()})",
@@ -312,7 +313,7 @@ class ProgramEditor(BasicEditor):
             playlist_icon = JDXi.UI.Icon.get_icon(
                 "mdi.playlist-music", color=JDXi.UI.Style.GREY
             )
-            self.main_tab_widget.addTab(self.playlist_widget, playlist_icon, "Playlist")
+            self.main_tab_widget.addTab(self.playlist_widget, playlist_icon, tr("Playlist"))
             log.message(
                 f"✅ Added 'Playlist' tab to main window (total tabs: {self.main_tab_widget.count()})",
                 scope=self.__class__.__name__,
@@ -329,7 +330,7 @@ class ProgramEditor(BasicEditor):
                 error_message="Error loading playlists: ",
                 icon_name="mdi.playlist-music",
             )
-            self.main_tab_widget.addTab(placeholder_widget, playlist_icon, "Playlist")
+            self.main_tab_widget.addTab(placeholder_widget, playlist_icon, tr("Playlist"))
             log.message(
                 f"✅ Added 'Playlist' tab (placeholder) (total tabs: {self.main_tab_widget.count()})",
                 scope=self.__class__.__name__,
@@ -353,7 +354,7 @@ class ProgramEditor(BasicEditor):
                 "mdi.playlist-edit", color=JDXi.UI.Style.GREY
             )
             self.main_tab_widget.addTab(
-                self.playlist_editor_widget, playlist_editor_icon, "Playlist Editor"
+                self.playlist_editor_widget, playlist_editor_icon, tr("Playlist Editor")
             )
             log.message(
                 f"✅ Added 'Playlist Editor' tab to main window (total tabs: {self.main_tab_widget.count()})",
@@ -374,7 +375,7 @@ class ProgramEditor(BasicEditor):
                 icon_name="mdi.playlist-edit",
             )
             self.main_tab_widget.addTab(
-                placeholder_widget, playlist_editor_icon, "Playlist Editor"
+                placeholder_widget, playlist_editor_icon, tr("Playlist Editor")
             )
             log.message(
                 f"✅Added 'Playlist Editor' tab (placeholder) (total tabs: {self.main_tab_widget.count()})",
@@ -411,7 +412,7 @@ class ProgramEditor(BasicEditor):
                 JDXi.UI.Icon.MUSIC, color=JDXi.UI.Style.GREY
             )
         self.program_group_widget.program_preset_tab_widget.addTab(
-            self.program_group_widget.preset, presets_icon, "Presets"
+            self.program_group_widget.preset, presets_icon, tr("Presets")
         )
         log.message(
             f"📑Added 'Presets' tab to program_preset_tab_widget (total tabs: {self.program_group_widget.program_preset_tab_widget.count()})",
@@ -609,7 +610,8 @@ class ProgramEditor(BasicEditor):
         # --- Get all programs (ROM + user from database)
         all_programs = JDXiUIProgramList.list_rom_and_user_programs()
         if self.program_group_widget:
-            self.program_group_widget._program_list_data = all_programs
+            # Refill the same list object: the MIDI info binding holds it
+            self.program_group_widget._program_list_data[:] = all_programs
 
         # --- Build program options, values, and filter data
         program_options = []
@@ -672,56 +674,20 @@ class ProgramEditor(BasicEditor):
                     return program.genre == genre if program.genre else False
             return False
 
-        # --- Update the combo box by recreating it (since SearchableFilterableComboBox doesn't have update methods)
-        # --- Get parent widget and layout from program_group_widget
+        # --- Refill the existing combo box. It used to be recreated here and
+        # --- inserted at the wrong place in the layout, so two program pickers
+        # --- were drawn on top of each other
         if not self.program_group_widget:
             return
-
-        program_widget = self.program_group_widget.edit_program_name_button.parent()
-        program_vlayout = program_widget.layout() if program_widget else None
-
-        if program_vlayout:
-            # --- Remove old combo box from layout
-            program_vlayout.removeWidget(
-                self.program_group_widget.program_number_combo_box
-            )
-            self.program_group_widget.program_number_combo_box.deleteLater()
-
-            # ---Create new combo box with updated data
-            self.program_group_widget.program_number_combo_box = (
-                SearchableFilterableComboBox(
-                    label="Program",
-                    options=program_options,
-                    values=program_values,
-                    categories=sorted(program_genres),
-                    banks=sorted(program_banks),
-                    bank_filter_func=program_bank_filter,
-                    category_filter_func=program_genre_filter,
-                    show_label=True,
-                    show_search=True,
-                    show_category=True,
-                    show_bank=True,
-                    search_placeholder="Search programs...",
-                    category_label="Genre:",
-                    bank_label="Bank:",
-                )
-            )
-
-            # --- Insert after edit_program_name_button
-            index = program_vlayout.indexOf(
-                self.program_group_widget.edit_program_name_button
-            )
-            program_vlayout.insertWidget(
-                index + 1, self.program_group_widget.program_number_combo_box
-            )
-            info_bar = self.program_group_widget.program_midi_info_bar
-            if info_bar and program_vlayout.indexOf(info_bar) >= 0:
-                program_vlayout.removeWidget(info_bar)
-                combo_index = program_vlayout.indexOf(
-                    self.program_group_widget.program_number_combo_box
-                )
-                program_vlayout.insertWidget(combo_index + 1, info_bar)
-            self.program_group_widget.bind_program_midi_info()
+        combo = self.program_group_widget.program_number_combo_box
+        combo.set_options(
+            program_options,
+            values=program_values,
+            categories=sorted(program_genres),
+            category_filter_func=program_genre_filter,
+        )
+        combo.set_banks(sorted(program_banks), bank_filter_func=program_bank_filter)
+        self.program_group_widget.bind_program_midi_info()
 
     def populate_programs(self, search_text: str = ""):
         """Populate the program list with available presets.

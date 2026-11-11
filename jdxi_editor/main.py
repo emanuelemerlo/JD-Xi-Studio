@@ -29,7 +29,7 @@ import sys
 from pathlib import Path
 
 from decologr import setup_logging
-from PySide6.QtCore import QLocale, QSettings, QTranslator
+from PySide6.QtCore import QSettings
 from PySide6.QtGui import QColor, QIcon, QPixmap, Qt
 from PySide6.QtWidgets import (
     QApplication,
@@ -41,6 +41,7 @@ from PySide6.QtWidgets import (
 )
 
 from jdxi_editor.core.jdxi import JDXi
+from jdxi_editor.i18n import DEFAULT_LANGUAGE, install_qt_translators, set_language, tr
 from jdxi_editor.log.message import log_message
 from jdxi_editor.project import __organization_name__, __program__, __version__
 from jdxi_editor.resources import resource_path
@@ -55,23 +56,16 @@ os.environ["QT_LOGGING_RULES"] = "qt.qpa.fonts=false"
 
 
 def load_translations(app: QApplication) -> bool:
-    """Load Qt .qm translation files for the current locale (e.g. en_GB for 'Bar' instead of 'Measure').
-    Place .qm files in jdxi_editor/i18n/ or in resources/translations/. Returns True if a translator was installed.
+    """Translate the interface into the language chosen in Preferences.
+
+    jdxi_editor.i18n.tr() reads jdxi_editor/i18n/jdxi_editor_<lang>.qm; this
+    also installs Qt's own catalogue so standard buttons and file dialogs
+    match. Returns True if a language other than English is in use.
     """
-    locale_name = QLocale().name()  # e.g. "en_GB", "en_US", "de_DE"
-    base_name = f"jdxi_editor_{locale_name}"
-    for search_dir in (
-        Path(__file__).parent / "i18n",
-        Path(resource_path(os.path.join("resources", "translations"))),
-        Path(__file__).parent.parent / "i18n",
-    ):
-        qm_path = search_dir / f"{base_name}.qm"
-        if qm_path.exists():
-            translator = QTranslator(app)
-            if translator.load(str(qm_path)):
-                app.installTranslator(translator)
-                return True
-    return False
+    language = set_language()
+    install_qt_translators(app)
+    app.setProperty("jdxi_language", language)
+    return language != DEFAULT_LANGUAGE
 
 
 @profiling_decorator()  # Profile is logged and printed when main() returns (after you close the app)
@@ -90,7 +84,7 @@ def main() -> None:
 
         load_lcd_font()
 
-        # --- Load translations for current locale (e.g. en_GB -> "Bar" / "Bars")
+        # --- Interface language (Preferences > Language, or the system's)
         load_translations(app)
 
         # --- Set application metadata
@@ -138,7 +132,7 @@ def main() -> None:
         splash, progress_bar, status_label = setup_splash_screen(app)
 
         # --- Update splash screen with initial progress
-        status_label.setText("Initializing MIDI subsystem…")
+        status_label.setText(tr("Initializing MIDI subsystem…"))
         progress_bar.setValue(10)
         app.processEvents()
 
@@ -229,13 +223,13 @@ def setup_splash_screen(
     title.setStyleSheet(JDXi.UI.Style.INSTRUMENT_TITLE_LABEL)
 
     notice = QLabel(
-        "'Roland' and 'JD-Xi' are trademarks of the Roland Corporation "
+        tr("'Roland' and 'JD-Xi' are trademarks of the Roland Corporation "
         "in the United States and/or other countries.\n\n"
         "This app is an independent, unofficial companion tool for the "
         "Roland JD-Xi synthesizer. It is not affiliated with, endorsed by, "
         "or sponsored by Roland Corporation in any way.\n\n"
         "All product names, trademarks, and logos are the property of "
-        "their respective owners."
+        "their respective owners.")
     )
     notice.setObjectName("NoticeLabel")
     notice.setWordWrap(True)
@@ -264,8 +258,7 @@ def setup_splash_screen(
 
     # --- Footer credits
     credits = QLabel(
-        f"{__program__}  •  Version {__version__}\n"
-        "Developed by mabsoft.com — Inspired by modern instrument editors"
+        tr('{program}  •  Version {version}\nDeveloped by mabsoft.com — Inspired by modern instrument editors').format(program=__program__, version=__version__)
     )
     credits.setObjectName("CreditLabel")
     credits.setAlignment(Qt.AlignCenter)

@@ -69,6 +69,7 @@ from jdxi_editor.ui.widgets.editor.helper import (
 from jdxi_editor.ui.widgets.editor.icon_type import IconType
 from jdxi_editor.ui.widgets.spec import ComboBoxSpec, SliderSpec, SwitchSpec
 from picomidi.sysex.parameter.address import AddressParameter
+from jdxi_editor.i18n import tr
 
 
 class SectionBaseWidget(SynthBase):
@@ -643,7 +644,7 @@ class SectionBaseWidget(SynthBase):
     def _create_shape_row(self):
         """Shape and sync controls"""
 
-        shape_label = QLabel("Shape")
+        shape_label = QLabel(tr("Shape"))
         layout_widgets = [shape_label]
 
         self.wave_shape_group = QButtonGroup(self)

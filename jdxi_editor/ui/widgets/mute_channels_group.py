@@ -15,6 +15,7 @@ from jdxi_editor.ui.widgets.editor.helper import create_group_with_layout
 from jdxi_editor.ui.widgets.jdxi.midi_group import JDXiMidiGroup
 from picoui.helpers import create_layout_with_items
 from picoui.specs.widgets import ButtonSpec
+from jdxi_editor.i18n import tr
 
 if TYPE_CHECKING:
     from jdxi_editor.ui.editors.midi_player.editor import MidiFilePlayer
@@ -40,7 +41,7 @@ class MuteChannelsGroup(JDXiMidiGroup):
             btn = create_small_sequencer_square_for_channel(ch)
             btn.setCheckable(True)
             btn.setChecked(False)
-            btn.setToolTip(f"Mute channel {ch}")
+            btn.setToolTip(tr('Mute channel {ch}').format(ch=ch))
             btn.setStyleSheet(style)
             btn.toggled.connect(
                 lambda checked, c=ch, b=btn: self.parent._toggle_channel_mute(c, checked, b)

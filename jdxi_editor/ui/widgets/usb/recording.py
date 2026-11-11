@@ -9,7 +9,7 @@ from typing import Optional
 
 import pyaudio
 from decologr import Decologr as log
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import QCheckBox, QComboBox, QGroupBox, QLabel, QPushButton
 
 from jdxi_editor.core.jdxi import JDXi
@@ -33,6 +33,7 @@ from picoui.specs.widgets import (
     MessageBoxSpec,
     get_file_save_from_spec,
 )
+from jdxi_editor.i18n import tr
 
 
 class USBFileRecordingWidget(JDXiMidiGroup):
@@ -56,7 +57,7 @@ class USBFileRecordingWidget(JDXiMidiGroup):
         return {
             "usb_port_refresh": ButtonSpec(
                 label="Refresh",
-                tooltip="Refresh list of USB devices",
+                tooltip=tr("Refresh list of USB devices"),
                 icon=JDXi.UI.Icon.REFRESH,
                 slot=self.populate_devices,
             ),
@@ -88,7 +89,8 @@ class USBFileRecordingWidget(JDXiMidiGroup):
         )
         grid.addLayout(usb_port_layout, row, 0)
         self.port_select_combo = QComboBox()
-        self.populate_devices()
+        # Listed when the recorder is first shown: PortAudio is slow to start
+        self._devices_listed = False
         grid.addWidget(self.port_select_combo, row, 1, 1, 2)
         spec = self.specs["buttons"]["usb_port_refresh"]
         self.port_refresh_devices_button = create_jdxi_button_from_spec(
@@ -105,13 +107,13 @@ class USBFileRecordingWidget(JDXiMidiGroup):
             label="File", icon=JDXi.UI.Icon.SAVE
         )
         grid.addLayout(file_layout, row, 0)
-        self.file_select = QPushButton("No File Selected")
+        self.file_select = QPushButton(tr("No File Selected"))
         self.file_select.clicked.connect(self.select_recording_file)
         grid.addWidget(self.file_select, row, 1, 1, 2)  # 2 = colspan I guess
         # row += 1
 
         # --- Row 2 still: Save USB recording checkbox
-        self.file_record_checkbox = QCheckBox("Save")
+        self.file_record_checkbox = QCheckBox(tr("Save"))
         JDXi.UI.Theme.apply_button_mini_style(self.file_record_checkbox)
         self.file_record_checkbox.setChecked(self.recorder.file_save_recording)
         self.file_record_checkbox.stateChanged.connect(
@@ -121,7 +123,7 @@ class USBFileRecordingWidget(JDXiMidiGroup):
         row += 1
 
         # --- Row 3: Auto-generate WAV filename checkbox
-        self.file_auto_generate_checkbox = QCheckBox("Auto-generate filename")
+        self.file_auto_generate_checkbox = QCheckBox(tr("Auto-generate filename"))
         JDXi.UI.Theme.apply_button_mini_style(self.file_auto_generate_checkbox)
         self.file_auto_generate_checkbox.setChecked(False)
         self.file_auto_generate_checkbox.stateChanged.connect(
@@ -171,6 +173,12 @@ class USBFileRecordingWidget(JDXiMidiGroup):
         )
         if is_enabled:
             self.update_auto_wav_filename()
+
+    def showEvent(self, event) -> None:
+        super().showEvent(event)
+        if not getattr(self, "_devices_listed", True):
+            self._devices_listed = True
+            QTimer.singleShot(0, self, self.populate_devices)
 
     def populate_devices(self) -> list:
         """

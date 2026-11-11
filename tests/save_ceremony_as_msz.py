@@ -14,6 +14,7 @@ import os
 import tempfile
 from pathlib import Path
 from typing import Dict, List, Any
+from jdxi_editor.midi.sysex.sections import SysExSection
 
 # Import logger only if available, otherwise use print
 try:

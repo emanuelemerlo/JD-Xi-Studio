@@ -35,6 +35,7 @@ from jdxi_editor.ui.widgets.editor.helper import (
 from picoui.helpers.layout import create_group
 from picoui.specs.widgets import ComboBoxSpec
 from picoui.widget.helper import create_combo_box, create_combo_row
+from jdxi_editor.i18n import tr
 
 if TYPE_CHECKING:
     from jdxi_editor.ui.editors.synth.editor import SynthEditor
@@ -140,9 +141,14 @@ class InstrumentPresetWidget(QWidget):
             self.instrument_selection_combo.set_value(current_value)
 
     def add_image_group(self, group: QGroupBox):
-        """add the image beside the preset panel; the pair stays centred"""
-        group.setMinimumWidth(JDXi.UI.Style.INSTRUMENT_IMAGE_WIDTH)
-        self.hlayout.addWidget(group, 0, Qt.AlignmentFlag.AlignTop)
+        """
+        The instrument picture is no longer shown: photos of other synths
+        (Jupiter-8, TR-909...) took half the page and had nothing to do with the
+        sound. The group stays out of the layout, hidden, because
+        update_instrument_image() still writes to its label.
+        """
+        group.setParent(self)  # kept as a hidden child, never a stray window
+        group.hide()
         self.hlayout.addStretch(1)
 
     def add_preset_group(self, group: QGroupBox):
@@ -231,7 +237,7 @@ class InstrumentPresetWidget(QWidget):
         :return: QGroupBox
         """
         self._synth_type = synth_type  # Store for refresh
-        instrument_preset_group = QGroupBox(f"{synth_type} Synth")
+        instrument_preset_group = QGroupBox(tr('{synth_type} Synth').format(synth_type=synth_type))
         instrument_title_group_layout = QVBoxLayout(instrument_preset_group)
         instrument_title_group_layout.setSpacing(3)  # Reduced spacing
         instrument_title_group_layout.setContentsMargins(5, 5, 5, 5)  # Reduced margins
@@ -260,7 +266,7 @@ class InstrumentPresetWidget(QWidget):
                     JDXi.UI.Icon.MUSIC, color=JDXi.UI.Style.GREY
                 )
             preset_tabs.addTab(
-                normal_preset_widget, analog_presets_icon, "Analog Presets"
+                normal_preset_widget, analog_presets_icon, tr("Analog Presets")
             )
 
             # === Tab 2: Cheat Presets (Digital Synth presets on Analog channel) ===
@@ -269,7 +275,7 @@ class InstrumentPresetWidget(QWidget):
             cheat_presets_icon = JDXi.UI.Icon.get_icon(
                 JDXi.UI.Icon.CODE_BRACES, color=JDXi.UI.Style.GREY
             )
-            preset_tabs.addTab(cheat_preset_widget, cheat_presets_icon, "Cheat Presets")
+            preset_tabs.addTab(cheat_preset_widget, cheat_presets_icon, tr("Cheat Presets"))
         else:
             # For Digital/Drums, create simple layout without tabs
             self._add_normal_preset_content(instrument_title_group_layout, synth_type)
@@ -292,7 +298,7 @@ class InstrumentPresetWidget(QWidget):
         # --- Edit Tone Name (round button + label, centered)
         self._add_centered_round_button(
             JDXi.UI.Icon.SETTINGS,
-            "Edit Tone Name",
+            tr("Edit Tone Name"),
             self.parent.edit_tone_name,
             layout,
             name="edit_tone_name",
@@ -344,7 +350,7 @@ class InstrumentPresetWidget(QWidget):
             show_label=False,
             show_search=True,
             show_category=True,
-            search_placeholder="Search presets...",
+            search_placeholder=tr("Search presets..."),
             use_analog_style=(synth_type == "Analog"),
         )
 
@@ -413,10 +419,10 @@ class InstrumentPresetWidget(QWidget):
         if synth_type == "Analog":
             random_row = QHBoxLayout()
             random_widget, _ = create_round_button_with_label(
-                "Random Patch",
+                tr("Random Patch"),
                 "mdi.dice-5-outline",
                 self._on_random_analog_patch,
-                "Randomize analog tone parameters (Manager rndVoice)",
+                tr("Randomize analog tone parameters (Manager rndVoice)"),
             )
             random_row.addWidget(random_widget)
             random_row.addStretch()
@@ -478,7 +484,7 @@ class InstrumentPresetWidget(QWidget):
 
         # Create SearchableFilterableComboBox for cheat preset selection
         self.cheat_preset_combo_box = SearchableFilterableComboBox(
-            label="Preset",
+            label=tr("Preset"),
             options=preset_options,
             values=preset_values,
             categories=preset_categories,
@@ -486,7 +492,7 @@ class InstrumentPresetWidget(QWidget):
             show_label=True,
             show_search=True,
             show_category=True,
-            search_placeholder="Search presets...",
+            search_placeholder=tr("Search presets..."),
         )
 
         from picomidi.core.channel import Channel
@@ -513,7 +519,7 @@ class InstrumentPresetWidget(QWidget):
         # Load Preset (round button + label, centered)
         self._add_centered_round_button(
             JDXi.UI.Icon.FOLDER_NOTCH_OPEN,
-            "Load Preset",
+            tr("Load Preset"),
             self._load_cheat_preset,
             layout,
             name="cheat_load",
@@ -527,7 +533,7 @@ class InstrumentPresetWidget(QWidget):
         :param channels: list
         :return: None
         """
-        self.midi_channel_combo_row, self.midi_channel_combo = create_combo_row(label="Midi Channel",
+        self.midi_channel_combo_row, self.midi_channel_combo = create_combo_row(label=tr("Midi Channel"),
                                                                                 items=channels,
                                                                                 sort_items=False,
                                                                                 slot=self._get_midi_channel_from_combo)

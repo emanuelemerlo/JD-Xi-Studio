@@ -22,6 +22,7 @@ from PySide6.QtWidgets import QMainWindow, QTextEdit, QVBoxLayout, QWidget
 
 from jdxi_editor.midi.io.helper import MidiIOHelper
 from jdxi_editor.ui.theme import ThemeManager
+from jdxi_editor.i18n import tr
 
 
 class MIDIMessageMonitor(QMainWindow):
@@ -31,7 +32,7 @@ class MIDIMessageMonitor(QMainWindow):
         self, midi_helper: MidiIOHelper = None, parent: Optional[QWidget] = None
     ):
         super().__init__(parent)
-        self.setWindowTitle("MIDI Message Monitor")
+        self.setWindowTitle(tr("MIDI Message Monitor"))
         self.setMinimumSize(600, 400)
 
         # Create central widget

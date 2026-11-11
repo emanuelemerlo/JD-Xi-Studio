@@ -10,6 +10,7 @@ that share a channel. Double-click resets to 100 %.
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QSlider, QWidget
+from jdxi_editor.i18n import tr
 
 
 class TrackVelocitySlider(QSlider):
@@ -34,7 +35,7 @@ class TrackVelocitySlider(QSlider):
         self.setValue(round(scale * 100))
 
     def _update_tooltip(self, percent: int) -> None:
-        self.setToolTip(f"Track velocity {percent}% (double-click: 100%)")
+        self.setToolTip(tr('Track velocity {percent}% (double-click: 100%)').format(percent=percent))
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         self.setValue(self.DEFAULT_PERCENT)

@@ -254,7 +254,9 @@ class DigitalPartialPanel(PartialPanel):
         if self.filter_tab.adsr_widget:
             self.filter_tab.adsr_widget.setEnabled(enabled)
 
-    def _on_waveform_selected(self, waveform: DigitalWaveOsc) -> None:
+    def _on_waveform_selected(
+        self, waveform: DigitalWaveOsc, send_midi: bool = True
+    ) -> None:
         """on waveform selected (harmonised Theme API)"""
         for btn in self.oscillator_tab.widgets.waveform_buttons.values():
             btn.setChecked(False)
@@ -265,7 +267,9 @@ class DigitalPartialPanel(PartialPanel):
             selected.setChecked(True)
             JDXi.UI.Theme.apply_button_active(selected, analog=False)
 
-        if not self.send_midi_parameter(Digital.Param.OSC_WAVEFORM, waveform.value):
+        if send_midi and not self.send_midi_parameter(
+            Digital.Param.OSC_WAVEFORM, waveform.value
+        ):
             log.warning(
                 scope=self.__class__.__name__,
                 message=f"Failed to set waveform: {waveform.name}",

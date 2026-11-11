@@ -2,6 +2,142 @@
 
 All notable changes to JDXI-Editor are documented in this file.
 
+# [1.0.0a1] — tag `v1.0.0-alpha.1` (new interface, in progress)
+
+The interface is being rebuilt for a desktop screen, one editor at a time. The
+last version with the original interface is **0.10.0b1** (tag `v0.10.0-beta.1`).
+Principles for every new screen: every parameter of the manual has a control (a
+test checks it); controls show what they do (graphs, drawn waveforms); the
+parameter under the pointer is explained on screen; names, groups and order as
+on the JD-Xi display.
+
+### Analog Synth editor (new)
+
+- **All 46 Analog parameters on one screen**, in six panels named and ordered as on the display:
+  OSC, PITCH, FILTER, AMP, LFO, COMMON (plus Pitch Env Velocity Sens, which is in the MIDI
+  Implementation but not on the display)
+- **Graphic controls**: waveforms drawn on their buttons (PW-SQR follows Pulse Width), the low-pass
+  response curve (drag sideways for Cutoff, up and down for Resonance), pitch, filter and amp
+  envelopes with points to drag, the LFO over time with its fade-in
+- **Knobs** with their value field: drag (Shift for fine steps), wheel, arrow keys or type the value
+  as on the display (+12 st, -2 st, +50…); double-click returns a bipolar value to 0
+- **Information panel**: name on the display, long name, value, range and unit, an explanation from
+  the Parameter Guide (with its page) and what the parameter depends on
+- **Settings without effect are greyed out**: Pulse Width and PWM Depth except with PW-SQR, the
+  filter with BYPASS, Rate with Tempo Sync ON (and Sync Note with it OFF), Porta Time with Porta Sw OFF
+- **Sending while dragging** at most every 25 ms, the last value always; values read from the JD-Xi
+  are shown without being sent back
+- Three columns on wide screens, two from 1280×720; the tone panel (presets, read from the JD-Xi,
+  .syx, random tone) stays on the right
+- The original Analog editor (`AnalogSynthEditor`) is still in the code; the app opens the new one
+
+### Start-up and CI
+
+- **The USB recorder starts PortAudio only when it is used**, not when the MIDI file player and the
+  pattern editor are created: starting it lists every audio driver (seconds on some Windows machines)
+  and failed on machines without an audio system, which broke 59 tests on the GitHub runners. Its device
+  list is filled when the recorder is first shown; without an audio system it is simply empty
+
+### Instrument window
+
+- **Minimise, maximise and close** buttons at the right of the menu bar, in the panel's colours; the
+  empty part of the menu bar moves the window and maximises it on double-click
+
+### Languages
+
+- The tone panel (preset list, Previous/Load/Next, Read from JD-Xi, .syx, Random) is translated too
+
+# [0.10.0b1] — tag `v0.10.0-beta.1` (beta, not released yet)
+
+First version of this repository as an **independent fork** of
+[markxbrooks/JDXI-Editor](https://github.com/markxbrooks/JDXI-Editor) (last
+release there: 0.9.9). Versions continue from 0.9.9: 0.10.x betas with the
+current interface, 1.0 with the new one.
+
+### Fork
+
+- **Update check** (Help › Check for Updates) asks this repository's releases, not the original's.
+  A beta copy is told about newer betas; a final release only about final releases. Versions such as
+  `v0.10.0-beta.2`, `0.10.0b2` and `v0.10.0-rc.1` now compare in release order (before, `0.10.0b1`
+  counted as `0.10.0`)
+- **pip installs** are upgraded from GitHub (`pip install -U git+https://github.com/emanuelemerlo/JDXI-Editor.git`):
+  the `JDXI-Editor` package on PyPI is the original project. The PyPI publishing workflow only runs by hand
+- **About** and **Help › Documentation** link to this repository and credit the original project;
+  `pyproject.toml` URLs and maintainer updated
+- **Windows build**: the installer and the portable app are two separate downloads, both as CI
+  artifacts (`…-win64-setup`, `…-win64-portable`, the latter the app folder itself, not a zip in a zip)
+  and as release assets
+- **README, README.rst and doc/installation.rst** describe the fork, its Windows builds and how to install
+  it from GitHub
+
+### MIDI connection dialog
+
+- **Redesigned and no longer freezes.** It opened FluidSynth and loaded its SoundFont (FluidR3_GM is
+  140 MB) as it appeared, and listed the audio devices through PortAudio, all on the interface thread:
+  the window showed "Not responding" for seconds. Now it opens at once; ports, audio devices and
+  SoundFonts are listed in the background, FluidSynth starts only on "Start", in the background
+- **Status at the top**: "Connected: the JD-Xi replies", "No reply…", "No JD-Xi among the MIDI ports".
+  **Test connection** sends an Identity Request and waits for the reply with a timer (1.5 s), recognising
+  the JD-Xi from its reply; another instrument (or Microsoft GS Wavetable Synth) is reported as such
+- **Find the JD-Xi** picks its ports; JD-Xi ports are listed first and marked ★. The FluidSynth section
+  ("Listen without the JD-Xi") stays closed unless in use. Standard OK/Cancel buttons; changed ports are
+  reopened after the dialog closes. All texts translated
+
+### Languages
+
+- **Interface in English and Italian**, chosen in Help › Preferences › Interface language
+  ("Same as the system", English, Italiano); it applies at the next start. `JDXI_LANGUAGE=it` overrides it
+- Menus, dialogs, messages, tooltips and editor titles go through `jdxi_editor.i18n.tr()` (372 strings);
+  Qt's own buttons and file dialogs use Qt's catalogue for the same language. Parameter names stay as on
+  the JD-Xi display, as in Roland's manuals
+- `python -m building.i18n update | compile | check` keeps the Qt Linguist catalogues
+  (`jdxi_editor/i18n/*.ts` and `.qm`) in step with the code; `tests/test_i18n.py` fails on an
+  untranslated string, a lost placeholder or a stale `.qm`
+
+## Checked against the manuals
+
+Checked against Roland's JD-Xi Parameter Guide (preset lists, pp. 44–47) and
+MIDI Implementation (parameter address map).
+
+### Fixed
+
+- **Digital presets 070–074** loaded the sounds of 084–088 (wrong name and PC in `PROGRAM_CHANGE` and `LIST`); `LIST` lacked 075–088 and `ENUMERATED` lacked 256 "Init Tone"
+- **Analog presets**: 16 presets (003–006, 010, 013–017, 019–021, 025–027) and 064 "Init Tone" were missing; 002 "Sub Bass 1" and 012 "Dist TB Bs 1" sent PC 6 and 17
+- **Drum kits** 13–25 and 30 were missing from `PROGRAM_CHANGE`
+- **Program Common addresses**: Program Tempo at `00 11` (was the reserved `00 17`), Vocal Effect at `00 16` (was `00 1C`), Vocal Effect Number at `00 1C` (was the reserved `00 1B`). The earlier values came from `doc/midi_parameters.txt`, whose Program Common rows were shifted; that file now matches the manual
+- **Auto Note Switch**: ON was turned into 2 and rejected by the range check
+- **MidiIOHelper**: a failed start (no MIDI backend) no longer leaves a half-initialized singleton that raises "can't initialize QObject twice" on the next attempt
+- **JDXiPresetData.get_preset_details**: bank select and PC come from the preset tables (was MSB `0x10`, LSB `n // 16`)
+- **Last preset name**: a stored preset number of 0 showed the last preset instead of "INIT PATCH"
+- **Drum partials**: removed "C#5"; the JD-Xi has 37 partials, keys 36–72
+- Removed `midi/data/parameter/program/controller.py`, which raised `TypeError` on import (`ArpeggioParam` covers Program Controller)
+- **No MIDI backend**: without a MIDI API (Linux with no ALSA sequencer, containers, WSL) the editor crashed at startup; it now runs offline on null ports and says so in a message and in the status bar
+- **MIDI configuration dialog**: opened without blocking (`open()` instead of `exec()`), after the main window is shown; the port indicators update when it closes, and asking again brings the open dialog forward
+- **Sliders sent every change twice**: `Slider.valueChanged` was connected twice, so each move sent its SysEx twice. It is sent once, and while the handle is dragged at most every 25 ms (first move and release at once), so the JD-Xi keeps up with a fast drag
+- **Analog waveform sent twice**: the waveform buttons and the editor callback both sent OSC_WAVEFORM; `ModeButtonGroup` also re-entered itself when re-checking its buttons
+- **Round buttons**: a click on the icon and label next to a round button now clicks it (it used to react only on the 30 px circle); action buttons built from a ButtonSpec are no longer checkable by default, so they do not stay lit
+- **Program page**: the program picker was recreated on load and inserted at the wrong place, so two pickers were drawn on top of each other; it is now refilled in place (`SearchableFilterableComboBox.set_banks`, `always_show_filters`)
+- `create_centered_layout_with_widgets` added the layout to itself (12 "QLayout: Cannot add layout to itself" warnings), so nothing was centred
+- Tab titles showed "Effects 1_2", "Delay_Reverb", "Programs _Presets": a single "&" is a Qt shortcut marker
+- Effects labels follow the Parameter Guide ("Level", "Delay Send Level", "Balance (D:W)" … instead of "Efx1 Level", "EFX1 Delay Send Level (0-127)")
+- Removed the decorative pictures (Jupiter-8, TR-909, effects artwork) beside the preset panels and in the simple editors
+- EFX1 Delay Send Level label; missing `SysExSection` import in two test scripts; `imp` (removed in Python 3.12) in the py2app includes
+
+### Added
+
+- `tests/fixtures/jdxi_manual_presets.json`: the preset lists from the Parameter Guide, with tests that keep every preset table in step with it and check the Program Common addresses
+- **Windows build**: `building/windows/jdxi_editor.spec` (PyInstaller, one folder) and the `Windows build` workflow, which builds the app and the Inno Setup installer, checks that the app starts, and attaches both to a pre-release on `v*` tags. `jdxi_editor.iss` takes the version from the build and installs per user, in English or Italian
+
+### Changed
+
+- `doc/midi_parameters.txt`: Program Common rows corrected against the MIDI Implementation (the rest of the file already matched); the vocal-effects address map, gap analyses and migration plan updated to match
+- Installation docs and READMEs: Windows installer and portable zip, SmartScreen note, Python 3.10+ (3.13 added to the classifiers)
+- `pyproject.toml`: `audio` extra (soundfile, librosa) and both in `dev`, since the audio-evidence tests import them; `build-windows` extra (PyInstaller)
+- `tests/test_ui_responsiveness.py`: one MIDI message per control change, slider drag throttling, clickable labels, centred layout
+- Tests run on in-memory MIDI ports (`tests/conftest.py`) that show a "JD-Xi" port, so they no longer need a MIDI driver or hardware; `pytest -m hardware` or `JDXI_TEST_REAL_MIDI=1` uses the real ports. `test_channel_edit_applies_after_delay` waits for the result instead of a fixed 500 ms, which was too short after other Qt-heavy tests
+- Tests that need `tests/sheep.mid` (not in the repository) are marked `slow`, like the others that use it, so the default run no longer fails on them
+- `python -m building.buildsys` on Windows passes the version to Inno Setup; removed the outdated copy `building/windows/jdxi_editor.iss` (0.9.2)
+
 # [0.9.9] — 2026-11
 Bumping version for PyPi
 

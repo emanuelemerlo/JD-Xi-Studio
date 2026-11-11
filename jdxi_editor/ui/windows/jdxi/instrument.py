@@ -120,13 +120,15 @@ from jdxi_editor.ui.widgets.viewer.log import LogViewer
 from jdxi_editor.ui.windows.jdxi.recent_files import RecentFilesManager
 from jdxi_editor.ui.windows.jdxi.ui import JDXiWindow
 from jdxi_editor.ui.windows.jdxi.utils import show_message_box_from_spec
+from jdxi_editor.ui.v2.analog import AnalogToneEditor
 from jdxi_editor.ui.windows.midi.config_dialog import MIDIConfigDialog
 from jdxi_editor.ui.windows.midi.debugger import MIDIDebugger
 from jdxi_editor.ui.windows.midi.monitor import MIDIMessageMonitor
 from jdxi_editor.ui.windows.patch.manager import PatchManager
 from jdxi_editor.utils.file import documentation_file_path, os_file_open
+from jdxi_editor.i18n import tr
 
-DOCUMENTATION_URL = "https://markxbrooks.github.io/JDXI-Editor/"
+DOCUMENTATION_URL = "https://github.com/emanuelemerlo/JDXI-Editor#readme"
 from picomidi.constant import Midi
 from picoui.specs.widgets import MessageBoxSpec
 
@@ -148,14 +150,20 @@ class JDXiInstrument(JDXiWindow):
             JDXi.UI.Theme.apply_transparent(self)
             JDXi.UI.Theme.apply_adsr_disabled(self)
         # Try to auto-connect to JD-Xi
+        self._midi_config_dialog = None
         self.midi_helper.auto_connect_jdxi()
-        if (
+        if not getattr(self.midi_helper, "midi_available", True):
+            # No MIDI API on this system: start offline and say so once the
+            # window is up, instead of offering ports that cannot exist
+            QTimer.singleShot(0, self._show_midi_unavailable)
+        elif (
             not self.midi_helper.current_in_port
             or not self.midi_helper.current_out_port
         ):
-            self._show_midi_config()
-        self.midi_in_indicator.set_state(self.midi_helper.is_input_open)
-        self.midi_out_indicator.set_state(self.midi_helper.is_output_open)
+            # Opened from the event loop, after the window is shown, so the
+            # constructor does not block waiting for the dialog
+            QTimer.singleShot(0, self._show_midi_config)
+        self._update_midi_indicators()
         self.sysex_composer = JDXiSysExComposer()
         self.program_helper = JDXiProgramHelper(self.midi_helper, MidiChannel.PROGRAM)
         self.settings = QSettings("mabsoft", __package_name__)
@@ -195,7 +203,7 @@ class JDXiInstrument(JDXiWindow):
             ),
             "analog": EditorConfig(
                 title="Analog Synth",
-                editor_class=AnalogSynthEditor,
+                editor_class=AnalogToneEditor,  # new interface (1.0)
                 synth_type=JDXiSynth.ANALOG_SYNTH,
                 midi_channel=MidiChannel.ANALOG_SYNTH,
                 icon="mdi.piano",
@@ -259,7 +267,7 @@ class JDXiInstrument(JDXiWindow):
 
     def on_check_for_updates(self) -> None:
         """Help → Check for Updates…"""
-        self.statusBar().showMessage("Checking GitHub for updates…", 5000)
+        self.statusBar().showMessage(tr("Checking GitHub for updates…"), 5000)
         self.update_checker.check(manual=True)
 
     def _on_update_available(self, release: ReleaseInfo, manual: bool) -> None:
@@ -286,9 +294,8 @@ class JDXiInstrument(JDXiWindow):
 
             QMessageBox.information(
                 self,
-                "Check for Updates",
-                f"You're up to date: {__program__} {__version__} is the newest "
-                "release.",
+                tr("Check for Updates"),
+                tr("You're up to date: {program} {version} is the newest release.").format(program=__program__, version=__version__),
             )
 
     def _on_update_check_failed(self, message: str, manual: bool) -> None:
@@ -298,8 +305,8 @@ class JDXiInstrument(JDXiWindow):
         if manual:
             QMessageBox.warning(
                 self,
-                "Check for Updates",
-                f"Couldn't check GitHub for updates:\n{message}",
+                tr("Check for Updates"),
+                tr("Couldn't check GitHub for updates:\n{message}").format(message=message),
             )
 
     def _init_preset_helpers(self):
@@ -900,6 +907,7 @@ class JDXiInstrument(JDXiWindow):
                     DigitalSynthEditor,
                     DigitalSynth2Editor,
                     AnalogSynthEditor,
+                    AnalogToneEditor,
                     DrumCommonEditor,
                     PatternSequenceEditor,
                     ProgramEditor,
@@ -933,20 +941,20 @@ class JDXiInstrument(JDXiWindow):
             # Update splash screen when creating editors
             if self.splash_status_label and self.splash_progress_bar:
                 if title == "Analog Synth":
-                    self.splash_status_label.setText("Loading Analog Synth editor...")
+                    self.splash_status_label.setText(tr("Loading Analog Synth editor..."))
                     self.splash_progress_bar.setValue(30)
                 elif title == "Digital Synth 1":
                     self.splash_status_label.setText(
-                        "Loading Digital Synth 1 editor..."
+                        tr("Loading Digital Synth 1 editor...")
                     )
                     self.splash_progress_bar.setValue(40)
                 elif title == "Digital Synth 2":
                     self.splash_status_label.setText(
-                        "Loading Digital Synth 2 editor..."
+                        tr("Loading Digital Synth 2 editor...")
                     )
                     self.splash_progress_bar.setValue(50)
                 elif title == "Drums":
-                    self.splash_status_label.setText("Preparing Drum Kit editor...")
+                    self.splash_status_label.setText(tr("Preparing Drum Kit editor..."))
                     self.splash_progress_bar.setValue(55)
                 QApplication.processEvents()
 
@@ -1067,6 +1075,7 @@ class JDXiInstrument(JDXiWindow):
                     DigitalSynthEditor,
                     DigitalSynth2Editor,
                     AnalogSynthEditor,
+                    AnalogToneEditor,
                     DrumCommonEditor,
                     PatternSequenceEditor,
                     ProgramEditor,
@@ -1113,6 +1122,9 @@ class JDXiInstrument(JDXiWindow):
                 exception=ex,
             )
 
+    def _forget_midi_config_dialog(self, *_args) -> None:
+        self._midi_config_dialog = None
+
     def _show_log_viewer(self) -> None:
         """Show log viewer window"""
         if not self.log_viewer:
@@ -1121,11 +1133,57 @@ class JDXiInstrument(JDXiWindow):
         self.log_viewer.raise_()
         log.message(scope="JDXiInstrument", message="Showing LogViewer window")
 
+    def _update_midi_indicators(self, *_args) -> None:
+        """Show whether the MIDI input and output ports are open."""
+        self.midi_in_indicator.set_state(self.midi_helper.is_input_open)
+        self.midi_out_indicator.set_state(self.midi_helper.is_output_open)
+
+    def _show_midi_unavailable(self) -> None:
+        """Tell the user the editor is running without MIDI (no MIDI API on this system)."""
+        reason = getattr(self.midi_helper, "midi_backend_error", None) or ""
+        log.warning(
+            scope="JDXiInstrument", message=f"Running offline, no MIDI backend: {reason}"
+        )
+        self.statusBar().showMessage(tr("Offline: no MIDI backend available"), 0)
+        box = QMessageBox(
+            QMessageBox.Icon.Warning,
+            tr("MIDI not available"),
+            tr(
+                "The system has no MIDI interface that the editor can open, so it runs "
+                "offline: you can edit, open and save patches, but nothing is sent to "
+                "or received from the JD-Xi.\n\n"
+                "On Linux, load the ALSA sequencer (sudo modprobe snd-seq) and restart "
+                "the editor."
+            ),
+            QMessageBox.StandardButton.Ok,
+            self,
+        )
+        box.setDetailedText(reason)
+        box.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        box.open()
+
     def _show_midi_config(self) -> None:
-        """Show MIDI configuration dialog"""
+        """
+        Show the MIDI configuration dialog.
+
+        The dialog is window-modal but non-blocking (open(), not exec()): the
+        caller returns at once and the indicators update when it closes.
+        """
         try:
+            if self._midi_config_dialog is not None:
+                self._midi_config_dialog.raise_()
+                self._midi_config_dialog.activateWindow()
+                return
             dialog = MIDIConfigDialog(self.midi_helper, parent=self)
-            dialog.exec()
+            dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+            # MIDIConfigDialog.accept() reopens the ports after finished is
+            # emitted, so read the port state once that has returned
+            dialog.finished.connect(
+                lambda *_: QTimer.singleShot(0, self._update_midi_indicators)
+            )
+            dialog.destroyed.connect(self._forget_midi_config_dialog)
+            self._midi_config_dialog = dialog
+            dialog.open()
 
         except Exception as ex:
             log.error(
@@ -1218,7 +1276,7 @@ class JDXiInstrument(JDXiWindow):
             )
 
             # Create Recent Files submenu
-            self.recent_files_menu = file_menu.addMenu("Recent MIDI Files")
+            self.recent_files_menu = file_menu.addMenu(tr("Recent MIDI Files"))
             self._update_recent_files_menu()
 
     def _update_recent_files_menu(self) -> None:
@@ -1252,7 +1310,7 @@ class JDXiInstrument(JDXiWindow):
         recent_files = self.recent_files_manager.get_recent_files()
 
         if not recent_files:
-            action = QAction("No recent files", self)
+            action = QAction(tr("No recent files"), self)
             action.setEnabled(False)
             self.recent_files_menu.addAction(action)
         else:
@@ -1270,7 +1328,7 @@ class JDXiInstrument(JDXiWindow):
 
             # Add separator and clear action
             self.recent_files_menu.addSeparator()
-            clear_action = QAction("Clear Recent Files", self)
+            clear_action = QAction(tr("Clear Recent Files"), self)
             clear_action.triggered.connect(self._clear_recent_files)
             self.recent_files_menu.addAction(clear_action)
 
@@ -1286,7 +1344,7 @@ class JDXiInstrument(JDXiWindow):
             from PySide6.QtWidgets import QMessageBox
 
             QMessageBox.warning(
-                self, "File Not Found", f"The file '{file_path}' no longer exists."
+                self, tr("File Not Found"), tr("The file '{file_path}' no longer exists.").format(file_path=file_path)
             )
             self._update_recent_files_menu()
             return
@@ -1355,15 +1413,15 @@ class JDXiInstrument(JDXiWindow):
         if not midi_editor or not getattr(midi_editor, "midi_state", None):
             QMessageBox.warning(
                 self,
-                "No MIDI file",
-                "Open the MIDI File player and load a MIDI file first.",
+                tr("No MIDI file"),
+                tr("Open the MIDI File player and load a MIDI file first."),
             )
             return
         if not midi_editor.midi_state.file:
             QMessageBox.warning(
                 self,
-                "No MIDI file",
-                "No MIDI file is loaded. Load a MIDI file from the File menu first.",
+                tr("No MIDI file"),
+                tr("No MIDI file is loaded. Load a MIDI file from the File menu first."),
             )
             return
         midi_file = midi_editor.midi_state.file
@@ -1381,8 +1439,8 @@ class JDXiInstrument(JDXiWindow):
                 )
                 QMessageBox.warning(
                     self,
-                    "Export failed",
-                    "Could not prepare the current MIDI file for export.",
+                    tr("Export failed"),
+                    tr("Could not prepare the current MIDI file for export."),
                 )
                 return
         try:
@@ -1395,15 +1453,15 @@ class JDXiInstrument(JDXiWindow):
             )
             QMessageBox.warning(
                 self,
-                "Export failed",
-                "Could not create PDF. Is LilyPond installed? See Help or preferences.",
+                tr("Export failed"),
+                tr("Could not create PDF. Is LilyPond installed? See Help or preferences."),
             )
             return
         if not pdf_path:
             QMessageBox.warning(
                 self,
-                "Export failed",
-                "Could not create PDF. Is LilyPond installed?",
+                tr("Export failed"),
+                tr("Could not create PDF. Is LilyPond installed?"),
             )
             return
         QDesktopServices.openUrl(QUrl.fromLocalFile(pdf_path))
@@ -1546,17 +1604,17 @@ class JDXiInstrument(JDXiWindow):
         if not self.midi_helper or not self.midi_helper.is_output_open:
             QMessageBox.warning(
                 self,
-                "MIDI Not Connected",
-                "Please connect to the JD-Xi synthesizer before updating the database.",
+                tr("MIDI Not Connected"),
+                tr("Please connect to the JD-Xi synthesizer before updating the database."),
             )
             return
 
         # Confirm with user
         reply = QMessageBox.question(
             self,
-            "Update User Program Database",
-            "This will scan through all user banks (E, F, G, H) and update the program database.\n"
-            "This may take several minutes. Continue?",
+            tr("Update User Program Database"),
+            tr("This will scan through all user banks (E, F, G, H) and update the program database.\n"
+            "This may take several minutes. Continue?"),
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             QMessageBox.StandardButton.No,
         )
@@ -1573,7 +1631,7 @@ class JDXiInstrument(JDXiWindow):
         progress = QProgressDialog(
             "Updating User Program Database...", "Cancel", 0, total_programs, self
         )
-        progress.setWindowTitle("Updating Database")
+        progress.setWindowTitle(tr("Updating Database"))
         progress.setWindowModality(Qt.WindowModality.WindowModal)
         progress.setMinimumDuration(0)
         progress.setValue(0)
@@ -1643,9 +1701,8 @@ class JDXiInstrument(JDXiWindow):
 
             QMessageBox.information(
                 self,
-                "Update Complete",
-                f"Successfully updated {self._db_update_programs_saved} programs in the database.\n\n"
-                f"The program list has been refreshed with the updated names.",
+                tr("Update Complete"),
+                tr('Successfully updated {db_update_programs_saved} programs in the database.\n\nThe program list has been refreshed with the updated names.').format(db_update_programs_saved=self._db_update_programs_saved),
             )
             return
 
@@ -1666,7 +1723,7 @@ class JDXiInstrument(JDXiWindow):
         )
         self._db_update_progress.setValue(current_progress)
         self._db_update_progress.setLabelText(
-            f"Reading {current_bank}{self._db_update_current_program:02d}..."
+            tr('Reading {current_bank}{db_update_current_program:02d}...').format(current_bank=current_bank, db_update_current_program=self._db_update_current_program)
         )
 
         # Calculate MIDI values for this program
@@ -2023,6 +2080,10 @@ class JDXiInstrument(JDXiWindow):
             )
             preset_number = self.settings.value("last_preset/preset_num", 0, type=int)
 
+            # Settings store 1-based numbers; 0 (nothing saved yet) would index
+            # the last preset of the list instead of falling back
+            if preset_number < 1:
+                return "INIT PATCH"
             # Get preset name - adjust index to be 0-based
             if synth_type == JDXiSynth.ANALOG_SYNTH:
                 return JDXiUIPreset.Analog.ENUMERATED[
@@ -2384,7 +2445,7 @@ class JDXiInstrument(JDXiWindow):
                     message="Error saving to favorite",
                     exception=ex,
                 )
-                QMessageBox.warning(self, "Error", f"Error saving preset: {str(ex)}")
+                QMessageBox.warning(self, tr("Error"), tr('Error saving preset: {value1}').format(value1=str(ex)))
 
     def _clear_favorite(self, button: Union[FavoriteButton, SequencerSquare]) -> None:
         """
@@ -2434,7 +2495,7 @@ class JDXiInstrument(JDXiWindow):
             if button_preset:
                 button.preset = button_preset  # Store preset in button
                 button.setToolTip(
-                    f"Tone {button_preset.number} {button_preset.name}, {button_preset.type}"
+                    tr('Tone {number} {name}, {type}').format(number=button_preset.number, name=button_preset.name, type=button_preset.type)
                 )
                 button.setChecked(True)  # Keep it checked
                 button.setCheckable(False)  # Prevent unchecking directly

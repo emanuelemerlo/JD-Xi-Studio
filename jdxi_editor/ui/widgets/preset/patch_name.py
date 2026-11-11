@@ -1,6 +1,7 @@
 from PySide6.QtCore import Signal
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QLabel, QLineEdit, QWidget
+from jdxi_editor.i18n import tr
 
 
 class PatchName(QWidget):
@@ -9,11 +10,11 @@ class PatchName(QWidget):
     def __init__(self, parent: object | None = None) -> None:
         super().__init__(parent)
         main_layout = QHBoxLayout(self)
-        group = QGroupBox("Patch Name")
+        group = QGroupBox(tr("Patch Name"))
         layout = QHBoxLayout(group)
         layout.setContentsMargins(4, 4, 4, 4)
 
-        self.label = QLabel("Name:")
+        self.label = QLabel(tr("Name:"))
         self.editor = QLineEdit()
         self.editor.setMaxLength(12)  # JD-Xi patch names are max 12 chars
         self.editor.setFont(QFont("Fixed", 10))  # Monospace font

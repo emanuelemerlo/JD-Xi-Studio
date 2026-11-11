@@ -59,6 +59,7 @@ from jdxi_editor.ui.widgets.editor.helper import (
 )
 from jdxi_editor.ui.widgets.plot.drum import DrumTVFEnvPlot
 from jdxi_editor.ui.widgets.spec import ComboBoxSpec, SliderSpec
+from jdxi_editor.i18n import tr
 
 
 class DrumTVFSection(DrumBaseSection):
@@ -208,14 +209,14 @@ class DrumTVFSection(DrumBaseSection):
         # --- Basic TVF controls and envelope controls ---
         controls_icon = JDXi.UI.Icon.get_icon("mdi.tune", color=JDXi.UI.Style.GREY)
         self.tvf_tab_widget.addTab(
-            self._create_tvf_basic_group(), controls_icon, "Controls"
+            self._create_tvf_basic_group(), controls_icon, tr("Controls")
         )
 
         # --- TVF Envelope Controls
         envelope_icon_base64 = generate_waveform_icon("adsr", "#FFFFFF", 1.0)
         envelope_icon = QIcon(base64_to_pixmap(envelope_icon_base64))
         self.tvf_tab_widget.addTab(
-            self._create_tvf_env_group(), envelope_icon, "Envelope"
+            self._create_tvf_env_group(), envelope_icon, tr("Envelope")
         )
 
         main_layout.addWidget(self.tvf_tab_widget)
@@ -223,7 +224,7 @@ class DrumTVFSection(DrumBaseSection):
 
     def _create_tvf_env_group(self) -> QGroupBox:
         """Envelope controls group"""
-        envelope_group = QGroupBox("Envelope")
+        envelope_group = QGroupBox(tr("Envelope"))
         envelope_group_layout = QHBoxLayout()
         #  --- Left side: Envelope sliders  ---
         envelope_slider_layout = QGridLayout()
@@ -362,7 +363,7 @@ class DrumTVFSection(DrumBaseSection):
 
     def _create_tvf_basic_group(self) -> QGroupBox:
         """Basic TVF controls group - widgets from SLIDER_GROUPS['controls'] in build_widgets()."""
-        group = QGroupBox("Controls")
+        group = QGroupBox(tr("Controls"))
 
         basic_tvf_layout = QFormLayout()
         centered_layout = create_centered_layout_with_child(basic_tvf_layout)

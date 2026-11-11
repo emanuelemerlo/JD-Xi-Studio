@@ -19,6 +19,7 @@ from jdxi_editor.ui.common import JDXi, QVBoxLayout, QWidget
 from jdxi_editor.ui.editors.helpers.widgets import create_jdxi_button, create_jdxi_row
 from jdxi_editor.ui.style import JDXiUIDimensions, JDXiUIStyle
 from jdxi_editor.ui.widgets.editor.helper import create_layout_with_items
+from jdxi_editor.i18n import tr
 
 
 class PresetComboBox(QWidget):
@@ -42,9 +43,9 @@ class PresetComboBox(QWidget):
 
         # --- Search Box
         self.search_box = QLineEdit()
-        search_row = create_layout_with_items([QLabel("Search:"), self.search_box])
+        search_row = create_layout_with_items([QLabel(tr("Search:")), self.search_box])
         self.search_box.setStyleSheet(JDXi.UI.Style.QLINEEDIT)
-        self.search_box.setPlaceholderText("Search presets...")
+        self.search_box.setPlaceholderText(tr("Search presets..."))
         self.search_box.textChanged.connect(self._populate_presets)
         search_row.addWidget(self.search_box)
         layout.addLayout(search_row)

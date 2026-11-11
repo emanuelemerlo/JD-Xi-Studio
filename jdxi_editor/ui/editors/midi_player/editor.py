@@ -99,6 +99,7 @@ from picoui.specs.widgets import (
     MessageBoxSpec,
     get_file_save_from_spec,
 )
+from jdxi_editor.i18n import tr
 
 # Expose Qt symbols for tests that patch via jdxi_editor.ui.editors.io.player
 # Tests expect these names to exist at module level
@@ -2045,7 +2046,7 @@ class MidiFilePlayer(SynthEditor):
         return {
             "automation_insert": ButtonSpec(
                 label="Insert Program Change Here",
-                tooltip="Insert Program Change at current position",
+                tooltip=tr("Insert Program Change at current position"),
                 icon=JDXi.UI.Icon.ADD,
                 slot=self.insert_program_change_current_position,
             ),

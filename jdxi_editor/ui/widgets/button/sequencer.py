@@ -8,6 +8,7 @@ from PySide6.QtWidgets import QPushButton
 from jdxi_editor.midi.io.helper import MidiIOHelper
 from jdxi_editor.project import __package_name__
 from jdxi_editor.ui.preset.button import JDXiPresetButtonData
+from jdxi_editor.i18n import tr
 
 
 class SequencerSquare(QPushButton):
@@ -33,7 +34,7 @@ class SequencerSquare(QPushButton):
         self.is_checked = checked
         if self.preset:
             self.setToolTip(
-                f"Tone: {self.preset.number} {self.preset.name}, {self.preset.type}"
+                tr('Tone: {number} {name}, {type}').format(number=self.preset.number, name=self.preset.name, type=self.preset.type)
             )
         self.update()  # Trigger repaint
 

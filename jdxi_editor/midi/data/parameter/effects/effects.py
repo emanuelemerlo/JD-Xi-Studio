@@ -135,24 +135,24 @@ class Effect1Param(AddressParameter):
         0,
         4,
         "Selects the type of effect to be applied:\n00: Thru\n01: Distortion\n02: Fuzz\n03: Compressor\n04: Bit Crusher ",
-        "Effect 1 Type",
+        "Type",
     )
     EFX1_LEVEL = ParameterSpec(
-        0x01, 0, 127, description="Sets the level of the effect."
+        0x01, 0, 127, description="Sets the level of the effect.", display_name="Level"
     )
     EFX1_DELAY_SEND_LEVEL = ParameterSpec(
         0x02,
         0,
         127,
         description="Depth of delay applied to the sound from effect 1.",
-        display_name="EFX1 Level (0-127)",
+        display_name="Delay Send Level",
     )
     EFX1_REVERB_SEND_LEVEL = ParameterSpec(
         0x03,
         0,
         127,
         description="Depth of reverb applied to the sound from effect 1.",
-        display_name="EFX1 Reverb Send Level (0-127)",
+        display_name="Reverb Send Level",
     )
     EFX1_OUTPUT_ASSIGN = ParameterSpec(
         0x04,
@@ -491,23 +491,23 @@ class Effect2Param(AddressParameter):
         return self.display_min, self.display_max
 
     # EFX2 Parameters
-    EFX2_TYPE = ParameterSpec(0x00, 0, 8, 0, 8, "Effect Type", "Effect Type")
+    EFX2_TYPE = ParameterSpec(0x00, 0, 8, 0, 8, "Effect Type", "Type")
     EFX2_LEVEL = ParameterSpec(
-        0x01, 0, 127, 0, 127, "EFX2 Level (0-127)", "Effect Level"
+        0x01, 0, 127, 0, 127, "EFX2 Level (0-127)", "Level"
     )
     EFX2_DELAY_SEND_LEVEL = ParameterSpec(
         0x02,
         0,
         127,
         description="EFX2 Delay Send Level (0-127)",
-        display_name="EFX2 Delay Send Level (0-127)",
+        display_name="Delay Send Level",
     )
     EFX2_REVERB_SEND_LEVEL = ParameterSpec(
         0x03,
         0,
         127,
         description="EFX2 Reverb Send Level (0-127)",
-        display_name="EFX2 Reverb Send Level (0-127)",
+        display_name="Reverb Send Level",
     )
     EFX2_PARAM_1 = ParameterSpec(0x11, 32768, 32895, 0, 127)
     EFX2_PARAM_1_FLANGER_RATE_NOTE_SWITCH = ParameterSpec(

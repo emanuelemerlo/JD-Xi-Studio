@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWi
 
 from jdxi_editor.core.jdxi import JDXi
 from jdxi_editor.ui.widgets.editor.helper import create_layout_with_items
+from jdxi_editor.i18n import tr
 
 
 def add_tone_container(
@@ -20,7 +21,7 @@ def add_tone_container(
     tone_container_layout = QVBoxLayout(tone_container)
     tone_container_layout.setSpacing(3)
     tone_label_layout = QHBoxLayout()
-    tone_label = QLabel("Tone")
+    tone_label = QLabel(tr("Tone"))
     tone_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
     tone_label.setStyleSheet(JDXi.UI.Style.TRANSPARENT)
     tone_label_layout.addWidget(tone_label)
@@ -46,12 +47,12 @@ def create_tone_buttons_row(previous_tone, next_tone):
     # --- Create tone up button
     tone_up_button.setFixedSize(tone_button_diameter, tone_button_diameter)
     tone_up_button.setStyleSheet(JDXi.UI.Style.BUTTON_ROUND_SMALL)
-    tone_up_button.setToolTip("Tone Up: Navigate to the next preset/tone")
+    tone_up_button.setToolTip(tr("Tone Up: Navigate to the next preset/tone"))
 
     # --- Create tone down button
     tone_down_button.setFixedSize(tone_button_diameter, tone_button_diameter)
     tone_down_button.setStyleSheet(JDXi.UI.Style.BUTTON_ROUND_SMALL)
-    tone_down_button.setToolTip("Tone Down: Navigate to the previous preset/tone")
+    tone_down_button.setToolTip(tr("Tone Down: Navigate to the previous preset/tone"))
 
     # --- Connect buttons to functions
     tone_down_button.clicked.connect(previous_tone)

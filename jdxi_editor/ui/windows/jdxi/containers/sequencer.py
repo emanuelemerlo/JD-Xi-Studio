@@ -19,6 +19,7 @@ from jdxi_editor.ui.style.factory import (
     toggle_button_style,
 )
 from jdxi_editor.ui.widgets.button.sequencer import SequencerSquare
+from jdxi_editor.i18n import tr
 
 
 def create_sequencer_buttons_row(
@@ -53,7 +54,7 @@ def create_sequencer_buttons_row(
         button.customContextMenuRequested.connect(
             lambda pos, b=button: on_context_menu(pos, b)
         )
-        button.setToolTip(f"Save Favorite {i}")  # initial tooltip
+        button.setToolTip(tr('Save Favorite {i}').format(i=i))  # initial tooltip
         button.toggled.connect(
             lambda checked, btn=button: toggle_button_style(btn, checked)
         )
@@ -86,7 +87,7 @@ def add_sequencer_container(
         JDXi.UI.Dimensions.SEQUENCER.CONTAINER.HEIGHT,
     )
     sequencer_container_layout = QHBoxLayout(sequencer_container)
-    sequencer_label = QLabel("Sequencer")
+    sequencer_label = QLabel(tr("Sequencer"))
     sequencer_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
     sequencer_label.setStyleSheet(JDXi.UI.Style.TRANSPARENT)
     sequencer_layout = QHBoxLayout()
@@ -136,7 +137,7 @@ def add_favorite_button_container(central_widget):
     favorite_button.setCheckable(True)
     # --- Style the button with brighter hover/border_pressed/selected  states
     favorite_button.setStyleSheet(JDXi.UI.Style.BUTTON_ROUND)
-    favorite_button.setToolTip("Favorite: Mark current settings as a favorite")
+    favorite_button.setToolTip(tr("Favorite: Mark current settings as a favorite"))
     row.addLayout(favourite_button_column)
     favourite_button_column.addWidget(favourite_button_label)
     favourite_button_column.addWidget(favorite_button)

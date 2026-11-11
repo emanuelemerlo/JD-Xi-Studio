@@ -1,8 +1,17 @@
 # JDXi-Editor
 
-![Roland JD-Xi Cartoon](https://raw.githubusercontent.com/markxbrooks/JDXI-Editor/main/resources/JDXI-Editor_logo_640.png)
+![Roland JD-Xi Cartoon](resources/JDXI-Editor_logo_640.png)
 
 **JDXi-Editor**: The missing MIDI editor for the **Roland JD-Xi synthesizer**
+
+> **This is an independent fork** of [JDXI-Editor](https://github.com/markxbrooks/JDXI-Editor) by Mark Brooks (MIT licence).
+> It goes its own way: the presets and SysEx addresses are checked against Roland's manuals, the editor runs
+> without a JD-Xi (offline mode), Windows builds come from CI, and the interface is translated (English, Italiano).
+> A new interface for desktop screens is being built, one editor at a time (version 1.0, starting with
+> the Analog editor): every parameter of the manual on screen, graphic controls, and an explanation of
+> the parameter under the pointer. The last version with the original interface is 0.10.0 beta
+> (tag `v0.10.0-beta.1`). Releases, issues and the update check of the app use this repository.
+
 
 ## Unleash the hidden power of your Roland JD-Xi. 
 - Stop fighting menus and start creating. 
@@ -25,6 +34,10 @@
 - **MIDI File Player**: Load MIDI files, classify tracks, assign channels, play with JD-Xi or FluidSynth.
 - **SoundFont Support**: Use .sf2/.sf3 for playback without hardware.
 - **MIDI Debugger**: Monitor and debug MIDI messages efficiently.
+- **New Analog editor** (1.0): all 46 parameters on one screen, filter curve and envelopes to drag,
+  drawn waveforms, and an information panel that explains the parameter under the pointer.
+- **Languages**: English and Italian, chosen in Preferences (see [Languages](#-languages)).
+- **Offline mode**: opens and edits without a JD-Xi or a MIDI system; it connects when one is available.
 
 ---
 
@@ -32,8 +45,8 @@ Designed for musicians, sound designers, and MIDI enthusiasts looking to unlock 
 
 ### 🖥️ 'Keyboard Window' Screenshot
 
-<a href="https://github.com/markxbrooks/JDXI-Editor/blob/main/resources/main_window_0.6.gif" rel="Current view of the Roland JD-Xi Editor App">
-  <img src="https://raw.githubusercontent.com/markxbrooks/JDXI-Editor/main/resources/main_window_0.6.gif" alt="Roland JD-Xi Main Editor Window" />
+<a href="resources/main_window_0.6.gif" rel="Current view of the Roland JD-Xi Editor App">
+  <img src="resources/main_window_0.6.gif" alt="Roland JD-Xi Main Editor Window" />
 </a>
 
 ---
@@ -60,24 +73,35 @@ Phil Collins – *In The Air Tonight* performed on the Roland JD-Xi
 
 ## 🚀 Getting Started
 
-
-### MacOS 🖥️
-There is a new build for MacOS Sequoia. See the [releases page](https://github.com/markxbrooks/JDXI-Editor/releases/tag/v0.9.6).
+Builds of this fork are on its [releases page](https://github.com/emanuelemerlo/JDXI-Editor/releases).
+Beta versions are marked as pre-releases. The app checks this page for updates (Help › Check for Updates):
+a beta is told about the next beta, a final release only about final releases.
 
 ### Windows 📦
-There is a new build for Windows. See the [releases page](https://github.com/markxbrooks/JDXI-Editor/releases/tag/v0.9.6).
+Each release offers two separate downloads; take the one you want:
+- the **installer** `jdxi_editor-<version>_setup_win_x86-64.exe` (installs for the current user,
+  no administrator rights, adds Start menu entries and an uninstaller);
+- the **portable** `JDXI-Editor-<version>-win64-portable.zip` (nothing to install: unzip anywhere,
+  even a USB stick, and run `jdxi_editor\jdxi_editor.exe`).
+Windows 10 or 11, 64-bit. The files are not signed: if SmartScreen warns, choose
+"More info" → "Run anyway". Test builds of every push are in the
+[Windows build](https://github.com/emanuelemerlo/JDXI-Editor/actions/workflows/windows-build.yml) workflow
+(Artifacts at the bottom of a run: `…-win64-setup` holds the installer, `…-win64-portable` the
+app folder, ready to run once unzipped).
 
-### Linux 📦
-There is a new build for Linux. See the [releases page](https://github.com/markxbrooks/JDXI-Editor/releases/tag/v0.9.6).
-
+### macOS and Linux
+This fork does not publish macOS or Linux packages yet: run it with Python (below), or build a package
+with `python -m building.buildsys` (see [Building](#building)). The packages on the original project's
+releases page are of the original app.
 
 ### Python 🐍
-JD-Xi Editor is on PyPI (Python 3.10 to 3.12). Install it in a virtual environment and start it with `jdxi-editor`:
+Python 3.10 to 3.13. The `JDXI-Editor` package on PyPI is the original project; install this fork from GitHub,
+in a virtual environment, and start it with `jdxi-editor`:
 
 ```bash
 $ python -m venv jdxi-env
 $ source jdxi-env/bin/activate        # Windows: jdxi-env\Scripts\activate
-$ python -m pip install JDXI-Editor
+$ python -m pip install "git+https://github.com/emanuelemerlo/JDXI-Editor.git"
 $ jdxi-editor
 ```
 
@@ -86,7 +110,7 @@ PyAudio needs the PortAudio library: on macOS `brew install portaudio`, on Debia
 To run from a checkout instead (for development):
 
 ```bash
-$ git clone https://github.com/markxbrooks/JDXI-Editor.git
+$ git clone https://github.com/emanuelemerlo/JDXI-Editor.git
 $ cd JDXI-Editor
 $ python -m venv venv
 $ source venv/bin/activate
@@ -94,11 +118,22 @@ $ python -m pip install -e ".[dev]"
 $ python -m jdxi_editor.main
 ```
 
+## 🌍 Languages
+
+The interface is in **English** and **Italiano**. Choose it in **Help › Preferences › Interface language**
+("Same as the system" follows the operating system; the change applies at the next start). Qt's own
+buttons and file dialogs follow the same language.
+
+Parameter names (Cutoff, Resonance, Porta Time…) stay as on the JD-Xi display and in Roland's manuals,
+in every language, so what you read on screen matches the instrument.
+
+To add a language or new strings, see [jdxi_editor/i18n/README.md](jdxi_editor/i18n/README.md).
+
 # 📖 Documentation
 
 ## Features and Usage
 
-See **[Features and Usage](https://github.com/markxbrooks/JDXI-Editor/blob/main/doc/features-and-usage.md)** for:
+See **[Features and Usage](doc/features-and-usage.md)** for:
 
 - **Recent changes** — Arpeggiator SysEx sync, Effects Editor, Vocal Effects
 - **Patch loading and saving** — .jsz, .msz, .json, .syx formats; save/load flow
@@ -109,69 +144,70 @@ See **[Features and Usage](https://github.com/markxbrooks/JDXI-Editor/blob/main/
 ## ℹ Available Documentation:
 ### 📃 HTML Documentation:
 
-https://markxbrooks.github.io/JDXI-Editor/
+The original project's documentation, which still describes most of this fork:
+https://markxbrooks.github.io/JDXI-Editor/ — what changed here is in [CHANGELOG.md](CHANGELOG.md).
 
 ### 🎹 UI Previews
 
 
 **Program Editor**  
-<a href="https://github.com/markxbrooks/JDXI-Editor/blob/main/resources/program_editor.gif">
-  <img src="https://raw.githubusercontent.com/markxbrooks/JDXI-Editor/main/resources/program_editor_600.gif" alt="Program Editor" />
+<a href="resources/program_editor.gif">
+  <img src="resources/program_editor_600.gif" alt="Program Editor" />
 </a>
 
 &nbsp;
 
 **Analog & Digital Synths**  
-<a href="https://github.com/markxbrooks/JDXI-Editor/blob/main/resources/analog_synth.png">
-  <img src="https://raw.githubusercontent.com/markxbrooks/JDXI-Editor/main/resources/analog_synth_600.png" alt="Analog Synth" />
+<a href="resources/analog_synth.png">
+  <img src="resources/analog_synth_600.png" alt="Analog Synth" />
 </a>
 
 &nbsp;
 
-<a href="https://github.com/markxbrooks/JDXI-Editor/blob/main/resources/digital_synth.png">
-  <img src="https://raw.githubusercontent.com/markxbrooks/JDXI-Editor/main/resources/digital_synth_600.png" alt="Digital Synth" />
+<a href="resources/digital_synth.png">
+  <img src="resources/digital_synth_600.png" alt="Digital Synth" />
 </a>
 
 &nbsp;
 
 **Drum Editor**  
-<a href="https://github.com/markxbrooks/JDXI-Editor/blob/main/resources/drum_editor.png">
-  <img src="https://raw.githubusercontent.com/markxbrooks/JDXI-Editor/main/resources/drum_editor_600.png" alt="Drum Editor" />
+<a href="resources/drum_editor.png">
+  <img src="resources/drum_editor_600.png" alt="Drum Editor" />
 </a>
 
 &nbsp;
 
 **MIDI File Player**  
-<a href="https://github.com/markxbrooks/JDXI-Editor/blob/main/resources/midi_player.png">
-  <img src="https://raw.githubusercontent.com/markxbrooks/JDXI-Editor/main/resources/midi_player_600.png" alt="MIDI File Player" />
+<a href="resources/midi_player.png">
+  <img src="resources/midi_player_600.png" alt="MIDI File Player" />
 </a>
 
 &nbsp;
 
 **Pattern Sequencer**  
-<a href="https://github.com/markxbrooks/JDXI-Editor/blob/main/resources/pattern.png">
-  <img src="https://raw.githubusercontent.com/markxbrooks/JDXI-Editor/main/resources/pattern_600.png" alt="Pattern Sequencer" />
+<a href="resources/pattern.png">
+  <img src="resources/pattern_600.png" alt="Pattern Sequencer" />
 </a>
 
 &nbsp;
 
 **Effects**  
-<a href="https://github.com/markxbrooks/JDXI-Editor/blob/main/resources/effects.png">
-  <img src="https://raw.githubusercontent.com/markxbrooks/JDXI-Editor/main/resources/effects_600.png" alt="Effects" />
+<a href="resources/effects.png">
+  <img src="resources/effects_600.png" alt="Effects" />
 </a>
 
 &nbsp;
 
 **Vocal Effects**  
-<a href="https://github.com/markxbrooks/JDXI-Editor/blob/main/resources/vocal_effects.png">
-  <img src="https://raw.githubusercontent.com/markxbrooks/JDXI-Editor/main/resources/vocal_effects_600.png" alt="Vocal Effects" />
+<a href="resources/vocal_effects.png">
+  <img src="resources/vocal_effects_600.png" alt="Vocal Effects" />
 </a>
 
 &nbsp;
 
 **Arpeggiator**  
-<a href="https://github.com/markxbrooks/JDXI-Editor/blob/main/resources/arpeggiator.png">
-  <img src="https://raw.githubusercontent.com/markxbrooks/JDXI-Editor/main/resources/arpeggiator_600.png" alt="Arpeggiator" />
+<a href="resources/arpeggiator.png">
+  <img src="resources/arpeggiator_600.png" alt="Arpeggiator" />
 </a>
 
 ---
@@ -215,7 +251,7 @@ JDXI-Editor provides preset selection, synth editing, drum part customization, e
 ### 💡 Contribute and Share Feedback
 JDXI-Editor is a growing project! 
 - ⭐ Star this repository to support its development.
-- 🛠️ Contribute features or report issues via [GitHub Issues](https://github.com/markxbrooks/JDXI-Editor/issues).
+- 🛠️ Contribute features or report issues via [GitHub Issues](https://github.com/emanuelemerlo/JDXI-Editor/issues).
 
 ---
 
@@ -259,11 +295,25 @@ Linux .deb or .Appimage
 python3 -m building.buildsys # builds both with no flag
 ```
 
-Windows 
+Windows: the app (PyInstaller, one folder) and the installer (Inno Setup 6)
+```commandline
+python -m pip install ".[soundfont,build-windows]"   # not -e: the spec bundles the installed resources
+cd %TEMP%
+pyinstaller --noconfirm --clean --distpath <repo>\dist <repo>\building\windows\jdxi_editor.spec
+cd <repo>
+iscc /DMyAppVersion=<version> jdxi_editor.iss                # -> dist\installer\
+```
+Translations: after changing interface strings run `python -m building.i18n update`, translate the
+`.ts` files, then `python -m building.i18n compile` (the tests fail while a string is untranslated).
+
+The `Windows build` workflow (`.github/workflows/windows-build.yml`) does the same on every push
+to a `fix/**` or `release/**` branch, starts the app as a smoke test, and uploads the portable app and the
+installer as two separate artifacts; on a `v*` tag it attaches them to a release (a pre-release when the tag has a `-`, e.g. `v0.10.0-beta.1`); the tag must match `__version__`.
+The older builder is still available:
 ```commandline
 python -m building.buildsys
 ```
-or ]
+or
 ```
 .\building\scripts\build.ps1
 ```
@@ -306,6 +356,7 @@ The earlier BassSynth drop trial, from the current filler, was recall 0.45 and 0
 
 ## 🙏 Credits
 
+- The original [JDXI-Editor](https://github.com/markxbrooks/JDXI-Editor) by Mark Brooks, on which this fork is built
 - [Qt](https://www.qt.io/)
 - [RtMidi](https://www.music.mcgill.ca/~gary/rtmidi/)
 - [Cursor.ai](https://cursor.so)
@@ -315,5 +366,5 @@ The earlier BassSynth drop trial, from the current filler, was recall 0.45 and 0
 
 ---
 
-> Made with 🎹 and ☕ by @markxbrooks
+> Original project made with 🎹 and ☕ by Mark Brooks · this fork maintained by emanuelemerlo
 

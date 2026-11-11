@@ -5,6 +5,7 @@ from jdxi_editor.core.jdxi import JDXi
 from jdxi_editor.core.synth.type import JDXiSynth
 from jdxi_editor.ui.windows.jdxi.helpers.button_row import create_button_row
 from picoui.specs.widgets import ButtonSpec
+from jdxi_editor.i18n import tr
 
 
 def create_parts_container(
@@ -27,7 +28,7 @@ def create_parts_container(
     parts_layout = QVBoxLayout(parts_container)
     parts_layout.setSpacing(3)
 
-    parts_label = QLabel("Parts Select")
+    parts_label = QLabel(tr("Parts Select"))
     parts_label.setStyleSheet(JDXi.UI.Style.PARTS_SELECT)
     parts_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
     parts_layout.addWidget(parts_label)

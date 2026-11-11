@@ -33,6 +33,7 @@ from PySide6.QtWidgets import QCheckBox, QHBoxLayout
 from jdxi_editor.core.jdxi import JDXi
 from jdxi_editor.midi.data.digital.partial import DigitalPartial
 from jdxi_editor.ui.common import QWidget
+from jdxi_editor.i18n import tr
 
 
 class PartialSwitch(QWidget):
@@ -51,12 +52,12 @@ class PartialSwitch(QWidget):
 
         # Names kept from the checkbox version: callers use isChecked/setChecked
         self.enable_check = self._switch("On")
-        self.enable_check.setToolTip(f"Partial {partial.value} on/off")
+        self.enable_check.setToolTip(tr('Partial {value} on/off').format(value=partial.value))
         self.enable_check.toggled.connect(self._on_state_changed)
         layout.addWidget(self.enable_check)
 
         self.select_check = self._switch("Select")
-        self.select_check.setToolTip(f"Select partial {partial.value} for editing")
+        self.select_check.setToolTip(tr('Select partial {value} for editing').format(value=partial.value))
         self.select_check.toggled.connect(self._on_state_changed)
         layout.addWidget(self.select_check)
 

@@ -56,6 +56,7 @@ from jdxi_editor.ui.widgets.editor.helper import (
 )
 from jdxi_editor.ui.widgets.editor.section_base import SectionBaseWidget
 from jdxi_editor.ui.widgets.wmt.envelope import WMTEnvelopeWidget
+from jdxi_editor.i18n import tr
 
 
 class DrumWMTSection(SectionBaseWidget):
@@ -176,13 +177,13 @@ class DrumWMTSection(SectionBaseWidget):
             JDXi.UI.Icon.TUNE, color=JDXi.UI.Style.GREY
         )
         self.wmt_controls_tab_widget.addTab(
-            self._create_wmt_controls_group(p), controls_icon, "Controls"
+            self._create_wmt_controls_group(p), controls_icon, tr("Controls")
         )
         waves_icon = JDXi.UI.Icon.get_icon(
             JDXi.UI.Icon.Wave.Icon.WAVEFORM, color=JDXi.UI.Style.GREY
         )
         self.wmt_controls_tab_widget.addTab(
-            self._create_wave_combo_group(p, wmt_index), waves_icon, "Waves"
+            self._create_wave_combo_group(p, wmt_index), waves_icon, tr("Waves")
         )
         fxm_icon = JDXi.UI.Icon.get_icon(
             JDXi.UI.Icon.EQUALIZER, color=JDXi.UI.Style.GREY
@@ -192,17 +193,17 @@ class DrumWMTSection(SectionBaseWidget):
             JDXi.UI.Icon.MUSIC_NOTE, color=JDXi.UI.Style.GREY
         )
         self.wmt_controls_tab_widget.addTab(
-            self._create_tuning_group(p), tuning_icon, "Tuning"
+            self._create_tuning_group(p), tuning_icon, tr("Tuning")
         )
         pan_icon = JDXi.UI.Icon.get_icon(
             JDXi.UI.Icon.PAN_HORIZONTAL, color=JDXi.UI.Style.GREY
         )
         self.wmt_controls_tab_widget.addTab(
-            self._create_wmt_pan_group(p), pan_icon, "Pan"
+            self._create_wmt_pan_group(p), pan_icon, tr("Pan")
         )
         adsr_icon = create_adsr_icon()
         self.wmt_controls_tab_widget.addTab(
-            self._create_adsr_widget(p), adsr_icon, "ADSR Envelope"
+            self._create_adsr_widget(p), adsr_icon, tr("ADSR Envelope")
         )
         return main_row_hlayout
 

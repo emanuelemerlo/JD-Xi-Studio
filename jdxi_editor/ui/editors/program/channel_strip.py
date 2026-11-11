@@ -8,6 +8,7 @@ from jdxi_editor.midi.data.address.address import JDXiSysExAddress
 from jdxi_editor.ui.style.dimensions import JDXiUIDimensions
 from jdxi_editor.ui.style.factory import generate_sequencer_button_style
 from picomidi.sysex.parameter.address import AddressParameter
+from jdxi_editor.i18n import tr
 
 
 class ChannelStrip(QWidget):
@@ -67,7 +68,7 @@ class ChannelStrip(QWidget):
         self.mute.setCheckable(True)
         self.mute.setFixedWidth(JDXiUIDimensions.SEQUENCER.SQUARE_SIZE)
         self.mute.setFixedHeight(JDXiUIDimensions.SEQUENCER.SQUARE_SIZE)
-        self.mute.setToolTip(f"Mute {title} channel")
+        self.mute.setToolTip(tr('Mute {title} channel').format(title=title))
         self._update_mute_button_style(self.mute.isChecked())
 
         self.mute.toggled.connect(self._on_mute_toggled)

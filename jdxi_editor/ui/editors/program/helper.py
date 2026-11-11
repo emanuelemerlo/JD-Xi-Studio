@@ -6,6 +6,7 @@ from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 from jdxi_editor.core.jdxi import JDXi
+from jdxi_editor.i18n import tr
 
 
 def create_placeholder_icon(
@@ -24,7 +25,7 @@ def create_placeholder_(e: Exception) -> tuple[QWidget, QIcon]:
     """Create a placeholder widget so the tab still appears"""
     placeholder_widget = QWidget()
     placeholder_layout = QVBoxLayout(placeholder_widget)
-    placeholder_label = QLabel(f"Error loading user programs: {e}")
+    placeholder_label = QLabel(tr('Error loading user programs: {e}').format(e=e))
     placeholder_layout.addWidget(placeholder_label)
     user_programs_icon = JDXi.UI.Icon.get_icon(
         "mdi.account-music", color=JDXi.UI.Style.GREY

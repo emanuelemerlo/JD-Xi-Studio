@@ -17,6 +17,7 @@ from PySide6.QtWidgets import QLabel, QProgressBar, QToolTip, QWidget
 from jdxi_editor.ui.common import JDXi, QVBoxLayout
 from jdxi_editor.ui.editors.midi_player.utils import format_time
 from jdxi_editor.ui.widgets.digital.title import DigitalTitle
+from jdxi_editor.i18n import tr
 
 SEGMENT_GAP = 3  # px between songs
 SEGMENT_HEIGHT = 14
@@ -216,7 +217,7 @@ class PlaylistProgressWidget(QWidget):
         self.display.set_upper_display_text(
             f"{status} · {count} song{'' if count == 1 else 's'}"
         )
-        self.display.setText("No song playing")
+        self.display.setText(tr("No song playing"))
         self.next_label.setText(
             f"First: {self._titles[0]}" if self._titles else "No songs with a MIDI file"
         )

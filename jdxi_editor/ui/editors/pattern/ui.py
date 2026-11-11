@@ -73,6 +73,7 @@ from picoui.helpers import create_layout_with_items
 from picoui.helpers.spinbox import spinbox_with_label_from_spec
 from picoui.specs.widgets import ButtonSpec, ComboBoxSpec, SpinBoxSpec
 from picoui.widget.helper import create_combo_box
+from jdxi_editor.i18n import tr
 
 
 def _combo_spec(items, tooltip: str = "") -> ComboBoxSpec:
@@ -113,8 +114,8 @@ class PatternUI(SynthEditor):
         self._build_row_specs()
         self.sequencer_rows: int = 4
         # Use Qt translations: add .ts/.qm for locale (e.g. en_GB "Measure" -> "Measure", "Measures" -> "Measures")
-        self.measure_name: str = self.tr("Measure")
-        self.measure_name_plural: str = self.tr("Measures")
+        self.measure_name: str = tr("Measure")
+        self.measure_name_plural: str = tr("Measures")
         self.muted_channels: list[int] = []
         self.total_measures: int = 1  # Start with 1 bar by default
         self.midi_helper: Optional[MidiIOHelper] = midi_helper
@@ -273,7 +274,7 @@ class PatternUI(SynthEditor):
         )
         self.pattern_widget.set_header_widget(self._create_headers_widget())
         # A "Pattern Sequencer" section on the glossy panel, as on the JD-Xi
-        self.sequencer_group = QGroupBox(self.tr("Pattern Sequencer"))
+        self.sequencer_group = QGroupBox(tr("Pattern Sequencer"))
         sequencer_layout = QVBoxLayout(self.sequencer_group)
         sequencer_layout.setContentsMargins(0, 0, 0, 0)
         sequencer_layout.addWidget(self.pattern_widget)
@@ -328,7 +329,7 @@ class PatternUI(SynthEditor):
         mute_btn.setIcon(
             JDXi.UI.Icon.get_icon(JDXi.UI.Icon.MUTE, color=JDXi.UI.Style.FOREGROUND)
         )
-        mute_btn.setToolTip(f"Mute {label_text}")
+        mute_btn.setToolTip(tr('Mute {label_text}').format(label_text=label_text))
         mute_btn.setCheckable(True)
         size = JDXi.UI.Style.BUTTON_TRACK_WIDTH + 6
         mute_btn.setFixedSize(size, size)
@@ -444,7 +445,7 @@ class PatternUI(SynthEditor):
         self._add_tool_button("tap_tempo", self.specs["buttons"]["tap_tempo"], row)
         row.addSpacing(mp.SPACING_GROUP)
 
-        row.addWidget(QLabel(self.tr("Steps:")))
+        row.addWidget(QLabel(tr("Steps:")))
         self.beats_per_measure_combo = create_combo_box(
             spec=self.specs["combos"]["beats_per_measure"]
         )
@@ -462,7 +463,7 @@ class PatternUI(SynthEditor):
         row.addWidget(self.velocity_spinbox)
         row.addSpacing(mp.SPACING_GROUP)
 
-        self.duration_label = QLabel("Dur:")
+        self.duration_label = QLabel(tr("Dur:"))
         self.duration_combo = create_combo_box(spec=self.specs["combos"]["duration"])
         self.duration_combo.setCurrentIndex(0)  # Default to 16th note
         self.duration_combo.currentIndexChanged.connect(self._on_duration_changed)
@@ -471,9 +472,9 @@ class PatternUI(SynthEditor):
         row.addStretch()
 
         usb_item, self.usb_recorder_toggle = create_round_button_with_label(
-            self.tr("USB Recorder"),
+            tr("USB Recorder"),
             JDXi.UI.Icon.SAVE,
-            tooltip=self.tr("Show the USB audio recorder"),
+            tooltip=tr("Show the USB audio recorder"),
             checkable=True,
         )
         self.usb_recorder_toggle.toggled.connect(self.usb_recorder.setVisible)
@@ -488,7 +489,7 @@ class PatternUI(SynthEditor):
 
         self._add_tool_button("add_measure", self.specs["buttons"]["add_measure"], row)
         self.copy_previous_measure_checkbox = QCheckBox(
-            f"Copy previous {self.measure_name.lower()}"
+            tr('Copy previous {value1}').format(value1=self.measure_name.lower())
         )
         self.copy_previous_measure_checkbox.setChecked(False)
         JDXi.UI.Theme.apply_button_mini_style(self.copy_previous_measure_checkbox)
@@ -503,7 +504,7 @@ class PatternUI(SynthEditor):
         )
         row.addWidget(start_label)
         row.addWidget(self.start_step_spinbox)
-        row.addWidget(QLabel(self.tr("to")))
+        row.addWidget(QLabel(tr("to")))
         row.addWidget(self.end_step_spinbox)
         self._add_tool_button("copy", self.specs["buttons"]["copy"], row)
         self._add_tool_button("paste", self.specs["buttons"]["paste"], row)
@@ -533,34 +534,34 @@ class PatternUI(SynthEditor):
                 min_val=1,
                 max_val=127,
                 value=100,
-                tooltip="Default velocity for new notes (1-127)",
+                tooltip=tr("Default velocity for new notes (1-127)"),
             ),
             "tempo": SpinBoxSpec(
                 label="BPM:",
                 min_val=20,
                 max_val=300,
                 value=120,
-                tooltip=self.tr("Tempo in beats per minute (20–300)"),
+                tooltip=tr("Tempo in beats per minute (20–300)"),
             ),
             "start": SpinBoxSpec(
-                label=self.tr("Steps"),
+                label=tr("Steps"),
                 min_val=1,
                 max_val=16,
                 value=1,
-                tooltip=self.tr("First step to copy, or where to paste (1–16)"),
+                tooltip=tr("First step to copy, or where to paste (1–16)"),
             ),
             "end": SpinBoxSpec(
-                label=self.tr("to"),
+                label=tr("to"),
                 min_val=1,
                 max_val=16,
                 value=16,
-                tooltip=self.tr("Last step to copy (1–16)"),
+                tooltip=tr("Last step to copy (1–16)"),
             ),
         }
 
     def _create_learn_group(self) -> QGroupBox:
         """create learn group"""
-        learn_group = QGroupBox("Learn Pattern")
+        learn_group = QGroupBox(tr("Learn Pattern"))
         learn_layout = QHBoxLayout()
 
         self._add_button_with_label_from_spec(
@@ -653,37 +654,37 @@ class PatternUI(SynthEditor):
                 "add_measure": ButtonSpec(
                     label="Add Measure",
                     icon=JDXi.UI.Icon.ADD,
-                    tooltip="Add a new Measure",
+                    tooltip=tr("Add a new Measure"),
                     slot=self._add_measure,
                 ),
                 "copy": ButtonSpec(
                     label="Copy Section",
                     icon=JDXi.UI.Icon.FILE_DOCUMENT,
-                    tooltip="Copy selected steps from current measure",
+                    tooltip=tr("Copy selected steps from current measure"),
                     slot=self._copy_section,
                 ),
                 "paste": ButtonSpec(
                     label="Paste Section",
                     icon=JDXi.UI.Icon.ADD,
-                    tooltip="Paste copied steps to current measure",
+                    tooltip=tr("Paste copied steps to current measure"),
                     slot=self._paste_section,
                 ),
                 "learn": ButtonSpec(
                     label="Start",
                     icon=JDXi.UI.Icon.PLAY,
-                    tooltip="Start learning pattern",
+                    tooltip=tr("Start learning pattern"),
                     slot=self.on_learn_pattern_button_clicked,
                 ),
                 "stop_learn": ButtonSpec(
                     label="Stop",
                     icon=JDXi.UI.Icon.STOP,
-                    tooltip="Stop learning pattern",
+                    tooltip=tr("Stop learning pattern"),
                     slot=self.on_stop_learn_pattern_button_clicked,
                 ),
                 "tap_tempo": ButtonSpec(
                     label="Tap",
                     icon=JDXi.UI.Icon.DRUM,
-                    tooltip="Tap to set tempo",
+                    tooltip=tr("Tap to set tempo"),
                     slot=self._on_tap_tempo,
                 ),
             },
@@ -691,7 +692,7 @@ class PatternUI(SynthEditor):
                 "drum": _combo_spec(self.drum_options),
                 "beats_per_measure": ComboBoxSpec(
                     items=["16 steps", "12 steps"],
-                    tooltip="Steps per measure: 16 (4/4) or 12 (3/4), in 16th notes",
+                    tooltip=tr("Steps per measure: 16 (4/4) or 12 (3/4), in 16th notes"),
                     slot=None,
                 ),
                 "duration": ComboBoxSpec(
@@ -705,7 +706,7 @@ class PatternUI(SynthEditor):
                         "Dotted Half (12 steps)",
                         "Whole (16 steps)",
                     ],
-                    tooltip="Default note duration for new notes",
+                    tooltip=tr("Default note duration for new notes"),
                     slot=None,
                 ),
                 "digital1": _combo_spec(self.digital_options),

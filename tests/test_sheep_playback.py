@@ -17,6 +17,11 @@ from jdxi_editor.midi.io.helper import MidiIOHelper
 from picomidi.playback.worker import MidiPlaybackWorker
 import mido
 
+import pytest
+
+# Needs tests/sheep.mid (not in the repository), like the other sheep.mid tests
+pytestmark = pytest.mark.slow
+
 try:
     from PySide6.QtWidgets import QApplication
 except ImportError:

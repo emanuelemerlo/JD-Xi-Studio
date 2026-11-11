@@ -27,6 +27,7 @@ from jdxi_editor.ui.common import JDXi, QVBoxLayout, QWidget
 from jdxi_editor.ui.editors.helpers.widgets import create_jdxi_button, create_jdxi_row
 from jdxi_editor.ui.style import JDXiUIDimensions, JDXiUIStyle
 from jdxi_editor.ui.widgets.editor.helper import transfer_layout_items
+from jdxi_editor.i18n import tr
 
 
 class PlaylistTable(QWidget):
@@ -256,7 +257,7 @@ class PlaylistTable(QWidget):
 
         from jdxi_editor.ui.programs.database import get_database
 
-        name, ok = QInputDialog.getText(self, "New Playlist", "Enter playlist name:")
+        name, ok = QInputDialog.getText(self, tr("New Playlist"), tr("Enter playlist name:"))
 
         if ok and name.strip():
             db = get_database()
@@ -271,8 +272,8 @@ class PlaylistTable(QWidget):
                 )
                 QMessageBox.warning(
                     self,
-                    "Error",
-                    f"Failed to create playlist '{name}'. It may already exist.",
+                    tr("Error"),
+                    tr("Failed to create playlist '{name}'. It may already exist.").format(name=name),
                 )
 
     def refresh_playlists(self) -> None:
@@ -287,7 +288,7 @@ class PlaylistTable(QWidget):
         selected_rows = self.playlist_table.selectionModel().selectedRows()
         if not selected_rows:
             QMessageBox.information(
-                self, "No Selection", "Please select a playlist to delete."
+                self, tr("No Selection"), tr("Please select a playlist to delete.")
             )
             return
 
@@ -305,8 +306,8 @@ class PlaylistTable(QWidget):
 
         reply = QMessageBox.question(
             self,
-            "Delete Playlist",
-            f"Are you sure you want to delete playlist '{playlist_name}'?",
+            tr("Delete Playlist"),
+            tr("Are you sure you want to delete playlist '{playlist_name}'?").format(playlist_name=playlist_name),
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
 
@@ -327,7 +328,7 @@ class PlaylistTable(QWidget):
                 )
                 QMessageBox.warning(
                     self,
-                    "Error",
+                    tr("Error"),
                     scope="PlaylistWidget",
                     message=f"Failed to delete playlist '{playlist_name}'.",
                 )

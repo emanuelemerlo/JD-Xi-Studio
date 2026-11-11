@@ -18,6 +18,7 @@ from jdxi_editor.ui.widgets.editor.helper import create_group_with_layout
 from jdxi_editor.ui.widgets.jdxi.midi_group import JDXiMidiGroup
 from picoui.helpers import create_layout_with_items
 from picoui.specs.widgets import ButtonSpec
+from jdxi_editor.i18n import tr
 
 if TYPE_CHECKING:
     from jdxi_editor.ui.editors.midi_player.editor import MidiFilePlayer
@@ -65,13 +66,13 @@ class MidiFileGroup(JDXiMidiGroup):
         return {
             "load_midi_file": ButtonSpec(
                 label="Load",
-                tooltip="Load MIDI File",
+                tooltip=tr("Load MIDI File"),
                 icon=JDXi.UI.Icon.FOLDER_OPENED,
                 slot=self.parent.midi_load_file,
             ),
             "save_midi_file": ButtonSpec(
                 label="Save",
-                tooltip="Save MIDI file",
+                tooltip=tr("Save MIDI file"),
                 icon=JDXi.UI.Icon.FLOPPY_DISK,
                 slot=self.parent.midi_save_file,
             ),

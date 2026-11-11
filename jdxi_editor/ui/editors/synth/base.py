@@ -43,6 +43,7 @@ from jdxi_editor.ui.widgets.spin_box.spin_box import SpinBox
 from jdxi_editor.ui.widgets.switch.switch import Switch
 from jdxi_editor.ui.windows.patch.name_editor import PatchNameEditor
 from picomidi.sysex.parameter.address import AddressParameter
+from jdxi_editor.i18n import tr
 
 
 def _tooltip_to_str(tooltip) -> str:
@@ -351,9 +352,9 @@ class SynthBase(QWidget):
         if not file_path:
             file_path, _ = QFileDialog.getSaveFileName(
                 self,
-                "Export Part SysEx",
+                tr("Export Part SysEx"),
                 last,
-                "SysEx Files (*.syx);;All Files (*)",
+                tr("SysEx Files (*.syx);;All Files (*)"),
             )
         if not file_path:
             return False
@@ -377,9 +378,9 @@ class SynthBase(QWidget):
         if not file_path:
             file_path, _ = QFileDialog.getOpenFileName(
                 self,
-                "Import Part SysEx",
+                tr("Import Part SysEx"),
                 last,
-                "SysEx Files (*.syx);;All Files (*)",
+                tr("SysEx Files (*.syx);;All Files (*)"),
             )
         if not file_path:
             return False
@@ -393,7 +394,7 @@ class SynthBase(QWidget):
                 scope=self.__class__.__name__,
             )
         else:
-            QMessageBox.warning(self, "Import Part SysEx", message)
+            QMessageBox.warning(self, tr("Import Part SysEx"), message)
         return ok
 
     def _build_sliders(self, specs: list["SliderSpec"]):

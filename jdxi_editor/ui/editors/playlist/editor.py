@@ -59,6 +59,7 @@ from jdxi_editor.ui.widgets.midi.selection_info_bar import (
     MidiSelectionInfoController,
 )
 from jdxi_editor.ui.midi.selection_info import resolve_tone_midi_for_channel
+from jdxi_editor.i18n import tr
 
 
 class PlaylistEditor(QWidget):
@@ -124,7 +125,7 @@ class PlaylistEditor(QWidget):
 
         # Playlist selection
         self.playlist_select_layout = QHBoxLayout()
-        self.playlist_select_layout.addWidget(QLabel("Select Playlist:"))
+        self.playlist_select_layout.addWidget(QLabel(tr("Select Playlist:")))
         # Initialize with empty options - will be populated by populate_playlist_combo()
         self.playlist_editor_combo = SearchableFilterableComboBox(
             label="",
@@ -825,7 +826,7 @@ class PlaylistEditor(QWidget):
         playlist_id = self._playlist_value_to_id.get(current_value)
         if not playlist_id:
             QMessageBox.information(
-                self, "No Playlist Selected", "Please select a playlist first."
+                self, tr("No Playlist Selected"), tr("Please select a playlist first.")
             )
             return
         self.show_select_programs_dialog(playlist_id=playlist_id)
@@ -833,7 +834,7 @@ class PlaylistEditor(QWidget):
     def show_select_programs_dialog(self, playlist_id: int):
         """Show a dialog to select programs from User Programs table"""
         dialog = QDialog(self)
-        dialog.setWindowTitle("Add Programs to Playlist")
+        dialog.setWindowTitle(tr("Add Programs to Playlist"))
         dialog_layout = QVBoxLayout(dialog)
 
         # Get playlist name from combo box text
@@ -842,7 +843,7 @@ class PlaylistEditor(QWidget):
             playlist_text.split(" (")[0] if " (" in playlist_text else playlist_text
         )
         dialog_layout.addWidget(
-            QLabel(f"Select a program to add to '{playlist_name}':")
+            QLabel(tr("Select a program to add to '{playlist_name}':").format(playlist_name=playlist_name))
         )
         program_options = []
         program_values = []
@@ -869,14 +870,14 @@ class PlaylistEditor(QWidget):
                     program_value_to_id[value] = program.id
         except Exception as e:
             log.error(f"Error loading programs for playlist: {e}")
-            QMessageBox.warning(self, "Error", f"Failed to load programs: {e}")
+            QMessageBox.warning(self, tr("Error"), tr('Failed to load programs: {e}').format(e=e))
             return
 
         if not program_options:
             QMessageBox.information(
                 self,
-                "No Programs Available",
-                "All programs are already in this playlist.",
+                tr("No Programs Available"),
+                tr("All programs are already in this playlist."),
             )
             return
 
@@ -909,7 +910,7 @@ class PlaylistEditor(QWidget):
 
             if not program_id:
                 QMessageBox.information(
-                    self, "No Selection", "Please select a program to add."
+                    self, tr("No Selection"), tr("Please select a program to add.")
                 )
                 return
 
@@ -940,7 +941,7 @@ class PlaylistEditor(QWidget):
                 self.playlist_programs_changed.emit()
             else:
                 QMessageBox.warning(
-                    self, "Error", "Failed to add programs to playlist."
+                    self, tr("Error"), tr("Failed to add programs to playlist.")
                 )
 
     def delete_program_from_playlist(self) -> None:
@@ -953,7 +954,7 @@ class PlaylistEditor(QWidget):
         playlist_id = self._playlist_value_to_id.get(current_value)
         if not playlist_id:
             QMessageBox.information(
-                self, "No Playlist Selected", "Please select a playlist first."
+                self, tr("No Playlist Selected"), tr("Please select a playlist first.")
             )
             return
 
@@ -961,15 +962,15 @@ class PlaylistEditor(QWidget):
         selected_rows = self.playlist_programs_table.selectionModel().selectedRows()
         if not selected_rows:
             QMessageBox.information(
-                self, "No Selection", "Please select at least one program to delete."
+                self, tr("No Selection"), tr("Please select at least one program to delete.")
             )
             return
 
         # --- Confirm deletion
         reply = QMessageBox.question(
             self,
-            "Delete Programs",
-            f"Are you sure you want to delete {len(selected_rows)} program(s) from the playlist?",
+            tr("Delete Programs"),
+            tr('Are you sure you want to delete {value1} program(s) from the playlist?').format(value1=len(selected_rows)),
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
 
@@ -1010,7 +1011,7 @@ class PlaylistEditor(QWidget):
                 self.playlist_programs_changed.emit()
             else:
                 QMessageBox.warning(
-                    self, "Error", "Failed to delete programs from playlist."
+                    self, tr("Error"), tr("Failed to delete programs from playlist.")
                 )
 
     def _play_playlist_program(self, index) -> None:
@@ -1076,7 +1077,7 @@ class PlaylistEditor(QWidget):
             if not os.path.exists(midi_file_path):
                 log.warning(f"⚠️ MIDI file not found: {midi_file_path}")
                 QMessageBox.warning(
-                    self, "File Not Found", f"MIDI file not found:\n{midi_file_path}"
+                    self, tr("File Not Found"), tr('MIDI file not found:\n{midi_file_path}').format(midi_file_path=midi_file_path)
                 )
                 return
 
@@ -1154,7 +1155,7 @@ class PlaylistEditor(QWidget):
 
                         log.error(traceback.format_exc())
                         QMessageBox.warning(
-                            self, "Error", f"Failed to load MIDI file:\n{str(e)}"
+                            self, tr("Error"), tr('Failed to load MIDI file:\n{value1}').format(value1=str(e))
                         )
                         # Reset tracking on error
                         self._current_playlist_row = None

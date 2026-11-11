@@ -9,6 +9,7 @@ from typing import Callable, Optional
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QWidget
 
 from jdxi_editor.ui.editors.helpers.widgets import create_round_button_with_label
+from jdxi_editor.i18n import tr
 
 
 def create_read_from_jdxi_row(
@@ -25,10 +26,10 @@ def create_read_from_jdxi_row(
     """
     row = QHBoxLayout()
     read, button = create_round_button_with_label(
-        "Read from JD-Xi",
+        tr("Read from JD-Xi"),
         "mdi.download",
         on_read,
-        "Request current parameters from the synthesizer (RQ1)",
+        tr("Request current parameters from the synthesizer (RQ1)"),
     )
     label = status_label or QLabel("")
     label.setWordWrap(True)
@@ -47,16 +48,16 @@ def create_preset_nav_row(
     """Previous / Next / Load controls for factory preset auditioning."""
     row = QHBoxLayout()
     prev, prev_btn = create_round_button_with_label(
-        "Previous", "mdi.chevron-left", on_prev, "Previous preset"
+        tr("Previous"), "mdi.chevron-left", on_prev, tr("Previous preset")
     )
     load, load_btn = create_round_button_with_label(
-        "Load",
+        tr("Load"),
         "mdi.check",
         on_load,
-        "Load selected factory preset and read parameters",
+        tr("Load selected factory preset and read parameters"),
     )
     nxt, next_btn = create_round_button_with_label(
-        "Next", "mdi.chevron-right", on_next, "Next preset"
+        tr("Next"), "mdi.chevron-right", on_next, tr("Next preset")
     )
     row.addStretch()
     row.addWidget(prev)
@@ -75,16 +76,16 @@ def create_part_syx_row(
     """Import / Export per-part .syx librarian buttons."""
     row = QHBoxLayout()
     import_row, _ = create_round_button_with_label(
-        "Import .syx",
+        tr("Import .syx"),
         "mdi.file-import-outline",
         on_import,
-        "Load a single-part SysEx file into this editor",
+        tr("Load a single-part SysEx file into this editor"),
     )
     export_row, _ = create_round_button_with_label(
-        "Export .syx",
+        tr("Export .syx"),
         "mdi.file-export-outline",
         on_export,
-        "Save this part as a SysEx file",
+        tr("Save this part as a SysEx file"),
     )
     row.addWidget(import_row)
     row.addWidget(export_row)

@@ -12,14 +12,6 @@ jdxi\_editor.midi.data.parameter.program.common module
    :undoc-members:
    :show-inheritance:
 
-jdxi\_editor.midi.data.parameter.program.controller module
-----------------------------------------------------------
-
-.. automodule:: jdxi_editor.midi.data.parameter.program.controller
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 jdxi\_editor.midi.data.parameter.program.zone module
 ----------------------------------------------------
 

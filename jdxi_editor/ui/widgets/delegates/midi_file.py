@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
     QStyleOptionButton,
     QWidget,
 )
+from jdxi_editor.i18n import tr
 
 
 class MidiFileDelegate(QStyledItemDelegate):
@@ -65,9 +66,9 @@ class MidiFileDelegate(QStyledItemDelegate):
                         MidiFileDelegate._dialog_open = True
                         file_path, _ = QFileDialog.getOpenFileName(
                             self.table_widget,
-                            "Select MIDI File",
+                            tr("Select MIDI File"),
                             "",
-                            "MIDI Files (*.mid *.midi);;All Files (*)",
+                            tr("MIDI Files (*.mid *.midi);;All Files (*)"),
                         )
                         if file_path:
                             # Update the table item directly

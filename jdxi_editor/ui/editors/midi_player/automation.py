@@ -24,6 +24,7 @@ from jdxi_editor.ui.widgets.editor.helper import (
 from jdxi_editor.ui.widgets.jdxi.midi_group import JDXiMidiGroup
 from jdxi_editor.ui.widgets.midi.selection_info_bar import MidiSelectionInfoBar
 from picoui.specs.widgets import ButtonSpec
+from jdxi_editor.i18n import tr
 
 
 class AutomationWidget(JDXiMidiGroup):
@@ -43,7 +44,7 @@ class AutomationWidget(JDXiMidiGroup):
         return {
             "automation_insert": ButtonSpec(
                 label="Insert Program Change Here",
-                tooltip="Insert Program Change at current position",
+                tooltip=tr("Insert Program Change at current position"),
                 icon=JDXi.UI.Icon.ADD,
                 slot=self.insert_program_change_current_position,
             )

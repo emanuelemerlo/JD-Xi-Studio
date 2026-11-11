@@ -19,6 +19,8 @@ Classes:
 import re
 from typing import Any, Callable, List, Optional
 
+from jdxi_editor.i18n import tr
+
 from decologr import Decologr as log
 from PySide6.QtCore import Signal, Slot
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QSizePolicy
@@ -65,10 +67,11 @@ class SearchableFilterableComboBox(QWidget):
         show_category: bool = True,
         show_bank: bool = False,
         search_placeholder: str = "Search...",
-        category_label: str = "Category:",
+        category_label: Optional[str] = None,
         bank_label: str = "Bank:",
-        search_label: str = "Search:",
+        search_label: Optional[str] = None,
         use_analog_style: bool = False,
+        always_show_filters: bool = False,
         parent: Optional[QWidget] = None,
     ):
         """
@@ -94,6 +97,8 @@ class SearchableFilterableComboBox(QWidget):
         :param bank_label: Label text for bank selector
         :param search_label: Label text for search box
         :param use_analog_style: If True, use blue (analog) accent for search QLineEdit
+        :param always_show_filters: Build the category and bank selectors even when
+            their lists start empty, so set_options / set_banks can fill them later
         :param parent: Parent widget
         """
         super().__init__(parent)
@@ -127,15 +132,15 @@ class SearchableFilterableComboBox(QWidget):
         layout = create_form_layout(parent=self)
         top_bar, self.label_widget = create_header_row(label, show_label, spacing=4)
         layout.addRow(top_bar)
-        if show_category and self._categories:
-            category_bar = self.add_categories(category_label)
+        if show_category and (self._categories or always_show_filters):
+            category_bar = self.add_categories(category_label or tr("Category:"))
             layout.addRow(category_bar)
-        if show_bank and self._banks:
+        if show_bank and (self._banks or always_show_filters):
             bank_bar = self.add_banks(bank_label)
             layout.addRow(bank_bar)
         if show_search:
             search_row = self.add_search(
-                search_label, search_placeholder, use_analog_style
+                search_label or tr("Search:"), search_placeholder, use_analog_style
             )
             layout.addRow(search_row)
 
@@ -434,6 +439,31 @@ class SearchableFilterableComboBox(QWidget):
         # Force UI update
         self.combo_box.update()
         self.update()
+
+    def set_banks(
+        self,
+        banks: List[str],
+        bank_filter_func: Optional[Callable[[str, str], bool]] = None,
+    ) -> None:
+        """
+        Replace the bank list (and optionally its filter) and refill the combo.
+
+        :param banks: bank names offered in the bank selector
+        :param bank_filter_func: (option, bank) -> bool; keeps the current one if None
+        """
+        self._banks = list(banks)
+        if bank_filter_func is not None:
+            self._bank_filter_func = bank_filter_func
+        if self.bank_combo:
+            self.bank_combo.blockSignals(True)
+            self.bank_combo.clear()
+            self.bank_combo.addItem("All Banks")
+            for bank in self._banks:
+                self.bank_combo.addItem(bank)
+            self.bank_combo.setCurrentIndex(0)
+            self.bank_combo.blockSignals(False)
+            self._current_bank = ""
+        self._populate_combo()
 
     def set_value(self, value: int) -> None:
         """Alias for setValue for consistency."""

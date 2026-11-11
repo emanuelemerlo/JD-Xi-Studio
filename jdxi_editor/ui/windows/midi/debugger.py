@@ -74,6 +74,7 @@ from jdxi_editor.midi.sysex.sections import SysExSection
 from jdxi_editor.ui.common import JDXi, QVBoxLayout, QWidget
 from jdxi_editor.ui.windows.midi.helpers.debugger import validate_checksum
 from picomidi.sysex.parameter.address import AddressParameter
+from jdxi_editor.i18n import tr
 
 def parse_sysex_message(
     message: bytes, enum_cls: Type[SysExEnumProtocol]
@@ -117,7 +118,7 @@ class MIDIDebugger(QMainWindow):
         self.midi_helper = midi_helper
 
         # Set window properties
-        self.setWindowTitle("MIDI Debugger")
+        self.setWindowTitle(tr("MIDI Debugger"))
         self.setMinimumSize(800, 600)
 
         JDXi.UI.Theme.apply_debugger_window(self)
@@ -143,29 +144,29 @@ class MIDIDebugger(QMainWindow):
 
         # Instructions
         instructions = QLabel(
-            "Enter MIDI commands (one per line) in hex format:\n"
-            "Example: F0 41 10 00 00 00 0E 12 19 01 20 00 01 F7"
+            tr("Enter MIDI commands (one per line) in hex format:\n"
+            "Example: F0 41 10 00 00 00 0E 12 19 01 20 00 01 F7")
         )
         instructions.setWordWrap(True)
         top_layout.addWidget(instructions)
 
         # Command input
         self.command_input = QPlainTextEdit()
-        self.command_input.setPlaceholderText("Enter MIDI commands here...")
+        self.command_input.setPlaceholderText(tr("Enter MIDI commands here..."))
         top_layout.addWidget(self.command_input)
 
         # Buttons
         button_layout = QHBoxLayout()
 
-        self.send_button = QPushButton("Send Commands")
+        self.send_button = QPushButton(tr("Send Commands"))
         self.send_button.clicked.connect(self._send_commands)
         button_layout.addWidget(self.send_button)
 
-        self.clear_button = QPushButton("Clear")
+        self.clear_button = QPushButton(tr("Clear"))
         self.clear_button.clicked.connect(self.command_input.clear)
         button_layout.addWidget(self.clear_button)
 
-        self.decode_button = QPushButton("Decode")
+        self.decode_button = QPushButton(tr("Decode"))
         self.decode_button.clicked.connect(self._decode_current)
         button_layout.addWidget(self.decode_button)
 
@@ -176,13 +177,13 @@ class MIDIDebugger(QMainWindow):
         bottom_layout = QVBoxLayout(bottom_widget)
 
         # Decoded output
-        bottom_layout.addWidget(QLabel("Decoded Message:"))
+        bottom_layout.addWidget(QLabel(tr("Decoded Message:")))
         self.decoded_text = QTextEdit()
         self.decoded_text.setReadOnly(True)
         bottom_layout.addWidget(self.decoded_text)
 
         # Response log
-        bottom_layout.addWidget(QLabel("Response Log:"))
+        bottom_layout.addWidget(QLabel(tr("Response Log:")))
         self.response_log = QTextEdit()
         self.response_log.setReadOnly(True)
         bottom_layout.addWidget(self.response_log)
@@ -195,7 +196,7 @@ class MIDIDebugger(QMainWindow):
         splitter.addWidget(bottom_widget)
         sysex_layout.addWidget(splitter)
 
-        self.tab_widget.addTab(sysex_tab, "SysEx")
+        self.tab_widget.addTab(sysex_tab, tr("SysEx"))
 
         # --- CC/PC tab ---
         cc_pc_tab = self._build_cc_pc_panel()
@@ -210,7 +211,7 @@ class MIDIDebugger(QMainWindow):
         layout = QVBoxLayout(tab)
 
         # Channel (1–16)
-        channel_group = QGroupBox("Channel")
+        channel_group = QGroupBox(tr("Channel"))
         channel_form = QFormLayout()
         self.cc_pc_channel = QSpinBox()
         self.cc_pc_channel.setRange(1, 16)
@@ -220,7 +221,7 @@ class MIDIDebugger(QMainWindow):
         layout.addWidget(channel_group)
 
         # Control Change
-        cc_group = QGroupBox("Control Change")
+        cc_group = QGroupBox(tr("Control Change"))
         cc_layout = QVBoxLayout()
         cc_form = QFormLayout()
         self.cc_controller = QSpinBox()
@@ -231,7 +232,7 @@ class MIDIDebugger(QMainWindow):
         self.cc_value.setValue(100)
         cc_form.addRow("Controller:", self.cc_controller)
         cc_form.addRow("Value:", self.cc_value)
-        send_cc_btn = QPushButton("Send CC")
+        send_cc_btn = QPushButton(tr("Send CC"))
         send_cc_btn.clicked.connect(self._send_cc)
         cc_form.addRow("", send_cc_btn)
         cc_layout.addLayout(cc_form)
@@ -250,26 +251,26 @@ class MIDIDebugger(QMainWindow):
             " 93  | Chorus\n"
             "123  | All Notes Off / All Sound Off"
         )
-        cc_layout.addWidget(QLabel("Reference:"))
+        cc_layout.addWidget(QLabel(tr("Reference:")))
         cc_layout.addWidget(cc_ref)
         cc_group.setLayout(cc_layout)
         layout.addWidget(cc_group)
 
         # Program Change
-        pc_group = QGroupBox("Program Change")
+        pc_group = QGroupBox(tr("Program Change"))
         pc_form = QFormLayout()
         self.pc_program = QSpinBox()
         self.pc_program.setRange(0, 127)
         self.pc_program.setValue(0)
         pc_form.addRow("Program:", self.pc_program)
-        send_pc_btn = QPushButton("Send PC")
+        send_pc_btn = QPushButton(tr("Send PC"))
         send_pc_btn.clicked.connect(self._send_pc)
         pc_form.addRow("", send_pc_btn)
         pc_group.setLayout(pc_form)
         layout.addWidget(pc_group)
 
         # Bank Select + Program Change
-        bank_group = QGroupBox("Bank Select + Program Change")
+        bank_group = QGroupBox(tr("Bank Select + Program Change"))
         bank_layout = QVBoxLayout()
         bank_form = QFormLayout()
         self.bank_msb = QSpinBox()
@@ -284,7 +285,7 @@ class MIDIDebugger(QMainWindow):
         bank_form.addRow("Bank MSB:", self.bank_msb)
         bank_form.addRow("Bank LSB:", self.bank_lsb)
         bank_form.addRow("Program:", self.bank_program)
-        send_bank_btn = QPushButton("Send Bank+PC")
+        send_bank_btn = QPushButton(tr("Send Bank+PC"))
         send_bank_btn.clicked.connect(self._send_bank_pc)
         bank_form.addRow("", send_bank_btn)
         bank_layout.addLayout(bank_form)
@@ -317,7 +318,7 @@ class MIDIDebugger(QMainWindow):
             " 85  96   0-63    Extra Bank (S)            S01-S64\n"
             " 85  97-103 ...   Extra Banks T-Z            T01-Z64"
         )
-        bank_layout.addWidget(QLabel("Reference:"))
+        bank_layout.addWidget(QLabel(tr("Reference:")))
         bank_layout.addWidget(bank_ref)
         bank_group.setLayout(bank_layout)
         layout.addWidget(bank_group)

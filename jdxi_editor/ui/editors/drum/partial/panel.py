@@ -28,6 +28,7 @@ from jdxi_editor.ui.editors.synth.partial import PartialPanel
 from jdxi_editor.ui.image.utils import base64_to_pixmap
 from jdxi_editor.ui.image.waveform import generate_waveform_icon
 from jdxi_editor.ui.style.editor_style import mark_flat
+from jdxi_editor.i18n import tr
 
 
 class DrumPartialPanel(PartialPanel):
@@ -92,7 +93,7 @@ class DrumPartialPanel(PartialPanel):
         partial_icon = JDXi.UI.Icon.get_icon(
             JDXi.UI.Icon.CIRCLE_OUTLINE, color=JDXi.UI.Style.GREY
         )
-        tab_widget.addTab(tab_partial, partial_icon, "Partial")
+        tab_widget.addTab(tab_partial, partial_icon, tr("Partial"))
 
         section_kwargs = dict(
             controls=self.controls,
@@ -129,7 +130,7 @@ class DrumPartialPanel(PartialPanel):
         tab_pitch_env_layout.setSpacing(0)
         pitch_env_icon_base64 = generate_waveform_icon("adsr", "#FFFFFF", 1.0)
         pitch_env_icon = QIcon(base64_to_pixmap(pitch_env_icon_base64))
-        tab_widget.addTab(tab_pitch_env, pitch_env_icon, "Pitch Env")
+        tab_widget.addTab(tab_pitch_env, pitch_env_icon, tr("Pitch Env"))
 
         pitch_env_group = DrumPitchEnvSection(**section_kwargs)
         tab_pitch_env_layout.addWidget(pitch_env_group)
@@ -142,7 +143,7 @@ class DrumPartialPanel(PartialPanel):
         output_icon = JDXi.UI.Icon.get_icon(
             JDXi.UI.Icon.VOLUME_HIGH, color=JDXi.UI.Style.GREY
         )
-        tab_widget.addTab(tab_output, output_icon, "Output")
+        tab_widget.addTab(tab_output, output_icon, tr("Output"))
 
         output_group = DrumOutputSection(**section_kwargs)
         tab_output_layout.addWidget(output_group)

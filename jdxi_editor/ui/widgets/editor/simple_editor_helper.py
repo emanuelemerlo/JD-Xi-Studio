@@ -138,7 +138,10 @@ class SimpleEditorHelper:
         title_group_layout = QHBoxLayout()
         title_group_box.setLayout(title_group_layout)
         title_group_layout.addWidget(self.title_label)
-        title_group_layout.addWidget(self.image_label)
+        # The decorative pictures (synths, effects artwork) took the room of the
+        # controls and said nothing about the sound; the label stays (hidden)
+        # because update_instrument_image() still writes to it
+        self.image_label.hide()
 
         # Create centered content widget
         centered_content = QWidget()

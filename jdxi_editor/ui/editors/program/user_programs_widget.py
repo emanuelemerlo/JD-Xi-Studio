@@ -31,6 +31,7 @@ from jdxi_editor.ui.editors.helpers.widgets import create_jdxi_button, create_jd
 from jdxi_editor.ui.style import JDXiUIDimensions, JDXiUIStyle
 from jdxi_editor.ui.widgets.delegates.play_button import PlayButtonDelegate
 from jdxi_editor.ui.widgets.editor.helper import transfer_layout_items
+from jdxi_editor.i18n import tr
 
 
 class UserProgramsWidget(QWidget):
@@ -79,10 +80,10 @@ class UserProgramsWidget(QWidget):
 
         # Search box
         search_layout = QHBoxLayout()
-        search_label = QLabel("Search:")
+        search_label = QLabel(tr("Search:"))
         self.user_programs_search_box = QLineEdit()
         self.user_programs_search_box.setPlaceholderText(
-            "Search by ID, name, genre, or tone..."
+            tr("Search by ID, name, genre, or tone...")
         )
         self.user_programs_search_box.textChanged.connect(
             lambda text: self.populate_table(text)

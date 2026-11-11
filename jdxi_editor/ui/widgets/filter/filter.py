@@ -27,6 +27,7 @@ from jdxi_editor.ui.widgets.pulse_width.slider_spinbox import PWMSliderSpinbox
 from picomidi.constant import Midi
 from picomidi.sysex.parameter.address import AddressParameter
 from picomidi.utils.conversion import midi_value_to_ms, ms_to_midi_value
+from jdxi_editor.i18n import tr
 
 
 class FilterWidget(EnvelopeWidgetBase):
@@ -62,7 +63,7 @@ class FilterWidget(EnvelopeWidgetBase):
         self.analog = analog
         self.plot: FilterPlot | None = None
         self.parent = parent
-        self.setWindowTitle("Filter Widget")
+        self.setWindowTitle(tr("Filter Widget"))
         self.address = address
         self.midi_helper = midi_helper
         self.slope_param = slope_param  # None for analog (no slope control)

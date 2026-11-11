@@ -1,31 +1,55 @@
 # Translations (i18n)
 
-The app uses **Qt Linguist** for translations. Strings are marked with `self.tr("...")` in code; at runtime the correct translation is chosen from `.qm` files based on the system locale.
+The interface is in **English** (the language of the source code) and **Italian**.
+The user picks the language in **Help › Preferences › Interface language**
+(`ui/language` in the settings: `system`, `en`, `it`); it applies at the next start.
+For a quick try without changing the settings, set `JDXI_LANGUAGE=it`.
 
-## Quick example: UK English ("Bar" instead of "Measure")
+What is translated, and what is not:
 
-1. **Extract translatable strings** (from project root):
-   ```bash
-   pylupdate6 jdxi_editor/ui/editors/pattern/pattern.py jdxi_editor/main.py -ts jdxi_editor/i18n/jdxi_editor_en_GB.ts
-   ```
-   Or use `lupdate` on the whole project if you use a `.pro` file.
+- Menus, dialogs, messages, tooltips and editor titles: yes.
+- Qt's own texts (OK/Cancel, file dialogs): yes, from the `qtbase_<lang>.qm` files that ship with Qt.
+- **Parameter names** (Cutoff, Resonance, Porta Time, Dly Send Lev…): no. They stay as on the JD-Xi
+  display and in Roland's manuals, which use them in every language, so the screen matches the instrument.
+- Log messages: no.
 
-2. **Edit the .ts file** in Qt Linguist or by hand. For UK English, set:
-   - `Measure` → `Bar`
-   - `Measures` → `Bars`
-   - `Copy previous measure` → `Copy previous bar`
+## Marking strings
 
-3. **Compile to .qm**:
-   ```bash
-   lrelease jdxi_editor/i18n/jdxi_editor_en_GB.ts -qm jdxi_editor/i18n/jdxi_editor_en_GB.qm
-   ```
+Wrap every user-visible string in `tr()`:
 
-4. **Run with UK locale** (so the app loads `en_GB`):
-   - macOS/Linux: `LANG=en_GB.UTF-8 python -m jdxi_editor.main` (or set in System Preferences / regional settings)
-   - Or the app will use the OS locale automatically if it matches a loaded translation.
+```python
+from jdxi_editor.i18n import tr
 
-The app looks for `.qm` files in:
+QPushButton(tr("Save"))
+QMessageBox.warning(self, tr("Error"), tr("Could not load pattern: {error}").format(error=ex))
+tr("Clear", "pattern")   # second argument: disambiguation, when one English word has two meanings
+```
 
-- `jdxi_editor/i18n/jdxi_editor_<locale>.qm` (e.g. `jdxi_editor_en_GB.qm`)
-- `jdxi_editor/resources/translations/`
-- project root `i18n/`
+- Use named `{placeholders}` and `.format()`, not f-strings: the whole sentence must be in the catalogue,
+  and translators may move the placeholders.
+- Keep `&` accelerators (`&File`); in tab titles a literal `&` is written `&&`.
+- `tr()` works at import time too (before the QApplication exists).
+
+## Updating the catalogues
+
+From the project root:
+
+```bash
+python -m building.i18n update    # collect tr() strings into jdxi_editor/i18n/jdxi_editor_<lang>.ts
+pyside6-linguist jdxi_editor/i18n/jdxi_editor_it.ts   # or edit the XML: fill <translation>, remove type="unfinished"
+python -m building.i18n compile   # .ts -> .qm (pyside6-lrelease)
+python -m building.i18n check     # anything missing, untranslated, with different placeholders, or stale
+```
+
+Commit both the `.ts` and the `.qm`. `tests/test_i18n.py` runs `check`, so the tests fail while a string is
+untranslated or the `.qm` is older than the `.ts`.
+
+## Adding a language
+
+1. Add it to `LANGUAGES` in `jdxi_editor/i18n/__init__.py` (code → name in that language, e.g. `"de": "Deutsch"`)
+   and in `building/i18n.py` (code → Qt locale, e.g. `"de": "de_DE"`).
+2. `python -m building.i18n update`, translate `jdxi_editor_de.ts`, `python -m building.i18n compile`.
+3. Add the Inno Setup language in `jdxi_editor.iss` if the installer should offer it.
+
+Terms used in Italian follow Roland's Italian manual: *programma*, *tono*, *parte Drums*, *misura*, *pattern*;
+*partial*, *preset*, *Program Change*, *SysEx* are kept as they are.

@@ -32,12 +32,13 @@ from PySide6.QtWidgets import QHBoxLayout, QMainWindow, QPushButton, QTextEdit
 
 from jdxi_editor.project import __package_name__
 from jdxi_editor.ui.common import JDXi, QVBoxLayout, QWidget
+from jdxi_editor.i18n import tr
 
 
 class LogViewer(QMainWindow):
     def __init__(self, midi_helper=None, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Log Viewer")
+        self.setWindowTitle(tr("Log Viewer"))
         self.setMinimumSize(980, 400)
 
         # Apply dark theme styling
@@ -66,12 +67,12 @@ class LogViewer(QMainWindow):
         button_layout = QHBoxLayout()
 
         # Create clear button
-        clear_button = QPushButton("Clear Log")
+        clear_button = QPushButton(tr("Clear Log"))
         clear_button.clicked.connect(self.clear_log)
         button_layout.addWidget(clear_button)
 
         # Create refresh mode toggle button
-        self.refresh_mode_button = QPushButton("Fast Refresh (500ms)")
+        self.refresh_mode_button = QPushButton(tr("Fast Refresh (500ms)"))
         self.refresh_mode_button.setCheckable(True)
         self.refresh_mode_button.setChecked(True)
         self.refresh_mode_button.clicked.connect(self.toggle_refresh_mode)
@@ -144,10 +145,10 @@ class LogViewer(QMainWindow):
 
         if self.fast_refresh_mode:
             self.refresh_timer.setInterval(500)  # 500ms
-            self.refresh_mode_button.setText("Fast Refresh (500ms)")
+            self.refresh_mode_button.setText(tr("Fast Refresh (500ms)"))
         else:
             self.refresh_timer.setInterval(30000)  # 30 seconds
-            self.refresh_mode_button.setText("Slow Refresh (30s)")
+            self.refresh_mode_button.setText(tr("Slow Refresh (30s)"))
 
         # Restart timer with new interval
         self.refresh_timer.start()

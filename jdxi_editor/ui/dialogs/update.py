@@ -29,6 +29,7 @@ from jdxi_editor.update.checker import (
     ReleaseInfo,
     app_settings,
 )
+from jdxi_editor.i18n import tr
 
 AUTO_CHECK_NOTICE = (
     f"{__program__} checks GitHub for new releases automatically, at most once "
@@ -50,22 +51,21 @@ class UpdateDialog(QDialog):
         super().__init__(parent)
         self.release = release
         self.settings = settings or app_settings()
-        self.setWindowTitle("Update available")
+        self.setWindowTitle(tr("Update available"))
         self.resize(560, 460)
 
         layout = QVBoxLayout(self)
         heading = QLabel(
-            f"<b>{__program__} {release.version}</b> is available "
-            f"(you have {current_version})."
+            tr('<b>{program} {version}</b> is available (you have {current_version}).').format(program=__program__, version=release.version, current_version=current_version)
         )
         layout.addWidget(heading)
 
         if kind == PIP:
-            how = QLabel(f"To upgrade, run: <code>{PIP_UPGRADE_COMMAND}</code>")
+            how = QLabel(tr('To upgrade, run: <code>{PIP_UPGRADE_COMMAND}</code>').format(PIP_UPGRADE_COMMAND=PIP_UPGRADE_COMMAND))
             how.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
             layout.addWidget(how)
         elif release.asset_name:
-            layout.addWidget(QLabel(f"Download: {release.asset_name}"))
+            layout.addWidget(QLabel(tr('Download: {asset_name}').format(asset_name=release.asset_name)))
 
         self.notes = QTextBrowser()
         self.notes.setOpenExternalLinks(True)
@@ -79,17 +79,17 @@ class UpdateDialog(QDialog):
 
         buttons = QDialogButtonBox()
         if release.asset_url and kind != PIP:
-            self.download_button = QPushButton("Download")
+            self.download_button = QPushButton(tr("Download"))
             self.download_button.setDefault(True)
             self.download_button.clicked.connect(self.on_download)
             buttons.addButton(self.download_button, QDialogButtonBox.ButtonRole.AcceptRole)
-        view = QPushButton("View release")
+        view = QPushButton(tr("View release"))
         view.clicked.connect(self.on_view_release)
         buttons.addButton(view, QDialogButtonBox.ButtonRole.ActionRole)
-        skip = QPushButton("Skip this version")
+        skip = QPushButton(tr("Skip this version"))
         skip.clicked.connect(self.on_skip)
         buttons.addButton(skip, QDialogButtonBox.ButtonRole.DestructiveRole)
-        later = QPushButton("Later")
+        later = QPushButton(tr("Later"))
         later.clicked.connect(self.reject)
         buttons.addButton(later, QDialogButtonBox.ButtonRole.RejectRole)
         layout.addWidget(buttons)

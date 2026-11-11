@@ -13,6 +13,7 @@ from PySide6.QtWidgets import QComboBox
 from jdxi_editor.midi.conversion.note import MidiNoteConverter
 from jdxi_editor.ui.editors.pattern.step_note import StepNoteEvent
 from picomidi.ui.widget.button.note import NoteButtonEvent
+from jdxi_editor.i18n import tr
 
 
 class NoteButtonAttrs:
@@ -594,7 +595,7 @@ class SequencerButtonManager:
             else:
                 note_name = self._midi_to_note_name(button.note)
 
-            button.setToolTip(f"Note: {note_name}")
+            button.setToolTip(tr('Note: {note_name}').format(note_name=note_name))
 
         except Exception as ex:
             log.debug(

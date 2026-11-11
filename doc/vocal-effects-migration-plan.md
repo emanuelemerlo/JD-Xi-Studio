@@ -18,10 +18,18 @@ A phased plan to bring the JDXI Editor Vocal Effects section to feature parity w
 | Vocal enums | `jdxi_editor/midi/data/vocal_effects/vocal.py` | VocoderEnvelope, VocoderHPF, VocalAutoPitchType, etc. |
 | Program Common | `jdxi_editor/midi/data/parameter/program/common.py` | VOCAL_EFFECT, VOCAL_EFFECT_NUMBER, VOCAL_EFFECT_PART, AUTO_NOTE_SWITCH |
 
-### JD-Xi Parameter Guide (midi_parameters.txt)
+### JD-Xi MIDI Implementation (Program Common, p. 9)
 
-**Program Common** (offsets 0x1C–0x1E):
-- 0x1C: Vocal Effect (0–2) OFF, VOCODER, AUTO-PITCH
+> **Correction (2026-11):** this section first followed `midi_parameters.txt`, whose
+> Program Common rows were shifted. The addresses below are from the Roland PDF;
+> Phase 1 had moved VOCAL_EFFECT and VOCAL_EFFECT_NUMBER to the wrong offsets and
+> has been reverted. See `doc/vocal-effects-sysex-address-map.md`.
+
+**Program Common** (offsets 0x10–0x1E):
+- 0x10: Program Level (0–127)
+- 0x11–0x14: Program Tempo (500–30000), 4 nibbled bytes
+- 0x16: Vocal Effect (0–2) OFF, VOCODER, AUTO-PITCH
+- 0x1C: Vocal Effect Number (0–20) 1–21
 - 0x1D: Vocal Effect Part (0–1) 1–2
 - 0x1E: Auto Note Switch (0–1) OFF, ON
 
@@ -56,7 +64,7 @@ A phased plan to bring the JDXI Editor Vocal Effects section to feature parity w
 | Parameter | JD-Xi addr | JDXI Editor | Notes |
 |-----------|------------|-------------|-------|
 | **Program Common** | | | |
-| Vocal Effect | 0x1C | ✓ ProgramCommonParam.VOCAL_EFFECT (0x16) | Verify address: 0x16 vs 0x1C |
+| Vocal Effect | 0x16 | ✓ ProgramCommonParam.VOCAL_EFFECT (0x16) | Verified against the MIDI Implementation |
 | Vocal Effect Part | 0x1D | ✓ ProgramCommonParam.VOCAL_EFFECT_PART | |
 | Auto Note Switch | 0x1E | ✓ ProgramCommonParam.AUTO_NOTE_SWITCH | |
 | **Program Vocal Effect** | | | |
@@ -107,8 +115,8 @@ A phased plan to bring the JDXI Editor Vocal Effects section to feature parity w
 
 ### Potential Issues
 
-1. **VOCAL_EFFECT address**: ProgramCommonParam.VOCAL_EFFECT uses 0x16; JD-Xi lists 0x1C. Confirm base offset for Program Common.
-2. **VOCAL_EFFECT_NUMBER**: Present in Common tab; JD-Xi Parameter Guide does not list "Effect Number" in Program Vocal Effect. May be Program Common or a different area.
+1. ~~**VOCAL_EFFECT address**~~: resolved — 0x16 per the MIDI Implementation.
+2. ~~**VOCAL_EFFECT_NUMBER**~~: resolved — Program Common 0x1C (0–20, shown 1–21).
 3. **Vocal Effect Part**: VOCAL_EFFECT_PART (Part 1/2) is in Program Common; not clearly exposed in Vocal FX UI.
 4. **Duplicate Vocoder Switch**: Common tab has "Effect Part" (VOCODER_SWITCH); Vocal FX tab has "Vocoder" (same param). Clarify or consolidate.
 
@@ -146,8 +154,9 @@ A phased plan to bring the JDXI Editor Vocal Effects section to feature parity w
 
 **Tasks:**
 1. **Verify Program Common addresses** ✅
-   - VOCAL_EFFECT: 0x16 → 0x1C (per JD-Xi guide)
-   - VOCAL_EFFECT_NUMBER: 0x1C → 0x1B (placeholder; undocumented in guide)
+   - ~~VOCAL_EFFECT: 0x16 → 0x1C; VOCAL_EFFECT_NUMBER: 0x1C → 0x1B~~ — based on the shifted
+     rows of `midi_parameters.txt`; reverted to VOCAL_EFFECT 0x16, VOCAL_EFFECT_NUMBER 0x1C
+     (MIDI Implementation p. 9), and PROGRAM_TEMPO moved to 0x11
    - apply_lmb_offset: ProgramCommonParam uses LMB=COMMON for correct routing
 
 2. **VocalFXParam verification** ✅

@@ -27,10 +27,12 @@ from PySide6.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequ
 
 from jdxi_editor.project import __organization_name__, __program__, __version__
 
-REPOSITORY = "markxbrooks/JDXI-Editor"
+REPOSITORY = "emanuelemerlo/JDXI-Editor"  # this fork has its own releases
 RELEASES_API_URL = f"https://api.github.com/repos/{REPOSITORY}/releases?per_page=10"
 RELEASES_PAGE_URL = f"https://github.com/{REPOSITORY}/releases"
-PIP_UPGRADE_COMMAND = "pip install -U jdxi-editor"
+PIP_UPGRADE_COMMAND = (
+    f"pip install -U git+https://github.com/{REPOSITORY}.git"
+)  # the fork is not on PyPI
 
 AUTO_CHECK_KEY = "update/auto_check"
 LAST_CHECK_KEY = "update/last_check"
@@ -81,13 +83,41 @@ def parse_version(text: str) -> Optional[tuple[int, ...]]:
     return tuple(int(part) for part in match.group(1).split("."))
 
 
+# Pre-release labels, in release order; a final release ranks after all of them
+_PRE_RANKS = {"a": 0, "alpha": 0, "b": 1, "beta": 1, "rc": 2, "c": 2}
+_FINAL = (3, 0)
+
+
+def version_key(text: str) -> Optional[tuple[tuple[int, ...], tuple[int, int]]]:
+    """Sortable key: '1.0.0-alpha.2' < '1.0.0b1' < '1.0.0rc1' < '1.0.0'.
+
+    Accepts tags (v0.10.0-beta.1) and PEP 440 versions (0.10.0b1).
+    """
+    match = re.match(
+        r"^\s*[vV]?(\d+(?:\.\d+)*)(?:[-_.]?(alpha|beta|rc|a|b|c)[-_.]?(\d*))?",
+        text or "",
+        re.IGNORECASE,
+    )
+    if not match:
+        return None
+    numbers = tuple(int(part) for part in match.group(1).split("."))
+    numbers = numbers + (0,) * (4 - len(numbers)) if len(numbers) < 4 else numbers
+    label = (match.group(2) or "").lower()
+    pre = (_PRE_RANKS[label], int(match.group(3) or 0)) if label else _FINAL
+    return numbers, pre
+
+
+def is_prerelease(text: str) -> bool:
+    key = version_key(text)
+    return key is not None and key[1] != _FINAL
+
+
 def is_newer(candidate: str, current: str) -> bool:
     """True if candidate is a later version than current (0.9.10 > 0.9.9)."""
-    new, old = parse_version(candidate), parse_version(current)
+    new, old = version_key(candidate), version_key(current)
     if new is None or old is None:
         return False
-    width = max(len(new), len(old))
-    return new + (0,) * (width - len(new)) > old + (0,) * (width - len(old))
+    return new > old
 
 
 def install_kind() -> str:
@@ -114,23 +144,32 @@ def _pick_asset(assets: Iterable[dict], kind: str) -> Optional[dict]:
     return None
 
 
-def pick_release(releases: Iterable[dict], kind: str) -> Optional[ReleaseInfo]:
-    """The newest published release with a build for this kind of install."""
+def pick_release(
+    releases: Iterable[dict], kind: str, include_prereleases: bool = False
+) -> Optional[ReleaseInfo]:
+    """The newest published release with a build for this kind of install.
+
+    Pre-releases count only with include_prereleases, which the checker sets
+    when the running copy is itself a pre-release (a beta tester hears about
+    the next beta, everyone else only about final releases).
+    """
     candidates = []
     for release in releases:
-        if release.get("draft") or release.get("prerelease"):
+        if release.get("draft"):
+            continue
+        if release.get("prerelease") and not include_prereleases:
             continue
         tag = str(release.get("tag_name", ""))
-        version = parse_version(tag)
-        if version is None:
+        key = version_key(tag)
+        if key is None:
             continue
-        candidates.append((version, release))
-    for version, release in sorted(candidates, key=lambda c: c[0], reverse=True):
+        candidates.append((key, release))
+    for _key, release in sorted(candidates, key=lambda c: c[0], reverse=True):
         asset = _pick_asset(release.get("assets") or [], kind)
         if asset is None and kind != PIP:
             continue  # e.g. published before its builds were uploaded
         return ReleaseInfo(
-            version=".".join(str(part) for part in version),
+            version=re.sub(r"^\s*[vV]", "", str(release.get("tag_name", ""))),
             tag=str(release.get("tag_name", "")),
             name=str(release.get("name") or release.get("tag_name", "")),
             notes=str(release.get("body") or ""),
@@ -231,7 +270,14 @@ class UpdateChecker(QObject):
                 self.failed.emit(message or "Unexpected reply from GitHub", manual)
                 return
             self.settings.setValue(LAST_CHECK_KEY, self._now().isoformat())
-            self._report(pick_release(releases, self.kind), manual)
+            self._report(
+                pick_release(
+                    releases,
+                    self.kind,
+                    include_prereleases=is_prerelease(self.current_version),
+                ),
+                manual,
+            )
         finally:
             reply.deleteLater()
 

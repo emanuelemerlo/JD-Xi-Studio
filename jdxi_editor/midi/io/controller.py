@@ -32,6 +32,7 @@ import rtmidi
 from decologr import Decologr as log
 
 from jdxi_editor.midi.io.device import JDXiDevice
+from jdxi_editor.midi.io.null_port import open_rtmidi_port
 from PySide6.QtCore import QObject
 
 from jdxi_editor.ui.windows.jdxi.helpers.port import (
@@ -50,13 +51,21 @@ class MidiIOController(QObject):
         :param parent: QObject, parent object for the controller
         """
         super().__init__(parent)
-        self.midi_in = rtmidi.MidiIn()
-        self.midi_out = rtmidi.MidiOut()
+        # Without a MIDI API (e.g. Linux with no ALSA sequencer) the editor runs
+        # offline on null ports instead of failing to start
+        self.midi_in, in_error = open_rtmidi_port(rtmidi.MidiIn)
+        self.midi_out, out_error = open_rtmidi_port(rtmidi.MidiOut)
+        self.midi_backend_error: Optional[str] = in_error or out_error
         self.input_port_number: Optional[int] = None
         self.output_port_number: Optional[int] = None
         # Request queue, memory mirror and echo guard of the connected JD-Xi;
         # the queue sends through the output handler's send_raw_message
         self.device = JDXiDevice(lambda message: self.send_raw_message(message))
+
+    @property
+    def midi_available(self) -> bool:
+        """False when the system has no MIDI API and the editor runs offline."""
+        return self.midi_backend_error is None
 
     @property
     def current_in_port(self) -> Optional[str]:
