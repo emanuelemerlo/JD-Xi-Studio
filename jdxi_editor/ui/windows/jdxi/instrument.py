@@ -120,6 +120,7 @@ from jdxi_editor.ui.widgets.viewer.log import LogViewer
 from jdxi_editor.ui.windows.jdxi.recent_files import RecentFilesManager
 from jdxi_editor.ui.windows.jdxi.ui import JDXiWindow
 from jdxi_editor.ui.windows.jdxi.utils import show_message_box_from_spec
+from jdxi_editor.ui.v2.analog import AnalogToneEditor
 from jdxi_editor.ui.windows.midi.config_dialog import MIDIConfigDialog
 from jdxi_editor.ui.windows.midi.debugger import MIDIDebugger
 from jdxi_editor.ui.windows.midi.monitor import MIDIMessageMonitor
@@ -202,7 +203,7 @@ class JDXiInstrument(JDXiWindow):
             ),
             "analog": EditorConfig(
                 title="Analog Synth",
-                editor_class=AnalogSynthEditor,
+                editor_class=AnalogToneEditor,  # new interface (1.0)
                 synth_type=JDXiSynth.ANALOG_SYNTH,
                 midi_channel=MidiChannel.ANALOG_SYNTH,
                 icon="mdi.piano",
@@ -906,6 +907,7 @@ class JDXiInstrument(JDXiWindow):
                     DigitalSynthEditor,
                     DigitalSynth2Editor,
                     AnalogSynthEditor,
+                    AnalogToneEditor,
                     DrumCommonEditor,
                     PatternSequenceEditor,
                     ProgramEditor,
@@ -1073,6 +1075,7 @@ class JDXiInstrument(JDXiWindow):
                     DigitalSynthEditor,
                     DigitalSynth2Editor,
                     AnalogSynthEditor,
+                    AnalogToneEditor,
                     DrumCommonEditor,
                     PatternSequenceEditor,
                     ProgramEditor,

@@ -3,7 +3,7 @@
 #define MyAppName "JDXI Editor"
 ; The version is passed by the build: iscc /DMyAppVersion=x.y.z jdxi_editor.iss
 #ifndef MyAppVersion
-  #define MyAppVersion "0.10.0b1"
+  #define MyAppVersion "1.0.0a1"
 #endif
 #define MyAppPublisher "Mark Brooks"
 #define MyAppURL "https://www.github.com/"

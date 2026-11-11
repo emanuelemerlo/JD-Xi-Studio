@@ -298,7 +298,7 @@ class InstrumentPresetWidget(QWidget):
         # --- Edit Tone Name (round button + label, centered)
         self._add_centered_round_button(
             JDXi.UI.Icon.SETTINGS,
-            "Edit Tone Name",
+            tr("Edit Tone Name"),
             self.parent.edit_tone_name,
             layout,
             name="edit_tone_name",
@@ -350,7 +350,7 @@ class InstrumentPresetWidget(QWidget):
             show_label=False,
             show_search=True,
             show_category=True,
-            search_placeholder="Search presets...",
+            search_placeholder=tr("Search presets..."),
             use_analog_style=(synth_type == "Analog"),
         )
 
@@ -419,10 +419,10 @@ class InstrumentPresetWidget(QWidget):
         if synth_type == "Analog":
             random_row = QHBoxLayout()
             random_widget, _ = create_round_button_with_label(
-                "Random Patch",
+                tr("Random Patch"),
                 "mdi.dice-5-outline",
                 self._on_random_analog_patch,
-                "Randomize analog tone parameters (Manager rndVoice)",
+                tr("Randomize analog tone parameters (Manager rndVoice)"),
             )
             random_row.addWidget(random_widget)
             random_row.addStretch()
@@ -484,7 +484,7 @@ class InstrumentPresetWidget(QWidget):
 
         # Create SearchableFilterableComboBox for cheat preset selection
         self.cheat_preset_combo_box = SearchableFilterableComboBox(
-            label="Preset",
+            label=tr("Preset"),
             options=preset_options,
             values=preset_values,
             categories=preset_categories,
@@ -492,7 +492,7 @@ class InstrumentPresetWidget(QWidget):
             show_label=True,
             show_search=True,
             show_category=True,
-            search_placeholder="Search presets...",
+            search_placeholder=tr("Search presets..."),
         )
 
         from picomidi.core.channel import Channel
@@ -519,7 +519,7 @@ class InstrumentPresetWidget(QWidget):
         # Load Preset (round button + label, centered)
         self._add_centered_round_button(
             JDXi.UI.Icon.FOLDER_NOTCH_OPEN,
-            "Load Preset",
+            tr("Load Preset"),
             self._load_cheat_preset,
             layout,
             name="cheat_load",
@@ -533,7 +533,7 @@ class InstrumentPresetWidget(QWidget):
         :param channels: list
         :return: None
         """
-        self.midi_channel_combo_row, self.midi_channel_combo = create_combo_row(label="Midi Channel",
+        self.midi_channel_combo_row, self.midi_channel_combo = create_combo_row(label=tr("Midi Channel"),
                                                                                 items=channels,
                                                                                 sort_items=False,
                                                                                 slot=self._get_midi_channel_from_combo)

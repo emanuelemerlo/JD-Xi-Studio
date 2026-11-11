@@ -62,6 +62,7 @@ from jdxi_editor.ui.windows.jdxi.containers import (
     create_tone_buttons_row,
 )
 from jdxi_editor.i18n import tr
+from jdxi_editor.ui.windows.jdxi.window_buttons import add_window_buttons
 
 
 class JDXiWindow(QMainWindow):
@@ -118,6 +119,8 @@ class JDXiWindow(QMainWindow):
         self._create_effects_menu()
         self._create_playback_menu()
         self._create_help_menu()
+        # --- Frameless window: minimise/maximise/close in the menu bar
+        self.window_buttons = add_window_buttons(self)
 
         # --- Load settings
         self.settings = QSettings("mabsoft", __package_name__)

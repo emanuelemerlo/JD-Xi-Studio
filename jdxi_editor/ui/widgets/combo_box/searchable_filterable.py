@@ -19,6 +19,8 @@ Classes:
 import re
 from typing import Any, Callable, List, Optional
 
+from jdxi_editor.i18n import tr
+
 from decologr import Decologr as log
 from PySide6.QtCore import Signal, Slot
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QSizePolicy
@@ -65,9 +67,9 @@ class SearchableFilterableComboBox(QWidget):
         show_category: bool = True,
         show_bank: bool = False,
         search_placeholder: str = "Search...",
-        category_label: str = "Category:",
+        category_label: Optional[str] = None,
         bank_label: str = "Bank:",
-        search_label: str = "Search:",
+        search_label: Optional[str] = None,
         use_analog_style: bool = False,
         always_show_filters: bool = False,
         parent: Optional[QWidget] = None,
@@ -131,14 +133,14 @@ class SearchableFilterableComboBox(QWidget):
         top_bar, self.label_widget = create_header_row(label, show_label, spacing=4)
         layout.addRow(top_bar)
         if show_category and (self._categories or always_show_filters):
-            category_bar = self.add_categories(category_label)
+            category_bar = self.add_categories(category_label or tr("Category:"))
             layout.addRow(category_bar)
         if show_bank and (self._banks or always_show_filters):
             bank_bar = self.add_banks(bank_label)
             layout.addRow(bank_bar)
         if show_search:
             search_row = self.add_search(
-                search_label, search_placeholder, use_analog_style
+                search_label or tr("Search:"), search_placeholder, use_analog_style
             )
             layout.addRow(search_row)
 

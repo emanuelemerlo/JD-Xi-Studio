@@ -7,9 +7,10 @@
 > **This is an independent fork** of [JDXI-Editor](https://github.com/markxbrooks/JDXI-Editor) by Mark Brooks (MIT licence).
 > It goes its own way: the presets and SysEx addresses are checked against Roland's manuals, the editor runs
 > without a JD-Xi (offline mode), Windows builds come from CI, and the interface is translated (English, Italiano).
-> A new interface, built around the JD-Xi panel and step-by-step sound "recipes", is being designed.
-> Releases, issues and the update check of the app use this repository; the version numbers continue from
-> the original's 0.9.9 (this fork: 0.10.0 beta, then 1.0 with the new interface).
+> A new interface for desktop screens is being built, one editor at a time (version 1.0, starting with
+> the Analog editor): every parameter of the manual on screen, graphic controls, and an explanation of
+> the parameter under the pointer. The last version with the original interface is 0.10.0 beta
+> (tag `v0.10.0-beta.1`). Releases, issues and the update check of the app use this repository.
 
 
 ## Unleash the hidden power of your Roland JD-Xi. 
@@ -33,6 +34,8 @@
 - **MIDI File Player**: Load MIDI files, classify tracks, assign channels, play with JD-Xi or FluidSynth.
 - **SoundFont Support**: Use .sf2/.sf3 for playback without hardware.
 - **MIDI Debugger**: Monitor and debug MIDI messages efficiently.
+- **New Analog editor** (1.0): all 46 parameters on one screen, filter curve and envelopes to drag,
+  drawn waveforms, and an information panel that explains the parameter under the pointer.
 - **Languages**: English and Italian, chosen in Preferences (see [Languages](#-languages)).
 - **Offline mode**: opens and edits without a JD-Xi or a MIDI system; it connects when one is available.
 

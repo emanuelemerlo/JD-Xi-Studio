@@ -2,6 +2,44 @@
 
 All notable changes to JDXI-Editor are documented in this file.
 
+# [1.0.0a1] — tag `v1.0.0-alpha.1` (new interface, in progress)
+
+The interface is being rebuilt for a desktop screen, one editor at a time. The
+last version with the original interface is **0.10.0b1** (tag `v0.10.0-beta.1`).
+Principles for every new screen: every parameter of the manual has a control (a
+test checks it); controls show what they do (graphs, drawn waveforms); the
+parameter under the pointer is explained on screen; names, groups and order as
+on the JD-Xi display.
+
+### Analog Synth editor (new)
+
+- **All 46 Analog parameters on one screen**, in six panels named and ordered as on the display:
+  OSC, PITCH, FILTER, AMP, LFO, COMMON (plus Pitch Env Velocity Sens, which is in the MIDI
+  Implementation but not on the display)
+- **Graphic controls**: waveforms drawn on their buttons (PW-SQR follows Pulse Width), the low-pass
+  response curve (drag sideways for Cutoff, up and down for Resonance), pitch, filter and amp
+  envelopes with points to drag, the LFO over time with its fade-in
+- **Knobs** with their value field: drag (Shift for fine steps), wheel, arrow keys or type the value
+  as on the display (+12 st, -2 st, +50…); double-click returns a bipolar value to 0
+- **Information panel**: name on the display, long name, value, range and unit, an explanation from
+  the Parameter Guide (with its page) and what the parameter depends on
+- **Settings without effect are greyed out**: Pulse Width and PWM Depth except with PW-SQR, the
+  filter with BYPASS, Rate with Tempo Sync ON (and Sync Note with it OFF), Porta Time with Porta Sw OFF
+- **Sending while dragging** at most every 25 ms, the last value always; values read from the JD-Xi
+  are shown without being sent back
+- Three columns on wide screens, two from 1280×720; the tone panel (presets, read from the JD-Xi,
+  .syx, random tone) stays on the right
+- The original Analog editor (`AnalogSynthEditor`) is still in the code; the app opens the new one
+
+### Instrument window
+
+- **Minimise, maximise and close** buttons at the right of the menu bar, in the panel's colours; the
+  empty part of the menu bar moves the window and maximises it on double-click
+
+### Languages
+
+- The tone panel (preset list, Previous/Load/Next, Read from JD-Xi, .syx, Random) is translated too
+
 # [0.10.0b1] — tag `v0.10.0-beta.1` (beta, not released yet)
 
 First version of this repository as an **independent fork** of
