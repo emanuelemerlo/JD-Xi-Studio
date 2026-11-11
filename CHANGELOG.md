@@ -25,6 +25,19 @@ current interface, 1.0 with the new one.
 - **README, README.rst and doc/installation.rst** describe the fork, its Windows builds and how to install
   it from GitHub
 
+### MIDI connection dialog
+
+- **Redesigned and no longer freezes.** It opened FluidSynth and loaded its SoundFont (FluidR3_GM is
+  140 MB) as it appeared, and listed the audio devices through PortAudio, all on the interface thread:
+  the window showed "Not responding" for seconds. Now it opens at once; ports, audio devices and
+  SoundFonts are listed in the background, FluidSynth starts only on "Start", in the background
+- **Status at the top**: "Connected: the JD-Xi replies", "No reply…", "No JD-Xi among the MIDI ports".
+  **Test connection** sends an Identity Request and waits for the reply with a timer (1.5 s), recognising
+  the JD-Xi from its reply; another instrument (or Microsoft GS Wavetable Synth) is reported as such
+- **Find the JD-Xi** picks its ports; JD-Xi ports are listed first and marked ★. The FluidSynth section
+  ("Listen without the JD-Xi") stays closed unless in use. Standard OK/Cancel buttons; changed ports are
+  reopened after the dialog closes. All texts translated
+
 ### Languages
 
 - **Interface in English and Italian**, chosen in Help › Preferences › Interface language

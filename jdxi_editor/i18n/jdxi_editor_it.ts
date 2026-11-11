@@ -1111,6 +1111,7 @@ Nota: se il Sync del JD-Xi è MIDI o AUTO, Start avvia anche il suo pattern sequ
             <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="77" />
             <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="173" />
             <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="220" />
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="321" />
             <source>Stop</source>
             <translation>Stop</translation>
         </message>
@@ -1678,102 +1679,243 @@ L'elenco dei programmi mostra ora i nomi aggiornati.</translation>
             <translation>Apri la documentazione di {program}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="129" />
-            <source>MIDI Configuration</source>
-            <translation>Configurazione MIDI</translation>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="196" />
+            <source>MIDI connection</source>
+            <translation>Collegamento MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="182" />
-            <source>MIDI Input</source>
-            <translation>Ingresso MIDI</translation>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="229" />
+            <source>JD-Xi</source>
+            <translation>JD-Xi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="211" />
-            <source>MIDI Output</source>
-            <translation>Uscita MIDI</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="239" />
-            <source>Software Synth (FluidSynth)</source>
-            <translation>Synth software (FluidSynth)</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="242" />
-            <source>Enable FluidSynth for local playback</source>
-            <translation>Usa FluidSynth per suonare sul computer</translation>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="246" />
+            <source>From the JD-Xi (MIDI input):</source>
+            <translation>Dal JD-Xi (ingresso MIDI):</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="247" />
-            <source>Use SoundFont List</source>
-            <translation>Usa l'elenco del SoundFont</translation>
+            <source>To the JD-Xi (MIDI output):</source>
+            <translation>Al JD-Xi (uscita MIDI):</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="250" />
-            <source>List the SoundFont's presets in the Digital, Analog and Drums preset lists (and GM percussion names in the Pattern editor) instead of the built-in JD-Xi presets. Needs the sf2utils package.</source>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="251" />
+            <source>Find the JD-Xi</source>
+            <translation>Trova il JD-Xi</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="252" />
+            <source>Choose the ports whose name contains JD-Xi</source>
+            <translation>Sceglie le porte il cui nome contiene JD-Xi</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="254" />
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="375" />
+            <source>Refresh list</source>
+            <translation>Aggiorna elenco</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="255" />
+            <source>List the MIDI ports again, e.g. after connecting the JD-Xi</source>
+            <translation>Rileggi le porte MIDI, per esempio dopo aver collegato il JD-Xi</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="257" />
+            <source>Test connection</source>
+            <translation>Prova collegamento</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="259" />
+            <source>Connect to the chosen ports and ask the instrument who it is</source>
+            <translation>Collegati alle porte scelte e chiedi allo strumento chi è</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="267" />
+            <source>No JD-Xi in the list? Connect it by USB, switch it on and press Refresh list. Without it the editor works offline.</source>
+            <translation>Il JD-Xi non è in elenco? Collegalo via USB, accendilo e premi Aggiorna elenco. Senza JD-Xi l'editor funziona offline.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="278" />
+            <source>Listen without the JD-Xi (FluidSynth)</source>
+            <translation>Ascolta senza JD-Xi (FluidSynth)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="288" />
+            <source>Default output</source>
+            <translation>Uscita predefinita</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="290" />
+            <source>Audio output for FluidSynth (needs the sounddevice package)</source>
+            <translation>Uscita audio di FluidSynth (richiede il pacchetto sounddevice)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="292" />
+            <source>Audio output:</source>
+            <translation>Uscita audio:</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="298" />
+            <source>Choose…</source>
+            <translation>Scegli…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="302" />
+            <source>SoundFont:</source>
+            <translation>SoundFont:</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="306" />
+            <source>Show the SoundFont's presets in the preset lists</source>
+            <translation>Mostra i preset del SoundFont negli elenchi dei preset</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="308" />
+            <source>List the SoundFont's presets in the Digital, Analog and Drums preset lists (and GM percussion names in the Pattern editor) instead of the JD-Xi presets. Needs the sf2utils package.</source>
             <translation>Mostra i preset del SoundFont negli elenchi Digital, Analog e Drums (e i nomi delle percussioni GM nell'editor dei pattern) al posto dei preset del JD-Xi. Richiede il pacchetto sf2utils.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="263" />
-            <source>Audio output device for FluidSynth playback. Requires sounddevice (pip install sounddevice).</source>
-            <translation>Uscita audio per FluidSynth. Richiede sounddevice (pip install sounddevice).</translation>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="319" />
+            <source>Start</source>
+            <translation>Avvia</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="468" />
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="323" />
+            <source>Test note</source>
+            <translation>Nota di prova</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="370" />
+            <source>Listing…</source>
+            <translation>Lettura…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="458" />
+            <source>Asking the instrument…</source>
+            <translation>Interrogo lo strumento…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="491" />
+            <source>No reply. Check that the JD-Xi is on and that both ports are the JD-Xi's (not, e.g., Microsoft GS Wavetable Synth).</source>
+            <translation>Nessuna risposta. Controlla che il JD-Xi sia acceso e che entrambe le porte siano del JD-Xi (non, per esempio, Microsoft GS Wavetable Synth).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="507" />
+            <source>Looking for audio outputs and SoundFonts…</source>
+            <translation>Cerco uscite audio e SoundFont…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="550" />
             <source>Select SoundFont</source>
             <translation>Scegli il SoundFont</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="470" />
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="550" />
             <source>SoundFonts (*.sf2 *.sf3)</source>
             <translation>SoundFont (*.sf2 *.sf3)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="260" />
-            <source>Hardware Interface:</source>
-            <translation>Interfaccia hardware:</translation>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="576" />
+            <source>Starting FluidSynth and loading the SoundFont…</source>
+            <translation>Avvio FluidSynth e carico il SoundFont…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="271" />
-            <source>SoundFont (SF2/SF3):</source>
-            <translation>SoundFont (SF2/SF3):</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="288" />
-            <source>Available:</source>
-            <translation>Disponibili:</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="460" />
-            <source>SoundFont List</source>
-            <translation>Elenco SoundFont</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="533" />
-            <source>FluidSynth: started</source>
-            <translation>FluidSynth: avviato</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="562" />
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="627" />
             <source>Test note triggered.</source>
             <translation>Nota di prova suonata.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="489" />
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="221" />
+            <source>Not connected. Choose the JD-Xi's ports, then Test connection.</source>
+            <translation>Non collegato. Scegli le porte del JD-Xi, poi Prova collegamento.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="406" />
+            <source>No JD-Xi among the MIDI ports.</source>
+            <translation>Nessun JD-Xi tra le porte MIDI.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="416" />
+            <source>Ports changed: Test connection, or OK to use them.</source>
+            <translation>Porte cambiate: Prova collegamento, oppure OK per usarle.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="449" />
+            <source>Could not open the chosen ports.</source>
+            <translation>Impossibile aprire le porte scelte.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="453" />
+            <source>The MIDI ports are not open.</source>
+            <translation>Le porte MIDI non sono aperte.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="478" />
+            <source>Connected: the JD-Xi replies.</source>
+            <translation>Collegato: il JD-Xi risponde.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="525" />
+            <source>No audio outputs listed: install sounddevice (pip install sounddevice)</source>
+            <translation>Nessuna uscita audio in elenco: installa sounddevice (pip install sounddevice)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="534" />
+            <source>None found: Choose… a .sf2 file</source>
+            <translation>Nessuno trovato: Scegli… un file .sf2</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="571" />
             <source>Please select a SoundFont first.</source>
             <translation>Scegli prima un SoundFont.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="548" />
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="604" />
+            <source>FluidSynth: started</source>
+            <translation>FluidSynth: avviato</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="612" />
             <source>FluidSynth: stopped</source>
             <translation>FluidSynth: fermo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="557" />
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="623" />
             <source>Start FluidSynth first.</source>
             <translation>Avvia prima FluidSynth.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="461" />
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="636" />
+            <source>SoundFont List</source>
+            <translation>Elenco SoundFont</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="296" />
+            <source>SoundFonts found in {folder}</source>
+            <translation>SoundFont trovati in {folder}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="378" />
+            <source>Could not list the MIDI ports: {error}</source>
+            <translation>Impossibile leggere le porte MIDI: {error}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="482" />
+            <source>A different instrument replied (manufacturer {id}). Choose the JD-Xi's ports.</source>
+            <translation>Ha risposto un altro strumento (produttore {id}). Scegli le porte del JD-Xi.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="515" />
+            <source>Could not list the audio outputs: {error}</source>
+            <translation>Impossibile leggere le uscite audio: {error}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="599" />
+            <source>FluidSynth error: {ex}</source>
+            <translation>Errore di FluidSynth: {ex}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="637" />
             <source>{problem}
 
 The preset lists will stay as JD-Xi until this is fixed.</source>
@@ -1782,19 +1924,14 @@ The preset lists will stay as JD-Xi until this is fixed.</source>
 Finché non si risolve, gli elenchi dei preset restano quelli del JD-Xi.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="536" />
-            <source>FluidSynth error: {ex}</source>
-            <translation>Errore di FluidSynth: {ex}</translation>
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="466" />
+            <source>Could not send to the MIDI output: {error}</source>
+            <translation>Impossibile inviare all'uscita MIDI: {error}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="550" />
+            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="614" />
             <source>Stop error: {ex}</source>
             <translation>Errore nel fermare: {ex}</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="564" />
-            <source>Test error: {ex}</source>
-            <translation>Errore nella prova: {ex}</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="121" />
@@ -1963,6 +2100,54 @@ Esempio: F0 41 10 00 00 00 0E 12 19 01 20 00 01 F7</translation>
             <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="106" />
             <source>Edit Patch Name</source>
             <translation>Modifica il nome della patch</translation>
+        </message>
+        <message>
+            <source>MIDI Configuration</source>
+            <translation type="vanished">Configurazione MIDI</translation>
+        </message>
+        <message>
+            <source>MIDI Input</source>
+            <translation type="vanished">Ingresso MIDI</translation>
+        </message>
+        <message>
+            <source>MIDI Output</source>
+            <translation type="vanished">Uscita MIDI</translation>
+        </message>
+        <message>
+            <source>Software Synth (FluidSynth)</source>
+            <translation type="vanished">Synth software (FluidSynth)</translation>
+        </message>
+        <message>
+            <source>Enable FluidSynth for local playback</source>
+            <translation type="vanished">Usa FluidSynth per suonare sul computer</translation>
+        </message>
+        <message>
+            <source>Use SoundFont List</source>
+            <translation type="vanished">Usa l'elenco del SoundFont</translation>
+        </message>
+        <message>
+            <source>List the SoundFont's presets in the Digital, Analog and Drums preset lists (and GM percussion names in the Pattern editor) instead of the built-in JD-Xi presets. Needs the sf2utils package.</source>
+            <translation type="vanished">Mostra i preset del SoundFont negli elenchi Digital, Analog e Drums (e i nomi delle percussioni GM nell'editor dei pattern) al posto dei preset del JD-Xi. Richiede il pacchetto sf2utils.</translation>
+        </message>
+        <message>
+            <source>Audio output device for FluidSynth playback. Requires sounddevice (pip install sounddevice).</source>
+            <translation type="vanished">Uscita audio per FluidSynth. Richiede sounddevice (pip install sounddevice).</translation>
+        </message>
+        <message>
+            <source>Hardware Interface:</source>
+            <translation type="vanished">Interfaccia hardware:</translation>
+        </message>
+        <message>
+            <source>SoundFont (SF2/SF3):</source>
+            <translation type="vanished">SoundFont (SF2/SF3):</translation>
+        </message>
+        <message>
+            <source>Available:</source>
+            <translation type="vanished">Disponibili:</translation>
+        </message>
+        <message>
+            <source>Test error: {ex}</source>
+            <translation type="vanished">Errore nella prova: {ex}</translation>
         </message>
     </context>
 </TS>

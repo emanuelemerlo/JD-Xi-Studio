@@ -1,50 +1,57 @@
 """
-config_dialog module
-====================
+MIDI connection dialog
+======================
 
-MIDIConfigDialog is a dialog class that allows users to configure MIDI input and output ports.
+Chooses the MIDI ports of the JD-Xi and, optionally, the FluidSynth software
+synth used to listen without the instrument.
 
-It provides the following functionality:
-- Display available MIDI input and output ports in combo boxes.
-- Allow users to select and change MIDI input and output ports.
-- Refresh the list of available MIDI ports.
-- Retrieve the selected MIDI port settings.
+The dialog never waits on the user interface thread:
 
-Attributes:
-    input_ports (list): List of available MIDI input ports.
-    output_ports (list): List of available MIDI output ports.
-    current_in (str): Currently selected MIDI input port (optional).
-    current_out (str): Currently selected MIDI output port (optional).
-    midi_helper (MidiIOHelper): Instance of the MIDIHelper class to interact with MIDI devices.
+- it opens at once with the ports already known, then lists the ports again
+  in the background;
+- the audio devices and the SoundFonts are listed only when the FluidSynth
+  section is opened, in the background (PortAudio can take seconds);
+- FluidSynth starts and loads its SoundFont in the background, only when
+  asked (it used to start, and load a 140 MB SoundFont, as the dialog opened);
+- "Test connection" sends an Identity Request and waits for the reply with a
+  timer, not a loop.
 
-Methods:
-    refresh_ports() : Refresh the list of available MIDI ports.
-    get_input_port() : Returns the currently selected MIDI input port.
-    get_output_port() : Returns the currently selected MIDI output port.
-    get_settings() : Returns a dictionary containing the selected MIDI input and output ports.
+The ports chosen apply with OK; the reconnection happens after the dialog has
+closed.
 
+Public attributes kept for callers and tests: input_combo, output_combo,
+get_input_port(), get_output_port(), get_settings(), refresh_ports().
 """
+
+from __future__ import annotations
 
 import os
 import sys
+import threading
+from typing import Callable, Optional
 
-import qtawesome as qta
+import shiboken6
 from decologr import Decologr as log
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import QObject, Qt, QTimer, Signal, Slot
 from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
     QDialog,
+    QDialogButtonBox,
     QFileDialog,
+    QFormLayout,
     QGroupBox,
     QHBoxLayout,
     QLabel,
     QLineEdit,
     QMessageBox,
+    QPushButton,
     QVBoxLayout,
+    QWidget,
 )
 
 from jdxi_editor.core.jdxi import JDXi
+from jdxi_editor.i18n import tr
 from jdxi_editor.midi.io.helper import MidiIOHelper
 from jdxi_editor.ui.editors.pattern.preset_list_provider import (
     get_hardware_interface,
@@ -55,25 +62,21 @@ from jdxi_editor.ui.editors.pattern.preset_list_provider import (
     set_use_soundfont_list,
     soundfont_list_problem,
 )
-from jdxi_editor.ui.editors.helpers.widgets import create_panel
-from jdxi_editor.ui.layout.helper import add_round_button_from_spec
 from jdxi_editor.ui.style import JDXiUIDimensions
-from jdxi_editor.ui.style.editor_style import mark_sheen
-from jdxi_editor.ui.widgets.digital.title import DigitalTitle
 from jdxi_editor.ui.windows.jdxi.helpers.port import (
     filter_excluded_ports,
+    find_jdxi_port,
     is_excluded_port,
 )
-from picoui.specs.widgets import ButtonSpec
-from jdxi_editor.i18n import tr
 
-# In-app FluidSynth defaults
-HW_PORT_HINT = "Roland JDXi"  # adjust if your port name differs
-SF2_PATH = os.path.expanduser("~/SoundFonts/FluidR3_GM.sf2")
+SF2_DIR = os.path.expanduser("~/SoundFonts")
+SF2_PATH = os.path.join(SF2_DIR, "FluidR3_GM.sf2")
+IDENTITY_REQUEST = [0xF0, 0x7E, 0x7F, 0x06, 0x01, 0xF7]  # any device ID
+IDENTITY_TIMEOUT_MS = 1500
+JDXI_FAMILY = (0x0E, 0x03)
+ROLAND = 0x41
 
-# Top-level imports so py2app/modulegraph includes these in the bundle
-# (lazy imports inside functions are not traced by the dependency analyzer)
-from jdxi_editor.midi.fluidsynth_library import (
+from jdxi_editor.midi.fluidsynth_library import (  # noqa: E402
     import_error_message,
     prepare_fluidsynth_library,
 )
@@ -82,375 +85,552 @@ _fluidsynth_err_msg = ""
 prepare_fluidsynth_library()  # Windows: point the DLL search at FluidSynth
 try:
     import fluidsynth as _fluidsynth_module
-except Exception as _fluidsynth_err:
+except Exception as _fluidsynth_err:  # pragma: no cover - depends on the system
     _fluidsynth_module = None
     _fluidsynth_err_msg = str(_fluidsynth_err)
 
-try:
-    import sounddevice as _sounddevice_module
-except Exception:
-    _sounddevice_module = None
 
+# --------------------------------------------------------------------- background
+class _Relay(QObject):
+    """Delivers a background result on the UI thread, if its owner still exists.
 
-def _get_output_devices() -> list[tuple[str, str]]:
+    Not a child of the owner: the dialog may be deleted (closed) while the work
+    runs, and the worker must never emit on a deleted object.
     """
-    Get list of (display_name, device_spec) for audio output devices.
 
-    On macOS: device_spec is the name (for CoreAudio).
-    On Windows/Linux: device_spec is "index:HostApi:Name" (for PortAudio).
-    Requires sounddevice.
+    finished = Signal(object, object)  # result, exception
+
+    def __init__(self, callback: Callable, owner: QObject):
+        super().__init__()
+        self._callback = callback
+        self._owner = owner
+        self.finished.connect(self._deliver, Qt.ConnectionType.QueuedConnection)
+
+    @Slot(object, object)
+    def _deliver(self, result, error) -> None:
+        try:
+            if shiboken6.isValid(self._owner):
+                self._callback(result, error)
+        finally:
+            self._owner = self._callback = None
+            _RELAYS.discard(self)
+
+
+_RELAYS: set = set()  # alive until delivered
+
+
+def run_in_background(fn: Callable, callback: Callable, parent: QObject) -> None:
+    """fn() on a worker thread, then callback(result, error) on parent's thread.
+
+    A plain Python thread (not a QRunnable, whose wrapper PySide may free while
+    it runs); the result crosses back through a queued Qt signal.
     """
-    if _sounddevice_module is None:
-        return []
+    relay = _Relay(callback, parent)
+    _RELAYS.add(relay)
+
+    def work() -> None:
+        try:
+            result, error = fn(), None
+        except Exception as ex:  # reported to the callback
+            result, error = None, ex
+        relay.finished.emit(result, error)
+
+    threading.Thread(target=work, name="MIDIConfigDialog", daemon=True).start()
+
+
+# ------------------------------------------------------------------- slow lookups
+def list_midi_ports(midi_helper) -> tuple[list[str], list[str]]:
+    return (
+        filter_excluded_ports(midi_helper.get_input_ports()),
+        filter_excluded_ports(midi_helper.get_output_ports()),
+    )
+
+
+def list_audio_outputs() -> list[tuple[str, str]]:
+    """(name, device spec) of the audio outputs; sounddevice imported only here."""
     try:
-        devices = _sounddevice_module.query_devices()
-        hostapis = _sounddevice_module.query_hostapis()
-        output_devices = [
-            (i, d) for i, d in enumerate(devices) if d["max_output_channels"] > 0
-        ]
-        result = []
-        for idx, d in output_devices:
-            name = d["name"]
-            if sys.platform != "darwin":
-                hostapi_idx = d.get("hostapi", 0)
-                hostapi_name = hostapis[hostapi_idx].get("name", "Unknown")
-                spec = f"{idx}:{hostapi_name}:{name}"
-                result.append((name, spec))
-            else:
-                result.append((name, name))
-        return result
+        import sounddevice
     except Exception:
         return []
+    devices = sounddevice.query_devices()
+    hostapis = sounddevice.query_hostapis()
+    result = []
+    for index, device in enumerate(devices):
+        if device["max_output_channels"] <= 0:
+            continue
+        name = device["name"]
+        if sys.platform == "darwin":
+            result.append((name, name))
+        else:
+            api = hostapis[device.get("hostapi", 0)].get("name", "Unknown")
+            result.append((f"{name} ({api})", f"{index}:{api}:{name}"))
+    return result
+
+
+def find_soundfonts(folder: str = SF2_DIR) -> list[str]:
+    found = []
+    if os.path.isdir(folder):
+        for root, _dirs, files in os.walk(folder):
+            found += [os.path.join(root, f) for f in files if f.lower().endswith((".sf2", ".sf3"))]
+    return sorted(found)
+
+
+def parse_identity_reply(data) -> Optional[dict]:
+    """Identity Reply (mido sysex data, without F0/F7) -> details, else None."""
+    data = list(data)
+    if len(data) < 7 or data[0] != 0x7E or data[2] != 0x06 or data[3] != 0x02:
+        return None
+    return {
+        "manufacturer": data[4],
+        "family": tuple(data[5:7]),
+        "is_jdxi": data[4] == ROLAND and tuple(data[5:7]) == JDXI_FAMILY,
+        "version": ".".join(str(b) for b in data[9:13]) if len(data) >= 13 else "",
+    }
 
 
 class MIDIConfigDialog(QDialog):
+    """Ports of the JD-Xi, connection test, and the optional FluidSynth."""
+
     def __init__(self, midi_helper=MidiIOHelper, parent=None):
         super().__init__(parent)
-        self.setWindowTitle(tr("MIDI Configuration"))
-        self.setMinimumSize(
-            JDXiUIDimensions.Config.WIDTH, JDXiUIDimensions.Config.HEIGHT
-        )
+        self.setWindowTitle(tr("MIDI connection"))
+        self.setMinimumWidth(JDXiUIDimensions.Config.WIDTH)
         JDXi.UI.Theme.apply_editor_style(self)
         self.midi_helper = midi_helper
-        self.input_ports = midi_helper.get_input_ports()
-        self.output_ports = midi_helper.get_output_ports()
-        self.current_in = midi_helper.current_in
-        self.current_out = midi_helper.current_out
-        # FluidSynth runtime state (optional), shared with MIDI input forwarding.
+        self.current_in = getattr(midi_helper, "current_in", None)
+        self.current_out = getattr(midi_helper, "current_out", None)
+        self.input_ports: list[str] = []
+        self.output_ports: list[str] = []
         self.fs = getattr(midi_helper, "soundfont_synth", None)
         self.sfid = getattr(midi_helper, "soundfont_sfid", None)
-        self.sf2_path = ""
-        self._create_ui()
-        # Prefill SoundFont path: prefer saved path, else default if file exists
-        try:
-            saved_path = get_sf2_path()
-            if saved_path and os.path.isfile(saved_path):
-                self.sf2_edit.setText(saved_path)
-                self.sf2_path = saved_path
-            elif os.path.isfile(SF2_PATH):
-                self.sf2_edit.setText(SF2_PATH)
-                self.sf2_path = SF2_PATH
-        except Exception:
-            pass
-        # Default to enabling in-app synth option
-        self.fluidsynth_enable.setChecked(True)
-        # Populate soundfont combo and sync with field
-        self._populate_sf2_combo()
-        if self.sf2_edit.text().strip():
-            self._select_sf2_in_combo(self.sf2_edit.text().strip())
-        self.setWindowFlag(Qt.WindowStaysOnTopHint, True)
+        self._identity_timer = QTimer(self)
+        self._identity_timer.setSingleShot(True)
+        self._identity_timer.timeout.connect(self._identity_timed_out)
+        self._listening = False
+        self._synth_loaded = False
+        self._busy_synth = False
+        self.status_kind = "idle"
 
-    def showEvent(self, event):
-        super().showEvent(event)
-        QTimer.singleShot(0, self._bring_to_front)
+        self._build()
+        # What is known now, at once; the fresh lists follow from the background
+        self._fill_ports(*self._known_ports())
+        QTimer.singleShot(0, self, self.refresh_ports)
+        if self._ports_open():
+            QTimer.singleShot(150, self, self.test_connection)
+        else:
+            self._set_status("idle", tr("Not connected. Choose the JD-Xi's ports, then Test connection."))
 
-    def _bring_to_front(self):
-        self.raise_()
-        self.activateWindow()
-        self.setFocus()
+    # ------------------------------------------------------------------ layout
+    def _build(self) -> None:
+        layout = QVBoxLayout(self)
+        layout.setSpacing(12)
 
-    def _create_ui(self):
-        """Create the dialog UI"""
-        # Everything sits on one glossy black panel (its groups sections on it)
-        outer_layout = QVBoxLayout(self)
-        self.panel = create_panel()
-        mark_sheen(self.panel)
-        outer_layout.addWidget(self.panel)
-        layout = self.panel.layout()
+        # --- JD-Xi
+        jdxi_box = QGroupBox(tr("JD-Xi"))
+        jdxi_layout = QVBoxLayout(jdxi_box)
+        status_row = QHBoxLayout()
+        self.status_dot = QLabel("●")
+        self.status_dot.setFixedWidth(18)
+        self.status_label = QLabel()
+        self.status_label.setWordWrap(True)
+        # Room for three lines, so a longer message does not get cut
+        self.status_label.setMinimumHeight(self.status_label.fontMetrics().lineSpacing() * 3)
+        self.status_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        status_row.addWidget(self.status_dot, 0, Qt.AlignmentFlag.AlignTop)
+        status_row.addWidget(self.status_label, 1)
+        jdxi_layout.addLayout(status_row)
 
-        # Input port selection
-        input_group = QGroupBox(tr("MIDI Input"))
-        input_layout = QVBoxLayout(input_group)
-
-        self.input_display = DigitalTitle(
-            self.current_in or "No input",
-            show_upper_text=False,
-        )
-        # input_layout.addWidget(self.input_display) @@@
-
-        icons_hlayout = QHBoxLayout()
-        for icon in ["mdi6.midi-port"]:
-            icon_label = QLabel()
-            icon = qta.icon(icon, color=JDXi.UI.Style.FOREGROUND)
-            pixmap = icon.pixmap(
-                JDXi.UI.Style.ICON_SIZE, JDXi.UI.Style.ICON_SIZE
-            )  # Set the desired size
-            icon_label.setPixmap(pixmap)
-            icon_label.setAlignment(Qt.AlignHCenter)
-            icons_hlayout.addWidget(icon_label)
-        input_layout.addLayout(icons_hlayout)
-
+        form = QFormLayout()
         self.input_combo = QComboBox()
-        self._update_midi_port_combo(self.input_combo, self.input_ports, self.current_in)
-        self.input_combo.currentIndexChanged.connect(self._on_input_combo_changed)
-
-        input_layout.addWidget(self.input_combo)
-        layout.addWidget(input_group)
-
-        # Output port selection
-        output_group = QGroupBox(tr("MIDI Output"))
-        output_layout = QVBoxLayout(output_group)
-
-        self.output_display = DigitalTitle(
-            self.current_out or "No output",
-            show_upper_text=False,
-        )
-
-        icons_hlayout = QHBoxLayout()
-        for icon in ["mdi6.midi-port"]:
-            icon_label = QLabel()
-            icon = qta.icon(icon, color=JDXi.UI.Style.FOREGROUND)
-            pixmap = icon.pixmap(
-                JDXi.UI.Style.ICON_SIZE, JDXi.UI.Style.ICON_SIZE
-            )  # Set the desired size
-            icon_label.setPixmap(pixmap)
-            icon_label.setAlignment(Qt.AlignHCenter)
-            icons_hlayout.addWidget(icon_label)
-        output_layout.addLayout(icons_hlayout)
-
         self.output_combo = QComboBox()
-        self._update_midi_port_combo(self.output_combo, self.output_ports, self.current_out)
-        self.output_combo.currentIndexChanged.connect(self._on_output_combo_changed)
+        for combo in (self.input_combo, self.output_combo):
+            combo.setMinimumContentsLength(28)
+            combo.currentIndexChanged.connect(self._on_port_choice_changed)
+        form.addRow(tr("From the JD-Xi (MIDI input):"), self.input_combo)
+        form.addRow(tr("To the JD-Xi (MIDI output):"), self.output_combo)
+        jdxi_layout.addLayout(form)
 
-        output_layout.addWidget(self.output_combo)
-        layout.addWidget(output_group)
-
-        # Software Synth (FluidSynth)
-        synth_group = QGroupBox(tr("Software Synth (FluidSynth)"))
-        synth_layout = QVBoxLayout(synth_group)
-
-        self.fluidsynth_enable = QCheckBox(tr("Enable FluidSynth for local playback"))
-        JDXi.UI.Theme.apply_button_mini_style(self.fluidsynth_enable)
-        self.fluidsynth_enable.toggled.connect(self._toggle_fluidsynth_controls)
-        synth_layout.addWidget(self.fluidsynth_enable)
-
-        self.use_soundfont_list = QCheckBox(tr("Use SoundFont List"))
-        JDXi.UI.Theme.apply_button_mini_style(self.use_soundfont_list)
-        self.use_soundfont_list.setToolTip(
-            tr("List the SoundFont's presets in the Digital, Analog and Drums "
-            "preset lists (and GM percussion names in the Pattern editor) "
-            "instead of the built-in JD-Xi presets. Needs the sf2utils package.")
+        buttons = QHBoxLayout()
+        self.find_button = QPushButton(tr("Find the JD-Xi"))
+        self.find_button.setToolTip(tr("Choose the ports whose name contains JD-Xi"))
+        self.find_button.clicked.connect(self.select_jdxi_ports)
+        self.refresh = QPushButton(tr("Refresh list"))
+        self.refresh.setToolTip(tr("List the MIDI ports again, e.g. after connecting the JD-Xi"))
+        self.refresh.clicked.connect(self.refresh_ports)
+        self.test_button = QPushButton(tr("Test connection"))
+        self.test_button.setToolTip(
+            tr("Connect to the chosen ports and ask the instrument who it is")
         )
-        self.use_soundfont_list.setChecked(get_use_soundfont_list())
-        self.use_soundfont_list.toggled.connect(self._on_soundfont_list_toggled)
-        synth_layout.addWidget(self.use_soundfont_list)
+        self.test_button.clicked.connect(self.test_connection)
+        for button in (self.find_button, self.refresh, self.test_button):
+            buttons.addWidget(button)
+        buttons.addStretch()
+        jdxi_layout.addLayout(buttons)
+        self.help_label = QLabel(
+            tr(
+                "No JD-Xi in the list? Connect it by USB, switch it on and press "
+                "Refresh list. Without it the editor works offline."
+            )
+        )
+        self.help_label.setWordWrap(True)
+        self.help_label.setVisible(False)
+        jdxi_layout.addWidget(self.help_label)
+        layout.addWidget(jdxi_box)
 
-        # Hardware Interface (audio output device for FluidSynth)
-        hw_row = QHBoxLayout()
-        hw_row.addWidget(QLabel(tr("Hardware Interface:")))
+        # --- FluidSynth, closed unless already in use
+        self.synth_box = QGroupBox(tr("Listen without the JD-Xi (FluidSynth)"))
+        self.synth_box.setCheckable(True)
+        self.synth_box.setChecked(self.fs is not None)
+        self.synth_box.toggled.connect(self._on_synth_box_toggled)
+        synth_outer = QVBoxLayout(self.synth_box)
+        self.synth_panel = QWidget()
+        synth_layout = QFormLayout(self.synth_panel)
+        synth_layout.setContentsMargins(0, 0, 0, 0)
+
         self.hardware_interface_combo = QComboBox()
+        self.hardware_interface_combo.addItem(tr("Default output"), "")
         self.hardware_interface_combo.setToolTip(
-            tr("Audio output device for FluidSynth playback. "
-            "Requires sounddevice (pip install sounddevice).")
+            tr("Audio output for FluidSynth (needs the sounddevice package)")
         )
-        self._refresh_hardware_devices()
-        hw_row.addWidget(self.hardware_interface_combo)
-        synth_layout.addLayout(hw_row)
+        synth_layout.addRow(tr("Audio output:"), self.hardware_interface_combo)
 
         sf_row = QHBoxLayout()
-        sf_row.addWidget(QLabel(tr("SoundFont (SF2/SF3):")))
-        self.sf2_edit = QLineEdit()
-        self.sf2_edit.setPlaceholderText("FluidR3_GM.sf2")  # default SoundFont
-        sf_row.addWidget(self.sf2_edit)
-        browse_btn_layout = QHBoxLayout()
-        browse_button_spec = ButtonSpec(
-            icon=JDXi.UI.Icon.FOLDER_NOTCH_OPEN,
-            label="Browse",
-            slot=self._browse_sf2,
-            layout=browse_btn_layout,
-        )
-        add_round_button_from_spec(spec=browse_button_spec)
-        sf_row.addLayout(browse_btn_layout)
-        synth_layout.addLayout(sf_row)
-
-        # Available SoundFonts selector
-        combo_row = QHBoxLayout()
-        combo_row.addWidget(QLabel(tr("Available:")))
         self.sf2_combo = QComboBox()
+        self.sf2_combo.setToolTip(tr("SoundFonts found in {folder}").format(folder=SF2_DIR))
         self.sf2_combo.currentIndexChanged.connect(self._on_sf2_combo_changed)
-        combo_row.addWidget(self.sf2_combo)
-        synth_layout.addLayout(combo_row)
+        self.browse_button = QPushButton(tr("Choose…"))
+        self.browse_button.clicked.connect(self._browse_sf2)
+        sf_row.addWidget(self.sf2_combo, 1)
+        sf_row.addWidget(self.browse_button)
+        synth_layout.addRow(tr("SoundFont:"), sf_row)
+        self.sf2_edit = QLineEdit()  # the chosen file; shown as the combo's text
+        self.sf2_edit.setVisible(False)
 
-        btn_row = QHBoxLayout()
-        button_row_button_specs = self._create_button_row_specs(btn_row)
-        buttons = []
-        for btn_spec in button_row_button_specs:
-            button = add_round_button_from_spec(btn_spec)
-            buttons.append(button)
-        self.fs_start_btn, self.fs_stop_btn, self.fs_test_btn = buttons
-        synth_layout.addLayout(btn_row)
+        self.use_soundfont_list = QCheckBox(tr("Show the SoundFont's presets in the preset lists"))
+        self.use_soundfont_list.setToolTip(
+            tr(
+                "List the SoundFont's presets in the Digital, Analog and Drums preset "
+                "lists (and GM percussion names in the Pattern editor) instead of the "
+                "JD-Xi presets. Needs the sf2utils package."
+            )
+        )
+        JDXi.UI.Theme.apply_button_mini_style(self.use_soundfont_list)  # visible tick box
+        self.use_soundfont_list.setChecked(get_use_soundfont_list())
+        self.use_soundfont_list.toggled.connect(self._on_soundfont_list_toggled)
+        synth_layout.addRow("", self.use_soundfont_list)
 
+        synth_buttons = QHBoxLayout()
+        self.fs_start_btn = QPushButton(tr("Start"))
+        self.fs_start_btn.clicked.connect(self._start_fluidsynth)
+        self.fs_stop_btn = QPushButton(tr("Stop"))
+        self.fs_stop_btn.clicked.connect(self._stop_fluidsynth)
+        self.fs_test_btn = QPushButton(tr("Test note"))
+        self.fs_test_btn.clicked.connect(self._test_fluidsynth)
+        for button in (self.fs_start_btn, self.fs_stop_btn, self.fs_test_btn):
+            synth_buttons.addWidget(button)
+        synth_buttons.addStretch()
+        synth_layout.addRow("", synth_buttons)
         self.fs_status = QLabel("")
-        synth_layout.addWidget(self.fs_status)
+        self.fs_status.setWordWrap(True)
+        synth_layout.addRow("", self.fs_status)
+        synth_outer.addWidget(self.synth_panel)
+        self.synth_panel.setVisible(self.synth_box.isChecked())
+        layout.addWidget(self.synth_box)
 
-        layout.addWidget(synth_group)
-
-        # Initially disable subordinate controls
-        self._toggle_fluidsynth_controls(False)
-
-        # Refresh button (round + label)
-        refresh_row = QHBoxLayout()
-        refresh_row.addStretch()
-        refresh_ports_spec = ButtonSpec(
-            label="Refresh Ports",
-            icon=JDXi.UI.Icon.REFRESH,
-            slot=self.refresh_ports,
-            layout=refresh_row,
+        # --- OK / Cancel (Qt translates the standard buttons)
+        self.button_box = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
         )
-        self.refresh = add_round_button_from_spec(refresh_ports_spec)
-        refresh_row.addStretch()
-        layout.addLayout(refresh_row)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+        self.ok_button = self.button_box.button(QDialogButtonBox.StandardButton.Ok)
+        self.cancel_button = self.button_box.button(QDialogButtonBox.StandardButton.Cancel)
+        layout.addWidget(self.button_box)
 
-        # Dialog buttons (round + labels, Transport style)
-        dialog_btn_row = QHBoxLayout()
-        dialog_btn_row.addStretch()
-        ok_btn_spec = ButtonSpec(
-            label="OK", icon=JDXi.UI.Icon.SAVE, slot=self.accept, layout=dialog_btn_row
-        )
-        self.ok_button = add_round_button_from_spec(ok_btn_spec)
-        cancel_btn_spec = ButtonSpec(
-            label="Cancel",
-            icon=JDXi.UI.Icon.CANCEL,
-            slot=self.reject,
-            layout=dialog_btn_row,
-        )
-        self.cancel_button = add_round_button_from_spec(cancel_btn_spec)
-        dialog_btn_row.addStretch()
-        layout.addLayout(dialog_btn_row)
+        self._update_synth_buttons()
+        if self.synth_box.isChecked():
+            QTimer.singleShot(0, self, self._load_synth_choices)
 
-    def _update_midi_port_combo(self, midi_port_combo: QComboBox, midi_ports: list, current_port: str) -> None:
-        """Populate a MIDI port combo box, omitting virtual/loopback ports."""
-        midi_ports = filter_excluded_ports(midi_ports)
-        midi_port_combo.addItems(midi_ports)
-        if current_port and current_port in midi_ports:
-            midi_port_combo.setCurrentText(current_port)
+    # ------------------------------------------------------------------ status
+    def _set_status(self, kind: str, text: str) -> None:
+        colours = {"ok": "#3cc98a", "busy": "#f2c94c", "error": "#f0483e", "idle": "#8a8d94"}
+        self.status_dot.setStyleSheet(f"color: {colours.get(kind, '#8a8d94')}; font-size: 16px;")
+        self.status_label.setText(text)
+        self.status_kind = kind
 
-    def _update_output_port_combo(self):
-        self.output_ports = filter_excluded_ports(self.output_ports)
-        self.output_combo.addItems(self.output_ports)
-        if self.current_out and self.current_out in self.output_ports:
-            self.output_combo.setCurrentText(self.current_out)
+    # ------------------------------------------------------------------- ports
+    def _ports_open(self) -> bool:
+        h = self.midi_helper
+        return bool(getattr(h, "is_input_open", False) and getattr(h, "is_output_open", False))
 
-    def _create_button_row_specs(self, btn_row: QHBoxLayout) -> list[ButtonSpec]:
-        """create button row specs"""
-        fs_start_btn_spec = ButtonSpec(
-            label="Start",
-            icon=JDXi.UI.Icon.PLAY,
-            slot=self._start_fluidsynth,
-            layout=btn_row,
-        )
-        fs_stop_btn_spec = ButtonSpec(
-            label="Stop",
-            icon=JDXi.UI.Icon.STOP,
-            slot=self._stop_fluidsynth,
-            layout=btn_row,
-        )
-        fs_test_btn_spec = ButtonSpec(
-            label="Test Note",
-            icon=JDXi.UI.Icon.MUSIC_NOTE,
-            slot=self._test_fluidsynth,
-            layout=btn_row,
-        )
-        button_row_button_specs = [
-            fs_start_btn_spec,
-            fs_stop_btn_spec,
-            fs_test_btn_spec,
-        ]
-        return button_row_button_specs
+    def _known_ports(self) -> tuple[list[str], list[str]]:
+        known_in = [p for p in [self.current_in] if p]
+        known_out = [p for p in [self.current_out] if p]
+        return known_in, known_out
 
-    def _refresh_hardware_devices(self, event=None):
-        """refresh hardware devices"""
-        self.hardware_interface_combo.clear()
-        devices = _get_output_devices()
-        if devices:
-            self.hardware_interface_combo.addItem("(Default)", "")
-            for display_name, device_spec in devices:
-                self.hardware_interface_combo.addItem(display_name, device_spec)
-            saved = get_hardware_interface()
-            idx = self.hardware_interface_combo.findText(saved)
-            self.hardware_interface_combo.setCurrentIndex(idx if idx >= 0 else 0)
+    def refresh_ports(self) -> None:
+        """List the MIDI ports again, in the background."""
+        self.refresh.setEnabled(False)
+        self.refresh.setText(tr("Listing…"))
+        run_in_background(lambda: list_midi_ports(self.midi_helper), self._ports_listed, self)
+
+    def _ports_listed(self, result, error) -> None:
+        self.refresh.setEnabled(True)
+        self.refresh.setText(tr("Refresh list"))
+        if error is not None:
+            log.error(f"Listing MIDI ports failed: {error}", scope="MIDIConfigDialog")
+            self._set_status("error", tr("Could not list the MIDI ports: {error}").format(error=error))
+            return
+        self._fill_ports(*result)
+
+    def _fill_ports(self, inputs: list[str], outputs: list[str]) -> None:
+        chosen_in = self.input_combo.currentText() or self.current_in
+        chosen_out = self.output_combo.currentText() or self.current_out
+        self.input_ports, self.output_ports = list(inputs), list(outputs)
+        for combo, ports, chosen in (
+            (self.input_combo, self.input_ports, chosen_in),
+            (self.output_combo, self.output_ports, chosen_out),
+        ):
+            combo.blockSignals(True)
+            combo.clear()
+            jdxi = find_jdxi_port(ports)
+            # The JD-Xi first, so it is easy to spot
+            for port in sorted(ports, key=lambda p: p != jdxi):
+                combo.addItem(f"★ {port}" if port == jdxi else port, port)
+            index = combo.findData(chosen) if chosen else -1
+            if index < 0 and jdxi:
+                index = combo.findData(jdxi)
+            combo.setCurrentIndex(max(index, 0) if combo.count() else -1)
+            combo.blockSignals(False)
+        found = bool(find_jdxi_port(self.input_ports) and find_jdxi_port(self.output_ports))
+        self.find_button.setEnabled(found)
+        self.help_label.setVisible(not found)
+        # Only when no test is running or has answered: its result says more
+        if not found and self.status_kind == "idle":
+            self._set_status("error", tr("No JD-Xi among the MIDI ports."))
+
+    def select_jdxi_ports(self) -> None:
+        for combo, ports in ((self.input_combo, self.input_ports), (self.output_combo, self.output_ports)):
+            port = find_jdxi_port(ports)
+            if port:
+                combo.setCurrentIndex(combo.findData(port))
+
+    def _on_port_choice_changed(self, _index: int = 0) -> None:
+        if self._ports_changed():
+            self._set_status("idle", tr("Ports changed: Test connection, or OK to use them."))
+
+    def _ports_changed(self) -> bool:
+        return (self.get_input_port() or None) != (self.current_in or None) or (
+            self.get_output_port() or None
+        ) != (self.current_out or None)
+
+    def get_input_port(self) -> str:
+        return self.input_combo.currentData() or self.input_combo.currentText().removeprefix("★ ")
+
+    def get_output_port(self) -> str:
+        return self.output_combo.currentData() or self.output_combo.currentText().removeprefix("★ ")
+
+    def get_settings(self) -> dict:
+        return {"input_port": self.get_input_port(), "output_port": self.get_output_port()}
+
+    def _apply_ports(self) -> bool:
+        in_port = self.get_input_port()
+        out_port = self.get_output_port()
+        in_port = "" if is_excluded_port(in_port) else in_port
+        out_port = "" if is_excluded_port(out_port) else out_port
+        log.message(f"Reconnecting to: Midi In: '{in_port}' Midi Out: '{out_port}'")
+        ok = self.midi_helper.reconnect_port_names(in_port, out_port)
+        if ok:
+            self.current_in, self.current_out = in_port, out_port
         else:
-            self.hardware_interface_combo.addItem(
-                "(sounddevice not installed)",
-                "",
+            log.warning("Failed to reopen both MIDI ports", scope="MIDIConfigDialog")
+        return ok
+
+    # -------------------------------------------------------- connection test
+    def test_connection(self) -> None:
+        """Use the chosen ports and send an Identity Request; the reply arrives later."""
+        if self._ports_changed() and not self._apply_ports():
+            self._set_status("error", tr("Could not open the chosen ports."))
+            return
+        signal = getattr(self.midi_helper, "midi_message_incoming", None)
+        if signal is None or not self._ports_open():
+            self._set_status("error", tr("The MIDI ports are not open."))
+            return
+        if not self._listening:
+            signal.connect(self._on_midi_message)
+            self._listening = True
+        self._set_status("busy", tr("Asking the instrument…"))
+        self.test_button.setEnabled(False)
+        self._identity_timer.start(IDENTITY_TIMEOUT_MS)
+        try:
+            self.midi_helper.send_raw_message(IDENTITY_REQUEST)
+        except Exception as ex:
+            self._identity_timer.stop()
+            self.test_button.setEnabled(True)
+            self._set_status("error", tr("Could not send to the MIDI output: {error}").format(error=ex))
+
+    @Slot(object)
+    def _on_midi_message(self, message) -> None:
+        if not self._identity_timer.isActive() or getattr(message, "type", "") != "sysex":
+            return
+        reply = parse_identity_reply(getattr(message, "data", ()))
+        if reply is None:
+            return
+        self._identity_timer.stop()
+        self.test_button.setEnabled(True)
+        if reply["is_jdxi"]:
+            self._set_status("ok", tr("Connected: the JD-Xi replies."))
+        else:
+            self._set_status(
+                "error",
+                tr("A different instrument replied (manufacturer {id}). Choose the JD-Xi's ports.").format(
+                    id=f"{reply['manufacturer']:02X}h"
+                ),
             )
 
-    def _on_input_combo_changed(self) -> None:
-        """On input ComboBox changed, set the DigitalTitle text."""
-        if hasattr(self, "input_display") and hasattr(self, "input_combo"):
-            self.input_display.setText(self.input_combo.currentText() or "No input")
+    def _identity_timed_out(self) -> None:
+        self.test_button.setEnabled(True)
+        self._set_status(
+            "error",
+            tr(
+                "No reply. Check that the JD-Xi is on and that both ports are the JD-Xi's "
+                "(not, e.g., Microsoft GS Wavetable Synth)."
+            ),
+        )
 
-    def _on_output_combo_changed(self) -> None:
-        """On output ComboBox changed, set the DigitalTitle text."""
-        if hasattr(self, "output_display") and hasattr(self, "output_combo"):
-            self.output_display.setText(self.output_combo.currentText() or "No output")
+    # -------------------------------------------------------------- FluidSynth
+    def _on_synth_box_toggled(self, checked: bool) -> None:
+        self.synth_panel.setVisible(checked)
+        self.adjustSize()
+        if checked and not self._synth_loaded:
+            self._load_synth_choices()
 
-    def refresh_ports(self):
-        """Refresh the list of MIDI ports"""
-        # Use the MIDIHelper instance to get the updated port lists
-        self.input_ports = self.midi_helper.get_input_ports()
-        self.output_ports = self.midi_helper.get_output_ports()
-        self._refresh_hardware_devices()
+    def _load_synth_choices(self) -> None:
+        """Audio outputs and SoundFonts, listed in the background once."""
+        self._synth_loaded = True
+        self.fs_status.setText(tr("Looking for audio outputs and SoundFonts…"))
+        run_in_background(
+            lambda: (list_audio_outputs(), find_soundfonts()), self._synth_choices_loaded, self
+        )
 
-        # Update the combo boxes
-        self.input_combo.clear()
-        self._update_midi_port_combo(self.input_combo, self.input_ports, self.current_in)
-        self.output_combo.clear()
-        self._update_midi_port_combo(self.output_combo, self.output_ports, self.current_out)
+    def _synth_choices_loaded(self, result, error) -> None:
+        self.fs_status.setText("")
+        if error is not None:
+            self.fs_status.setText(tr("Could not list the audio outputs: {error}").format(error=error))
+            return
+        outputs, soundfonts = result
+        saved = get_hardware_interface()
+        for name, spec in outputs:
+            self.hardware_interface_combo.addItem(name, spec)
+        index = self.hardware_interface_combo.findText(saved) if saved else -1
+        self.hardware_interface_combo.setCurrentIndex(max(index, 0))
+        if not outputs:
+            self.hardware_interface_combo.setToolTip(
+                tr("No audio outputs listed: install sounddevice (pip install sounddevice)")
+            )
+        chosen = get_sf2_path() or (SF2_PATH if os.path.isfile(SF2_PATH) else "")
+        self.sf2_combo.blockSignals(True)
+        for path in soundfonts:
+            self.sf2_combo.addItem(os.path.basename(path), path)
+        if chosen and self.sf2_combo.findData(chosen) < 0:
+            self.sf2_combo.addItem(os.path.basename(chosen), chosen)
+        if not self.sf2_combo.count():
+            self.sf2_combo.addItem(tr("None found: Choose… a .sf2 file"), "")
+        self.sf2_combo.setCurrentIndex(max(self.sf2_combo.findData(chosen), 0))
+        self.sf2_combo.blockSignals(False)
+        self.sf2_edit.setText(self.sf2_combo.currentData() or "")
+        self._update_synth_buttons()
 
-        # Keep DigitalTitle in sync with current selection
-        self._on_input_combo_changed()
-        self._on_output_combo_changed()
+    def _on_sf2_combo_changed(self, _index: int) -> None:
+        path = self.sf2_combo.currentData() or ""
+        self.sf2_edit.setText(path)
+        if path:
+            set_sf2_path(path)
+        self._update_synth_buttons()
 
-    def _toggle_fluidsynth_controls(self, enabled: bool) -> None:
-        controls_enabled = bool(self.fluidsynth_enable.isChecked())
-        for w in [
-            self.hardware_interface_combo,
-            self.sf2_edit,
-            self.fs_start_btn,
-            self.fs_stop_btn,
-            self.fs_test_btn,
-        ]:
-            w.setEnabled(controls_enabled)
-        if not controls_enabled:
-            self.fs_status.setText("")
+    def _browse_sf2(self) -> None:
+        start = SF2_DIR if os.path.isdir(SF2_DIR) else ""
+        path, _ = QFileDialog.getOpenFileName(
+            self, tr("Select SoundFont"), start, tr("SoundFonts (*.sf2 *.sf3)")
+        )
+        if not path:
+            return
+        if self.sf2_combo.findData(path) < 0:
+            self.sf2_combo.addItem(os.path.basename(path), path)
+        self.sf2_combo.setCurrentIndex(self.sf2_combo.findData(path))
+
+    def _update_synth_buttons(self) -> None:
+        running = getattr(self.midi_helper, "soundfont_synth", None) is not None
+        has_file = bool(self.sf2_edit.text().strip())
+        self.fs_start_btn.setEnabled(not self._busy_synth and not running and has_file)
+        self.fs_stop_btn.setEnabled(not self._busy_synth and running)
+        self.fs_test_btn.setEnabled(not self._busy_synth and running)
+
+    def _start_fluidsynth(self) -> None:
+        if _fluidsynth_module is None:
+            self.fs_status.setText(import_error_message(_fluidsynth_err_msg))
+            return
+        sf_path = self.sf2_edit.text().strip()
+        if not sf_path or not os.path.isfile(sf_path):
+            self.fs_status.setText(tr("Please select a SoundFont first."))
+            return
+        device = self.hardware_interface_combo.currentData() or ""
+        self._busy_synth = True
+        self._update_synth_buttons()
+        self.fs_status.setText(tr("Starting FluidSynth and loading the SoundFont…"))
+
+        def start():
+            fs = _fluidsynth_module.Synth()
+            if sys.platform == "darwin":
+                if device:
+                    fs.setting("audio.coreaudio.device", device)
+                fs.start(driver="coreaudio")
+            elif device and ":" in device:
+                fs.setting("audio.portaudio.device", device)
+                fs.start(driver="portaudio")
+            else:
+                fs.start()
+            sfid = fs.sfload(sf_path)
+            fs.program_select(0, sfid, 0, 0)
+            return fs, sfid
+
+        run_in_background(start, self._fluidsynth_started, self)
+
+    def _fluidsynth_started(self, result, error) -> None:
+        self._busy_synth = False
+        if error is not None:
+            log.error(f"FluidSynth error: {error}", scope="MIDIConfigDialog")
+            self.fs_status.setText(tr("FluidSynth error: {ex}").format(ex=error))
         else:
-            # Auto-start if a valid SoundFont is already set and synth not running
-            try:
-                if (
-                    self.fs is None
-                    and self.sf2_edit.text().strip()
-                    and os.path.isfile(self.sf2_edit.text().strip())
-                ):
-                    self._start_fluidsynth()
-            except Exception:
-                pass
+            self.fs, self.sfid = result
+            self.midi_helper.soundfont_synth = self.fs
+            self.midi_helper.soundfont_sfid = self.sfid
+            self.fs_status.setText(tr("FluidSynth: started"))
+        self._update_synth_buttons()
+
+    def _stop_fluidsynth(self) -> None:
+        fs = getattr(self.midi_helper, "soundfont_synth", None)
+        try:
+            if fs is not None:
+                fs.delete()
+            self.fs_status.setText(tr("FluidSynth: stopped"))
+        except Exception as ex:
+            self.fs_status.setText(tr("Stop error: {ex}").format(ex=ex))
+        self.midi_helper.soundfont_synth = None
+        self.midi_helper.soundfont_sfid = None
+        self.fs = self.sfid = None
+        self._update_synth_buttons()
+
+    def _test_fluidsynth(self) -> None:
+        fs = getattr(self.midi_helper, "soundfont_synth", None)
+        if fs is None:
+            self.fs_status.setText(tr("Start FluidSynth first."))
+            return
+        fs.noteon(0, 60, 110)
+        QTimer.singleShot(400, self, lambda: fs.noteoff(0, 60))  # a short note, no wait
+        self.fs_status.setText(tr("Test note triggered."))
 
     def _on_soundfont_list_toggled(self, checked: bool) -> None:
-        """Handle SoundFont list checkbox toggle - save immediately and notify listeners."""
-        sf_path = self.sf2_edit.text().strip()
-        if sf_path and os.path.isfile(sf_path):
-            set_sf2_path(sf_path)
         set_use_soundfont_list(checked)
         problem = soundfont_list_problem() if checked else None
         if problem:
@@ -458,216 +638,34 @@ class MIDIConfigDialog(QDialog):
             QMessageBox.warning(
                 self,
                 tr("SoundFont List"),
-                tr('{problem}\n\nThe preset lists will stay as JD-Xi until this is fixed.').format(problem=problem),
+                tr("{problem}\n\nThe preset lists will stay as JD-Xi until this is fixed.").format(
+                    problem=problem
+                ),
             )
 
-    def _browse_sf2(self) -> None:
-        start_dir = os.path.expanduser("~/SoundFonts")
-        file_path, _ = QFileDialog.getOpenFileName(
-            self,
-            tr("Select SoundFont"),
-            start_dir if os.path.isdir(start_dir) else "",
-            tr("SoundFonts (*.sf2 *.sf3)"),
-        )
-        if file_path:
-            self.sf2_edit.setText(file_path)
-            self.sf2_path = file_path
-            set_sf2_path(file_path)
-            # Add to combo if missing and select
-            self._ensure_sf2_in_combo(file_path)
-            self._select_sf2_in_combo(file_path)
+    # --------------------------------------------------------------- closing
+    def _stop_listening(self) -> None:
+        self._identity_timer.stop()
+        if self._listening:
+            try:
+                self.midi_helper.midi_message_incoming.disconnect(self._on_midi_message)
+            except (RuntimeError, TypeError):
+                pass
+            self._listening = False
 
-    def _start_fluidsynth(self) -> None:
-        if _fluidsynth_module is None:
-            self.fs_status.setText(import_error_message(_fluidsynth_err_msg))
-            return
-        Synth = _fluidsynth_module.Synth
-
-        try:
-            sf_path = self.sf2_edit.text().strip()
-            if not sf_path:
-                self.fs_status.setText(tr("Please select a SoundFont first."))
-                return
-
-            fs = getattr(self.midi_helper, "soundfont_synth", None)
-            if fs is None:
-                fs = Synth()
-                device_name = self.hardware_interface_combo.currentText()
-                if device_name and device_name not in (
-                    "(Default)",
-                    "(sounddevice not installed)",
-                ):
-                    if sys.platform == "darwin":
-                        # macOS: use CoreAudio with specific device (accepts device name)
-                        try:
-                            fs.setting("audio.coreaudio.device", device_name)
-                            fs.start(driver="coreaudio")
-                        except Exception as ex:
-                            log.warning(
-                                f"Could not set CoreAudio device '{device_name}': {ex}"
-                            )
-                            fs.start(driver="coreaudio")  # fallback to default
-                    else:
-                        # Windows/Linux: use PortAudio with "index:HostApi:Name" format
-                        device_spec = self.hardware_interface_combo.currentData()
-                        try:
-                            if isinstance(device_spec, str) and ":" in device_spec:
-                                fs.setting("audio.driver", "portaudio")
-                                fs.setting("audio.portaudio.device", device_spec)
-                                fs.start(driver="portaudio")
-                            else:
-                                fs.start()
-                        except Exception as ex:
-                            log.warning(f"Could not set PortAudio device: {ex}")
-                            fs.start()
-                else:
-                    fs.start(
-                        driver="coreaudio" if sys.platform == "darwin" else None
-                    )
-                self.midi_helper.soundfont_synth = fs
-                self.fs = fs
-
-            self.sfid = fs.sfload(sf_path)
-            self.midi_helper.soundfont_sfid = self.sfid
-            fs.program_select(0, self.sfid, 0, 0)
-            self.fs_status.setText(tr("FluidSynth: started"))
-
-        except Exception as ex:
-            self.fs_status.setText(tr('FluidSynth error: {ex}').format(ex=ex))
-            log.error(f"FluidSynth error: {ex}")
-
-    def _stop_fluidsynth(self) -> None:
-        try:
-            fs = getattr(self.midi_helper, "soundfont_synth", None)
-            if fs is not None:
-                fs.delete()
-                self.midi_helper.soundfont_synth = None
-                self.midi_helper.soundfont_sfid = None
-                self.fs = None
-                self.sfid = None
-                self.fs_status.setText(tr("FluidSynth: stopped"))
-        except Exception as ex:
-            self.fs_status.setText(tr('Stop error: {ex}').format(ex=ex))
-            log.error(f"FluidSynth stop error: {ex}")
-
-    def _test_fluidsynth(self) -> None:
-        try:
-            fs = getattr(self.midi_helper, "soundfont_synth", None)
-            if fs is None:
-                self.fs_status.setText(tr("Start FluidSynth first."))
-                return
-            # Middle C test
-            fs.noteon(0, 60, 110)
-            fs.noteoff(0, 60)
-            self.fs_status.setText(tr("Test note triggered."))
-        except Exception as ex:
-            self.fs_status.setText(tr('Test error: {ex}').format(ex=ex))
-            log.error(f"FluidSynth test error: {ex}")
-
-    def _populate_sf2_combo(self) -> None:
-        """Scan ~/SoundFonts for .sf2/.sf3 files and populate the combo box."""
-        if not hasattr(self, "sf2_combo"):
-            return
-        self.sf2_combo.blockSignals(True)
-        self.sf2_combo.clear()
-        base_dir = os.path.expanduser("~/SoundFonts")
-        found = []
-        try:
-            if os.path.isdir(base_dir):
-                for root, dirs, files in os.walk(base_dir):
-                    for f in files:
-                        if f.lower().endswith((".sf2", ".sf3")):
-                            full = os.path.join(root, f)
-                            found.append(full)
-        except Exception:
-            pass
-        # Add items (digital basename, store full path)
-        for path in sorted(found):
-            self.sf2_combo.addItem(os.path.basename(path), path)
-        self.sf2_combo.blockSignals(False)
-
-    def _on_sf2_combo_changed(self, index: int) -> None:
-        if index < 0:
-            return
-        path = self.sf2_combo.currentData()
-        if isinstance(path, str) and path:
-            self.sf2_edit.setText(path)
-            self.sf2_path = path
-            set_sf2_path(path)
-
-    def _ensure_sf2_in_combo(self, path: str) -> None:
-        if not hasattr(self, "sf2_combo"):
-            return
-        # If already present, do nothing
-        for i in range(self.sf2_combo.count()):
-            if self.sf2_combo.itemData(i) == path:
-                return
-        self.sf2_combo.addItem(os.path.basename(path), path)
-
-    def _select_sf2_in_combo(self, path: str) -> None:
-        if not hasattr(self, "sf2_combo"):
-            return
-        for i in range(self.sf2_combo.count()):
-            if self.sf2_combo.itemData(i) == path:
-                self.sf2_combo.setCurrentIndex(i)
-                return
-
-    def accept(self):
+    def accept(self) -> None:
         set_use_soundfont_list(self.use_soundfont_list.isChecked())
-        sf_path = self.sf2_edit.text().strip()
-        if sf_path:
-            set_sf2_path(sf_path)
-        hw_name = self.hardware_interface_combo.currentText()
-        if hw_name in ("(Default)", "(sounddevice not installed)", ""):
-            set_hardware_interface("")
-        else:
-            set_hardware_interface(hw_name)
+        if self.sf2_edit.text().strip():
+            set_sf2_path(self.sf2_edit.text().strip())
+        if self._synth_loaded:
+            index = self.hardware_interface_combo.currentIndex()
+            set_hardware_interface(self.hardware_interface_combo.currentText() if index > 0 else "")
+        self._stop_listening()
+        changed = self._ports_changed()
         super().accept()
-        self.midi_helper.close_ports()
-        input_port_text = self.get_input_port()
-        output_port_text = self.get_output_port()
-        input_port_text = self.get_undesirable_midi_port(input_port_text)
-        output_port_text = self.get_undesirable_midi_port(output_port_text)
-        if is_excluded_port(output_port_text):
-            log.warning("Detected excluded MIDI output port. Ignoring.")
-            output_port_text = ""
-        log.message(f"Reconnecting to: Midi In:\t'{input_port_text}'")
-        log.message(f"Reconnecting to: Midi Out:\t'{output_port_text}'")
-        success = self.midi_helper.reconnect_port_names(
-            input_port_text, output_port_text
-        )
-        if not success:
-            log.warning("Failed to reopen both MIDI ports")
+        if changed:
+            self._apply_ports()  # after the dialog has closed
 
-    def get_undesirable_midi_port(self, midi_port_text: str) -> str:
-        if is_excluded_port(midi_port_text):
-            log.warning("Detected excluded MIDI port. Ignoring.")
-            midi_port_text = ""
-        return midi_port_text
-
-    def get_input_port(self) -> str:
-        """Get selected input port name
-
-        Returns:
-            Selected input port name or empty string if none selected
-        """
-        return self.input_combo.currentText()
-
-    def get_output_port(self) -> str:
-        """Get selected output port name
-
-        Returns:
-            Selected output port name or empty string if none selected
-        """
-        return self.output_combo.currentText()
-
-    def get_settings(self) -> dict:
-        """Get all selected settings
-
-        Returns:
-            Dictionary containing input_port and output_port selections
-        """
-        return {
-            "input_port": self.get_input_port(),
-            "output_port": self.get_output_port(),
-        }
+    def reject(self) -> None:
+        self._stop_listening()
+        super().reject()
