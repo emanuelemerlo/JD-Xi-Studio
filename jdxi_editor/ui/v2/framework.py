@@ -175,10 +175,18 @@ class Block:
     address: object  # JDXiSysExAddress of the block
     params: list[PSpec] = field(default_factory=list)
     request: object = None  # the RQ1 that reads the block
+    export: bool = True  # whether the editor gives the whole block for patches and .syx
 
     def address_bytes(self) -> list[int]:
         a = self.address
         return [a.msb, a.umb, a.lmb, a.lsb]
+
+    def size(self) -> int:
+        """Bytes in the block, from its RQ1 (0 when it has none)."""
+        if not self.request:
+            return 0
+        tokens = str(self.request).split()
+        return address_number([int(t, 16) for t in tokens[12:16]])
 
 
 class NameField(QLineEdit):
@@ -500,6 +508,46 @@ class V2Editor(SynthBase):
         from jdxi_editor.midi.message.roland import JDXiSysEx
 
         return bool(helper.send_midi_message(JDXiSysEx(sysex_address=address, value=list(data))))
+
+    # ------------------------------------------------------- whole blocks
+    def export_dt1s(self) -> list[bytes]:
+        """
+        Every block as one DT1 with the values shown (for patches and .syx).
+
+        Bytes the editor has no control for (reserves) come from the copy of
+        the JD-Xi's memory when it holds them, otherwise they are 0.
+        """
+        from jdxi_editor.midi.io.synth_memory import build_dt1
+
+        memory = None
+        helper = getattr(self, "_midi_helper", None) or getattr(self, "midi_helper", None)
+        if helper is not None:
+            try:
+                from jdxi_editor.midi.io.device import device_for
+
+                memory = device_for(helper).memory
+            except Exception:  # a test double without a device
+                memory = None
+        messages = []
+        for block in self.blocks:
+            size = block.size()
+            if not size or not block.export:
+                continue
+            address = block.address_bytes()
+            known = memory.read(address, size) if memory is not None else None
+            data = bytearray(known if known is not None else bytes(size))
+            for spec in block.params:
+                pos, width = seven_bit(spec.offset), spec.get_nibbled_size()
+                if pos + width > size:
+                    continue
+                raw = spec.convert_to_midi(self.values[spec].value())
+                if width == 1:
+                    data[pos] = raw & 0x7F
+                else:
+                    for i in range(width):
+                        data[pos + i] = (raw >> (4 * (width - 1 - i))) & 0x0F
+            messages.append(build_dt1(address, data))
+        return messages
 
 
 @functools.lru_cache(maxsize=None)

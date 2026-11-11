@@ -31,6 +31,43 @@ on the JD-Xi display.
   .syx, random tone) stays on the right
 - The original Analog editor (`AnalogSynthEditor`) is still in the code; the app opens the new one
 
+### Vocal Effect editor (new)
+
+- **AutoPitch and Vocoder** with every parameter of Program Vocal Effect (MIDI Implementation) and the
+  vocal effect settings of Program Common (effect, number, part, Auto Note), explained from the
+  Parameter Guide (p. 9, 28); the output shared by both (level, pan, Output Assign, sends) apart
+- Only the selected effect is active; the AutoPitch key on two rows, major and minor; the key only
+  with Scale Maj(Min)
+- Address 00 0F, listed in the MIDI Implementation without a name, is shown as such
+
+### Arpeggio editor (new)
+
+- **Every Program Controller parameter**: on/off, style (the 128 names), grid, duration, motif with
+  the manual's explanation of the selected one, octave range, accent, velocity (REAL or fixed); the
+  program tempo; and which parts the arpeggio plays (Program Zone)
+- A timing view draws two beats of the grid: notes per beat, shuffle, how long and how loud each note is
+
+### Drum Kit editor (new)
+
+- **Every Drum Kit parameter** of the MIDI Implementation: kit name and level, and for each of the
+  37 drum partials (keys 36-72) its name, common settings, the four waves (WMT), pitch, TVF and TVA,
+  with the Parameter Guide explanations (p. 20-24); only WMT Wave Group Type (always 0) is left out
+- The kit as a grid of 37 pads in keyboard order; the selected pad is edited in sections as on the
+  display: **COMMON**, **WAVE** (the four waves side by side, wave lists by name, velocity range and
+  fade drawn and draggable), **PITCH**, **TVF**, **TVA** (each envelope drawn: drag the points for
+  time and level); a pad's page is built the first time it is opened
+- Settings without effect greyed out: a wave's settings when it is off, velocity ranges when WMT Vel
+  Ctrl is not ON, pitch and FXM with Wave Tempo Sync, FXM color/depth with FXM off, resonance with
+  LPF2/LPF3, the filter with OFF, Rx Hold-1 with NO-SUS; velocity lower/upper follow each other (p. 21)
+- Parameters past the 128th byte of a partial (pitch envelope onward, at 01 xx) are addressed in the
+  next LMB, as the MIDI Implementation numbers them: checked by tests
+
+### Patches and .syx with the new editors
+
+- The new editors give each block as one DT1, as the JD-Xi sends it: patch saving, the part .syx
+  export and "send all settings" use those messages (reserved bytes from the copy of the JD-Xi's
+  memory when known)
+
 ### Digital Synth editor (new), for Digital 1 and Digital 2
 
 - **Every parameter of the SuperNATURAL synth tone**: Common, Modify and the three Partials of the

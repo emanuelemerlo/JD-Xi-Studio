@@ -122,6 +122,9 @@ from jdxi_editor.ui.windows.jdxi.ui import JDXiWindow
 from jdxi_editor.ui.windows.jdxi.utils import show_message_box_from_spec
 from jdxi_editor.ui.v2.analog import AnalogToneEditor
 from jdxi_editor.ui.v2.digital import Digital2ToneEditor, DigitalToneEditor
+from jdxi_editor.ui.v2.drums import DrumKitEditor
+from jdxi_editor.ui.v2.vocal import VocalEffectEditor
+from jdxi_editor.ui.v2.arpeggio import ArpeggioEditor as ArpeggioV2Editor
 from jdxi_editor.ui.v2.effects import EffectsEditor
 from jdxi_editor.ui.v2.program import ProgramPartsEditor
 from jdxi_editor.ui.windows.midi.config_dialog import MIDIConfigDialog
@@ -183,7 +186,7 @@ class JDXiInstrument(JDXiWindow):
         self.editor_registry = {
             "vocal_fx": EditorConfig(
                 title="Vocal Effects",
-                editor_class=VocalFXEditor,
+                editor_class=VocalEffectEditor,  # new interface (1.0)
                 synth_type=JDXiSynth.VOCAL_FX,
                 midi_channel=MidiChannel.VOCAL_FX,
                 icon="mdi.microphone",
@@ -213,14 +216,14 @@ class JDXiInstrument(JDXiWindow):
             ),
             "drums": EditorConfig(
                 title="Drums",
-                editor_class=DrumCommonEditor,
+                editor_class=DrumKitEditor,  # new interface (1.0)
                 synth_type=JDXiSynth.DRUM_KIT,
                 midi_channel=MidiChannel.DRUM_KIT,
                 icon="fa5s.drum",
             ),
             "arpeggio": EditorConfig(
                 title="Arpeggiator",
-                editor_class=ArpeggioEditor,
+                editor_class=ArpeggioV2Editor,  # new interface (1.0)
                 icon="ph.music-notes-simple-bold",
             ),
             "effects": EditorConfig(
@@ -927,6 +930,9 @@ class JDXiInstrument(JDXiWindow):
                     ProgramPartsEditor,
                     DigitalToneEditor,
                     Digital2ToneEditor,
+                    DrumKitEditor,
+                    VocalEffectEditor,
+                    ArpeggioV2Editor,
                 }
                 else None
             )
@@ -1099,6 +1105,9 @@ class JDXiInstrument(JDXiWindow):
                     ProgramPartsEditor,
                     DigitalToneEditor,
                     Digital2ToneEditor,
+                    DrumKitEditor,
+                    VocalEffectEditor,
+                    ArpeggioV2Editor,
                 ]
                 else None
             )
@@ -1549,6 +1558,12 @@ class JDXiInstrument(JDXiWindow):
 
             # Iterate through all registered editors
             for editor in self.editors:
+                # The new editors send their blocks as they are
+                if hasattr(editor, "export_dt1s"):
+                    for dt1 in editor.export_dt1s():
+                        self.midi_helper.send_raw_message(list(dt1))
+                        total_sent += 1
+                    continue
                 # Skip editors that don't have the required attributes
                 if not hasattr(editor, "address") or not hasattr(
                     editor, "get_controls_as_dict"

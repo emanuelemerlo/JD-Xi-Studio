@@ -36,6 +36,10 @@
 - **MIDI Debugger**: Monitor and debug MIDI messages efficiently.
 - **New Analog editor** (1.0): all 46 parameters on one screen, filter curve and envelopes to drag,
   drawn waveforms, and an information panel that explains the parameter under the pointer.
+- **New Vocal Effect and Arpeggio editors** (1.0): AutoPitch and Vocoder with every parameter; the
+  arpeggio with its timing drawn and the parts it plays.
+- **New Drum Kit editor** (1.0): the 37 drum partials as pads, each with its four waves, pitch,
+  filter and amplifier envelopes drawn and draggable.
 - **New Digital Synth editor** (1.0), for Digital 1 and 2: every SuperNATURAL synth parameter, the
   three partials with drawn waveforms, filter curves, envelopes and LFOs.
 - **New Program editor** (1.0): program name, level, tempo and the four parts side by side (main,

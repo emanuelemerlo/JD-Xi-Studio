@@ -349,7 +349,7 @@ versione:	{version}</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="29" />
-            <location filename="../../jdxi_editor/ui/v2/framework.py" line="297" />
+            <location filename="../../jdxi_editor/ui/v2/framework.py" line="305" />
             <location filename="../../jdxi_editor/ui/windows/patch/manager.py" line="134" />
             <location filename="../../jdxi_editor/ui/windows/patch/manager.py" line="221" />
             <location filename="../../jdxi_editor/ui/windows/patch/manager.py" line="227" />
@@ -358,7 +358,7 @@ versione:	{version}</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="32" />
-            <location filename="../../jdxi_editor/ui/v2/framework.py" line="298" />
+            <location filename="../../jdxi_editor/ui/v2/framework.py" line="306" />
             <source>Request current parameters from the synthesizer (RQ1)</source>
             <translation>Chiedi al synth i parametri attuali (RQ1)</translation>
         </message>
@@ -478,7 +478,7 @@ versione:	{version}</translation>
             <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1158" />
             <location filename="../../jdxi_editor/ui/editors/playlist/table.py" line="275" />
             <location filename="../../jdxi_editor/ui/editors/playlist/table.py" line="331" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="2464" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="2479" />
             <source>Error</source>
             <translation>Errore</translation>
         </message>
@@ -697,7 +697,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1080" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1363" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1372" />
             <source>File Not Found</source>
             <translation>File non trovato</translation>
         </message>
@@ -1007,6 +1007,225 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <location filename="../../jdxi_editor/ui/v2/analog.py" line="258" />
             <source>Modulation wheel (CC01)</source>
             <translation>Rotella di modulazione (CC01)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="88" />
+            <source>Two beats of the arpeggio: where the notes fall, how long and how loud they are</source>
+            <translation>Due battiti dell'arpeggio: dove cadono le note, quanto durano e quanto sono forti</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="126" />
+            <source>beat 1</source>
+            <translation>battito 1</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="127" />
+            <source>beat 2</source>
+            <translation>battito 2</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="142" />
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="157" />
+            <source>Parameter Guide, p. 29</source>
+            <translation>Parameter Guide, p. 29</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="157" />
+            <source>TIMING</source>
+            <translation>TEMPI</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="164" />
+            <source>PARTS THE ARPEGGIO PLAYS</source>
+            <translation>PARTI SUONATE DALL'ARPEGGIO</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="164" />
+            <source>MIDI Implementation, Program Zone</source>
+            <translation>MIDI Implementation, Program Zone</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="175" />
+            <source>Only the lowest key each time, upward from the lowest key.</source>
+            <translation>Solo il tasto più basso ogni volta, salendo dal tasto più basso.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="176" />
+            <source>The lowest and highest keys each time, upward from the lowest key.</source>
+            <translation>Il tasto più basso e il più alto ogni volta, salendo dal più basso.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="177" />
+            <source>The keys in order, upward from the lowest.</source>
+            <translation>I tasti in ordine, salendo dal più basso.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="178" />
+            <source>Only the lowest key each time, downward from the highest key.</source>
+            <translation>Solo il tasto più basso ogni volta, scendendo dal tasto più alto.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="179" />
+            <source>The lowest and highest keys each time, downward from the highest key.</source>
+            <translation>Il tasto più basso e il più alto ogni volta, scendendo dal più alto.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="180" />
+            <source>The keys in order, downward from the highest.</source>
+            <translation>I tasti in ordine, scendendo dal più alto.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="181" />
+            <source>Up and back down, with only the lowest key each time.</source>
+            <translation>Su e di nuovo giù, con solo il tasto più basso ogni volta.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="182" />
+            <source>Up and back down, with the lowest and highest keys each time.</source>
+            <translation>Su e di nuovo giù, con il tasto più basso e il più alto ogni volta.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="183" />
+            <source>The keys in order, up and back down.</source>
+            <translation>I tasti in ordine, su e di nuovo giù.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="184" />
+            <source>The keys at random, with only the lowest key each time.</source>
+            <translation>I tasti a caso, con solo il tasto più basso ogni volta.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="185" />
+            <source>The keys you press at random.</source>
+            <translation>I tasti premuti, a caso.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="186" />
+            <source>One key plays a phrase based on its pitch; with several keys, the last one pressed.</source>
+            <translation>Un tasto suona una frase basata sulla sua nota; con più tasti, l'ultimo premuto.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="39" />
+            <location filename="../../jdxi_editor/ui/v2/program.py" line="221" />
+            <source>Arpeggio Switch</source>
+            <translation>Arpeggio attivo</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="39" />
+            <source>Turns the arpeggio on or off (the [Arpeggio] button).</source>
+            <translation>Accende o spegne l'arpeggio (il tasto [Arpeggio]).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="41" />
+            <source>Arpeggio Style</source>
+            <translation>Stile dell'arpeggio</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="41" />
+            <source>The arpeggio's performance style.</source>
+            <translation>Lo stile esecutivo dell'arpeggio.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="43" />
+            <source>Arpeggio Grid</source>
+            <translation>Griglia dell'arpeggio</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="44" />
+            <source>Note value of one grid unit and its shuffle: 1/8 two per beat, 1/12 eighth-note triplets, 1/16 four per beat, 1/24 sixteenth triplets; L light shuffle, H heavy.</source>
+            <translation>Valore di nota di un'unità della griglia e il suo shuffle: 1/8 due per battito, 1/12 terzine di crome, 1/16 quattro per battito, 1/24 terzine di semicrome; L shuffle leggero, H pesante.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="46" />
+            <source>Arpeggio Duration</source>
+            <translation>Durata delle note dell'arpeggio</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="47" />
+            <source>How long each note sounds, in % of the grid value: 30 is staccato, 120 tenuto; Full holds each note until the next one.</source>
+            <translation>Quanto suona ogni nota, in % del valore della griglia: 30 è staccato, 120 tenuto; Full tiene ogni nota fino alla successiva.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="49" />
+            <source>Arpeggio Motif</source>
+            <translation>Motivo dell'arpeggio</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="50" />
+            <source>How the notes are played when you hold more keys than the style has notes: up, down, up and down, random (L: only the lowest key each time, L&amp;H: lowest and highest, _: in order), or Phrase.</source>
+            <translation>Come vengono suonate le note quando tieni più tasti di quante note ha lo stile: su, giù, su e giù, a caso (L: solo il tasto più basso ogni volta, L&amp;H: il più basso e il più alto, _: in ordine), o Phrase.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="52" />
+            <source>Arpeggio Octave Range</source>
+            <translation>Estensione in ottave dell'arpeggio</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="53" />
+            <source>Shifts the arpeggio by an octave at each cycle, up to three octaves up or down.</source>
+            <translation>Sposta l'arpeggio di un'ottava a ogni ciclo, fino a tre ottave in su o in giù.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="55" />
+            <source>Arpeggio Accent Rate</source>
+            <translation>Accento dell'arpeggio</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="56" />
+            <source>100: the velocities programmed in the style; 0: every note at the same velocity.</source>
+            <translation>100: le dinamiche programmate nello stile; 0: tutte le note alla stessa dinamica.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="57" />
+            <source>Arpeggio Velocity</source>
+            <translation>Dinamica dell'arpeggio</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="58" />
+            <source>REAL: as hard as you play; 1-127: always this velocity.</source>
+            <translation>REAL: come suoni; 1-127: sempre questa dinamica.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="71" />
+            <location filename="../../jdxi_editor/ui/v2/program.py" line="89" />
+            <source>Program Tempo (BPM)</source>
+            <translation>Tempo del programma (BPM)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="71" />
+            <source>Tempo of the program, which the arpeggio follows.</source>
+            <translation>Tempo del programma, che l'arpeggio segue.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="137" />
+            <source>Arpeggio</source>
+            <translation>Arpeggio</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="40" />
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="65" />
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="105" />
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="127" />
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="148" />
+            <location filename="../../jdxi_editor/ui/v2/program.py" line="81" />
+            <location filename="../../jdxi_editor/ui/v2/program.py" line="114" />
+            <location filename="../../jdxi_editor/ui/v2/program.py" line="216" />
+            <location filename="../../jdxi_editor/ui/v2/program.py" line="412" />
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="37" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="895" />
+            <source>MIDI Implementation</source>
+            <translation>MIDI Implementation</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="65" />
+            <location filename="../../jdxi_editor/ui/v2/program.py" line="222" />
+            <source>Whether the arpeggio plays this part.</source>
+            <translation>Se l'arpeggio suona questa parte.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/arpeggio.py" line="64" />
+            <source>Arpeggio for {part}</source>
+            <translation>Arpeggio per {part}</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/digital.py" line="136" />
@@ -1517,6 +1736,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/digital.py" line="200" />
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="232" />
             <source>Stereo position of the partial.</source>
             <translation>Posizione stereo del partial.</translation>
         </message>
@@ -1716,8 +1936,9 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/digital.py" line="302" />
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="419" />
             <location filename="../../jdxi_editor/ui/v2/effects.py" line="472" />
-            <location filename="../../jdxi_editor/ui/v2/program.py" line="387" />
+            <location filename="../../jdxi_editor/ui/v2/program.py" line="388" />
             <source>Changes are heard at once and kept in the current program until another one is selected. To keep them, save the program on the JD-Xi with [Menu/Write]: the JD-Xi cannot be written to its memory via MIDI.</source>
             <translation>Le modifiche si sentono subito e restano nel programma corrente finché non se ne sceglie un altro. Per conservarle salva il programma sul JD-Xi con [Menu/Write]: via MIDI non si può scrivere nella sua memoria.</translation>
         </message>
@@ -1773,6 +1994,452 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Modifica il partial {n}</translation>
         </message>
         <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="82" />
+            <source>Positive: more effect the harder you play; negative: less.</source>
+            <translation>Positivo: più effetto quanto più forte suoni; negativo: meno.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="83" />
+            <source>How playing harder changes Time 1: positive makes it faster, negative slower.</source>
+            <translation>Come suonare più forte cambia Time 1: positivo lo rende più rapido, negativo più lento.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="84" />
+            <source>How releasing faster changes Time 4: positive makes it faster, negative slower.</source>
+            <translation>Come rilasciare più in fretta cambia Time 4: positivo lo rende più rapido, negativo più lento.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="85" />
+            <source>Curve of the response to velocity; FIXED: velocity has no effect.</source>
+            <translation>Curva di risposta alla dinamica; FIXED: la dinamica non ha effetto.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="86" />
+            <source>Stereo position of the wave.</source>
+            <translation>Posizione stereo dell'onda.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="87" />
+            <source>Used when WMT Vel Ctrl is ON.</source>
+            <translation>Usato con WMT Vel Ctrl su ON.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="88" />
+            <source>Only with FXM Switch ON.</source>
+            <translation>Solo con FXM Switch su ON.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="89" />
+            <source>No effect with Wave Tempo Sync ON.</source>
+            <translation>Nessun effetto con Wave Tempo Sync su ON.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="90" />
+            <source>No effect with Filter Type OFF.</source>
+            <translation>Nessun effetto con Filter Type su OFF.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="262" />
+            <source>Drag the points: sideways for the time, up and down for the level</source>
+            <translation>Trascina i punti: in orizzontale per il tempo, in verticale per il livello</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="323" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="670" />
+            <source>key off</source>
+            <translation>rilascio</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="378" />
+            <source>Parameter Guide, p. 20</source>
+            <translation>Parameter Guide, p. 20</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="381" />
+            <source>Kit Name</source>
+            <translation>Nome del kit</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="385" />
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="69" />
+            <source>Name of the drum kit (12 characters).</source>
+            <translation>Nome del kit di batteria (12 caratteri).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="478" />
+            <source>Parameter Guide, p. 20, 24</source>
+            <translation>Parameter Guide, p. 20, 24</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="480" />
+            <source>Partial Name</source>
+            <translation>Nome del partial</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="485" />
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="105" />
+            <source>Name of the drum partial (12 characters).</source>
+            <translation>Nome del partial di batteria (12 caratteri).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="492" />
+            <source>OUTPUT</source>
+            <translation>USCITA</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="492" />
+            <source>Parameter Guide, p. 9</source>
+            <translation>Parameter Guide, p. 9</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="528" />
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="530" />
+            <source>Parameter Guide, p. 22</source>
+            <translation>Parameter Guide, p. 22</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="530" />
+            <source>PITCH ENVELOPE</source>
+            <translation>INVILUPPO D'INTONAZIONE</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="540" />
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="545" />
+            <source>Parameter Guide, p. 23</source>
+            <translation>Parameter Guide, p. 23</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="545" />
+            <source>TVF ENVELOPE</source>
+            <translation>INVILUPPO TVF</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="556" />
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="560" />
+            <source>Parameter Guide, p. 24</source>
+            <translation>Parameter Guide, p. 24</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="560" />
+            <source>TVA ENVELOPE</source>
+            <translation>INVILUPPO TVA</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="73" />
+            <source>Volume of the whole drum kit.</source>
+            <translation>Volume dell'intero kit di batteria.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="111" />
+            <source>MULTI: repeated notes on the same key overlap. SINGLE: a new note stops the previous one (e.g. open hi-hat).</source>
+            <translation>MULTI: le note ripetute sullo stesso tasto si sovrappongono. SINGLE: una nuova nota ferma la precedente (es. charleston aperto).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="114" />
+            <source>Partials in the same group cannot sound together, like open and closed hi-hat (up to 31 groups; OFF: none).</source>
+            <translation>I partial dello stesso gruppo non suonano insieme, come charleston aperto e chiuso (fino a 31 gruppi; OFF: nessuno).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="116" />
+            <source>NO-SUS: the sound decays naturally even if the key is held. One-shot waves never sustain.</source>
+            <translation>NO-SUS: il suono decade naturalmente anche tenendo il tasto. Le onde one-shot non si sostengono mai.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="118" />
+            <source>Pitch change in semitones with the bend lever (the same both ways).</source>
+            <translation>Variazione di intonazione in semitoni con la leva pitch bend (uguale nei due sensi).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="120" />
+            <source>Whether this partial reacts to MIDI Expression.</source>
+            <translation>Se questo partial reagisce a Expression MIDI.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="122" />
+            <source>Whether this partial reacts to Hold-1 (damper).</source>
+            <translation>Se questo partial reagisce a Hold-1 (pedale di risonanza).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="122" />
+            <source>No effect with Env Mode NO-SUS.</source>
+            <translation>Nessun effetto con Env Mode su NO-SUS.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="124" />
+            <source>ON: the sound plays to the end of the wave or envelope, as with NO-SUS.</source>
+            <translation>ON: il suono va fino alla fine dell'onda o dell'inviluppo, come con NO-SUS.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="126" />
+            <source>Effects this partial goes through when the drum part's Part Output is KIT.</source>
+            <translation>Effetti attraversati da questo partial quando il Part Output della parte di batteria è KIT.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="128" />
+            <source>Level of the partial sent to its output.</source>
+            <translation>Livello del partial inviato alla sua uscita.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="129" />
+            <location filename="../../jdxi_editor/ui/v2/program.py" line="131" />
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="59" />
+            <source>Delay Send Level</source>
+            <translation>Mandata al delay</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="130" />
+            <source>Amount of delay applied to this partial (the MIDI Implementation calls it Chorus Send Level).</source>
+            <translation>Quantità di delay applicata a questo partial (la MIDI Implementation lo chiama Chorus Send Level).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="131" />
+            <location filename="../../jdxi_editor/ui/v2/program.py" line="133" />
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="61" />
+            <source>Reverb Send Level</source>
+            <translation>Mandata al riverbero</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="132" />
+            <source>Amount of reverb applied to this partial.</source>
+            <translation>Quantità di riverbero applicata a questo partial.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="134" />
+            <source>Volume correction of the partial, normally 0; set by the key-based controller messages.</source>
+            <translation>Correzione del volume del partial, normalmente 0; impostata dai messaggi di controllo per tasto.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="137" />
+            <source>ON: which waves sound depends on velocity (their velocity ranges). RANDOM: the waves sound at random.</source>
+            <translation>ON: quali onde suonano dipende dalla dinamica (i loro intervalli). RANDOM: le onde suonano a caso.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="183" />
+            <source>The pitch (note) at which the partial sounds.</source>
+            <translation>L'intonazione (nota) a cui suona il partial.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="185" />
+            <source>Pitch of the partial in cents (±50).</source>
+            <translation>Intonazione del partial in centesimi (±50).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="187" />
+            <source>Random Pitch Depth</source>
+            <translation>Variazione casuale d'intonazione</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="188" />
+            <source>Random pitch change at each key press, in cents; 0: none.</source>
+            <translation>Variazione casuale d'intonazione a ogni tasto, in centesimi; 0: nessuna.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="190" />
+            <source>How much the pitch envelope changes the pitch; negative inverts it.</source>
+            <translation>Quanto l'inviluppo cambia l'intonazione; negativo lo inverte.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="196" />
+            <source>Pitch envelope times: a higher value takes longer to reach the next level.</source>
+            <translation>Tempi dell'inviluppo d'intonazione: un valore più alto impiega di più a raggiungere il livello successivo.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="198" />
+            <source>Pitch at this point, above (+) or below (-) the partial's pitch.</source>
+            <translation>Intonazione in questo punto, sopra (+) o sotto (-) quella del partial.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="202" />
+            <source>OFF: no filter. LPF: low-pass. BPF: band-pass. HPF: high-pass. PKG: peaking (a drum's resonance). LPF2, LPF3: softer low-pass, without resonance.</source>
+            <translation>OFF: nessun filtro. LPF: passa-basso. BPF: passa-banda. HPF: passa-alto. PKG: peaking (la risonanza di un tamburo). LPF2, LPF3: passa-basso più morbidi, senza risonanza.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="204" />
+            <source>Frequency at which the filter begins to act.</source>
+            <translation>Frequenza da cui il filtro comincia ad agire.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="208" />
+            <source>Positive: the cutoff rises the harder you play; negative: it falls.</source>
+            <translation>Positivo: il cutoff sale quanto più forte suoni; negativo: scende.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="210" />
+            <source>Emphasizes the sound around the cutoff; too much can distort.</source>
+            <translation>Enfatizza il suono attorno al cutoff; troppa può distorcere.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="210" />
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="212" />
+            <source>No effect with OFF, LPF2 or LPF3.</source>
+            <translation>Nessun effetto con OFF, LPF2 o LPF3.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="212" />
+            <source>Positive: more resonance the harder you play; negative: less.</source>
+            <translation>Positivo: più risonanza quanto più forte suoni; negativo: meno.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="214" />
+            <source>How much the filter envelope moves the cutoff; negative inverts it.</source>
+            <translation>Quanto l'inviluppo del filtro sposta il cutoff; negativo lo inverte.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="222" />
+            <source>Filter envelope times: a higher value takes longer to reach the next level.</source>
+            <translation>Tempi dell'inviluppo del filtro: un valore più alto impiega di più a raggiungere il livello successivo.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="224" />
+            <source>Cutoff at this point, relative to the Cutoff setting.</source>
+            <translation>Cutoff in questo punto, rispetto all'impostazione Cutoff.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="227" />
+            <source>Volume of the drum partial, for the balance between the drums.</source>
+            <translation>Volume del partial, per il bilanciamento tra i tamburi.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="230" />
+            <source>Positive: louder the harder you play; negative: softer.</source>
+            <translation>Positivo: più forte quanto più forte suoni; negativo: più piano.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="233" />
+            <source>Random Pan Depth</source>
+            <translation>Variazione casuale del pan</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="234" />
+            <source>Range of the random pan change; only for waves with Random Pan Sw ON.</source>
+            <translation>Ampiezza della variazione casuale del pan; solo per le onde con Random Pan Sw su ON.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="235" />
+            <source>Alternate Pan Depth</source>
+            <translation>Alternanza del pan</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="237" />
+            <source>How far the pan alternates at each key press; L and R reverse the order. Only for waves with Alter Pan Sw ON or REVS.</source>
+            <translation>Di quanto il pan si alterna a ogni tasto; L e R invertono l'ordine. Solo per le onde con Alter Pan Sw su ON o REVS.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="242" />
+            <source>Volume envelope times: a higher value takes longer to reach the next level.</source>
+            <translation>Tempi dell'inviluppo del volume: un valore più alto impiega di più a raggiungere il livello successivo.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="244" />
+            <source>Volume at this point, relative to the partial's Level.</source>
+            <translation>Volume in questo punto, rispetto al Level del partial.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="366" />
+            <source>Drum Kit</source>
+            <translation>Kit di batteria</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="505" />
+            <source>Parameter Guide, p. 21</source>
+            <translation>Parameter Guide, p. 21</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="147" />
+            <source>Turns this wave on (the [05]-[08] buttons).</source>
+            <translation>Accende questa onda (i tasti [05]-[08]).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="149" />
+            <source>Wave group of the wave (normally OFF).</source>
+            <translation>Gruppo dell'onda (normalmente OFF).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="151" />
+            <source>The wave; in mono only the left (L) one.</source>
+            <translation>L'onda; in mono solo quella sinistra (L).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="153" />
+            <source>The right wave, for stereo waves.</source>
+            <translation>L'onda destra, per le onde stereo.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="155" />
+            <source>Gain of the wave; each 6 dB step doubles it.</source>
+            <translation>Guadagno dell'onda; ogni passo di 6 dB lo raddoppia.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="157" />
+            <source>FXM (frequency cross modulation) adds complex overtones, for dramatic sounds and effects.</source>
+            <translation>FXM (modulazione incrociata di frequenza) aggiunge armoniche complesse, per suoni drammatici ed effetti.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="159" />
+            <source>How FXM modulates: higher is grainier, lower more metallic.</source>
+            <translation>Come modula FXM: più alto è più granuloso, più basso più metallico.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="160" />
+            <source>Depth of the FXM modulation.</source>
+            <translation>Profondità della modulazione FXM.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="162" />
+            <source>ON: the wave follows the tempo; pitch and FXM settings then have no effect.</source>
+            <translation>ON: l'onda segue il tempo; intonazione e FXM allora non hanno effetto.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="164" />
+            <source>Pitch of the wave in semitones (±4 octaves).</source>
+            <translation>Intonazione dell'onda in semitoni (±4 ottave).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="166" />
+            <source>Pitch of the wave in cents (±50).</source>
+            <translation>Intonazione dell'onda in centesimi (±50).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="169" />
+            <source>ON: the pan changes at random at each key press (range: TVA Rnd Pan Dpth).</source>
+            <translation>ON: il pan cambia a caso a ogni tasto (ampiezza: TVA Rnd Pan Dpth).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="171" />
+            <source>ON: the pan alternates left and right at each key press (TVA Alt Pan Dpth); REVS: reversed.</source>
+            <translation>ON: il pan si alterna tra sinistra e destra a ogni tasto (TVA Alt Pan Dpth); REVS: invertito.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="172" />
+            <source>Volume of the wave.</source>
+            <translation>Volume dell'onda.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="173" />
+            <source>Lowest velocity at which the wave sounds.</source>
+            <translation>Dinamica minima a cui suona l'onda.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="174" />
+            <source>Highest velocity at which the wave sounds.</source>
+            <translation>Dinamica massima a cui suona l'onda.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="176" />
+            <source>How gradually the wave fades below its velocity range (0: not heard at all).</source>
+            <translation>Quanto gradualmente l'onda svanisce sotto il suo intervallo di dinamica (0: non si sente affatto).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="178" />
+            <source>How gradually the wave fades above its velocity range (0: not heard at all).</source>
+            <translation>Quanto gradualmente l'onda svanisce sopra il suo intervallo di dinamica (0: non si sente affatto).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/drums.py" line="343" />
+            <source>Edit {name} (key {note})</source>
+            <translation>Modifica {name} (tasto {note})</translation>
+        </message>
+        <message>
             <location filename="../../jdxi_editor/ui/v2/effects.py" line="63" />
             <source>all parameters</source>
             <translation>tutti i parametri</translation>
@@ -1824,6 +2491,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/effects.py" line="162" />
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="83" />
             <source>Volume balance between the direct sound (D) and the effect sound (W).</source>
             <translation>Bilanciamento di volume tra suono diretto (D) e suono dell'effetto (W).</translation>
         </message>
@@ -1905,6 +2573,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/effects.py" line="113" />
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="56" />
             <source>Output Assign</source>
             <translation>Assegnazione uscita</translation>
         </message>
@@ -2272,12 +2941,12 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Numeri dei parametri presi da JD-Xi Manager, da verificare sullo strumento: {which}.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/framework.py" line="473" />
+            <location filename="../../jdxi_editor/ui/v2/framework.py" line="481" />
             <source>Reading from JD-Xi…</source>
             <translation>Lettura dal JD-Xi…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/framework.py" line="474" />
+            <location filename="../../jdxi_editor/ui/v2/framework.py" line="482" />
             <source>Read complete</source>
             <translation>Lettura completata</translation>
         </message>
@@ -2547,15 +3216,6 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Nella MIDI Implementation; il display del JD-Xi non lo mostra.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/program.py" line="81" />
-            <location filename="../../jdxi_editor/ui/v2/program.py" line="114" />
-            <location filename="../../jdxi_editor/ui/v2/program.py" line="216" />
-            <location filename="../../jdxi_editor/ui/v2/program.py" line="411" />
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="895" />
-            <source>MIDI Implementation</source>
-            <translation>MIDI Implementation</translation>
-        </message>
-        <message>
             <location filename="../../jdxi_editor/ui/v2/program.py" line="112" />
             <source>TONE: use the setting of the tone assigned to the part.</source>
             <translation>TONE: usa l'impostazione del timbro assegnato alla parte.</translation>
@@ -2571,17 +3231,14 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Volume del programma.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/program.py" line="89" />
-            <source>Program Tempo (BPM)</source>
-            <translation>Tempo del programma (BPM)</translation>
-        </message>
-        <message>
             <location filename="../../jdxi_editor/ui/v2/program.py" line="90" />
             <source>Tempo of the program. The Tempo knob adjusts it from 60 to 240; with the SYSTEM parameter Sync Mode set to SLAVE the tempo follows the external device.</source>
             <translation>Tempo del programma. La manopola Tempo lo regola da 60 a 240; con il parametro di SYSTEM Sync Mode su SLAVE il tempo segue il dispositivo esterno.</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/program.py" line="92" />
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="39" />
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="140" />
             <source>Vocal Effect</source>
             <translation>Effetto voce</translation>
         </message>
@@ -2592,16 +3249,19 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/program.py" line="95" />
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="42" />
             <source>Vocal Effect Number</source>
             <translation>Numero dell'effetto voce</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/program.py" line="96" />
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="43" />
             <source>Number of the vocal effect setting used by the program.</source>
             <translation>Numero dell'impostazione dell'effetto voce usata dal programma.</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/program.py" line="97" />
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="44" />
             <source>Vocal Effect Part</source>
             <translation>Parte dell'effetto voce</translation>
         </message>
@@ -2612,6 +3272,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/program.py" line="99" />
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="46" />
             <source>Auto Note Switch</source>
             <translation>Auto Note</translation>
         </message>
@@ -2631,33 +3292,23 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Ottava della tastiera per questa parte (i tasti [Octave]).</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/program.py" line="221" />
-            <source>Arpeggio Switch</source>
-            <translation>Arpeggio attivo</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/program.py" line="222" />
-            <source>Whether the arpeggio plays this part.</source>
-            <translation>Se l'arpeggio suona questa parte.</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/program.py" line="408" />
-            <location filename="../../jdxi_editor/ui/v2/program.py" line="414" />
+            <location filename="../../jdxi_editor/ui/v2/program.py" line="409" />
+            <location filename="../../jdxi_editor/ui/v2/program.py" line="415" />
             <source>Parameter Guide, p. 10</source>
             <translation>Parameter Guide, p. 10</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/program.py" line="410" />
+            <location filename="../../jdxi_editor/ui/v2/program.py" line="411" />
             <source>Parameter Guide, p. 11</source>
             <translation>Parameter Guide, p. 11</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/program.py" line="418" />
+            <location filename="../../jdxi_editor/ui/v2/program.py" line="419" />
             <source>Program Name</source>
             <translation>Nome del programma</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/program.py" line="421" />
+            <location filename="../../jdxi_editor/ui/v2/program.py" line="422" />
             <location filename="../../jdxi_editor/ui/v2/program.py" line="83" />
             <source>Name of the program (12 characters).</source>
             <translation>Nome del programma (12 caratteri).</translation>
@@ -2678,11 +3329,6 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Posizione stereo della parte: L64 tutto a sinistra, 0 al centro, 63R tutto a destra.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/program.py" line="131" />
-            <source>Delay Send Level</source>
-            <translation>Mandata al delay</translation>
-        </message>
-        <message>
             <location filename="../../jdxi_editor/ui/v2/program.py" line="132" />
             <source>Amount of delay applied to the part; 0 for none.</source>
             <translation>Quantità di delay applicata alla parte; 0 per nessuno.</translation>
@@ -2691,11 +3337,6 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <location filename="../../jdxi_editor/ui/v2/program.py" line="132" />
             <source>Not with Part Output REV, DIR or KIT.</source>
             <translation>Non con Part Output REV, DIR o KIT.</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/program.py" line="133" />
-            <source>Reverb Send Level</source>
-            <translation>Mandata al riverbero</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/program.py" line="134" />
@@ -2903,7 +3544,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Numero del timbro assegnato alla parte, all'interno del banco.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/program.py" line="334" />
+            <location filename="../../jdxi_editor/ui/v2/program.py" line="335" />
             <source>Program: common and parts</source>
             <translation>Programma: generale e parti</translation>
         </message>
@@ -2963,6 +3604,218 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Se la parte reagisce ai messaggi {message}.</translation>
         </message>
         <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="151" />
+            <source>VOCAL EFFECT OF THE PROGRAM</source>
+            <translation>EFFETTO VOCE DEL PROGRAMMA</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="151" />
+            <source>Parameter Guide, p. 9, 28</source>
+            <translation>Parameter Guide, p. 9, 28</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="165" />
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="171" />
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="178" />
+            <source>Parameter Guide, p. 28</source>
+            <translation>Parameter Guide, p. 28</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="40" />
+            <source>Which vocal effect the program uses: none, the vocoder (the selected digital part is the instrument) or AutoPitch (the external input is corrected; the selected digital part turns off).</source>
+            <translation>Quale effetto voce usa il programma: nessuno, il vocoder (la parte digitale scelta è lo strumento) o AutoPitch (l'ingresso esterno viene corretto; la parte digitale scelta si spegne).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="45" />
+            <source>Digital part used by the vocal effect (Part 1 or Part 2).</source>
+            <translation>Parte digitale usata dall'effetto voce (Part 1 o Part 2).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="47" />
+            <source>ON: AutoPitch corrects to the notes played on the keyboard.</source>
+            <translation>ON: AutoPitch corregge verso le note suonate sulla tastiera.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="57" />
+            <source>Where the sound goes: EFX1, EFX2, Delay, Reverb, or straight out without effects (DIR).</source>
+            <translation>Dove va il suono: EFX1, EFX2, Delay, Reverb o direttamente all'uscita senza effetti (DIR).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="60" />
+            <source>Amount of delay applied to the sound of the vocal effect.</source>
+            <translation>Quantità di delay applicata al suono dell'effetto voce.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="62" />
+            <source>Amount of reverb applied to the sound of the vocal effect.</source>
+            <translation>Quantità di riverbero applicata al suono dell'effetto voce.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="64" />
+            <source>Auto Pitch Switch</source>
+            <translation>AutoPitch attivo</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="64" />
+            <source>Turns AutoPitch on or off.</source>
+            <translation>Accende o spegne AutoPitch.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="66" />
+            <source>Auto Pitch Type</source>
+            <translation>Tipo di AutoPitch</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="67" />
+            <source>SOFT: smooth correction. HARD: quick. ELECTRIC1: stepwise. ELECTRIC2: stronger, the mechanical stepwise correction of pop music.</source>
+            <translation>SOFT: correzione morbida. HARD: rapida. ELECTRIC1: a scalini. ELECTRIC2: più forte, la correzione meccanica a scalini della musica pop.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="69" />
+            <source>Auto Pitch Scale</source>
+            <translation>Scala di AutoPitch</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="70" />
+            <source>CHROMATIC: corrects to semitones. Maj(Min): to the notes of the key below.</source>
+            <translation>CHROMATIC: corregge ai semitoni. Maj(Min): alle note della tonalità qui sotto.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="72" />
+            <source>Auto Pitch Key</source>
+            <translation>Tonalità di AutoPitch</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="73" />
+            <source>Key of the song: e.g. C for C major, Am for A minor.</source>
+            <translation>Tonalità del brano: es. C per Do maggiore, Am per La minore.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="75" />
+            <source>Auto Pitch Note</source>
+            <translation>Nota di AutoPitch</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="76" />
+            <source>Note AutoPitch corrects to.</source>
+            <translation>Nota verso cui AutoPitch corregge.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="77" />
+            <source>Auto Pitch Gender</source>
+            <translation>Genere di AutoPitch</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="78" />
+            <source>Negative: a more masculine voice; positive: more feminine.</source>
+            <translation>Negativo: una voce più maschile; positivo: più femminile.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="80" />
+            <source>Auto Pitch Octave</source>
+            <translation>Ottava di AutoPitch</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="80" />
+            <source>Raises or lowers the pitch by an octave.</source>
+            <translation>Alza o abbassa l'intonazione di un'ottava.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="82" />
+            <source>Auto Pitch Balance</source>
+            <translation>Bilanciamento di AutoPitch</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="86" />
+            <source>Vocoder Switch</source>
+            <translation>Vocoder attivo</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="86" />
+            <source>Turns the vocoder on or off.</source>
+            <translation>Accende o spegne il vocoder.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="88" />
+            <source>Vocoder Envelope</source>
+            <translation>Inviluppo del vocoder</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="89" />
+            <source>Character of the sound. SHARP: emphasizes the voice. SOFT: the instrument. LONG: a vintage sound with a long decay.</source>
+            <translation>Carattere del suono. SHARP: mette in risalto la voce. SOFT: lo strumento. LONG: un suono vintage con un lungo decadimento.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="91" />
+            <source>Vocoder Mic Sens</source>
+            <translation>Sensibilità del microfono</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="91" />
+            <source>Input sensitivity of the mic.</source>
+            <translation>Sensibilità d'ingresso del microfono.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="92" />
+            <source>Vocoder Synth Level</source>
+            <translation>Livello del sintetizzatore</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="92" />
+            <source>Input level of the instrument sound.</source>
+            <translation>Livello d'ingresso del suono dello strumento.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="94" />
+            <source>Vocoder Mic Mix Level</source>
+            <translation>Miscelazione del microfono</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="95" />
+            <source>How much of the mic, after the Mic HPF, is added to the vocoder output.</source>
+            <translation>Quanto del microfono, dopo il Mic HPF, si aggiunge all'uscita del vocoder.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="96" />
+            <source>Vocoder Mic HPF</source>
+            <translation>Passa-alto del microfono</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="97" />
+            <source>Frequency from which the high-pass filter on the mic acts; BYPASS: no filter.</source>
+            <translation>Frequenza da cui agisce il passa-alto sul microfono; BYPASS: nessun filtro.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="99" />
+            <source>Vocal Effect, address 00 0F</source>
+            <translation>Effetto voce, indirizzo 00 0F</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="100" />
+            <source>A value the MIDI Implementation lists without a name (0-127).</source>
+            <translation>Un valore che la MIDI Implementation elenca senza nome (0-127).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="186" />
+            <source>Vocoder/AutoPitch can be used for one part only; with it, the analog part cannot be selected (Parameter Guide, p. 4). The settings are saved with the program: save it on the JD-Xi with [Menu/Write].</source>
+            <translation>Vocoder/AutoPitch si usa su una sola parte; con esso la parte analogica non è selezionabile (Parameter Guide, p. 4). Le impostazioni si salvano con il programma: salvalo sul JD-Xi con [Menu/Write].</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="53" />
+            <source>Volume of the sound that passes through the vocal effect.</source>
+            <translation>Volume del suono che passa dall'effetto voce.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="55" />
+            <source>Stereo position of the sound that passes through the vocal effect.</source>
+            <translation>Posizione stereo del suono che passa dall'effetto voce.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/vocal.py" line="74" />
+            <source>Only with Scale Maj(Min).</source>
+            <translation>Solo con Scale su Maj(Min).</translation>
+        </message>
+        <message>
             <location filename="../../jdxi_editor/ui/v2/widgets.py" line="588" />
             <source>Drag the points to change the envelope</source>
             <translation>Trascina i punti per cambiare l'inviluppo</translation>
@@ -2986,11 +3839,6 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <location filename="../../jdxi_editor/ui/v2/widgets.py" line="864" />
             <source>Its name on the display, range and explanation appear here, with what it depends on.</source>
             <translation>Qui compaiono il nome sul display, l'intervallo e la spiegazione, con ciò da cui dipende.</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="670" />
-            <source>key off</source>
-            <translation>rilascio</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/widgets.py" line="761" />
@@ -3481,22 +4329,22 @@ Nota: se il Sync del JD-Xi è MIDI o AUTO, Start avvia anche il suo pattern sequ
             <translation>Tono giù: passa al preset/tono precedente</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="278" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="281" />
             <source>Checking GitHub for updates…</source>
             <translation>Controllo degli aggiornamenti su GitHub…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1163" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1172" />
             <source>Offline: no MIDI backend available</source>
             <translation>Offline: nessun sistema MIDI disponibile</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1166" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1175" />
             <source>MIDI not available</source>
             <translation>MIDI non disponibile</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1167" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1176" />
             <source>The system has no MIDI interface that the editor can open, so it runs offline: you can edit, open and save patches, but nothing is sent to or received from the JD-Xi.
 
 On Linux, load the ALSA sequencer (sudo modprobe snd-seq) and restart the editor.</source>
@@ -3505,125 +4353,125 @@ On Linux, load the ALSA sequencer (sudo modprobe snd-seq) and restart the editor
 Su Linux carica il sequencer ALSA (sudo modprobe snd-seq) e riavvia l'editor.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1631" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1646" />
             <source>Update User Program Database</source>
             <translation>Aggiorna l'archivio dei programmi utente</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1632" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1647" />
             <source>This will scan through all user banks (E, F, G, H) and update the program database.
 This may take several minutes. Continue?</source>
             <translation>Verranno letti tutti i banchi utente (E, F, G, H) per aggiornare l'archivio dei programmi.
 Può richiedere alcuni minuti. Continuare?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1650" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1665" />
             <source>Updating Database</source>
             <translation>Aggiornamento dell'archivio</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="305" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="316" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="308" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="319" />
             <source>Check for Updates</source>
             <translation>Cerca aggiornamenti</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1295" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1304" />
             <source>Recent MIDI Files</source>
             <translation>MIDI file recenti</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1329" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1338" />
             <source>No recent files</source>
             <translation>Nessun file recente</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1347" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1356" />
             <source>Clear Recent Files</source>
             <translation>Svuota l'elenco dei file recenti</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1432" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1439" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1441" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1448" />
             <source>No MIDI file</source>
             <translation>Nessun MIDI file</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1433" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1442" />
             <source>Open the MIDI File player and load a MIDI file first.</source>
             <translation>Apri il lettore di MIDI file e carica prima un MIDI file.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1440" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1449" />
             <source>No MIDI file is loaded. Load a MIDI file from the File menu first.</source>
             <translation>Nessun MIDI file caricato. Caricane prima uno dal menu File.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1479" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1472" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1458" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1488" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1481" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1467" />
             <source>Export failed</source>
             <translation>Esportazione non riuscita</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1480" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1489" />
             <source>Could not create PDF. Is LilyPond installed?</source>
             <translation>Impossibile creare il PDF. LilyPond è installato?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1623" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1638" />
             <source>MIDI Not Connected</source>
             <translation>MIDI non collegato</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1624" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1639" />
             <source>Please connect to the JD-Xi synthesizer before updating the database.</source>
             <translation>Collega il JD-Xi prima di aggiornare l'archivio.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1720" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1735" />
             <source>Update Complete</source>
             <translation>Aggiornamento completato</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1473" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1482" />
             <source>Could not create PDF. Is LilyPond installed? See Help or preferences.</source>
             <translation>Impossibile creare il PDF. LilyPond è installato? Vedi l'Aiuto o le Preferenze.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1742" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1757" />
             <source>Reading {current_bank}{db_update_current_program:02d}...</source>
             <translation>Lettura di {current_bank}{db_update_current_program:02d}...</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="306" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="309" />
             <source>You're up to date: {program} {version} is the newest release.</source>
             <translation>Hai la versione più recente: {program} {version}.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="317" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="320" />
             <source>Couldn't check GitHub for updates:
 {message}</source>
             <translation>Impossibile controllare gli aggiornamenti su GitHub:
 {message}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="956" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="962" />
             <source>Loading Analog Synth editor...</source>
             <translation>Caricamento dell'editor Analog Synth...</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1363" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1372" />
             <source>The file '{file_path}' no longer exists.</source>
             <translation>Il file '{file_path}' non esiste più.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1459" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1468" />
             <source>Could not prepare the current MIDI file for export.</source>
             <translation>Impossibile preparare il MIDI file attuale per l'esportazione.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1721" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1736" />
             <source>Successfully updated {db_update_programs_saved} programs in the database.
 
 The program list has been refreshed with the updated names.</source>
@@ -3632,27 +4480,27 @@ The program list has been refreshed with the updated names.</source>
 L'elenco dei programmi mostra ora i nomi aggiornati.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="960" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="966" />
             <source>Loading Digital Synth 1 editor...</source>
             <translation>Caricamento dell'editor Digital Synth 1...</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="2514" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="2529" />
             <source>Tone {number} {name}, {type}</source>
             <translation>Tono {number} {name}, {type}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="965" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="971" />
             <source>Loading Digital Synth 2 editor...</source>
             <translation>Caricamento dell'editor Digital Synth 2...</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="2464" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="2479" />
             <source>Error saving preset: {value1}</source>
             <translation>Errore nel salvare il preset: {value1}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="969" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="975" />
             <source>Preparing Drum Kit editor...</source>
             <translation>Preparazione dell'editor del kit Drums...</translation>
         </message>
@@ -4312,6 +5160,18 @@ Esempio: F0 41 10 00 00 00 0E 12 19 01 20 00 01 F7</translation>
             <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="106" />
             <source>Edit Patch Name</source>
             <translation>Modifica il nome della patch</translation>
+        </message>
+        <message>
+            <source>OUTPUT (MIDI only)</source>
+            <translation type="vanished">USCITA (solo MIDI)</translation>
+        </message>
+        <message>
+            <source>Send level the MIDI Implementation calls "Chorus Send Level" (not on the JD-Xi display).</source>
+            <translation type="vanished">Livello di mandata che la MIDI Implementation chiama "Chorus Send Level" (non è sul display del JD-Xi).</translation>
+        </message>
+        <message>
+            <source>Amount of reverb applied to the partial.</source>
+            <translation type="vanished">Quantità di riverbero applicata al partial.</translation>
         </message>
         <message>
             <source>MIDI Configuration</source>

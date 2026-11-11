@@ -229,8 +229,9 @@ def zone_block(part: int) -> Block:
 class VelocityView(_Graph):
     """Which velocities play the part, with the fades: drag the lower and upper limits."""
 
-    def __init__(self, editor: "ProgramPartsEditor", lower, upper, fade_lower, fade_upper):
-        super().__init__(ACCENT, editor.info_hub, 70)
+    def __init__(self, editor: "ProgramPartsEditor", lower, upper, fade_lower, fade_upper, accent: str = ACCENT):
+        super().__init__(accent, editor.info_hub, 70)
+        self.color = accent
         self.lower, self.upper, self.fade_lower, self.fade_upper = lower, upper, fade_lower, fade_upper
         for pv in (lower, upper, fade_lower, fade_upper):
             pv.watch(lambda _v: self.update())
@@ -259,10 +260,10 @@ class VelocityView(_Graph):
         path.lineTo(QPointF(self._x(lo), r.top()))
         path.lineTo(QPointF(self._x(hi), r.top()))
         path.lineTo(QPointF(self._x(min(127, hi + self.fade_upper.value())), r.bottom()))
-        fill = QColor(ACCENT)
+        fill = QColor(self.color)
         fill.setAlpha(60)
         p.setBrush(fill)
-        p.setPen(QPen(QColor(ACCENT), 1.6))
+        p.setPen(QPen(QColor(self.color), 1.6))
         p.drawPath(path)
         self._draw_handles(p)
         p.setPen(QColor("#8a8d94"))
