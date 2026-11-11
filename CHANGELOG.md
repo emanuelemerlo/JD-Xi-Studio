@@ -45,8 +45,10 @@ on the JD-Xi display.
   always on top**; closing the keyboard closes the editors
 - **Window → Line up the editors with the keyboard**: the editors window right above the keyboard
   (below it when there is no room)
-- **Window → Show the editors** (Ctrl+Shift+W); the panel keeps its size and stays centred when
-  the keyboard window is maximised
+- **Window → Show the editors** (Ctrl+Shift+W)
+- **A maximised keyboard window keeps the instrument as it is**: panel and keys are one block of
+  fixed size, centred, and the body grows around it (the Parts Select buttons, the wheels and the
+  keyboard no longer come apart from the panel); the status bar shows only while it has a message
 
 ### Each editor in its own colour
 
