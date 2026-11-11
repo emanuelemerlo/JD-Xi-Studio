@@ -51,7 +51,10 @@ class TestResourcePath(unittest.TestCase):
                 resources, "_macos_app_resources_dir", return_value=None
             ):
                 resolved = resources.resource_path("resources/foo.png")
-                self.assertEqual(resolved, os.path.join("/tmp/fake_meipass", "resources/foo.png"))
+                self.assertEqual(
+                    resolved,
+                    os.path.normpath(os.path.join("/tmp/fake_meipass", "resources/foo.png")),
+                )
 
 
 if __name__ == "__main__":
