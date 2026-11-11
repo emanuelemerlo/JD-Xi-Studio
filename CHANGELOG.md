@@ -31,6 +31,27 @@ on the JD-Xi display.
   .syx, random tone) stays on the right
 - The original Analog editor (`AnalogSynthEditor`) is still in the code; the app opens the new one
 
+### Effects editor (new)
+
+- **Effect 1, Effect 2, Delay and Reverb on one screen**, with every parameter of the Parameter Guide
+  (p. 26-27) and the Version 1.50 side-chain compressor (Side Switch, Level, Note, Time, Release, Sync)
+- **Signal chain** at the top: the selected types and how Effect 1 is connected (Output Assign DIR or
+  EFX2, in series); click a block to go to its settings
+- **Only the parameters of the selected type** are shown, as on the display; when the type changes
+  the editor reads the block back, since the JD-Xi loads that type's own settings
+- **Graphs**: the delay echoes over time (time or note, feedback, PAN with Tap Time on the left
+  channel, level) and the compressor curve (drag the threshold)
+- **Right addresses and encoding** from the MIDI Implementation, checked by tests: 4-nibble effect
+  parameters (32768 = 0) at 00 11 + 4(n-1), Effect 2 types sent as 0, 5-8, delay time in ms; the
+  delay and reverb levels the panel knobs set are Delay/Reverb Parameter 8/4, the block levels at 00 01
+  (MIDI only) are shown apart
+- Settings without effect greyed out (Rate or Note, Time or Note, Tap Time only with PAN, side chain
+  with Side Switch OFF); parameter numbers that come from the JD-Xi Manager and not from a Roland
+  document are marked on screen (Phaser Manual/Level, Ring Mod, Slicer, Side Time units)
+- A common base (`jdxi_editor/ui/v2/framework.py`) describes parameters as data (address, encoding,
+  range, explanation): the next editors are built on it
+- The original effects editor (`EffectsCommonEditor`) is still in the code; the app opens the new one
+
 ### Start-up and CI
 
 - **The USB recorder starts PortAudio only when it is used**, not when the MIDI file player and the

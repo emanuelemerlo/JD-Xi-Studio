@@ -121,6 +121,7 @@ from jdxi_editor.ui.windows.jdxi.recent_files import RecentFilesManager
 from jdxi_editor.ui.windows.jdxi.ui import JDXiWindow
 from jdxi_editor.ui.windows.jdxi.utils import show_message_box_from_spec
 from jdxi_editor.ui.v2.analog import AnalogToneEditor
+from jdxi_editor.ui.v2.effects import EffectsEditor
 from jdxi_editor.ui.windows.midi.config_dialog import MIDIConfigDialog
 from jdxi_editor.ui.windows.midi.debugger import MIDIDebugger
 from jdxi_editor.ui.windows.midi.monitor import MIDIMessageMonitor
@@ -222,7 +223,7 @@ class JDXiInstrument(JDXiWindow):
             ),
             "effects": EditorConfig(
                 title="Effects",
-                editor_class=EffectsCommonEditor,
+                editor_class=EffectsEditor,  # new interface (1.0)
                 icon="ri.sound-module-fill",
             ),
             "pattern": EditorConfig(
@@ -915,6 +916,7 @@ class JDXiInstrument(JDXiWindow):
                     MidiFilePlayer,
                     VocalFXEditor,
                     EffectsCommonEditor,
+                    EffectsEditor,
                 }
                 else None
             )
@@ -1083,6 +1085,7 @@ class JDXiInstrument(JDXiWindow):
                     MidiFilePlayer,
                     VocalFXEditor,
                     EffectsCommonEditor,
+                    EffectsEditor,
                 ]
                 else None
             )

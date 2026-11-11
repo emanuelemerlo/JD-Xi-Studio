@@ -41,6 +41,8 @@ class ParamInfo:
     page: int = 0  # page of the Parameter Guide
     signed: bool = False  # show "+" before positive values
     show_negative: bool = False  # the display shows the value as negative (Bend Range Down)
+    area: str = "TONE"  # what the group belongs to: TONE, PROGRAM, EFFECTS...
+    source: str = ""  # where the explanation comes from, when not the Parameter Guide
 
     def format(self, value: int) -> str:
         if self.choices and 0 <= value < len(self.choices):

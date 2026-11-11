@@ -308,6 +308,7 @@ versione:	{version}</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/effects/common.py" line="215" />
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="443" />
             <source>Effects</source>
             <translation>Effetti</translation>
         </message>
@@ -348,6 +349,7 @@ versione:	{version}</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="29" />
+            <location filename="../../jdxi_editor/ui/v2/framework.py" line="211" />
             <location filename="../../jdxi_editor/ui/windows/patch/manager.py" line="134" />
             <location filename="../../jdxi_editor/ui/windows/patch/manager.py" line="221" />
             <location filename="../../jdxi_editor/ui/windows/patch/manager.py" line="227" />
@@ -356,6 +358,7 @@ versione:	{version}</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="32" />
+            <location filename="../../jdxi_editor/ui/v2/framework.py" line="212" />
             <source>Request current parameters from the synthesizer (RQ1)</source>
             <translation>Chiedi al synth i parametri attuali (RQ1)</translation>
         </message>
@@ -475,7 +478,7 @@ versione:	{version}</translation>
             <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1158" />
             <location filename="../../jdxi_editor/ui/editors/playlist/table.py" line="275" />
             <location filename="../../jdxi_editor/ui/editors/playlist/table.py" line="331" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="2448" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="2451" />
             <source>Error</source>
             <translation>Errore</translation>
         </message>
@@ -694,7 +697,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1080" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1347" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1350" />
             <source>File Not Found</source>
             <translation>File non trovato</translation>
         </message>
@@ -1006,362 +1009,876 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Rotella di modulazione (CC01)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="132" />
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="63" />
+            <source>all parameters</source>
+            <translation>tutti i parametri</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="91" />
+            <source>Adjusts the volume.</source>
+            <translation>Regola il volume.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="98" />
+            <source>JD-Xi Version 1.50 Supplementary Manual</source>
+            <translation>Manuale supplementare JD-Xi versione 1.50</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="107" />
+            <source>Selects the type of distortion.</source>
+            <translation>Seleziona il tipo di distorsione.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="108" />
+            <source>Adjusts the depth of distortion.</source>
+            <translation>Regola la profondità della distorsione.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="109" />
+            <source>Adjusts the character of the ultra-high-frequency region.</source>
+            <translation>Regola il carattere della regione delle frequenze più acute.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="110" />
+            <source>Only with Side Switch ON.</source>
+            <translation>Solo con Side Switch su ON.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="158" />
+            <source>Frequency of modulation.</source>
+            <translation>Frequenza della modulazione.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="159" />
+            <source>RATE: the speed is set with Rate. NOTE: it follows the tempo, as a note value.</source>
+            <translation>RATE: la velocità si imposta con Rate. NOTE: segue il tempo, come valore di nota.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="161" />
+            <source>Adjusts the basic frequency from which the sound will be modulated.</source>
+            <translation>Regola la frequenza di base da cui il suono viene modulato.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="162" />
+            <source>Volume balance between the direct sound (D) and the effect sound (W).</source>
+            <translation>Bilanciamento di volume tra suono diretto (D) e suono dell'effetto (W).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="68" />
+            <source>Side Time, sent as milliseconds (60-1000)</source>
+            <translation>Side Time, inviato in millisecondi (60-1000)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="160" />
+            <source>Only with Rate/Note set to RATE.</source>
+            <translation>Solo con Rate/Note su RATE.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="160" />
+            <source>Only with Rate/Note set to NOTE.</source>
+            <translation>Solo con Rate/Note su NOTE.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="254" />
+            <source>Click a block to go to its settings</source>
+            <translation>Fai clic su un blocco per andare alle sue impostazioni</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="314" />
+            <source>Effect 1 → Effect 2 in series (Output Assign EFX2)</source>
+            <translation>Effetto 1 → Effetto 2 in serie (Output Assign EFX2)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="314" />
+            <source>Effect 1 → output, Effect 2 used by other parts (Output Assign DIR)</source>
+            <translation>Effetto 1 → uscita, Effetto 2 usato da altre parti (Output Assign DIR)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="432" />
+            <source>in → out</source>
+            <translation>ingresso → uscita</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="479" />
+            <source>Parameter Guide, p. 26-27</source>
+            <translation>Parameter Guide, p. 26-27</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="529" />
+            <source>SIDE CHAIN (version 1.50)</source>
+            <translation>SIDE CHAIN (versione 1.50)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="538" />
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="551" />
+            <source>Parameter Guide, p. 26</source>
+            <translation>Parameter Guide, p. 26</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="383" />
+            <source>{time} ms between echoes</source>
+            <translation>{time} ms tra gli echi</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="385" />
+            <source>(note at tempo 120)</source>
+            <translation>(nota a tempo 120)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="387" />
+            <source>blue: left, orange: right</source>
+            <translation>blu: sinistra, arancione: destra</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="472" />
+            <source>Changes are heard at once and kept in the current program until another one is selected. To keep them, save the program on the JD-Xi with [Menu/Write]: the JD-Xi cannot be written to its memory via MIDI.</source>
+            <translation>Le modifiche si sentono subito e restano nel programma corrente finché non se ne sceglie un altro. Per conservarle salva il programma sul JD-Xi con [Menu/Write]: via MIDI non si può scrivere nella sua memoria.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="112" />
+            <source>Effect 1 Type</source>
+            <translation>Tipo dell'effetto 1</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="112" />
+            <source>Selects the type of effect 1.</source>
+            <translation>Seleziona il tipo dell'effetto 1.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="113" />
+            <source>Output Assign</source>
+            <translation>Assegnazione uscita</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="114" />
+            <source>Selects the output destination for the sound from effect 1. DIR: to the Output jacks. EFX2: to Effect 2 (in series). To use EFX1 and EFX2 separately for each part, set DIR.</source>
+            <translation>Seleziona dove va il suono dell'effetto 1. DIR: alle uscite Output. EFX2: all'effetto 2 (in serie). Per usare EFX1 ed EFX2 separatamente per ciascuna parte, imposta DIR.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="116" />
+            <source>Effect 1 Delay Send Level</source>
+            <translation>Mandata al delay dell'effetto 1</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="116" />
+            <source>Depth of delay applied to the sound from effect 1.</source>
+            <translation>Quantità di delay applicata al suono dell'effetto 1.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="117" />
+            <source>Effect 1 Reverb Send Level</source>
+            <translation>Mandata al riverbero dell'effetto 1</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="117" />
+            <source>Depth of reverb applied to the sound from effect 1.</source>
+            <translation>Quantità di riverbero applicata al suono dell'effetto 1.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="118" />
+            <source>Effect 1 Level</source>
+            <translation>Livello dell'effetto 1</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="118" />
+            <source>Output level of the whole Effect 1 block. Not on the JD-Xi display; it can only be set via MIDI.</source>
+            <translation>Livello d'uscita dell'intero blocco Effetto 1. Non è sul display del JD-Xi: si imposta solo via MIDI.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="164" />
+            <source>Effect 2 Type</source>
+            <translation>Tipo dell'effetto 2</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="164" />
+            <source>Selects the type of effect 2.</source>
+            <translation>Seleziona il tipo dell'effetto 2.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="166" />
+            <source>Effect 2 Delay Send Level</source>
+            <translation>Mandata al delay dell'effetto 2</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="166" />
+            <source>Depth of delay applied to the sound from effect 2.</source>
+            <translation>Quantità di delay applicata al suono dell'effetto 2.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="167" />
+            <source>Effect 2 Reverb Send Level</source>
+            <translation>Mandata al riverbero dell'effetto 2</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="167" />
+            <source>Depth of reverb applied to the sound from effect 2.</source>
+            <translation>Quantità di riverbero applicata al suono dell'effetto 2.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="168" />
+            <source>Effect 2 Level</source>
+            <translation>Livello dell'effetto 2</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="168" />
+            <source>Output level of the whole Effect 2 block. Not on the JD-Xi display; it can only be set via MIDI.</source>
+            <translation>Livello d'uscita dell'intero blocco Effetto 2. Non è sul display del JD-Xi: si imposta solo via MIDI.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="219" />
+            <source>Delay to Reverb Send Level</source>
+            <translation>Mandata dal delay al riverbero</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="220" />
+            <source>Depth of reverb applied to the sound that passes through the delay.</source>
+            <translation>Quantità di riverbero applicata al suono che passa dal delay.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="221" />
+            <source>Delay Level (block)</source>
+            <translation>Livello del delay (blocco)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="222" />
+            <source>Output level of the whole Delay block. Not on the JD-Xi display; it can only be set via MIDI.</source>
+            <translation>Livello d'uscita dell'intero blocco Delay. Non è sul display del JD-Xi: si imposta solo via MIDI.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="236" />
+            <source>Reverb Level (block)</source>
+            <translation>Livello del riverbero (blocco)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="237" />
+            <source>Output level of the whole Reverb block. Not on the JD-Xi display; it can only be set via MIDI.</source>
+            <translation>Livello d'uscita dell'intero blocco Reverb. Non è sul display del JD-Xi: si imposta solo via MIDI.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="119" />
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="169" />
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="222" />
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="237" />
+            <source>Set via MIDI only.</source>
+            <translation>Si imposta solo via MIDI.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="121" />
+            <source>Distortion Type</source>
+            <translation>Tipo di distorsione</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="126" />
+            <source>Fuzz Type</source>
+            <translation>Tipo di fuzz</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="131" />
+            <source>Level at which compression is applied.</source>
+            <translation>Livello oltre il quale si applica la compressione.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="132" />
+            <source>Compression ratio.</source>
+            <translation>Rapporto di compressione.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="133" />
+            <source>Time from when the input exceeds the Threshold until compression begins.</source>
+            <translation>Tempo da quando l'ingresso supera la soglia (Threshold) all'inizio della compressione.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="135" />
+            <source>Time from when the input falls below the Threshold until compression is removed.</source>
+            <translation>Tempo da quando l'ingresso scende sotto la soglia alla fine della compressione.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="138" />
+            <source>Side Chain Switch</source>
+            <translation>Interruttore side chain</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="139" />
+            <source>Side chain: lowers the volume of the digital/analog parts while the drum part is producing sound.</source>
+            <translation>Side chain: abbassa il volume delle parti digitali/analogica mentre suona la parte di batteria.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="141" />
+            <source>Specifies the level of the side chain.</source>
+            <translation>Livello del side chain.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="142" />
+            <source>Drum instrument (note number) sent to the side chain. In the drum part you can also set it with the keyboard.</source>
+            <translation>Strumento di batteria (numero di nota) inviato al side chain. Nella parte di batteria lo si può impostare anche dalla tastiera.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="144" />
+            <source>Time after which the reduced volume starts returning to normal.</source>
+            <translation>Tempo dopo il quale il volume ridotto comincia a tornare normale.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="146" />
+            <source>Time over which compression is removed once the reduced volume starts returning to normal.</source>
+            <translation>Tempo in cui la compressione si toglie, una volta che il volume ridotto comincia a tornare normale.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="148" />
+            <source>Side Sync Switch</source>
+            <translation>Sincronizzazione side chain</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="149" />
+            <source>ON: Side Time follows the tempo (the value set is the one at tempo 120).</source>
+            <translation>ON: Side Time segue il tempo (il valore impostato vale a tempo 120).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="152" />
+            <source>Adjusts the sampling frequency.</source>
+            <translation>Regola la frequenza di campionamento.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="153" />
+            <source>Adjusts the bit depth.</source>
+            <translation>Regola la risoluzione in bit.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="154" />
+            <source>Adjusts the filter depth.</source>
+            <translation>Regola la profondità del filtro.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="171" />
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="180" />
+            <source>Rate or Note</source>
+            <translation>Velocità o nota</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="174" />
+            <source>Depth of modulation.</source>
+            <translation>Profondità della modulazione.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="175" />
+            <source>Proportion of the flanger sound that is returned to the input. With 0 the flanger works as a chorus.</source>
+            <translation>Quota del suono del flanger rimandata all'ingresso. Con 0 il flanger funziona come un chorus.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="181" />
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="182" />
+            <source>Adjusts the speed of rotation.</source>
+            <translation>Regola la velocità di rotazione.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="183" />
+            <source>Adjusts the depth of the phase effect.</source>
+            <translation>Regola la profondità dell'effetto di fase.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="184" />
+            <source>Adjusts the amount of resonance.</source>
+            <translation>Regola la quantità di risonanza.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="188" />
+            <source>Adjusts the frequency at which modulation is applied.</source>
+            <translation>Regola la frequenza a cui si applica la modulazione.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="189" />
+            <source>Adjusts the amount of frequency modulation applied.</source>
+            <translation>Regola la quantità di modulazione di frequenza applicata.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="193" />
+            <source>Timing Pattern</source>
+            <translation>Schema ritmico</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="193" />
+            <source>Selects the rhythm pattern by which the sound is sliced.</source>
+            <translation>Seleziona lo schema ritmico con cui il suono viene affettato.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="194" />
+            <source>Adjusts the rate at which the sound is sliced.</source>
+            <translation>Regola la velocità con cui il suono viene affettato.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="195" />
+            <source>Speed at which the level changes between steps.</source>
+            <translation>Velocità con cui il livello cambia tra un passo e l'altro.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="197" />
+            <source>Sensitivity that triggers playback from the beginning of the pattern. Set 127 to keep the Slicer in step with the pattern.</source>
+            <translation>Sensibilità che fa ripartire lo schema dall'inizio. Imposta 127 per tenere lo Slicer a tempo con il pattern.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="205" />
+            <source>Selects the type of delay. PAN: the echoes alternate between left and right.</source>
+            <translation>Seleziona il tipo di delay. PAN: gli echi si alternano tra sinistra e destra.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="206" />
+            <source>Delay time as milliseconds or note</source>
+            <translation>Tempo del delay in millisecondi o come nota</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="207" />
+            <source>TIME: the delay time is set in milliseconds. NOTE: it follows the tempo, as a note value.</source>
+            <translation>TIME: il tempo del delay si imposta in millisecondi. NOTE: segue il tempo, come valore di nota.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="208" />
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="210" />
+            <source>Delay Time</source>
+            <translation>Tempo del delay</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="208" />
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="210" />
+            <source>Adjusts the delay time.</source>
+            <translation>Regola il tempo del delay.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="209" />
+            <source>Only with Time/Note set to TIME.</source>
+            <translation>Solo con Time/Note su TIME.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="211" />
+            <source>Only with Time/Note set to NOTE.</source>
+            <translation>Solo con Time/Note su NOTE.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="212" />
+            <source>Delay time of the L channel relative to the R channel (100%).</source>
+            <translation>Tempo del canale sinistro rispetto a quello del destro (100%).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="213" />
+            <source>Only with Type PAN.</source>
+            <translation>Solo con Type su PAN.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="214" />
+            <source>Proportion of delay sound that is returned to the input.</source>
+            <translation>Quota del suono del delay rimandata all'ingresso.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="215" />
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="232" />
+            <source>High Frequency Damp</source>
+            <translation>Smorzamento degli acuti</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="216" />
+            <source>Frequency at which to cut the high-frequency portion of the delay sound returned to the input (BYPASS: no cut).</source>
+            <translation>Frequenza oltre la quale si tagliano gli acuti del suono del delay rimandato all'ingresso (BYPASS: nessun taglio).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="218" />
+            <source>Adjusts the volume of the delay sound. The panel [Delay] knob sets it.</source>
+            <translation>Regola il volume del suono del delay. La manopola [Delay] del pannello agisce su questo.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="229" />
+            <source>Specifies the type of reverb.</source>
+            <translation>Seleziona il tipo di riverbero.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="231" />
+            <source>Time length of reverberation.</source>
+            <translation>Durata del riverbero.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="233" />
+            <source>Frequency at which to cut the high-frequency portion of the reverb sound (BYPASS: no cut).</source>
+            <translation>Frequenza oltre la quale si tagliano gli acuti del riverbero (BYPASS: nessun taglio).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="235" />
+            <source>Adjusts the volume of the reverb sound. The panel [Reverb] knob sets it.</source>
+            <translation>Regola il volume del riverbero. La manopola [Reverb] del pannello agisce su questo.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="495" />
+            <source>Thru: the sound passes through unchanged.</source>
+            <translation>Thru: il suono passa senza modifiche.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/effects.py" line="505" />
+            <source>Parameter numbers from the JD-Xi Manager, to be checked on the instrument: {which}.</source>
+            <translation>Numeri dei parametri presi da JD-Xi Manager, da verificare sullo strumento: {which}.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/framework.py" line="327" />
+            <source>Reading from JD-Xi…</source>
+            <translation>Lettura dal JD-Xi…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/framework.py" line="328" />
+            <source>Read complete</source>
+            <translation>Lettura completata</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="134" />
             <source>Only with Waveform PW-SQR.</source>
             <translation>Solo con Waveform PW-SQR.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="133" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="135" />
             <source>Only with Filter Type LPF.</source>
             <translation>Solo con Filter Type LPF.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="134" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="136" />
             <source>Used when Tempo Sync is OFF.</source>
             <translation>Usato con Tempo Sync OFF.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="135" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="137" />
             <source>Applied with the modulation wheel (CC01).</source>
             <translation>Agisce con la rotella di modulazione (CC01).</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="130" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="132" />
             <source>OFF</source>
             <translation>OFF</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="130" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="132" />
             <source>ON</source>
             <translation>ON</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="131" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="133" />
             <source>st</source>
             <translation>st</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="131" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="133" />
             <source>cent</source>
             <translation>cent</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="140" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="142" />
             <source>Glides the pitch from one note to the next.</source>
             <translation>Fa scivolare l'intonazione da una nota alla successiva.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="144" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="146" />
             <source>How long the glide to the next note takes: higher is slower.</source>
             <translation>Durata dello scivolamento verso la nota successiva: più alto è più lento.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="149" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="151" />
             <source>Playing a key while the previous one is held changes the pitch without restarting the note.</source>
             <translation>Suonando un tasto mentre il precedente è ancora premuto cambia l'intonazione senza far ripartire la nota.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="154" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="156" />
             <source>Moves the tone up or down by octaves.</source>
             <translation>Sposta il tono in alto o in basso di ottave.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="158" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="160" />
             <source>How far the pitch rises with the bend lever all the way up.</source>
             <translation>Quanto sale l'intonazione con la leva del bend tutta in alto.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="162" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="164" />
             <source>How far the pitch falls with the bend lever all the way down.</source>
             <translation>Quanto scende l'intonazione con la leva del bend tutta in basso.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="168" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="170" />
             <source>The oscillator's waveform: SAW bright and full, TRI soft and hollow, PW-SQR hollow and nasal, with a variable pulse width.</source>
             <translation>Forma d'onda dell'oscillatore: SAW brillante e piena, TRI morbida e vuota, PW-SQR vuota e nasale, con larghezza d'impulso variabile.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="173" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="175" />
             <source>How much the LFO moves the pulse width (PWM).</source>
             <translation>Quanto l'LFO muove la larghezza d'impulso (PWM).</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="177" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="179" />
             <source>Width of the top of the square wave: small values are close to a square wave (50%), larger values sound thinner.</source>
             <translation>Larghezza della parte alta dell'onda quadra: valori bassi sono vicini all'onda quadra (50%), valori alti suonano più sottili.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="182" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="184" />
             <source>Adds a square wave one (OCT-1) or two (OCT-2) octaves below.</source>
             <translation>Aggiunge un'onda quadra una (OCT-1) o due (OCT-2) ottave sotto.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="188" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="190" />
             <source>Pitch in semitones.</source>
             <translation>Intonazione in semitoni.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="192" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="194" />
             <source>Pitch in cents (hundredths of a semitone).</source>
             <translation>Intonazione in cent (centesimi di semitono).</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="196" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="198" />
             <source>Time from the key press until the pitch reaches its highest (or lowest) point.</source>
             <translation>Tempo dalla pressione del tasto finché l'intonazione raggiunge il punto più alto (o più basso).</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="200" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="202" />
             <source>Time for the pitch to come back to the note played.</source>
             <translation>Tempo perché l'intonazione torni alla nota suonata.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="204" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="206" />
             <source>How much, and in which direction, the pitch envelope moves the pitch. 0: no effect.</source>
             <translation>Quanto, e in che direzione, l'inviluppo muove l'intonazione. 0: nessun effetto.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="209" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="211" />
             <source>How much the pitch envelope depth follows how hard you play.</source>
             <translation>Quanto la profondità dell'inviluppo d'intonazione segue la forza con cui suoni.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="216" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="218" />
             <source>LPF uses the analog low-pass filter; BYPASS leaves the sound unfiltered.</source>
             <translation>LPF usa il filtro passa-basso analogico; BYPASS lascia il suono non filtrato.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="221" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="223" />
             <source>Frequency above which the filter cuts: lower is darker. Drag the curve sideways.</source>
             <translation>Frequenza oltre la quale il filtro taglia: più bassa è più scuro. Trascina la curva di lato.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="226" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="228" />
             <source>Emphasises the frequencies around the cutoff. Drag the curve up or down.</source>
             <translation>Enfatizza le frequenze attorno al taglio. Trascina la curva in alto o in basso.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="231" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="233" />
             <source>How the cutoff follows the keys: at +100 it rises one octave per octave played above C4; at -100 it falls.</source>
             <translation>Come il taglio segue i tasti: a +100 sale di un'ottava per ogni ottava suonata sopra C4; a -100 scende.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="236" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="238" />
             <source>How much the filter envelope depth follows how hard you play.</source>
             <translation>Quanto la profondità dell'inviluppo del filtro segue la forza con cui suoni.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="241" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="243" />
             <source>Time from the key press until the cutoff reaches its highest (or lowest) point.</source>
             <translation>Tempo dalla pressione del tasto finché il taglio raggiunge il punto più alto (o più basso).</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="246" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="248" />
             <source>Time for the cutoff to go from that point to the sustain level.</source>
             <translation>Tempo perché il taglio passi da quel punto al livello di sustain.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="251" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="253" />
             <source>Cutoff held while the key stays down.</source>
             <translation>Taglio mantenuto finché il tasto resta premuto.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="255" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="257" />
             <source>Time for the cutoff to reach its minimum after the key is released.</source>
             <translation>Tempo perché il taglio arrivi al minimo dopo il rilascio del tasto.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="260" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="262" />
             <source>How much, and in which direction, the envelope moves the cutoff. 0: the envelope has no effect.</source>
             <translation>Quanto, e in che direzione, l'inviluppo muove il taglio. 0: l'inviluppo non ha effetto.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="265" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="267" />
             <source>Volume of the tone.</source>
             <translation>Volume del tono.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="269" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="271" />
             <source>How much the volume follows how hard you play.</source>
             <translation>Quanto il volume segue la forza con cui suoni.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="273" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="275" />
             <source>Positive: louder as you play above C4; negative: softer.</source>
             <translation>Positivo: più forte suonando sopra C4; negativo: più piano.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="278" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="280" />
             <source>Time from the key press to full volume. A little attack removes the click.</source>
             <translation>Tempo dalla pressione del tasto al volume pieno. Un po' di attacco toglie il clic.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="282" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="284" />
             <source>Time from full volume down to the sustain level.</source>
             <translation>Tempo dal volume pieno al livello di sustain.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="286" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="288" />
             <source>Volume held while the key stays down.</source>
             <translation>Volume mantenuto finché il tasto resta premuto.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="290" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="292" />
             <source>Time for the sound to fade out after the key is released.</source>
             <translation>Tempo perché il suono si spenga dopo il rilascio del tasto.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="295" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="297" />
             <source>Waveform of the LFO: TRI, SIN, SAW, SQR, S&amp;H (steps at random levels) or RND (random, smooth).</source>
             <translation>Forma d'onda dell'LFO: TRI, SIN, SAW, SQR, S&amp;H (gradini a livelli casuali) o RND (casuale, morbida).</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="299" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="301" />
             <source>Speed of the LFO.</source>
             <translation>Velocità dell'LFO.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="303" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="305" />
             <source>ON: the speed is a note value of the tempo (Sync Note) instead of Rate.</source>
             <translation>ON: la velocità è un valore di nota del tempo (Sync Note) invece di Rate.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="308" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="310" />
             <source>Length of one LFO cycle as a note value of the tempo.</source>
             <translation>Durata di un ciclo dell'LFO come valore di nota del tempo.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="313" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="315" />
             <source>Time from the note start until the LFO reaches its full depth: a delayed vibrato.</source>
             <translation>Tempo dall'inizio della nota finché l'LFO raggiunge la piena profondità: un vibrato ritardato.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="317" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="319" />
             <source>ON: the LFO cycle restarts at every key press.</source>
             <translation>ON: il ciclo dell'LFO riparte a ogni pressione di tasto.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="321" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="323" />
             <source>The LFO moves the pitch: vibrato.</source>
             <translation>L'LFO muove l'intonazione: vibrato.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="325" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="327" />
             <source>The LFO moves the cutoff: wah.</source>
             <translation>L'LFO muove il taglio: wah.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="329" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="331" />
             <source>The LFO moves the volume: tremolo.</source>
             <translation>L'LFO muove il volume: tremolo.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="333" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="335" />
             <source>Vibrato added by the modulation wheel.</source>
             <translation>Vibrato aggiunto dalla rotella di modulazione.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="337" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="339" />
             <source>Wah added by the modulation wheel.</source>
             <translation>Wah aggiunto dalla rotella di modulazione.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="341" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="343" />
             <source>Tremolo added by the modulation wheel.</source>
             <translation>Tremolo aggiunto dalla rotella di modulazione.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="345" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="347" />
             <source>Positive: the wheel speeds the LFO up; negative: it slows it down.</source>
             <translation>Positivo: la rotella accelera l'LFO; negativo: lo rallenta.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="145" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="147" />
             <source>Has an effect with Porta Sw ON.</source>
             <translation>Ha effetto con Porta Sw ON.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="154" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="156" />
             <source>oct</source>
             <translation>ott</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="210" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="212" />
             <source>In the MIDI Implementation; the JD-Xi display does not show it.</source>
             <translation>Nella MIDI Implementation; il display del JD-Xi non lo mostra.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/params.py" line="309" />
+            <location filename="../../jdxi_editor/ui/v2/params.py" line="311" />
             <source>Used when Tempo Sync is ON.</source>
             <translation>Usato con Tempo Sync ON.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="546" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="553" />
             <source>Drag the points to change the envelope</source>
             <translation>Trascina i punti per cambiare l'inviluppo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="641" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="648" />
             <source>Drag sideways for Cutoff, up and down for Resonance</source>
             <translation>Trascina di lato per Cutoff, in alto e in basso per Resonance</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="802" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="809" />
             <source>PARAMETER</source>
             <translation>PARAMETRO</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="807" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="814" />
             <source>Point at a control</source>
             <translation>Punta un controllo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="821" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="828" />
             <source>Its name on the display, range and explanation appear here, with what it depends on.</source>
             <translation>Qui compaiono il nome sul display, l'intervallo e la spiegazione, con ciò da cui dipende.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="628" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="635" />
             <source>key off</source>
             <translation>rilascio</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="719" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="726" />
             <source>BYPASS: no filter</source>
             <translation>BYPASS: nessun filtro</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="781" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="788" />
             <source>full depth</source>
             <translation>piena profondità</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="849" />
-            <source>MIDI Implementation</source>
-            <translation>MIDI Implementation</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="742" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="749" />
             <source>1 cycle = {note}</source>
             <translation>1 ciclo = {note}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="745" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="752" />
             <source>Rate {rate}</source>
             <translation>Rate {rate}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="846" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="853" />
             <source>Range: {range}</source>
             <translation>Intervallo: {range}</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/widgets.py" line="859" />
+            <source>MIDI Implementation</source>
+            <translation>MIDI Implementation</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="869" />
             <source>Inactive now. {reason}</source>
             <translation>Ora inattivo. {reason}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="849" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="859" />
             <source>Parameter Guide, p. {page}</source>
             <translation>Parameter Guide, p. {page}</translation>
         </message>
@@ -1819,22 +2336,22 @@ Nota: se il Sync del JD-Xi è MIDI o AUTO, Start avvia anche il suo pattern sequ
             <translation>Tono giù: passa al preset/tono precedente</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="270" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="271" />
             <source>Checking GitHub for updates…</source>
             <translation>Controllo degli aggiornamenti su GitHub…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1147" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1150" />
             <source>Offline: no MIDI backend available</source>
             <translation>Offline: nessun sistema MIDI disponibile</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1150" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1153" />
             <source>MIDI not available</source>
             <translation>MIDI non disponibile</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1151" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1154" />
             <source>The system has no MIDI interface that the editor can open, so it runs offline: you can edit, open and save patches, but nothing is sent to or received from the JD-Xi.
 
 On Linux, load the ALSA sequencer (sudo modprobe snd-seq) and restart the editor.</source>
@@ -1843,125 +2360,125 @@ On Linux, load the ALSA sequencer (sudo modprobe snd-seq) and restart the editor
 Su Linux carica il sequencer ALSA (sudo modprobe snd-seq) e riavvia l'editor.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1615" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1618" />
             <source>Update User Program Database</source>
             <translation>Aggiorna l'archivio dei programmi utente</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1616" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1619" />
             <source>This will scan through all user banks (E, F, G, H) and update the program database.
 This may take several minutes. Continue?</source>
             <translation>Verranno letti tutti i banchi utente (E, F, G, H) per aggiornare l'archivio dei programmi.
 Può richiedere alcuni minuti. Continuare?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1634" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1637" />
             <source>Updating Database</source>
             <translation>Aggiornamento dell'archivio</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="297" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="308" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="298" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="309" />
             <source>Check for Updates</source>
             <translation>Cerca aggiornamenti</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1279" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1282" />
             <source>Recent MIDI Files</source>
             <translation>MIDI file recenti</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1313" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1316" />
             <source>No recent files</source>
             <translation>Nessun file recente</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1331" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1334" />
             <source>Clear Recent Files</source>
             <translation>Svuota l'elenco dei file recenti</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1416" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1423" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1419" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1426" />
             <source>No MIDI file</source>
             <translation>Nessun MIDI file</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1417" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1420" />
             <source>Open the MIDI File player and load a MIDI file first.</source>
             <translation>Apri il lettore di MIDI file e carica prima un MIDI file.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1424" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1427" />
             <source>No MIDI file is loaded. Load a MIDI file from the File menu first.</source>
             <translation>Nessun MIDI file caricato. Caricane prima uno dal menu File.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1463" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1456" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1442" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1466" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1459" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1445" />
             <source>Export failed</source>
             <translation>Esportazione non riuscita</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1464" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1467" />
             <source>Could not create PDF. Is LilyPond installed?</source>
             <translation>Impossibile creare il PDF. LilyPond è installato?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1607" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1610" />
             <source>MIDI Not Connected</source>
             <translation>MIDI non collegato</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1608" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1611" />
             <source>Please connect to the JD-Xi synthesizer before updating the database.</source>
             <translation>Collega il JD-Xi prima di aggiornare l'archivio.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1704" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1707" />
             <source>Update Complete</source>
             <translation>Aggiornamento completato</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1457" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1460" />
             <source>Could not create PDF. Is LilyPond installed? See Help or preferences.</source>
             <translation>Impossibile creare il PDF. LilyPond è installato? Vedi l'Aiuto o le Preferenze.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1726" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1729" />
             <source>Reading {current_bank}{db_update_current_program:02d}...</source>
             <translation>Lettura di {current_bank}{db_update_current_program:02d}...</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="298" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="299" />
             <source>You're up to date: {program} {version} is the newest release.</source>
             <translation>Hai la versione più recente: {program} {version}.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="309" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="310" />
             <source>Couldn't check GitHub for updates:
 {message}</source>
             <translation>Impossibile controllare gli aggiornamenti su GitHub:
 {message}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="944" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="946" />
             <source>Loading Analog Synth editor...</source>
             <translation>Caricamento dell'editor Analog Synth...</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1347" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1350" />
             <source>The file '{file_path}' no longer exists.</source>
             <translation>Il file '{file_path}' non esiste più.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1443" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1446" />
             <source>Could not prepare the current MIDI file for export.</source>
             <translation>Impossibile preparare il MIDI file attuale per l'esportazione.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1705" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1708" />
             <source>Successfully updated {db_update_programs_saved} programs in the database.
 
 The program list has been refreshed with the updated names.</source>
@@ -1970,27 +2487,27 @@ The program list has been refreshed with the updated names.</source>
 L'elenco dei programmi mostra ora i nomi aggiornati.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="948" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="950" />
             <source>Loading Digital Synth 1 editor...</source>
             <translation>Caricamento dell'editor Digital Synth 1...</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="2498" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="2501" />
             <source>Tone {number} {name}, {type}</source>
             <translation>Tono {number} {name}, {type}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="953" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="955" />
             <source>Loading Digital Synth 2 editor...</source>
             <translation>Caricamento dell'editor Digital Synth 2...</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="2448" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="2451" />
             <source>Error saving preset: {value1}</source>
             <translation>Errore nel salvare il preset: {value1}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="957" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="959" />
             <source>Preparing Drum Kit editor...</source>
             <translation>Preparazione dell'editor del kit Drums...</translation>
         </message>

@@ -436,6 +436,13 @@ class NoteCombo(QWidget):
         name.setMinimumWidth(78)
         name.setStyleSheet("color: #c9cbd1; font-size: 11px; background: transparent;")
         self.combo = QComboBox()
+        self.combo.setStyleSheet(
+            "QComboBox { background: #121214; color: #ffffff; border: 1px solid #3a3d44; border-radius: 5px;"
+            " padding: 2px 6px; font-size: 12px; }"
+            "QComboBox:disabled { color: #6b6e75; }"
+            "QComboBox QAbstractItemView { background: #1b1c1f; color: #e6e6e6;"
+            " selection-background-color: #333333; }"
+        )
         self.combo.addItems(list(value.info.choices))
         self.combo.currentIndexChanged.connect(lambda i: self.pv.setValue(i))
         layout.addWidget(name)
@@ -840,14 +847,17 @@ class InfoPanel(QFrame):
             pv.watch(lambda _v, pv=pv: self._refresh_value(pv))
             pv.watch_enabled(lambda _e, pv=pv: self._refresh_value(pv))
         info = pv.info
-        self.group.setText(f"TONE: {info.group}")
+        self.group.setText(f"{info.area}: {info.group}" if info.area else info.group)
         self.name.setText(info.label)
         self.long.setText(info.long if info.long and info.long != info.label else "")
         self.range.setText(tr("Range: {range}").format(range=pv.range_text))
         self.description.setText(info.description)
-        self.source.setText(
-            tr("Parameter Guide, p. {page}").format(page=info.page) if info.page else tr("MIDI Implementation")
-        )
+        if info.source:
+            self.source.setText(info.source)
+        else:
+            self.source.setText(
+                tr("Parameter Guide, p. {page}").format(page=info.page) if info.page else tr("MIDI Implementation")
+            )
         self._refresh_value(pv)
 
     def _refresh_value(self, pv: ParamValue) -> None:

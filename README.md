@@ -36,6 +36,8 @@
 - **MIDI Debugger**: Monitor and debug MIDI messages efficiently.
 - **New Analog editor** (1.0): all 46 parameters on one screen, filter curve and envelopes to drag,
   drawn waveforms, and an information panel that explains the parameter under the pointer.
+- **New Effects editor** (1.0): Effect 1, Effect 2, Delay and Reverb with every parameter of the
+  manual (side-chain compressor included), the signal chain, the delay echoes and compressor curve.
 - **Languages**: English and Italian, chosen in Preferences (see [Languages](#-languages)).
 - **Offline mode**: opens and edits without a JD-Xi or a MIDI system; it connects when one is available.
 
