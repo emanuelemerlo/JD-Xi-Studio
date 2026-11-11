@@ -31,6 +31,17 @@ on the JD-Xi display.
   .syx, random tone) stays on the right
 - The original Analog editor (`AnalogSynthEditor`) is still in the code; the app opens the new one
 
+### Pattern and MIDI file player (new look)
+
+- **Same editors, same engine**: the sequencer, learning, measures, copy/paste, USB recorder,
+  track classification, automation, A/B loop, trim, event suppression and transport work as before
+- **The new editors' look**: dark background, panels as cards with the title in the accent colour
+  (orange for Pattern, light blue for the player), dark fields, lists and sliders
+- **Flat buttons with icon and name** instead of a round button with the label beside it; a pressed
+  button (Play, Stop, Loop…) takes the accent colour
+- The open editors are still found by class name, so the playlist, the patch manager and the
+  Pattern ↔ player link keep working
+
 ### Recipes (new)
 
 - **Parts → Recipes…** (Ctrl+Shift+R): step-by-step instructions to make a sound, as in the mockups

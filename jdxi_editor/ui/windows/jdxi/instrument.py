@@ -107,8 +107,8 @@ from jdxi_editor.ui.editors.helpers.program import (
     get_program_id_by_name,
 )
 from jdxi_editor.ui.editors.main import MainEditor
-from jdxi_editor.ui.editors.midi_player.editor import MidiFilePlayer
-from jdxi_editor.ui.editors.pattern.pattern import PatternSequenceEditor
+# The pattern sequencer and the MIDI file player in the new look (same editors).
+from jdxi_editor.ui.v2.players import MidiFilePlayer, PatternSequenceEditor
 from jdxi_editor.ui.editors.preset.editor import PresetEditor
 from jdxi_editor.ui.preset.button import JDXiPresetButtonData
 from jdxi_editor.ui.preset.helper import JDXiPresetHelper

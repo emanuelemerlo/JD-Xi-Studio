@@ -3692,15 +3692,15 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="87" />
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="69" />
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="561" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="562" />
             <source>by ear</source>
             <translation>a orecchio</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="100" />
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="112" />
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="461" />
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="680" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="462" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="681" />
             <source>Recipes</source>
             <translation>Ricette</translation>
         </message>
@@ -3710,47 +3710,47 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>LE MIE RICETTE</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="154" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="155" />
             <source>Open</source>
             <translation>Apri</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="156" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="157" />
             <source>Edit</source>
             <translation>Modifica</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="158" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="159" />
             <source>Delete</source>
             <translation>Elimina</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="167" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="168" />
             <source>NEW RECIPE</source>
             <translation>NUOVA RICETTA</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="175" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="176" />
             <source>Save template .xlsx…</source>
             <translation>Salva il modello .xlsx…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="177" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="178" />
             <source>Template .csv…</source>
             <translation>Modello .csv…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="179" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="180" />
             <source>Parameter list .csv…</source>
             <translation>Elenco parametri .csv…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="187" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="188" />
             <source>Choose a file…</source>
             <translation>Scegli un file…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="194" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="195" />
             <source>…or paste a table copied from a document or a web page, e.g.
 TONE: FILTER	Cutoff	55–65
 TONE: FILTER	Cutoff KF	+50</source>
@@ -3759,27 +3759,27 @@ TONE: FILTER	Cutoff	55–65
 TONE: FILTER	Cutoff KF	+50</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="199" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="200" />
             <source>Read the text</source>
             <translation>Leggi il testo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="206" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="207" />
             <source>Open the recipe editor</source>
             <translation>Apri l'editor di ricette</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="277" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="278" />
             <source>Pasted recipe</source>
             <translation>Ricetta incollata</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="302" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="303" />
             <source>(none)</source>
             <translation>(nessuna)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="325" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="326" />
             <location filename="../../jdxi_editor/ui/windows/patch/manager.py" line="146" />
             <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="68" />
             <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="127" />
@@ -3787,77 +3787,77 @@ TONE: FILTER	Cutoff KF	+50</translation>
             <translation>Annulla</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="327" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="328" />
             <source>Correct in the editor</source>
             <translation>Correggi nell'editor</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="329" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="330" />
             <source>Exclude the rows to fix and import</source>
             <translation>Escludi le righe da sistemare e importa</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="331" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="332" />
             <source>Import the recipe</source>
             <translation>Importa la ricetta</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="463" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="464" />
             <source>Edit the recipe</source>
             <translation>Modifica la ricetta</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="487" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="488" />
             <source>Set the missing values of the step</source>
             <translation>Imposta i valori mancanti del passo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="489" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="490" />
             <source>Read the JD-Xi again</source>
             <translation>Rileggi il JD-Xi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="491" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="492" />
             <source>Next step</source>
             <translation>Passo successivo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="498" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="499" />
             <source>To keep the sound, save the program on the JD-Xi with [Menu/Write] (the JD-Xi cannot be written to via MIDI); the recipe suggests user program {program}.</source>
             <translation>Per conservare il suono salva il programma sul JD-Xi con [Menu/Write] (via MIDI non si può scrivere nella sua memoria); la ricetta suggerisce il programma utente {program}.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="667" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="668" />
             <source>Add row</source>
             <translation>Aggiungi riga</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="669" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="670" />
             <source>Remove row</source>
             <translation>Togli riga</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="671" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="672" />
             <source>Take the values from the JD-Xi</source>
             <translation>Prendi i valori dal JD-Xi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="672" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="673" />
             <source>Writes in each row the value the parameter has now</source>
             <translation>Scrive in ogni riga il valore che il parametro ha adesso</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="674" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="675" />
             <source>Export…</source>
             <translation>Esporta…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="676" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="677" />
             <source>Try the recipe</source>
             <translation>Prova la ricetta</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="678" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="679" />
             <source>Save recipe</source>
             <translation>Salva ricetta</translation>
         </message>
@@ -3877,309 +3877,309 @@ TONE: FILTER	Cutoff KF	+50</translation>
             <translation>da correggere</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="164" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="165" />
             <source>Saved recipes stay in the library and can be used again on another program.</source>
             <translation>Le ricette salvate restano nella libreria e si possono riaprire su un altro programma.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="168" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="169" />
             <source>A recipe is a list of steps: for each step, which parameters to set and to what value. Before using it the editor checks it row by row and shows what it understood: nothing is sent to the JD-Xi until you decide.</source>
             <translation>Una ricetta è un elenco di passi: per ogni passo, quali parametri impostare e a che valore. Prima di usarla l'editor la controlla riga per riga e ti mostra cosa ha capito: niente viene inviato al JD-Xi finché non lo decidi tu.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="171" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="172" />
             <source>1 · Fill in the template</source>
             <translation>1 · Compila il modello</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="172" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="173" />
             <source>A ready sheet: Part, Group and Parameter have menus with the valid names only; a second sheet lists every parameter with its allowed values. It contains the Jungle Gardenia lead as an example.</source>
             <translation>Un foglio già pronto: le colonne Parte, Gruppo e Parametro hanno menu a tendina con i soli nomi validi, e un secondo foglio elenca tutti i parametri con i valori ammessi. Contiene come esempio il lead di Jungle Gardenia.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="185" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="186" />
             <source>2 · Import a file or a text</source>
             <translation>2 · Importa un file o un testo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="202" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="203" />
             <source>From PDFs and texts only the lines that look like Group · Parameter · Value are taken; the rest is kept as notes.</source>
             <translation>Dai PDF e dai testi l'editor prende solo le righe che sembrano Gruppo · Parametro · Valore; il resto lo conserva come note.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="204" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="205" />
             <source>3 · Write it in the editor</source>
             <translation>3 · Creala nell'editor</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="241" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="242" />
             <source>Delete recipe</source>
             <translation>Elimina ricetta</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="249" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="250" />
             <source>Save template</source>
             <translation>Salva il modello</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="257" />
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="264" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="258" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="265" />
             <source>Import a recipe</source>
             <translation>Importa una ricetta</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="258" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="259" />
             <source>Recipes (*.xlsx *.csv *.md *.txt *.pdf *.json)</source>
             <translation>Ricette (*.xlsx *.csv *.md *.txt *.pdf *.json)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="279" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="280" />
             <source>pasted text</source>
             <translation>testo incollato</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="300" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="301" />
             <source>Rows without a part are for:</source>
             <translation>Le righe senza parte sono per:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="314" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="315" />
             <source>Row read in the file</source>
             <translation>Riga letta nel file</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="314" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="315" />
             <source>Understood</source>
             <translation>L'editor ha capito</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="314" />
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="476" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="315" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="477" />
             <source>Status</source>
             <translation>Stato</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="314" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="315" />
             <source>Explanation</source>
             <translation>Spiegazione</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="314" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="315" />
             <source>Action</source>
             <translation>Azione</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="400" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="401" />
             <source>Use</source>
             <translation>Usa</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="405" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="406" />
             <source>Fine</source>
             <translation>Va bene così</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="408" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="409" />
             <source>Include</source>
             <translation>Includi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="408" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="409" />
             <source>Exclude</source>
             <translation>Escludi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="476" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="477" />
             <source>Group</source>
             <translation>Gruppo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="476" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="477" />
             <source>Parameter</source>
             <translation>Parametro</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="476" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="477" />
             <source>Recipe</source>
             <translation>Ricetta</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="476" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="477" />
             <source>On the JD-Xi</source>
             <translation>Sul JD-Xi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="476" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="477" />
             <source>Actions</source>
             <translation>Azioni</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="514" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="515" />
             <source>To keep the sound, save the program on the JD-Xi with [Menu/Write] (the JD-Xi cannot be written to via MIDI).</source>
             <translation>Per conservare il suono salva il programma sul JD-Xi con [Menu/Write] (via MIDI non si può scrivere nella sua memoria).</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="582" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="583" />
             <source>Go to the control</source>
             <translation>Vai al controllo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="591" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="592" />
             <source>All values of the step are set</source>
             <translation>Tutti i valori del passo sono impostati</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="646" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="647" />
             <source>Title</source>
             <translation>Titolo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="646" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="647" />
             <source>Starting tone</source>
             <translation>Tono di partenza</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="646" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="647" />
             <source>User program</source>
             <translation>Programma utente</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="652" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="653" />
             <source>Description</source>
             <translation>Descrizione</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="664" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="665" />
             <source>The menus show only what exists: choosing the part AN, the group offers COMMON, OSC, PITCH, FILTER, AMP, LFO, and the parameter shows its range. The check is the same as for imported files, while you write.</source>
             <translation>I menu mostrano solo ciò che esiste: scegliendo la parte AN, il gruppo offre COMMON, OSC, PITCH, FILTER, AMP, LFO, e il parametro mostra il suo intervallo. Il controllo è lo stesso dell'importazione da file, ma qui gira mentre scrivi.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="847" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="848" />
             <source>Export the recipe</source>
             <translation>Esporta la ricetta</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="848" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="849" />
             <source>Excel (*.xlsx);;CSV (*.csv);;Markdown (*.md)</source>
             <translation>Excel (*.xlsx);;CSV (*.csv);;Markdown (*.md)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="284" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="285" />
             <source>New recipe</source>
             <translation>Nuova ricetta</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="358" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="359" />
             <source>Check of "{name}"</source>
             <translation>Controllo di "{name}"</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="360" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="361" />
             <source>{ok} recognized · {confirm} to confirm · {fix} to fix · {ear} by ear · {notes} lines kept as notes</source>
             <translation>{ok} riconosciute · {confirm} da confermare · {fix} da correggere · {ear} a orecchio · {notes} righe tenute come note</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="378" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="379" />
             <source>excluded</source>
             <translation>esclusa</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="565" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="566" />
             <source>to set</source>
             <translation>da impostare</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="579" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="580" />
             <source>Set</source>
             <translation>Imposta</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="601" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="602" />
             <source>Values "by ear" are not set automatically: the editor opens the control and leaves the tuning to you.</source>
             <translation>I valori "a orecchio" non vengono impostati in automatico: l'editor apre il controllo e lascia a te la regolazione.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="657" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="658" />
             <source>Check</source>
             <translation>Controllo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="840" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="841" />
             <source>Saved in the library: {path}</source>
             <translation>Salvata nella libreria: {path}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="241" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="242" />
             <source>Delete "{name}"?</source>
             <translation>Eliminare "{name}"?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="362" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="363" />
             <source>The recipe starts from {tone}: load it on the JD-Xi first to get the same result.</source>
             <translation>La ricetta parte da {tone}: caricalo prima sul JD-Xi per avere lo stesso risultato.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="387" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="388" />
             <source>Notes: {notes}</source>
             <translation>Note: {notes}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="547" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="548" />
             <source>STEP {n}</source>
             <translation>PASSO {n}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="563" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="564" />
             <source>in range</source>
             <translation>nell'intervallo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="563" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="564" />
             <source>done</source>
             <translation>fatto</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="590" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="591" />
             <source>Set the {n} missing values of the step</source>
             <translation>Imposta i {n} valori mancanti del passo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="801" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="802" />
             <source>All {n} rows are valid</source>
             <translation>Tutte le {n} righe sono valide</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="802" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="803" />
             <source>{bad} of {n} rows to fix</source>
             <translation>{bad} righe su {n} da correggere</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="264" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="265" />
             <source>Could not read the file: {error}</source>
             <translation>Non riesco a leggere il file: {error}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="284" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="285" />
             <source>Step 1</source>
             <translation>Passo 1</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="515" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="516" />
             <source>The recipe suggests user program {program}.</source>
             <translation>La ricetta suggerisce il programma utente {program}.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="797" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="798" />
             <source>Range: {lo} … {hi}</source>
             <translation>Intervallo: {lo} … {hi}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="512" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="513" />
             <source>{n} parameters in {steps} steps</source>
             <translation>{n} parametri in {steps} passi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="511" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="512" />
             <source>starting tone {tone}</source>
             <translation>tono di partenza {tone}</translation>
         </message>

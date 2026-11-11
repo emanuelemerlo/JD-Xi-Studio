@@ -44,6 +44,8 @@
   filter and amplifier envelopes drawn and draggable.
 - **New Digital Synth editor** (1.0), for Digital 1 and 2: every SuperNATURAL synth parameter, the
   three partials with drawn waveforms, filter curves, envelopes and LFOs.
+- **Pattern and MIDI file player in the new look** (1.0): same functions and engine, with the
+  new editors' dark cards and flat buttons with icon and name.
 - **New Program editor** (1.0): program name, level, tempo and the four parts side by side (main,
   pitch, offsets, velocity range, scale tune, MIDI receive) with every Program Part parameter.
 - **New Effects editor** (1.0): Effect 1, Effect 2, Delay and Reverb with every parameter of the
