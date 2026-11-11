@@ -31,6 +31,20 @@ on the JD-Xi display.
   .syx, random tone) stays on the right
 - The original Analog editor (`AnalogSynthEditor`) is still in the code; the app opens the new one
 
+### Keyboard and editor windows, together
+
+- **Minimise works on Windows**: the keyboard window (frameless) now has the minimise hints Windows
+  needs, so its minimise button and the taskbar work
+- **The editor windows follow the keyboard**: minimising the keyboard or an editor window minimises
+  them all; restoring the keyboard (from the taskbar too) brings back the editors that were open
+- **Window → Move the editors with the keyboard** (on by default): dragging the keyboard window
+  moves the open editor windows with it
+- **Window → Line up the editors with the keyboard**: the editors window right above the keyboard
+  (below it when there is no room); the first time the app starts it is placed this way, then
+  where it was left
+- **Window → Show the editors** (Ctrl+Shift+W); the panel keeps its size and stays centred when
+  the keyboard window is maximised
+
 ### Pattern and MIDI file player (new look)
 
 - **Same editors, same engine**: the sequencer, learning, measures, copy/paste, USB recorder,

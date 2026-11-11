@@ -92,7 +92,16 @@ class JDXiWindow(QMainWindow):
         self.current_synth_type = JDXiSynth.DIGITAL_SYNTH_1
         # --- Initialize octave
         self.current_octave = 0  # Initialize octave tracking first
-        self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.FramelessWindowHint)
+        # Frameless, with the minimise/maximise hints: without them Windows
+        # does not minimise the window (showMinimized() does nothing) nor
+        # restore it from the taskbar
+        self.setWindowFlags(
+            Qt.WindowType.Window
+            | Qt.WindowType.FramelessWindowHint
+            | Qt.WindowType.WindowMinMaxButtonsHint
+            | Qt.WindowType.WindowCloseButtonHint
+            | Qt.WindowType.WindowSystemMenuHint
+        )
         self.setWindowTitle(__program__)
         self.setMinimumSize(
             JDXi.UI.Dimensions.INSTRUMENT.WIDTH, JDXi.UI.Dimensions.INSTRUMENT.HEIGHT
@@ -147,6 +156,9 @@ class JDXiWindow(QMainWindow):
         # Fixed panel height: the image is drawn this tall and the controls are
         # placed in its coordinates (no stretching, no cropping)
         container_widget.setFixedHeight(JDXi.UI.Dimensions.INSTRUMENT.PANEL_HEIGHT)
+        # and width: the controls are placed in the image's coordinates, so the
+        # panel stays this size, centred, when the window is wider
+        container_widget.setFixedWidth(JDXi.UI.Dimensions.INSTRUMENT.WIDTH)
         container_widget.setLayout(QVBoxLayout())
         container_widget.layout().setContentsMargins(0, 0, 0, 0)
         container_widget.layout().setSpacing(6)
@@ -212,7 +224,7 @@ class JDXiWindow(QMainWindow):
         )
         self.favorite_button = add_favorite_button_container(container_widget)
         add_slider_container(container_widget, self.midi_helper)
-        layout.addWidget(container_widget)
+        layout.addWidget(container_widget, 0, Qt.AlignmentFlag.AlignHCenter)
 
         # --- Initialize current preset index
         self.current_preset_index = 0

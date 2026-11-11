@@ -118,6 +118,7 @@ from jdxi_editor.ui.widgets.button import SequencerSquare
 from jdxi_editor.ui.widgets.button.favorite import FavoriteButton
 from jdxi_editor.ui.widgets.viewer.log import LogViewer
 from jdxi_editor.ui.windows.jdxi.recent_files import RecentFilesManager
+from jdxi_editor.ui.windows.jdxi.linked import WindowLink
 from jdxi_editor.ui.windows.jdxi.ui import JDXiWindow
 from jdxi_editor.ui.windows.jdxi.utils import show_message_box_from_spec
 from jdxi_editor.ui.v2.analog import AnalogToneEditor
@@ -264,6 +265,7 @@ class JDXiInstrument(JDXiWindow):
         # Each editor requests its own data via showEvent() when displayed
         self._show_main_editor()
         self.init_main_editor()
+        self._init_window_layout()
         # Initialize the current preset and synth type
         self.current_synth_type = JDXiSynth.DIGITAL_SYNTH_1
         self.channel = MidiChannel.DIGITAL_SYNTH_1
@@ -410,6 +412,7 @@ class JDXiInstrument(JDXiWindow):
         try:
             # Wait for any USB recording threads to avoid "Destroyed while still running"
             self._wait_for_usb_recording_threads()
+            self._save_window_layout()
             self.midi_helper.close_ports()
             self._save_settings()
             event.accept()
@@ -828,6 +831,55 @@ class JDXiInstrument(JDXiWindow):
         self.main_editor.setUpdatesEnabled(True)
         self.main_editor.show()
 
+    # --- Window menu: the editor windows follow the keyboard window
+
+    def _init_window_layout(self) -> None:
+        """The Window menu and the link between the keyboard and the editor windows."""
+        self.window_link = WindowLink(self)
+        menu = QMenu(tr("&Window"), self)
+        menu.addAction(self._menu_action(tr("Show the &editors"), self._show_main_editor, "Ctrl+Shift+W"))
+        menu.addAction(
+            self._menu_action(
+                tr("&Line up the editors with the keyboard"),
+                lambda: self.window_link.line_up(self.main_editor),
+                status_tip=tr("Place the editors window right above the keyboard"),
+            )
+        )
+        menu.addSeparator()
+        self.move_together_action = self._menu_action(
+            tr("&Move the editors with the keyboard"),
+            lambda: self.set_move_together(self.move_together_action.isChecked()),
+            status_tip=tr("Dragging the keyboard window moves the open editor windows too"),
+        )
+        self.move_together_action.setCheckable(True)
+        menu.addAction(self.move_together_action)
+        self.menuBar().insertMenu(self.help_menu.menuAction(), menu)
+        self.window_menu = menu
+        settings = getattr(self, "settings", None)
+        value = settings.value("window/move_together", True) if settings is not None else True
+        self.set_move_together(str(value).lower() != "false")
+        # The editors where they were left; the first time, right above the keyboard
+        geometry = settings.value("window/editors_geometry") if settings is not None else None
+        if geometry:
+            self.main_editor.restoreGeometry(geometry)
+        else:
+            QTimer.singleShot(0, self, lambda: self.window_link.line_up(self.main_editor))
+
+    def set_move_together(self, on: bool) -> None:
+        self.window_link.move_together = bool(on)
+        self.move_together_action.setChecked(bool(on))
+        settings = getattr(self, "settings", None)
+        if settings is not None:
+            settings.setValue("window/move_together", bool(on))
+
+    def _save_window_layout(self) -> None:
+        settings = getattr(self, "settings", None)
+        link = getattr(self, "window_link", None)
+        if settings is not None and link is not None:
+            settings.setValue("window/move_together", link.move_together)
+            if self.main_editor is not None and self.main_editor.isVisible():
+                settings.setValue("window/editors_geometry", self.main_editor.saveGeometry())
+
     def show_editor(self, editor_type: str, **kwargs) -> None:
         """
         Show editor of given type
@@ -850,6 +902,9 @@ class JDXiInstrument(JDXiWindow):
         self._show_editor_tab(
             config.title, config.editor_class, config.icon, **merged_kwargs
         )
+        # Bring the editors forward (not while the startup editors open)
+        if self.main_editor is not None and self.main_editor.updatesEnabled():
+            self._show_main_editor()
 
     def on_documentation(self):
         """
@@ -1272,6 +1327,8 @@ class JDXiInstrument(JDXiWindow):
         """
         if not self.main_editor:
             self.main_editor = MainEditor(self)
+        if self.isMinimized():  # the editors come back with the keyboard
+            self.showNormal()
         self.main_editor.show()
         self.main_editor.raise_()
 
