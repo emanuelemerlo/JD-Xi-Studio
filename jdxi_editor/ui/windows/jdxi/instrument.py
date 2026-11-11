@@ -1147,12 +1147,14 @@ class JDXiInstrument(JDXiWindow):
         self.statusBar().showMessage(tr("Offline: no MIDI backend available"), 0)
         box = QMessageBox(
             QMessageBox.Icon.Warning,
-            "MIDI not available",
-            "The system has no MIDI interface that the editor can open, so it runs "
-            "offline: you can edit, open and save patches, but nothing is sent to "
-            "or received from the JD-Xi.\n\n"
-            "On Linux, load the ALSA sequencer (sudo modprobe snd-seq) and restart "
-            "the editor.",
+            tr("MIDI not available"),
+            tr(
+                "The system has no MIDI interface that the editor can open, so it runs "
+                "offline: you can edit, open and save patches, but nothing is sent to "
+                "or received from the JD-Xi.\n\n"
+                "On Linux, load the ALSA sequencer (sudo modprobe snd-seq) and restart "
+                "the editor."
+            ),
             QMessageBox.StandardButton.Ok,
             self,
         )

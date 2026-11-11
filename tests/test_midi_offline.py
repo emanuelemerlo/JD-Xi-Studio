@@ -80,7 +80,9 @@ def test_window_starts_offline_and_says_so(monkeypatch, fresh_helper_singleton):
     try:
         assert not window.midi_helper.midi_available
         assert "Offline" in window.statusBar().currentMessage()
-        assert [box.windowTitle() for box in _visible(QMessageBox)] == ["MIDI not available"]
+        boxes = _visible(QMessageBox)
+        # macOS shows no title on message boxes (Qt leaves it empty there): check the text
+        assert len(boxes) == 1 and "MIDI" in boxes[0].text()
     finally:
         for box in _visible(QMessageBox):
             box.close()
