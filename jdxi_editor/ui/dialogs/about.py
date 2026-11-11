@@ -14,7 +14,8 @@ from PySide6.QtWidgets import (
     QLabel,
 )
 
-from jdxi_editor.project import __package_name__, __program__, __version__
+from jdxi_editor.project import __display_name__, __package_name__, __program__, __version__
+from jdxi_editor.ui.v2.brand import origin_line
 from jdxi_editor.resources import resource_path
 from jdxi_editor.ui.common import JDXi, QVBoxLayout, QWidget
 from jdxi_editor.i18n import tr
@@ -34,20 +35,20 @@ class UiAboutDialog(QDialog):
         :return: None
         """
         self.resize(508, 300)
-        self.setWindowTitle(tr('about {program}').format(program=__program__))
+        self.setWindowTitle(tr('about {program}').format(program=__display_name__))
         self.setStyleSheet(
             JDXi.UI.Style.SPLASH_SCREEN + JDXi.UI.Style.CREDITS_LABEL_STYLE
         )
         main_layout = QVBoxLayout(self)
         group_box_layout = QVBoxLayout()
-        group_box = QGroupBox(__program__)
+        group_box = QGroupBox(__display_name__)
         group_box_layout.addWidget(group_box)
         image_layout = QVBoxLayout()
         group_box.setLayout(image_layout)
         image_label = QLabel()
-        image_pixmap = QPixmap(
-            resource_path(os.path.join("resources", "jdxi_cartoon_600.png"))
-        )
+        from jdxi_editor.ui.v2.brand import draw_mark
+
+        image_pixmap = draw_mark(200)  # JD-Xi Studio's own mark
 
         # Scale the pixmap to 200x200 while keeping aspect ratio
         scaled_pixmap = image_pixmap.scaled(
@@ -60,7 +61,10 @@ class UiAboutDialog(QDialog):
         image_layout.addWidget(image_label, alignment=Qt.AlignHCenter)
 
         version_label = QLabel()
-        version_label.setText(tr('{program}\nversion:\t{version}').format(program=__program__, version=__version__))
+        version_label.setText(
+            tr('{program}\nversion:\t{version}').format(program=__display_name__, version=__version__)
+            + "\n" + origin_line()
+        )
         image_layout.addWidget(version_label)
 
         button_box = QDialogButtonBox(self)
@@ -78,7 +82,7 @@ class UiAboutDialog(QDialog):
             "&bull; <a style='color: blue' href='https://www.music.mcgill.ca/~gary/rtmidi/'>RtMidi</a> – Low-level MIDI communication<br>"
             "&bull; <a style='color: blue' href='https://www.qt.io/'>Qt</a> – Cross-platform application framework<br>"
             "Source code available on <a style='color: blue' href='https://github.com/emanuelemerlo/JDXI-Editor'>GitHub</a><br>"
-            "An independent fork of <a style='color: blue' href='https://github.com/markxbrooks/JDXI-Editor'>JDXI-Editor</a> by Mark Brooks<br>"
+            "JD-Xi Studio is an independent edition of <a style='color: blue' href='https://github.com/markxbrooks/JDXI-Editor'>JDXI-Editor</a> by Mark Brooks<br>"
             "Licensed under the <a style='color: blue' href='https://opensource.org/licenses/MIT'>MIT License</a><br>"
             "'Roland' and 'JD-Xi' are Trademarks of the Roland Corporation <br> in the United States and/or other countries<br>"
             "This app is an independent, unofficial companion tool for the Roland JDXi synthesizer<br>"

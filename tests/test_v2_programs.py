@@ -46,9 +46,8 @@ def test_one_page_with_the_cards(editor):
     titles = {g.title() for g in editor.findChildren(QGroupBox) if g.title()}
     assert {"LIBRARY", "PARTS OF THE PROGRAM", "MIXER"} <= titles
     tabs = [editor.more_tabs.tabText(i) for i in range(editor.more_tabs.count())]
-    assert tabs == ["Presets", "User Programs", "Playlist", "Playlist Editor", "System Settings"]
+    assert tabs == ["Presets", "User Programs", "Playlist", "Playlist Editor"]  # system: in Settings
     assert editor.more_tabs.widget(0) is editor.program_group_widget.preset
-    assert editor.more_tabs.widget(4) is editor.program_group_widget.system_settings_widget
     assert editor.mixer_panel.isAncestorOf(editor.mixer_widget.mixer_group)
 
 

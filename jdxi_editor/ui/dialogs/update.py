@@ -21,7 +21,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from jdxi_editor.project import __program__, __version__
+from jdxi_editor.project import __display_name__, __program__, __version__
 from jdxi_editor.update.checker import (
     PIP,
     PIP_UPGRADE_COMMAND,
@@ -32,7 +32,7 @@ from jdxi_editor.update.checker import (
 from jdxi_editor.i18n import tr
 
 AUTO_CHECK_NOTICE = (
-    f"{__program__} checks GitHub for new releases automatically, at most once "
+    f"{__display_name__} checks GitHub for new releases automatically, at most once "
     "a day. You can turn this off in Help → Preferences."
 )
 
@@ -56,7 +56,7 @@ class UpdateDialog(QDialog):
 
         layout = QVBoxLayout(self)
         heading = QLabel(
-            tr('<b>{program} {version}</b> is available (you have {current_version}).').format(program=__program__, version=release.version, current_version=current_version)
+            tr('<b>{program} {version}</b> is available (you have {current_version}).').format(program=__display_name__, version=release.version, current_version=current_version)
         )
         layout.addWidget(heading)
 

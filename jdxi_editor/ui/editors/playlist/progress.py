@@ -132,9 +132,9 @@ class PlaylistProgressWidget(QWidget):
         self._current: Optional[int] = None
         self._duration = 0.0
         self._paused = False
-        self._status = "Stopped"  # shown while no song is playing
+        self._status = tr("Stopped")  # shown while no song is playing
 
-        self.display = DigitalTitle("No song playing")
+        self.display = DigitalTitle(tr("No song playing"))
         self.song_bar = QProgressBar()
         self.song_bar.setRange(0, 1000)
         self.song_bar.setTextVisible(True)
@@ -198,11 +198,11 @@ class PlaylistProgressWidget(QWidget):
         self._refresh()
 
     def show_stopped(self) -> None:
-        self._show_idle("Stopped")
+        self._show_idle(tr("Stopped"))
 
     def show_finished(self) -> None:
         """The last song ended: every segment lit."""
-        self._show_idle("Playlist finished")
+        self._show_idle(tr("Playlist finished"))
         if self._titles:
             self.segments.set_position(len(self._titles) - 1, 1.0)
 
@@ -215,11 +215,11 @@ class PlaylistProgressWidget(QWidget):
         self.segments.set_position(None)
         count = len(self._titles)
         self.display.set_upper_display_text(
-            f"{status} · {count} song{'' if count == 1 else 's'}"
+            (tr("{status} · 1 song") if count == 1 else tr("{status} · {count} songs")).format(status=status, count=count)
         )
         self.display.setText(tr("No song playing"))
         self.next_label.setText(
-            f"First: {self._titles[0]}" if self._titles else "No songs with a MIDI file"
+            tr("First: {title}").format(title=self._titles[0]) if self._titles else tr("No songs with a MIDI file")
         )
 
     # --- Text -----------------------------------------------------------------
@@ -232,10 +232,12 @@ class PlaylistProgressWidget(QWidget):
         if self._current is None:
             return
         count = len(self._titles)
-        state = "Paused" if self._paused else "Playing"
-        self.display.set_upper_display_text(f"Song {self._current + 1} of {count} · {state}")
+        state = tr("Paused") if self._paused else tr("Playing")
+        self.display.set_upper_display_text(
+            tr("Song {n} of {count} · {state}").format(n=self._current + 1, count=count, state=state)
+        )
         self.display.setText(self._titles[self._current])
         following = self._current + 1
         self.next_label.setText(
-            f"Up next: {self._titles[following]}" if following < count else "Last song"
+            tr("Up next: {title}").format(title=self._titles[following]) if following < count else tr("Last song")
         )

@@ -123,10 +123,12 @@ class TransportWidget(JDXiMidiGroup):
             button.blockSignals(False)
         if group is not None:
             group.setExclusive(True)
+        text = tr("Resume") if state == TransportState.PAUSED else tr("Pause")
         if self.pause_label is not None:
-            self.pause_label.setText(
-                "Resume" if state == TransportState.PAUSED else "Pause"
-            )
+            self.pause_label.setText(text)
+        pause = getattr(self, "pause_button", None)
+        if pause is not None and pause.text():  # a flat button with its name (new look)
+            pause.setText(text)
 
     def _create_transport_control(
         self,

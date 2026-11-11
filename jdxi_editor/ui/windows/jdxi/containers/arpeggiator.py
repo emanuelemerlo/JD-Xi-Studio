@@ -1,3 +1,4 @@
+from jdxi_editor.i18n import tr
 from typing import Callable
 
 from PySide6.QtCore import Qt
@@ -57,21 +58,21 @@ def add_octave_and_arp_buttons(container: QWidget, send_octave: Callable):
 
     # Buttons
     octave_down_button = create_button_with_tooltip(
-        "Octave Down: Lower the keyboard pitch by one octave"
+        tr("Octave Down: Lower the keyboard pitch by one octave")
     )
     octave_down_button.clicked.connect(lambda: send_octave(-1))
 
     octave_up_button = create_button_with_tooltip(
-        "Octave Up: Raise the keyboard pitch by one octave"
+        tr("Octave Up: Raise the keyboard pitch by one octave")
     )
     octave_up_button.clicked.connect(lambda: send_octave(1))
 
     arpeggiator_button = create_button_with_tooltip(
-        "Arpeggiator On/Off: Enable or disable the arpeggiator"
+        tr("Arpeggiator On/Off: Enable or disable the arpeggiator")
     )
 
     key_hold_button = create_button_with_tooltip(
-        "Key Hold: Hold arpeggiator notes when enabled"
+        tr("Key Hold: Hold arpeggiator notes when enabled")
     )
 
     grid.addWidget(octave_down_button, 2, 0, Qt.AlignCenter)

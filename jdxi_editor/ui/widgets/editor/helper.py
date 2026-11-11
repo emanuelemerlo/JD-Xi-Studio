@@ -6,6 +6,7 @@ adds JD-Xi-specific helpers (filter buttons, icons, ADSR styling, etc.)
 and re-exports picoui helpers under the names used by the rest of the app.
 """
 
+from jdxi_editor.i18n import tr
 from typing import Any, Optional
 
 import qtawesome as qta
@@ -99,7 +100,7 @@ def create_icon_and_label(
 ) -> tuple[QHBoxLayout, QLabel]:
     """create icon and label"""
     layout = QHBoxLayout()
-    label = QLabel(label)
+    label = QLabel(tr(label) if label else "")
     icon_pixmap = JDXi.UI.Icon.get_icon_pixmap(
         icon, color=JDXi.UI.Style.FOREGROUND, size=20
     )
@@ -113,10 +114,10 @@ def create_icon_and_label(
 
 def create_checkbox_from_spec(spec: CheckBoxSpec) -> QCheckBox:
     """create checkbox from spec"""
-    checkbox = QCheckBox(spec.label)
+    checkbox = QCheckBox(tr(spec.label) if spec.label else "")
     checkbox.setChecked(spec.checked_state)
     checkbox.stateChanged.connect(spec.slot)
-    checkbox.setToolTip(spec.tooltip)
+    checkbox.setToolTip(tr(spec.tooltip) if spec.tooltip else "")
     return checkbox
 
 

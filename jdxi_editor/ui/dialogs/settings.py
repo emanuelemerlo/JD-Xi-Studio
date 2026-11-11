@@ -18,6 +18,7 @@ from PySide6.QtWidgets import (
 )
 
 from jdxi_editor.project import (
+    __display_name__,
     __organization_name__,
     __package_name__,
     __program__,
@@ -59,7 +60,7 @@ class UiPreferencesDialog(QDialog):
         log_settings()
         self.resize(508, 400)
 
-        self.setWindowTitle(tr("JD-XI Editor settings"))
+        self.setWindowTitle(tr("{program} preferences").format(program=__display_name__))
         main_layout = QVBoxLayout(self)
 
         # Create a QComboBox

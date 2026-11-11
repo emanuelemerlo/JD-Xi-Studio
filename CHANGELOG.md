@@ -57,6 +57,40 @@ on the JD-Xi display.
   Vocal Effect pink (they shared colours with the parts before); the preset panel of Digital 2 says
   DIGITAL SYNTH 2
 
+### JD-Xi Studio: a name of its own
+
+- **The interface is called JD-Xi Studio**, an independent edition of JDXI-Editor by Mark Brooks,
+  so the two are not confused: splash screen, window titles, the keyboard panel, the editors
+  window, About, Preferences and the update messages; the origin is always shown ("based on
+  JDXI-Editor by Mark Brooks" on the splash and in About, with the MIT licence)
+- **Its own mark**, drawn in code: the four part colours as a step row over three keys (splash,
+  About, window icon); the original logo stays with the original project
+- The installer, the exe, the settings folder and the saved settings keep the original names, so
+  nothing is lost when updating
+
+### One language in the windows
+
+- Buttons, labels, lists, table headers, placeholders and tooltips built by the shared widget
+  helpers now go through the translation (Pattern, MIDI file player, Programs, playlists, presets,
+  MIDI debugger, keyboard tooltips); in Italian there are no more half-English windows
+- Parameter names (Cutoff, Porta Time, Rx Bank Sel...), the JD-Xi's own values (OFF/ON, LIGHT,
+  MEDIUM, HEAVY), tone categories and the labels printed on the instrument stay as on the JD-Xi
+
+### Editors window header and Settings (new)
+
+- **The editors as a row of buttons** with short, translated names (Programs, Digital 1, Digital 2,
+  Analog, Drums, Arpeggio, Effects, Vocal FX, Pattern, MIDI file, Settings…); the selected one in
+  the editor's colour; on the right the program and tone last received and the connection state
+- **Settings** (Edit → Settings…, Ctrl+Shift+E): the JD-Xi's System Common (Master Tune, Key Shift,
+  Master Level, Program Control Channel 1–16/OFF, Rx Program Change, Rx Bank Select) and System
+  Controller (Tx Program Change, Tx Bank Select, Keyboard Velocity, Velocity Curve and Offset),
+  checked against the MIDI Implementation, read from the JD-Xi with one button; the MIDI connection
+  and ports; files (load/save patch, send all, update user programs); preferences, updates, MIDI
+  monitor, SysEx debugger and log
+- The System Settings tab under Programs moved to Settings; the Program Control Channel follows the
+  MIDI Implementation (0–15 = channels 1–16, 16 = OFF)
+- Each new editor's badge shows its translated short name, as on its button
+
 ### Programs on one page (new layout)
 
 - **Library**: every program (A–D preset, E–H user) in one table with number, name, genre and the
@@ -67,8 +101,7 @@ on the JD-Xi display.
 - **Mixer**: the original level strips and mutes on the same page
 - **Rename…** and **Parts and advanced settings…** (opens Program: common and parts: level, pan,
   offsets, scale, receive switches, zones) next to the display
-- **Below, in tabs**: Presets, User Programs, Playlist, Playlist Editor, System Settings (the same
-  widgets as before)
+- **Below, in tabs**: Presets, User Programs, Playlist, Playlist Editor (the same widgets as before)
 
 ### Pattern and MIDI file player (new layout)
 

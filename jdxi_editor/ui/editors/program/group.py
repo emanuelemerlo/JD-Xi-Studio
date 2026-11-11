@@ -52,7 +52,7 @@ class ProgramGroup(QGroupBox):
     """Program Widget"""
 
     def __init__(self, title: str = None, parent: Optional["ProgramEditor"] = None):
-        super().__init__("Load a program")
+        super().__init__(tr("Load a program"))
         self.edit_program_name_button: QPushButton | None = None
         self.mixer_widget: Optional[ProgramMixer] = None
         self.parent = parent

@@ -99,7 +99,7 @@ class PlaylistTable(QWidget):
         self.playlist_table = QTableWidget()
         self.playlist_table.setColumnCount(4)
         self.playlist_table.setHorizontalHeaderLabels(
-            ["ID", "Name", "Description", "Programs"]
+            [tr(h) for h in ("ID", "Name", "Description", "Programs")]
         )
 
         # Apply custom styling
