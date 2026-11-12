@@ -62,9 +62,9 @@ def audit_navigation(app, window, problems: list[str], timings: dict[str, float]
             problems.append(f"navigation: {source} opened {type(widget).__name__}, not {config.editor_class.__name__}")
         if not window.main_editor.isVisible():
             problems.append(f"navigation: {source} left the editors window hidden")
-        if key in window.PANEL_EDITORS:
-            lit = [k for k, b in window.part_buttons.items() if b.isChecked()]
-            want = [k for k, v in PANEL_KEYS.items() if v == key]
+        lit = [k for k, b in window.part_buttons.items() if b.isChecked()]
+        want = [k for k, v in PANEL_KEYS.items() if v == key]  # none for Programs, Effects...
+        if True:
             if lit != want:
                 problems.append(f"panel: after {source} the lit buttons are {lit}, expected {want}")
 
@@ -89,6 +89,7 @@ def audit_navigation(app, window, problems: list[str], timings: dict[str, float]
         timed(f"panel button {name}", key, window.part_buttons[name].click)
     timed("panel button Vocoder", "vocal_fx", window.vocal_effects_button.click)
     timed("panel button Effects", "effects", window.effects_button.click)
+    timed("panel display", "program", lambda: window._show_program_editor(None))
     # menu entries: those whose text names an editor's tab
     titles = {window.editor_registry[k].title.lower(): k for k in window.editor_registry}
     for top in window.menuBar().actions():

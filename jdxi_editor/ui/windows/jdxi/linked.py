@@ -166,3 +166,16 @@ class DialogsInFront(QObject):
         widget.raise_()
         widget.activateWindow()
 
+
+
+class PanelFollowsEditors(QObject):
+    """When the editors window is shown or closed, the panel lights what it shows (or nothing)."""
+
+    def __init__(self, keyboard):
+        super().__init__(keyboard)
+        self.keyboard = keyboard
+
+    def eventFilter(self, watched, event):  # noqa: N802 (Qt name)
+        if event.type() in (QEvent.Type.Show, QEvent.Type.Hide):
+            QTimer.singleShot(0, self.keyboard, self.keyboard.resync_panel)
+        return False

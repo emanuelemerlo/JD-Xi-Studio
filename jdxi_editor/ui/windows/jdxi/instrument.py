@@ -120,7 +120,7 @@ from jdxi_editor.ui.widgets.button import SequencerSquare
 from jdxi_editor.ui.widgets.button.favorite import FavoriteButton
 from jdxi_editor.ui.widgets.viewer.log import LogViewer
 from jdxi_editor.ui.windows.jdxi.recent_files import RecentFilesManager
-from jdxi_editor.ui.windows.jdxi.linked import DialogsInFront, WindowLink
+from jdxi_editor.ui.windows.jdxi.linked import DialogsInFront, PanelFollowsEditors, WindowLink
 from jdxi_editor.ui.windows.jdxi.ui import JDXiWindow
 from jdxi_editor.ui.windows.jdxi.utils import show_message_box_from_spec
 from jdxi_editor.ui.v2.analog import AnalogToneEditor
@@ -597,8 +597,7 @@ class JDXiInstrument(JDXiWindow):
         )
         self.current_synth_type = synth_type
         self.channel = JDXiSynth.midi_channel_number(synth_type)
-        self._panel_editor = None
-        self._update_synth_button_styles()
+        self._update_synth_button_styles()  # the lit button stays the editor shown
         previous = getattr(self, "preset_helper", None)
         self.preset_helper = self.get_preset_helper_for_current_synth()
         if previous is not self.preset_helper:  # once per helper (it was connected again at every click)
@@ -611,18 +610,21 @@ class JDXiInstrument(JDXiWindow):
 
     PANEL_EDITORS = ("digital1", "digital2", "analog", "drums", "arpeggio")
 
-    def _mark_panel_editor(self, editor_type: str) -> None:
-        """Light the part (or Arpeggiator) button of the editor that is open."""
-        if editor_type not in self.PANEL_EDITORS:
-            return
-        self._panel_editor = editor_type
+    def _mark_panel_editor(self, editor_type: str | None) -> None:
+        """Light the part (or Arpeggiator) button of the editor shown, and only that one.
+
+        Any other editor (Programs, Effects, Pattern...) or no editor shown:
+        no button lit, so the panel never points at a tab that is not there.
+        """
+        self._panel_editor = editor_type if editor_type in self.PANEL_EDITORS else None
         if hasattr(self, "synth_buttons"):
             self._update_synth_button_styles()
 
     def _sync_panel_with_tab(self, index: int) -> None:
-        """A tab chosen in the editors window lights its button on the panel."""
+        """The tab shown in the editors window lights its button on the panel (or none)."""
         widget = self.main_editor.editor_tab_widget.widget(index) if self.main_editor else None
-        if widget is None:
+        if widget is None or not self.main_editor.isVisible():
+            self._mark_panel_editor(None)
             return
         for key in self.PANEL_EDITORS:
             config = self.editor_registry.get(key)
@@ -633,16 +635,29 @@ class JDXiInstrument(JDXiWindow):
                     self._select_synth(config.synth_type)
                 self._mark_panel_editor(key)
                 return
+        self._mark_panel_editor(None)
+
+    def resync_panel(self) -> None:
+        tabs = self.main_editor.editor_tab_widget if self.main_editor else None
+        self._sync_panel_with_tab(tabs.currentIndex() if tabs is not None else -1)
+
+    def _panel_key_of(self, synth_type) -> str | None:
+        for key in self.PANEL_EDITORS:
+            config = self.editor_registry.get(key)
+            if config is not None and config.synth_type == synth_type:
+                return key
+        return None
 
     def _update_synth_button_styles(self):
-        """Update styles for synth buttons based on selection (Arpeggiator when its editor is open)."""
-        arp_open = getattr(self, "_panel_editor", None) == "arpeggio"
-        # an exclusive group keeps one part checked: let all go while Arpeggiator is lit
+        """Light the button of the editor shown (a part, or Arpeggiator); none for other tabs."""
+        shown = getattr(self, "_panel_editor", None)
+        arp_open = shown == "arpeggio"
+        # an exclusive group keeps one part checked: let all go, then light only the one shown
         groups = {b.group() for b in self.synth_buttons.values() if b.group() is not None}
         for group in groups:
             group.setExclusive(False)
         for synth_type, button in self.synth_buttons.items():
-            is_selected = synth_type == self.current_synth_type and not arp_open
+            is_selected = shown is not None and self._panel_key_of(synth_type) == shown
             button.setStyleSheet(
                 JDXi.UI.Style.BUTTON_ROUND_SELECTED
                 if not is_selected
@@ -653,8 +668,9 @@ class JDXiInstrument(JDXiWindow):
         if arp is not None:
             arp.setStyleSheet(JDXi.UI.Style.BUTTON_ROUND if arp_open else JDXi.UI.Style.BUTTON_ROUND_SELECTED)
             arp.setChecked(arp_open)
+        lit = any(b.isChecked() for b in self.synth_buttons.values())
         for group in groups:
-            group.setExclusive(not arp_open)
+            group.setExclusive(lit)
 
     def _program_update(self, index_change: int) -> None:
         """
@@ -893,6 +909,9 @@ class JDXiInstrument(JDXiWindow):
         self._dialogs_in_front = None
         if self.main_editor is not None:
             self.window_link.add(self.main_editor)
+            # closing (or reopening) the editors window: the panel follows what is shown
+            self._panel_follows = PanelFollowsEditors(self)
+            self.main_editor.installEventFilter(self._panel_follows)
         menu = QMenu(tr("&Window"), self)
         menu.addAction(self._menu_action(tr("Show the &editors"), self._show_main_editor, "Ctrl+Shift+W"))
         menu.addAction(

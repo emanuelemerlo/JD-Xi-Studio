@@ -165,3 +165,28 @@ def test_keyboard_on_top_installs_the_dialog_filter_and_removes_it(app, tmp_path
         assert window._dialogs_in_front is None and not window.on_top_pin.isChecked()
     finally:
         window.close()
+
+
+def test_the_panel_lights_only_the_editor_shown(app, tmp_path, monkeypatch):
+    monkeypatch.setenv("HOME", str(tmp_path))
+    from jdxi_editor.ui.windows.jdxi.instrument import JDXiInstrument
+
+    window = JDXiInstrument()
+
+    def lit():
+        _spin(app, 10)
+        return [k for k, b in window.part_buttons.items() if b.isChecked()]
+
+    try:
+        window.part_buttons["digital2"].click()
+        assert lit() == ["digital2"]
+        window._show_program_editor(None)  # a click on the display: Programs, no part lit
+        assert lit() == []
+        window.show_editor("digital2")
+        assert lit() == ["digital2"]
+        window.main_editor.close()  # editors closed: nothing lit
+        assert lit() == []
+        window._show_main_editor()  # back, on the Digital 2 tab
+        assert lit() == ["digital2"]
+    finally:
+        window.close()
