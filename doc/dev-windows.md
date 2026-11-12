@@ -4,7 +4,7 @@
 
 1. Install **Python 3.11 or 3.12 (64-bit)** from python.org (tick "Add python.exe to PATH" and the `py` launcher).
    The same steps work on macOS and Linux with `python3 -m venv .venv` and `.venv/bin/python`.
-2. Install **Git** (or GitHub Desktop) and clone `emanuelemerlo/JDXI-Editor`.
+2. Install **Git** (or GitHub Desktop) and clone `emanuelemerlo/JD-Xi-Studio`.
 3. In the repository folder create the environment and install the editor with the test tools:
 
    ```powershell

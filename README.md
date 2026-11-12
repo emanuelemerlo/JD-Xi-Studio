@@ -12,7 +12,7 @@ pattern sequencer, the effects and the vocoder, on the computer screen instead o
 > (MIT licence). It goes its own way: a new interface for desktop screens with every parameter of
 > Roland's manuals, presets and SysEx addresses checked against those manuals, offline mode (no JD-Xi
 > needed), English and Italian, and Windows builds from CI. Releases, issues and the app's update
-> check use [this repository](https://github.com/emanuelemerlo/JDXI-Editor).
+> check use [this repository](https://github.com/emanuelemerlo/JD-Xi-Studio).
 
 <p align="center">
   <a href="resources/keyboard_window.png"><img src="resources/keyboard_window_900.png" alt="The keyboard window" /></a>
@@ -55,7 +55,7 @@ pattern sequencer, the effects and the vocoder, on the computer screen instead o
 
 ## 🚀 Download and install
 
-The builds are on the [releases page](https://github.com/emanuelemerlo/JDXI-Editor/releases).
+The builds are on the [releases page](https://github.com/emanuelemerlo/JD-Xi-Studio/releases).
 Alpha and beta versions are marked as pre-releases. The app checks that page for updates
 (Help › Check for Updates).
 
@@ -80,7 +80,7 @@ from GitHub, and start it with `jdxi-editor`:
 ```bash
 python -m venv jdxi-env
 source jdxi-env/bin/activate          # Windows: jdxi-env\Scripts\activate
-python -m pip install "git+https://github.com/emanuelemerlo/JDXI-Editor.git"
+python -m pip install "git+https://github.com/emanuelemerlo/JD-Xi-Studio.git"
 jdxi-editor
 ```
 
@@ -109,8 +109,8 @@ manuals, so what you read matches the instrument. To add a language, see
 ## 🛠 Development
 
 ```bash
-git clone https://github.com/emanuelemerlo/JDXI-Editor.git
-cd JDXI-Editor
+git clone https://github.com/emanuelemerlo/JD-Xi-Studio.git
+cd JD-Xi-Studio
 python -m venv venv
 source venv/bin/activate              # Windows: venv\Scripts\activate
 python -m pip install -e ".[dev]"
@@ -156,7 +156,7 @@ No tag to push by hand. The `Windows build` workflow still builds every push to 
   [RtMidi](https://www.music.mcgill.ca/~gary/rtmidi/), [qtawesome](https://github.com/spyder-ide/qtawesome).
 - **Roland**, for such a powerful little synth.
 
-Issues and ideas: [GitHub Issues](https://github.com/emanuelemerlo/JDXI-Editor/issues).
+Issues and ideas: [GitHub Issues](https://github.com/emanuelemerlo/JD-Xi-Studio/issues).
 
 ---
 

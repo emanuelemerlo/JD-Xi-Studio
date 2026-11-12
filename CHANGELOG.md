@@ -8,6 +8,9 @@ The fixes from testing alpha 1 on Windows 11, JD-Xi Studio's own logo, icon and 
 the About window with both authors, the documentation aligned, and the Release workflow.
 
 ### About, documentation and releases
+- **The repository is now `emanuelemerlo/JD-Xi-Studio`** (it was `JDXI-Editor`): the update
+  check, the links in the app, the README, the documentation and pyproject use the new name
+  (GitHub redirects the old one, so earlier versions still find the updates)
 - **Panel names always fit**: where the system's font is wider than the one designed for (Segoe UI
   missing on Linux, Windows' scaling), a name is drawn a little smaller instead of being cut; this
   made the UI audit fail on the GitHub runners
