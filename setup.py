@@ -22,13 +22,7 @@ DATA_FILES = [
     "resources/jdxi_icon.png",
     "resources/fonts/JdLCD.ttf",
     ("resources", glob.glob("resources/*.png")),
-    ("resources/analog_synths", glob.glob("resources/analog_synths/*.png")),
-    ("resources/arpeggiator", glob.glob("resources/arpeggiator/*.png")),
-    ("resources/drum_kits", glob.glob("resources/drum_kits/*.png")),
-    ("resources/digital_synths", glob.glob("resources/digital_synths/*.png")),
-    ("resources/effects", glob.glob("resources/effects/*.png")),
-    ("resources/presets", glob.glob("resources/presets/*.png")),
-    ("resources/vocal_fx", glob.glob("resources/vocal_fx/*.png")),
+    ("resources/recipes", glob.glob("resources/recipes/*")),
 ]  # Include any additional files your app needs
 OPTIONS = {
     'packages': ['jdxi_editor', 'rtmidi', 'decologr', 'picomidi', 'qtawesome',
