@@ -23,8 +23,7 @@ REQUIRED_RESOURCES = (
     "resources/jdxi_icon.png",
     "resources/jdxi_studio_logo.png",
     "resources/fonts",
-    "resources/digital_synths",
-    "resources/drum_kits",
+    "resources/recipes",
 )
 
 

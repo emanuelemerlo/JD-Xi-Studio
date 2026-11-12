@@ -30,6 +30,11 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   `JD-Xi recipe parameters.csv`, made from the Italian files by `building/recipes/make_english.py`.
   The Recipes page offers the files in the interface's language; the editor reads both (English
   headers, "value / range / by ear", EFFECTS / VOCAL)
+- **Obsolete files removed** (115): the instrument pictures the editors no longer show (digital_synths,
+  analog_synths, drum_kits, effects, vocal_fx, programs, presets, arpeggiator), unused icons and fonts,
+  a duplicate LCD font, the original project's Perl/Arduino leftovers and old CSVs, and the development
+  notes of finished work (critiques, gap analyses, migration and refactoring plans); `make_art.py` now
+  draws only the logo, the icons and the installer image
 - **Exporting a recipe to .xlsx** writes Step, From and To as numbers: the template's Check column
   no longer marks every range row as wrong
 
