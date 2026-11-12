@@ -33,4 +33,7 @@ def add_effects_container(central_widget, open_vocal_fx, open_effects):
     fx_layout.addLayout(vocal_effects_row)
     fx_layout.addLayout(effects_row)
     fx_container.setStyleSheet(JDXi.UI.Style.TRANSPARENT)
+    # They open an editor: momentary, not left lit (they stayed pressed)
+    for button in (vocal_effects_button, effects_button):
+        button.setCheckable(False)
     return vocal_effects_button, effects_button

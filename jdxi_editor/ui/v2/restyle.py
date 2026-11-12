@@ -23,12 +23,12 @@ def stylesheet(root_class: str, accent: str) -> str:
     QWidget {{ color: #e6e6e6; }}
     QLabel {{ color: #c9cbd1; background: transparent; }}
     QGroupBox {{
-        background: #1b1c1f; border: 1px solid #2a2d33; border-radius: 10px;
-        margin-top: 14px; padding: 12px 10px 10px 10px; font-weight: 700;
+        background: #1b1c1f; border: 1px solid #2e3036; border-radius: 10px;
+        margin-top: 0px; padding: 34px 12px 12px 12px;
     }}
     QGroupBox::title {{
-        subcontrol-origin: margin; subcontrol-position: top left; left: 14px; top: 2px;
-        color: {accent}; letter-spacing: 2px; padding: 0 4px; background: transparent;
+        subcontrol-origin: padding; subcontrol-position: top left; left: 14px; top: 12px;
+        color: {accent}; font-size: 12px; font-weight: 700; letter-spacing: 2px; background: transparent;
     }}
     QTabWidget::pane {{ background: #1b1c1f; border: 1px solid #2a2d33; border-radius: 8px; }}
     QTabBar::tab {{ background: #1b1c1f; color: #c9cbd1; padding: 6px 14px; border: 1px solid #2a2d33;
@@ -161,3 +161,15 @@ def restyle(editor: QWidget, accent: str) -> None:
             panel.setProperty(SHEEN_PROPERTY, False)
     editor.setStyleSheet(stylesheet(type(editor).__name__, accent))
     flatten_round_buttons(editor)
+
+
+def title_badge(text: str, accent: str) -> QLabel:
+    """The editor's name as a badge in its colour, as at the top of the other new editors."""
+    label = QLabel(text.upper())
+    label.setObjectName("v2Title")
+    label.setStyleSheet(
+        f"QLabel#v2Title {{ background: {accent}; color: #0e0f11; border-radius: 6px;"
+        " padding: 3px 12px; font-size: 16px; font-weight: 800; letter-spacing: 2px; }"
+    )
+    label.setSizePolicy(label.sizePolicy().horizontalPolicy(), label.sizePolicy().verticalPolicy())
+    return label

@@ -63,6 +63,7 @@ def create_parts_container(
         button_group.addButton(b)
     button_group.setExclusive(True)
 
+    arp_button.setCheckable(False)  # opens the Arpeggio editor: momentary, not a part
     for row in [digital1_row, digital2_row, drums_row, analog_row, arp_row]:
         parts_layout.addLayout(row)
 

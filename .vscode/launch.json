@@ -1,0 +1,40 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "JD-Xi Studio",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "jdxi_editor.main",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": true
+    },
+    {
+      "name": "JD-Xi Studio (English)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "jdxi_editor.main",
+      "cwd": "${workspaceFolder}",
+      "env": { "JDXI_LANGUAGE": "en" },
+      "justMyCode": true
+    },
+    {
+      "name": "JD-Xi Studio (Italian)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "jdxi_editor.main",
+      "cwd": "${workspaceFolder}",
+      "env": { "JDXI_LANGUAGE": "it" },
+      "justMyCode": true
+    },
+    {
+      "name": "Tests: current file",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["${file}", "-q"],
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false
+    }
+  ]
+}

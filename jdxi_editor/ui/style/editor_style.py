@@ -233,9 +233,10 @@ class AppEditorStyle:
     BORDER_ACTIVE = ACCENT
     LCD_ORANGE = "#FF6A00"
     LCD_ORANGE_DIM = "#CC5500"
-    LCD_BG_EDGE = "#1A0A0A"
-    LCD_BG_MID = "#331111"
-    LCD_BG_GLOW = "#551100"
+    # Solid black behind the LCD text: the red gradient made it hard to read
+    LCD_BG_EDGE = "#000000"
+    LCD_BG_MID = "#000000"
+    LCD_BG_GLOW = "#000000"
 
     TEXT = "#E6E6E6"
     TEXT_SECONDARY = "#999999"

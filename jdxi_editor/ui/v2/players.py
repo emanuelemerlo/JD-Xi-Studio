@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (
 from jdxi_editor.i18n import tr
 from jdxi_editor.ui.editors.midi_player import editor as _player
 from jdxi_editor.ui.editors.pattern import pattern as _pattern
-from jdxi_editor.ui.v2.restyle import flatten_round_buttons, restyle
+from jdxi_editor.ui.v2.restyle import flatten_round_buttons, restyle, title_badge
 
 PATTERN_ACCENT = "#f2c94c"  # as in the mockup
 PLAYER_ACCENT = "#3f8cff"
@@ -207,6 +207,10 @@ class PatternSequenceEditor(_pattern.PatternSequenceEditor):
         last.addWidget(files, 1)
         last.addWidget(recorder, 2)
         self.layout.setSpacing(12)
+        badge = QHBoxLayout()
+        badge.addWidget(title_badge(tr("Pattern"), PATTERN_ACCENT))
+        badge.addStretch()
+        self.layout.addLayout(badge)
         self.layout.addLayout(first)
         self.layout.addWidget(self.sequencer_group)
         self.layout.addLayout(last)
@@ -318,6 +322,10 @@ class MidiFilePlayer(_player.MidiFilePlayer):
         main = QVBoxLayout()
         main.setContentsMargins(12, 12, 12, 12)
         main.setSpacing(12)
+        badge = QHBoxLayout()
+        badge.addWidget(title_badge(tr("MIDI file"), PLAYER_ACCENT))
+        badge.addStretch()
+        main.addLayout(badge)
         main.addLayout(first)
         main.addWidget(tracks, 1)
         main.addWidget(playback)

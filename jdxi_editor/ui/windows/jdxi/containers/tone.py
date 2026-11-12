@@ -20,6 +20,7 @@ def add_tone_container(
     tone_container.setStyleSheet(JDXi.UI.Style.TRANSPARENT)
     tone_container_layout = QVBoxLayout(tone_container)
     tone_container_layout.setSpacing(3)
+    tone_container_layout.setContentsMargins(0, 0, 0, 0)
     tone_label_layout = QHBoxLayout()
     tone_label = QLabel(tr("Tone"))
     tone_label.setAlignment(Qt.AlignmentFlag.AlignCenter)

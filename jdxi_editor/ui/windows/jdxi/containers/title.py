@@ -27,7 +27,7 @@ def add_title_container(central_widget):
     font = QFont()
     font.setFamilies(["Myriad Pro", "Segoe UI"])  # Qt 6+
     font.setStyleHint(QFont.SansSerif)
-    font.setPointSize(24)
+    font.setPixelSize(26)  # pixels: points grow with the screen's DPI (Windows) and overlapped the display
     font.setBold(True)  # Optionally make it bold
 
     # Apply the font to the QLabel

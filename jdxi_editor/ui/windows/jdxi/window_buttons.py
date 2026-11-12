@@ -9,7 +9,7 @@ dragged and maximises/restores it on double-click, as a title bar would.
 
 from __future__ import annotations
 
-from PySide6.QtCore import QEvent, QObject, QPointF, QRectF, QSize, Qt
+from PySide6.QtCore import QTimer, QEvent, QObject, QPointF, QRectF, QSize, Qt
 from PySide6.QtGui import QColor, QPainter, QPen
 from PySide6.QtWidgets import QHBoxLayout, QMenuBar, QToolButton, QWidget
 
@@ -85,6 +85,9 @@ class WindowButtons(QWidget):
         window = self.window()
         if window.isMaximized():
             window.showNormal()
+            fit = getattr(window, "fit_to_instrument", None)
+            if fit is not None:  # back to the instrument's size, not the old maximised one
+                QTimer.singleShot(0, fit)
         else:
             window.showMaximized()
 

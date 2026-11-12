@@ -1356,6 +1356,12 @@ class JDXiInstrument(JDXiWindow):
         about_dialog.setAttribute(Qt.WA_DeleteOnClose)
         about_dialog.exec()
 
+    def fit_to_instrument(self) -> None:
+        """Normal size: the panel and the keys, nothing more (not maximised)."""
+        if self.isMaximized() or self.isFullScreen():
+            self.showNormal()
+        self.resize(self.minimumSizeHint().expandedTo(self.minimumSize()))
+
     @staticmethod
     def _new_look(window) -> None:
         """The new editors' look for a tool window (once): dark cards, flat buttons."""
@@ -1376,8 +1382,12 @@ class JDXiInstrument(JDXiWindow):
             self.main_editor = MainEditor(self)
         if self.isMinimized():  # the editors come back with the keyboard
             self.showNormal()
+        if self.main_editor.isMinimized():
+            self.main_editor.showNormal()
         self.main_editor.show()
+        # in front of the keyboard window (a window of its own: Windows needs both)
         self.main_editor.raise_()
+        self.main_editor.activateWindow()
 
     def _create_menu_bar(self) -> None:
         """Override to add Recent Files submenu."""
@@ -2662,6 +2672,10 @@ class JDXiInstrument(JDXiWindow):
                 geometry = self.settings.value("geometry")
                 if geometry:
                     self.restoreGeometry(geometry)
+                # Always start at the instrument's own size (position kept): a saved
+                # maximised state on Windows could not be brought back to normal size
+                self.setWindowState(Qt.WindowState.WindowNoState)
+                QTimer.singleShot(0, self, self.fit_to_instrument)
 
                 # Load preset info
                 self.current_preset_number = int(

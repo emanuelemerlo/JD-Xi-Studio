@@ -57,6 +57,23 @@ on the JD-Xi display.
   Vocal Effect pink (they shared colours with the parts before); the preset panel of Digital 2 says
   DIGITAL SYNTH 2
 
+### Windows 11 fixes
+
+- **The keyboard window starts at its own size**, not maximised from a saved state, and the
+  maximise button brings it back to that size (it could only be minimised)
+- **The editors window comes in front** when a part, Vocoder, Effects or a menu opens an editor
+  (it opened the tab behind the keyboard window)
+- **Vocoder, Effects and Arpeggiator do not stay lit**: they open an editor, they are not a choice
+- **Panel layout**: the title in pixels (in points it grew with Windows' DPI and covered the
+  display), the display lower, Program and Tone to the right of the part buttons (they
+  overlapped); Analog Synth in the same colour as the other parts
+- **Displays on solid black**, without the red gradient and the glow, on the keyboard and in
+  every editor
+- **Pattern, MIDI file player and Programs** with the same badge and cards (title inside, in the
+  editor's colour) as the other new editors
+- **Visual Studio 2026 and VS Code**: `JD-Xi-Studio.sln`, `.vscode/` (run, debug, tests, tasks),
+  `building/windows/local_build.ps1` (exe and installer on your PC), guide in `doc/dev-windows.md`
+
 ### Preset panel, Programs tabs and tool windows in the new look
 
 - **The preset panel** beside the tone editors: a card in the editor's colour, flat buttons with

@@ -20,6 +20,7 @@ def add_program_container(central_widget, create_program_buttons_row):
     )
     program_container_layout = QVBoxLayout(program_container)
     program_container_layout.setSpacing(4)
+    program_container_layout.setContentsMargins(0, 0, 0, 0)
 
     program_label_layout = QHBoxLayout()
     program_label_layout.setSpacing(1)

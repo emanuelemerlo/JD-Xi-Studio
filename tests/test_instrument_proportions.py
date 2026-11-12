@@ -125,3 +125,24 @@ def test_a_bigger_window_keeps_the_instrument_as_it_is(window):
     centre = stage.mapTo(window, stage.rect().center()).x()
     assert abs(centre - window.width() // 2) <= 2
     assert window.parts_container.parentWidget() is window.panel_container
+
+
+def test_starts_and_comes_back_at_its_own_size(window):
+    """A saved maximised state could not be brought back on Windows: always the instrument's size."""
+    window.showMaximized()
+    window.fit_to_instrument()
+    for _ in range(5):
+        _APP.processEvents()
+    assert not window.isMaximized()
+    assert window.size() == window.minimumSizeHint().expandedTo(window.minimumSize())
+
+
+def test_editor_buttons_do_not_stay_lit(window):
+    for button in (window.vocal_effects_button, window.effects_button, window.part_buttons["arp"]):
+        assert not button.isCheckable()
+
+
+def test_displays_on_solid_black():
+    from jdxi_editor.ui.style.editor_style import AppEditorStyle
+
+    assert AppEditorStyle.LCD_BG_EDGE == AppEditorStyle.LCD_BG_MID == AppEditorStyle.LCD_BG_GLOW == "#000000"

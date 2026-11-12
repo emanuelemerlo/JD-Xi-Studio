@@ -220,7 +220,7 @@ class LEDDisplayDimensions(Dimensions):
     WIDTH: int = 210
     HEIGHT: int = 70
     X = InstrumentDimensions.MARGIN + 20
-    Y = InstrumentDimensions.MARGIN + 35
+    Y = InstrumentDimensions.MARGIN + 42  # below the title, with room (Windows fonts)
 
 
 class DigitalTitleDimensions(Dimensions):
@@ -246,9 +246,9 @@ class TitleDimensions(Dimensions):
     """Title above digital (moved down)"""
 
     X = InstrumentDimensions.MARGIN + 20
-    Y = InstrumentDimensions.MARGIN
-    WIDTH: int = 200
-    HEIGHT: int = 50
+    Y = InstrumentDimensions.MARGIN - 6
+    WIDTH: int = 230
+    HEIGHT: int = 46
 
 
 class KeyboardDimensions(Dimensions):
@@ -319,7 +319,7 @@ class PartsDimensions(Dimensions):
 
     X = LEDDisplayDimensions.right() + 10
     Y = InstrumentDimensions.MARGIN
-    WIDTH: int = 180
+    WIDTH: int = 165  # ends before Program / Tone
     HEIGHT: int = 220
 
 
@@ -342,18 +342,18 @@ class RoundButtonDimensions(Dimensions):
 class ToneButtonDimensions(Dimensions):
     """Tone button dimensions"""
 
-    X: int = 385
+    X: int = 428  # right of the part buttons (they overlapped)
     Y = InstrumentDimensions.MARGIN + 75
-    WIDTH: int = 150
+    WIDTH: int = 72
     HEIGHT = 80
 
 
 class ProgramButtonDimensions(Dimensions):
     """Program buttons"""
 
-    X: int = 385
+    X: int = 428
     Y = InstrumentDimensions.MARGIN + 15
-    WIDTH: int = 150
+    WIDTH: int = 72
     HEIGHT = 80
 
 

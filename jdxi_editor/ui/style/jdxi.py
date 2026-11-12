@@ -1436,13 +1436,7 @@ class JDXiUIStyle:
                 border-radius: 5px;
                 padding: 1px;
                 margin: 1px;
-                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #321212,
-                    stop: 0.3 #331111,
-                    stop: 0.5 #551100,
-                    stop: 0.7 #331111,
-                    stop: 1 #321212
-                );
+                background: #000000;  /* solid black: readable */
             }}
             """
 
