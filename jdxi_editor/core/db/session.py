@@ -33,9 +33,9 @@ class DatabaseSession:
         """
         if db_path is None:
             # --- Default to user's home directory for JD-Xi Editor database
-            from jdxi_editor.project import __package_name__
+            from jdxi_editor.project import __data_name__, __package_name__
 
-            json_folder = Path.home() / f".{__package_name__}"
+            json_folder = Path.home() / f".{__data_name__}"
             json_folder.mkdir(parents=True, exist_ok=True)
             db_path = json_folder / "user_programs.db"
         else:

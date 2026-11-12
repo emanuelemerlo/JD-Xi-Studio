@@ -40,7 +40,7 @@ Install the **Python development** workload, then open `JD-Xi-Studio.sln`.
 ## The Windows exe and the installer on your PC
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File building\windows\local_build.ps1             # exe in dist\jdxi_editor
+powershell -ExecutionPolicy Bypass -File building\windows\local_build.ps1             # exe in dist\JD-Xi-Studio
 powershell -ExecutionPolicy Bypass -File building\windows\local_build.ps1 -Installer  # and dist\installer
 ```
 

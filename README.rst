@@ -20,7 +20,7 @@ pattern sequencer, the effects and the vocoder, on the computer screen instead o
 Download
 --------
 The builds are on the `releases page <https://github.com/emanuelemerlo/JD-Xi-Studio/releases>`_:
-for Windows an installer (``jdxi_editor-<version>_setup_win_x86-64.exe``, for the current user,
+for Windows an installer (``JD-Xi-Studio-<version>-setup-win64.exe``, for the current user,
 no administrator rights) and a portable zip, plus the Python wheel. On macOS and Linux install the
 wheel with Python 3.10 to 3.13 and start it with ``jdxi-editor``.
 

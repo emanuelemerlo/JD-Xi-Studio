@@ -564,6 +564,7 @@ class InstrumentPresetWidget(QWidget):
         label = getattr(self, "_preset_status_label", None)
         if label is not None:
             label.setText(text)
+            label.setVisible(bool(text))  # hidden while empty: the button takes the row
 
     def _on_prev_preset(self) -> None:
         combo = self.instrument_selection_combo.combo_box

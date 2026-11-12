@@ -580,6 +580,30 @@ def tone_editor_base():
             if self.SYNTH_TYPE is not None:
                 self._init_synth_data(self.SYNTH_TYPE)
 
+        def update_instrument_image(self) -> None:
+            """The preset's category as a card: its icon and name, the same for every sound of it.
+
+            (The editors used to show a photo or drawing of the synth a preset
+            imitates, picked from its name: poor at this size, and it suggested
+            compatibility with instruments the JD-Xi only imitates.)
+            """
+            label = getattr(self, "instrument_image_label", None)
+            if label is None:
+                return
+            label.setPixmap(sound_card(self._selected_category(), self.ACCENT))
+
+        def _selected_category(self) -> str:
+            combo = getattr(getattr(self, "instrument_preset", None), "instrument_selection_combo", None)
+            presets = getattr(self, "preset_preset_list", None) or []
+            if combo is None:
+                return ""
+            text = combo.combo_box.currentText()
+            preset_id = text.split(" - ")[0].strip() if " - " in text else ""
+            for preset in presets:
+                if str(preset.get("id")) == preset_id:
+                    return str(preset.get("category", ""))
+            return ""
+
         def side_widgets(self) -> list:
             from jdxi_editor.core.jdxi import JDXi
             from jdxi_editor.ui.preset.widget import InstrumentPresetWidget
@@ -603,8 +627,169 @@ def tone_editor_base():
             from jdxi_editor.ui.v2.restyle import restyle
 
             restyle(self.instrument_preset, self.ACCENT)
+            tidy_preset_card(self.instrument_preset)
             self.update_instrument_image()
             self.read_button.hide()  # the preset panel has its own "Read from JD-Xi"
             return [self.instrument_preset]
 
     return V2ToneEditor
+
+
+# The preset categories' icons (MDI / Font Awesome through qtawesome)
+CATEGORY_ICONS = (
+    ("bass", "mdi.music-clef-bass"),
+    ("string", "mdi.violin"),
+    ("pad", "mdi.violin"),
+    ("lead", "mdi.music-note"),
+    ("brass", "mdi.trumpet"),
+    ("keyboard", "mdi.piano"),
+    ("piano", "mdi.piano"),
+    ("seq", "mdi.dots-grid"),
+    ("fx", "mdi.creation"),
+    ("drum", "fa5s.drum"),
+    ("percussion", "fa5s.drum"),
+    ("kit", "fa5s.drum"),
+    ("dance", "fa5s.drum"),
+    ("hip-hop", "fa5s.drum"),
+    ("decade", "fa5s.drum"),
+    ("experimental", "fa5s.drum"),
+    ("init", "mdi.restart"),
+    ("synth", "mdi.sine-wave"),
+)
+
+
+def category_icon(category: str) -> str:
+    name = category.lower()
+    for word, icon in CATEGORY_ICONS:
+        if word in name:
+            return icon
+    return "mdi.sine-wave"
+
+
+def sound_card(category: str, accent: str, width: int = 268, height: int = 96):
+    """A card with the category's icon in the editor's colour and its name."""
+    import qtawesome as qta
+    from PySide6.QtCore import QRectF
+    from PySide6.QtGui import QColor, QFont, QPainter, QPainterPath, QPixmap
+
+    from jdxi_editor.i18n import tr
+
+    ratio = 2  # drawn at twice the size: sharp on scaled screens
+    pixmap = QPixmap(width * ratio, height * ratio)
+    pixmap.fill(Qt.GlobalColor.transparent)
+    p = QPainter(pixmap)
+    p.setRenderHint(QPainter.RenderHint.Antialiasing)
+    p.scale(ratio, ratio)
+    card = QPainterPath()
+    card.addRoundedRect(QRectF(0.5, 0.5, width - 1, height - 1), 10, 10)
+    p.fillPath(card, QColor("#16171a"))
+    p.setPen(QColor("#2e3036"))
+    p.drawPath(card)
+    tile = QRectF(14, (height - 64) / 2, 64, 64)
+    tint = QColor(accent)
+    tint.setAlpha(40)
+    p.setPen(Qt.PenStyle.NoPen)
+    p.setBrush(tint)
+    p.drawRoundedRect(tile, 14, 14)
+    icon = qta.icon(category_icon(category), color=accent)
+    icon.paint(p, tile.adjusted(12, 12, -12, -12).toRect())
+    text_left = tile.right() + 16
+    small = QFont()
+    small.setPixelSize(11)
+    small.setBold(True)
+    small.setLetterSpacing(QFont.SpacingType.AbsoluteSpacing, 1.5)
+    p.setFont(small)
+    p.setPen(QColor(accent))
+    p.drawText(QRectF(text_left, 22, width - text_left - 10, 16), Qt.AlignmentFlag.AlignLeft, tr("CATEGORY"))
+    big = QFont()
+    big.setBold(True)
+    p.setPen(QColor("#f2f2f2"))
+    name = category or tr("All sounds")
+    room = QRectF(text_left, 40, width - text_left - 10, 44)
+    flags = int(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop | Qt.TextFlag.TextWordWrap)
+    for px in (19, 17, 15, 13):  # long names (drum kit groups) on two lines, a little smaller
+        big.setPixelSize(px)
+        p.setFont(big)
+        if room.contains(p.fontMetrics().boundingRect(room.toRect(), flags, name).toRectF()):
+            break
+    p.drawText(room, flags, name)
+    p.end()
+    pixmap.setDevicePixelRatio(ratio)
+    return pixmap
+
+
+def tidy_preset_card(panel: QWidget) -> None:
+    """The preset card in columns: every row as wide as the card, nothing cut or sticking out.
+
+    The card is 340 px wide; with large Windows text the buttons' natural
+    widths added up to more, so the display and the rows overflowed it.
+    Previous / Next become arrows (named in their tooltips), every row of
+    buttons shares the card's width, the display fits the card.
+    """
+    from PySide6.QtWidgets import QComboBox, QHBoxLayout, QLabel, QLayout, QPushButton, QSizePolicy, QSpacerItem
+
+    preset = getattr(panel, "_preset_prev_button", None), getattr(panel, "_preset_next_button", None)
+    for button, arrow in zip(preset, ("‹", "›")):
+        if button is not None:
+            button.setToolTip(button.text().strip() or button.toolTip())
+            button.setText("")
+            button.setFixedWidth(40)
+            button.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+
+    def rows(layout: QLayout):
+        for i in range(layout.count()):
+            item = layout.itemAt(i)
+            child = item.layout() or (QWidget.layout(item.widget()) if item.widget() is not None else None)
+            if child is not None:
+                yield from rows(child)
+        yield layout
+
+    root = QWidget.layout(panel)  # (the preset widget's own "layout" attribute hides the method)
+    if root is None:
+        return
+    for layout in list(rows(root)):
+        if layout is not root:
+            layout.setContentsMargins(0, 0, 0, 0)
+        if not isinstance(layout, QHBoxLayout):
+            continue
+        widgets = [layout.itemAt(i).widget() for i in range(layout.count()) if layout.itemAt(i).widget()]
+        if layout is not root:
+            layout.setContentsMargins(0, 0, 0, 0)  # every row starts at the card's edge
+        if any(isinstance(w, QComboBox) for w in widgets):
+            for w in widgets:  # an empty name in front of a list only pushes it to the right
+                if isinstance(w, QLabel) and not w.text() and (w.pixmap() is None or w.pixmap().isNull()):
+                    w.hide()
+            continue
+        widgets = [w for w in widgets if not w.isHidden()]
+        buttons = [w for w in widgets if isinstance(w, QPushButton) or (w.findChildren(QPushButton) and not w.findChildren(QComboBox))]
+        others = [w for w in widgets if w not in buttons and not isinstance(w, QLabel)]
+        if not buttons or others:
+            continue  # not a row of buttons (a label and a field, say)
+        for i in reversed(range(layout.count())):  # the stretches that kept them at their natural width
+            if isinstance(layout.itemAt(i), QSpacerItem):
+                layout.takeAt(i)
+        for i in range(layout.count()):
+            layout.setStretch(i, 0)
+            label = layout.itemAt(i).widget()
+            if isinstance(label, QLabel) and not label.text():
+                label.hide()  # an empty status line (it shows up when there is something to say)
+        for w in buttons:
+            inner = [w] if isinstance(w, QPushButton) else w.findChildren(QPushButton)
+            fixed = all(b.sizePolicy().horizontalPolicy() == QSizePolicy.Policy.Fixed and b.maximumWidth() <= 40 for b in inner)
+            if fixed:
+                continue
+            w.setMinimumWidth(0)
+            w.setSizePolicy(QSizePolicy.Policy.Expanding, w.sizePolicy().verticalPolicy())
+            for b in inner:
+                b.setMinimumWidth(0)
+                b.setSizePolicy(QSizePolicy.Policy.Expanding, b.sizePolicy().verticalPolicy())
+            if QWidget.layout(w) is not None:
+                QWidget.layout(w).setContentsMargins(0, 0, 0, 0)
+    group = getattr(panel, "_preset_group", None)
+    if group is not None and QWidget.layout(group) is not None:
+        QWidget.layout(group).setContentsMargins(12, 8, 12, 12)  # as the other cards
+        QWidget.layout(group).setSpacing(8)
+    title = getattr(panel, "instrument_title_label", None)
+    if title is not None:  # the display: as wide as the card
+        title.setMinimumWidth(0)
+        title.setSizePolicy(QSizePolicy.Policy.Expanding, title.sizePolicy().verticalPolicy())

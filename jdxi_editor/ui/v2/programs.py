@@ -320,7 +320,11 @@ class ProgramEditor(_program.ProgramEditor):
             if widget is not None:
                 _strip_titles(widget)
                 self.more_tabs.addTab(widget, title)
-        self.more_tabs.setMinimumHeight(360)
+        # one height for all four (the tallest page's): the area no longer
+        # grows and shrinks as the tabs change
+        pages = [self.more_tabs.widget(i) for i in range(self.more_tabs.count())]
+        tallest = max((page.sizeHint().height() for page in pages), default=320)
+        self.more_tabs.setFixedHeight(max(360, tallest + self.more_tabs.tabBar().sizeHint().height() + 12))
         # the decorative icon rows of the old pages say nothing: hidden
         for label in self.more_tabs.findChildren(QLabel, "decorIcon"):
             label.hide()

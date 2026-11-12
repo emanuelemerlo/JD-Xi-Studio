@@ -60,7 +60,7 @@ from jdxi_editor.midi.sysex.request.read_session import (
     start_read_session,
 )
 from jdxi_editor.midi.sysex.sections import SysExSection
-from jdxi_editor.project import __package_name__
+from jdxi_editor.project import __data_name__, __package_name__
 from jdxi_editor.ui.common import JDXi, QVBoxLayout, QWidget
 from jdxi_editor.ui.editors import ProgramEditor
 from jdxi_editor.ui.editors.midi_player.editor import MidiFilePlayer
@@ -356,7 +356,7 @@ class PatchManager(QMainWindow):
             date_str = today.strftime("%Y-%m-%d")
             temp_folder = (
                 Path.home()
-                / f".{__package_name__}"
+                / f".{__data_name__}"
                 / "temp"
                 / f"{date_str}_{random_int}/"
             )

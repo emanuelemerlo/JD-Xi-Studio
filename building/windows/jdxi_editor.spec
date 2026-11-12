@@ -1,6 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 """
-PyInstaller spec for the Windows build (one folder: dist/jdxi_editor/).
+PyInstaller spec for the Windows build (one folder: dist/JD-Xi-Studio/, with JD-Xi-Studio.exe).
 
 Build from the repository root after installing the package (not editable):
 
@@ -70,7 +70,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name="jdxi_editor",
+    name="JD-Xi-Studio",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -86,5 +86,5 @@ coll = COLLECT(
     a.datas,
     strip=False,
     upx=False,
-    name="jdxi_editor",
+    name="JD-Xi-Studio",
 )

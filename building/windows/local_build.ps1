@@ -22,7 +22,7 @@ Push-Location $env:TEMP
 $code = $LASTEXITCODE
 Pop-Location
 if ($code -ne 0) { exit $code }
-Write-Host "Exe: $repo\dist\jdxi_editor\jdxi_editor.exe"
+Write-Host "Exe: $repo\dist\JD-Xi-Studio\JD-Xi-Studio.exe"
 
 if ($Installer) {
     $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"

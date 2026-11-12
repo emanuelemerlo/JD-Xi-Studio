@@ -30,7 +30,7 @@ from pathlib import Path
 from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QHBoxLayout, QMainWindow, QPushButton, QTextEdit
 
-from jdxi_editor.project import __package_name__
+from jdxi_editor.project import __data_name__
 from jdxi_editor.ui.common import JDXi, QVBoxLayout, QWidget
 from jdxi_editor.i18n import tr
 
@@ -44,9 +44,9 @@ class LogViewer(QMainWindow):
         # Apply dark theme styling
         self.setStyleSheet(JDXi.UI.Style.LOG_VIEWER)
 
-        # Determine log file path (Decologr writes to ~/.{package_name}/logs/{package_name}.log)
-        log_dir = Path.home() / f".{__package_name__}" / "logs"
-        self.log_file = log_dir / f"{__package_name__}.log"
+        # Each session writes its own file (~/.jdxi_studio/logs/jdxi_studio-<date>-<time>.log):
+        # the newest one is this session's
+        self.log_file = self.session_log()
 
         # Track the last position we read from in the file
         self.last_position = 0
@@ -90,6 +90,16 @@ class LogViewer(QMainWindow):
         self.refresh_timer = QTimer(self)
         self.refresh_timer.timeout.connect(self.refresh_log_file)
         self.refresh_timer.start(500)  # Start with fast refresh (500ms)
+
+    @staticmethod
+    def session_log(log_dir: Path | None = None) -> Path:
+        """The newest log file (this session's); the folder's expected file when there is none."""
+        log_dir = log_dir or Path.home() / f".{__data_name__}" / "logs"
+        try:
+            logs = sorted(log_dir.glob("*.log"), key=lambda p: p.stat().st_mtime)
+        except OSError:
+            logs = []
+        return logs[-1] if logs else log_dir / f"{__data_name__}.log"
 
     def load_log_file(self):
         """Load the entire log file into the text widget"""

@@ -5,7 +5,7 @@ from typing import List, Optional
 from decologr import Decologr as log
 
 from jdxi_editor.midi.program.program import JDXiProgram
-from jdxi_editor.project import __package_name__
+from jdxi_editor.project import __data_name__, __package_name__
 
 ROM_PROGRAMS = [
     {
@@ -3786,7 +3786,7 @@ class JDXiUIProgramList:
         )
         for data in ROM_PROGRAMS
     ]
-    json_folder = Path.home() / f".{__package_name__}"
+    json_folder = Path.home() / f".{__data_name__}"
     USER_PROGRAMS_FILE = str(json_folder / "user_programs.json")
     USER_PROGRAMS = []
     try:
