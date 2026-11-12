@@ -81,6 +81,8 @@ on the JD-Xi display.
   pad, bass, strings, drum kits...) shown small at the bottom of the preset card, plus Programs,
   Presets, Effects, Vocal FX, Arpeggio; the program icon (.png/.ico/.icns) with the JD-Xi's red
   trim and the installer's side image
+- **New logo**: JD-Xi Studio's own (the instrument in perspective with its microphone, red
+  trim, the name with "Xi" in red), replacing the original JDXI-Editor logo in the READMEs
 - **Obsolete files removed**: about 150 unused pictures, icon sets, GIMP sources and old splash
   screens; the photos of other synths replaced by the new pictures
 - **Keyboard always on top**: dialogs (MIDI ports, messages, names to save) come up above the

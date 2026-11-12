@@ -10,6 +10,8 @@ What it writes
     (resources/digital_synths, analog_synths, drum_kits: the editors pick the
     file by the preset's family or kit, e.g. pad.png, 808.png);
   - the pictures of Programs, Presets, Effects, Vocal FX and Arpeggiator;
+  - the project's logo (jdxi_studio_logo.png: README, GitHub), which replaces
+    the original JDXI-Editor logo;
   - the program icon (jdxi_icon.png / _512.png / .ico / .icns) and the
     Windows installer side image, from the mark in jdxi_editor/ui/v2/brand.py.
 """
@@ -346,6 +348,138 @@ def presets_inside(p: QPainter, r: QRectF, accent: str) -> None:
         p.drawText(row.adjusted(14, 0, 0, 0), Qt.AlignmentFlag.AlignVCenter, name)
 
 
+# --- the project's logo ---------------------------------------------------------
+
+
+def panel_top(w: int = 1000, h: int = 420) -> QImage:
+    """The instrument seen from above: the flat drawing that logo() puts in perspective."""
+    image, p = canvas(w, h)
+    rect = QRectF(4, 4, w - 8, h - 8)
+    g = QLinearGradient(rect.topLeft(), rect.bottomLeft())
+    g.setColorAt(0, QColor("#26282d"))
+    g.setColorAt(1, QColor("#141518"))
+    p.fillPath(rounded(rect, 22), g)
+    p.setPen(QPen(QColor("#ff3b1f"), 4))
+    p.setBrush(Qt.BrushStyle.NoBrush)
+    p.drawPath(rounded(rect.adjusted(2, 2, -2, -2), 20))  # the red frame of the panel
+    # top row: knobs with coloured rings, the display, the big value knob
+    for i, colour in enumerate(("#eb5757", "#eb5757", "#f2994a", "#f2c94c")):
+        knob(p, QPointF(70 + i * 70, 70), 24, -70 + i * 45, colour)
+    lcd(p, QRectF(360, 38, 290, 66), "JD-Xi STUDIO", None)
+    knob(p, QPointF(720, 72), 34, 40, "#ff3b1f")
+    for i in range(6):  # small buttons
+        r = QRectF(790 + (i % 3) * 64, 44 + (i // 3) * 44, 50, 28)
+        p.fillPath(rounded(r, 5), QColor("#eb5757") if i == 0 else QColor("#33353b"))
+    # part buttons and the 16 step pads
+    for i, colour in enumerate((DIGITAL, "#f2994a", DRUMS, ANALOG)):
+        c = QPointF(70 + i * 70, 150)
+        p.setPen(QPen(QColor(colour), 4))
+        p.setBrush(QColor("#0c0d0f"))
+        p.drawEllipse(c, 20, 20)
+    pad_w = (w - 380 - 15 * 8) / 16
+    for i in range(16):
+        r = QRectF(330 + i * (pad_w + 8), 132, pad_w, 36)
+        colour = QColor(PADS[i // 4])
+        p.fillPath(rounded(r, 4), colour if i % 4 == 0 else colour.darker(300))
+    # wheels and the keyboard
+    for i in range(2):
+        r = QRectF(40 + i * 56, 210, 40, 170)
+        g = QLinearGradient(r.topLeft(), r.bottomLeft())
+        g.setColorAt(0, QColor("#4a4d55"))
+        g.setColorAt(0.5, QColor("#1b1c1f"))
+        g.setColorAt(1, QColor("#4a4d55"))
+        p.fillPath(rounded(r, 8), g)
+    keys(p, QRectF(170, 196, w - 200, h - 214), 3, {7, 9, 11}, DIGITAL)
+    p.end()
+    return image
+
+
+def logo(size: int = 640) -> QImage:
+    """JD-Xi Studio's logo: the instrument in perspective, its microphone, the name."""
+    from PySide6.QtGui import QPolygonF, QTransform
+
+    image, p = canvas(size, size)
+    p.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
+    bg = QRadialGradient(size / 2, size * 0.42, size * 0.7)
+    bg.setColorAt(0, QColor("#22140f"))
+    bg.setColorAt(0.55, QColor("#0d0d0f"))
+    bg.setColorAt(1, QColor("#050506"))
+    p.fillRect(QRectF(0, 0, size, size), bg)
+    top = panel_top()
+    tw, th = top.width(), top.height()
+    s = size / 640
+    quad = QPolygonF([QPointF(110 * s, 150 * s), QPointF(530 * s, 150 * s), QPointF(610 * s, 360 * s), QPointF(30 * s, 360 * s)])
+    src = QPolygonF([QPointF(0, 0), QPointF(tw, 0), QPointF(tw, th), QPointF(0, th)])
+    t = QTransform()
+    QTransform.quadToQuad(src, quad, t)
+    # the gooseneck microphone, behind the instrument (left)
+    p.setPen(QPen(QColor("#5a5d64"), 7 * s, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap))
+    p.setBrush(Qt.BrushStyle.NoBrush)
+    neck = QPainterPath(QPointF(140 * s, 175 * s))
+    neck.cubicTo(QPointF(130 * s, 110 * s), QPointF(175 * s, 90 * s), QPointF(205 * s, 70 * s))
+    p.drawPath(neck)
+    head = QRectF(190 * s, 34 * s, 40 * s, 52 * s)
+    p.save()
+    p.translate(head.center())
+    p.rotate(35)
+    g = QLinearGradient(-20 * s, 0, 20 * s, 0)
+    g.setColorAt(0, QColor("#6b6e75"))
+    g.setColorAt(1, QColor("#1b1c1f"))
+    p.setPen(QPen(QColor("#0a0a0b"), 1.5))
+    p.setBrush(g)
+    p.drawRoundedRect(QRectF(-20 * s, -26 * s, 40 * s, 52 * s), 20 * s, 20 * s)
+    p.restore()
+    # the front edge (the body's thickness) and a red glow under it
+    glow = QRadialGradient(320 * s, 392 * s, 300 * s)
+    glow.setColorAt(0, QColor(255, 59, 31, 90))
+    glow.setColorAt(1, QColor(255, 59, 31, 0))
+    p.save()
+    p.translate(320 * s, 392 * s)
+    p.scale(1, 0.16)
+    p.translate(-320 * s, -392 * s)
+    p.fillRect(QRectF(0, 300 * s, size, 200 * s), glow)
+    p.restore()
+    front = QPainterPath()
+    front.moveTo(30 * s, 360 * s)
+    front.lineTo(610 * s, 360 * s)
+    front.lineTo(604 * s, 388 * s)
+    front.lineTo(36 * s, 388 * s)
+    front.closeSubpath()
+    g = QLinearGradient(0, 360 * s, 0, 388 * s)
+    g.setColorAt(0, QColor("#1d1e22"))
+    g.setColorAt(1, QColor("#08090a"))
+    p.fillPath(front, g)
+    p.fillRect(QRectF(36 * s, 386 * s, 568 * s, 2 * s), QColor("#ff3b1f"))
+    # the panel in perspective
+    p.save()
+    p.setTransform(t)
+    p.drawImage(0, 0, top)
+    p.restore()
+    # the name
+    p.setPen(QColor("#f4f4f4"))
+    p.setFont(font(84 * s))
+    name = QRectF(0, 420 * s, size, 100 * s)
+    fm = p.fontMetrics()
+    left_w = fm.horizontalAdvance("JD-")
+    total = fm.horizontalAdvance("JD-Xi")
+    x0 = (size - total) / 2
+    p.drawText(QPointF(x0, 500 * s), "JD-")
+    p.setPen(QColor("#ff3b1f"))
+    p.drawText(QPointF(x0 + left_w, 500 * s), "Xi")
+    f = font(34 * s)
+    f.setLetterSpacing(QFont.SpacingType.AbsoluteSpacing, 16 * s)
+    p.setFont(f)
+    p.setPen(QColor("#d9d9d9"))
+    p.drawText(QRectF(8 * s, 512 * s, size, 50 * s), Qt.AlignmentFlag.AlignHCenter, "STUDIO")
+    # the step row under the name, in the part colours
+    for i in range(16):
+        r = QRectF(size / 2 - 8 * 26 * s + i * 26 * s + 3 * s, 578 * s, 20 * s, 10 * s)
+        p.fillPath(rounded(r, 2 * s), QColor(PADS[i // 4]) if i % 4 == 0 else QColor(PADS[i // 4]).darker(320))
+    del name
+    p.end()
+    return image
+
+
 # --- the program icon -----------------------------------------------------------
 
 
@@ -442,6 +576,7 @@ def main() -> None:
     card_device("PROGRAM", DIGITAL, programs_inside).save(str(RES / "programs" / "programs.png"))
     card_device("PRESETS", DIGITAL, presets_inside).save(str(RES / "presets" / "presets.png"))
     arpeggio_image().save(str(RES / "arpeggiator" / "arpeggiator2.png"))
+    logo().save(str(RES / "jdxi_studio_logo.png"))
     write_icons()
     write_installer_image()
     print("pictures and icons written to", RES)

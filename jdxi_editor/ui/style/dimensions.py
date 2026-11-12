@@ -155,7 +155,7 @@ class LfoIconDimensions(Dimensions):
 
 
 class SplashScreenDimensions(Dimensions):
-    """Splash screen dimensions (the square JDXI-Editor_logo_640.png at the left)"""
+    """Splash screen dimensions (the JD-Xi Studio mark at the left)"""
 
     WIDTH: int = 850
     HEIGHT: int = 540

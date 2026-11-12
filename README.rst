@@ -1,9 +1,9 @@
 JDXI-Editor
 ===========
 
-.. image:: ./resources/jdxi_icon.png
+.. image:: ./resources/jdxi_studio_logo.png
    :alt: JD-Xi Studio
-   :width: 128
+   :width: 320
 
 .. note::
    This is an independent fork of `JDXI-Editor <https://github.com/markxbrooks/JDXI-Editor>`_ by
