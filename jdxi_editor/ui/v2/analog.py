@@ -55,6 +55,12 @@ SEND_INTERVAL_MS = 25
 class AnalogToneEditor(AnalogSynthEditor):
     """The Analog Synth tone, every parameter on one screen."""
 
+    def update_instrument_image(self) -> None:
+        """The preset's category as a card, as in the Digital and Drums panels."""
+        from jdxi_editor.ui.v2.framework import show_category_card
+
+        show_category_card(self, ACCENT)
+
     def __init__(self, midi_helper=None, preset_helper=None, parent=None):
         self.values: dict[AnalogParam, ParamValue] = {}
         self.info_hub: Optional[InfoHub] = None
@@ -124,7 +130,20 @@ class AnalogToneEditor(AnalogSynthEditor):
         # the app's theme for the preset panel only (its buttons need it)
         from jdxi_editor.core.jdxi import JDXi
 
-        JDXi.UI.Theme.apply_editor_style(self.instrument_preset, analog=True)
+        JDXi.UI.Theme.apply_editor_style(self.instrument_preset)
+        # the same look as the Digital and Drums panels: no blue frame of its own,
+        # both tabs readable (they scrolled behind arrows)
+        from PySide6.QtWidgets import QTabWidget
+
+        from jdxi_editor.ui.v2.framework import finish_preset_panel
+
+        self.instrument_preset_group.setStyleSheet("")
+        for tabs in self.instrument_preset.findChildren(QTabWidget):
+            tabs.setUsesScrollButtons(False)
+            tabs.tabBar().setExpanding(True)
+            tabs.setStyleSheet("QTabBar::tab { padding: 6px 8px; }")
+
+        finish_preset_panel(self, ACCENT)
         side.addWidget(self.instrument_preset)
         self.info_panel = InfoPanel(ACCENT)
         self.info_panel.setFixedWidth(340)

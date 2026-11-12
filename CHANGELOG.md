@@ -22,6 +22,14 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - **The preset's category as a card** (icon and name: Bass, Strings/Pad, Lead, Brass, Keyboard,
   Seq, FX, drum kits) in place of the picture of the synth a preset imitates, which said little and
   suggested a compatibility the JD-Xi does not have
+- **The category card follows the list**: choosing a category (which selects one of its presets)
+  updates it; Analog has it too
+- **Analog's preset panel** looks and lines up as Digital's and Drums' (no blue frame of its own, both
+  tabs readable, rows as wide as the card)
+- **Splash**: the mark with the name, origin and version beside it, the startup steps and display
+  the card's width, the trademark notice small at the bottom
+- **Preferences** in two cards (Interface, Logs): each option with its box and, in grey, what it does
+- **USB recorder**: icons and names next to their controls (the name column took the spare width)
 - **Settings is always among the tabs** (it appeared only when opened from the menu)
 - **Log viewer** shows this session's log (the logs are one file per session, with date and time)
 - **Programs**: the area of Presets / User Programs / Playlist / Playlist Editor keeps one height
@@ -30,6 +38,11 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   `JD-Xi recipe parameters.csv`, made from the Italian files by `building/recipes/make_english.py`.
   The Recipes page offers the files in the interface's language; the editor reads both (English
   headers, "value / range / by ear", EFFECTS / VOCAL)
+- **Obsolete files removed** (115): the instrument pictures the editors no longer show (digital_synths,
+  analog_synths, drum_kits, effects, vocal_fx, programs, presets, arpeggiator), unused icons and fonts,
+  a duplicate LCD font, the original project's Perl/Arduino leftovers and old CSVs, and the development
+  notes of finished work (critiques, gap analyses, migration and refactoring plans); `make_art.py` now
+  draws only the logo, the icons and the installer image
 - **Exporting a recipe to .xlsx** writes Step, From and To as numbers: the template's Check column
   no longer marks every range row as wrong
 

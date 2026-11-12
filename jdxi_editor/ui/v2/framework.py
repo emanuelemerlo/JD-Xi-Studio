@@ -581,28 +581,10 @@ def tone_editor_base():
                 self._init_synth_data(self.SYNTH_TYPE)
 
         def update_instrument_image(self) -> None:
-            """The preset's category as a card: its icon and name, the same for every sound of it.
-
-            (The editors used to show a photo or drawing of the synth a preset
-            imitates, picked from its name: poor at this size, and it suggested
-            compatibility with instruments the JD-Xi only imitates.)
-            """
-            label = getattr(self, "instrument_image_label", None)
-            if label is None:
-                return
-            label.setPixmap(sound_card(self._selected_category(), self.ACCENT))
+            show_category_card(self, self.ACCENT)
 
         def _selected_category(self) -> str:
-            combo = getattr(getattr(self, "instrument_preset", None), "instrument_selection_combo", None)
-            presets = getattr(self, "preset_preset_list", None) or []
-            if combo is None:
-                return ""
-            text = combo.combo_box.currentText()
-            preset_id = text.split(" - ")[0].strip() if " - " in text else ""
-            for preset in presets:
-                if str(preset.get("id")) == preset_id:
-                    return str(preset.get("category", ""))
-            return ""
+            return selected_category(self)
 
         def side_widgets(self) -> list:
             from jdxi_editor.core.jdxi import JDXi
@@ -623,16 +605,55 @@ def tone_editor_base():
             self.instrument_preset.add_image_group(self.instrument_image_group)
             self.instrument_preset.setFixedWidth(340)
             JDXi.UI.Theme.apply_editor_style(self.instrument_preset)
-            # The new look: a card in the editor's colour, flat buttons with icon and name
-            from jdxi_editor.ui.v2.restyle import restyle
-
-            restyle(self.instrument_preset, self.ACCENT)
-            tidy_preset_card(self.instrument_preset)
-            self.update_instrument_image()
+            finish_preset_panel(self, self.ACCENT)
             self.read_button.hide()  # the preset panel has its own "Read from JD-Xi"
             return [self.instrument_preset]
 
     return V2ToneEditor
+
+
+def finish_preset_panel(editor, accent: str) -> None:
+    """The preset panel in the new look (Digital, Drums, Analog): a card in the editor's
+    colour, flat buttons, rows as wide as the card, the category card that follows the list."""
+    from jdxi_editor.ui.v2.restyle import restyle
+
+    panel = editor.instrument_preset
+    restyle(panel, accent)
+    tidy_preset_card(panel)
+    show_category_card(editor, accent)
+    combo = getattr(panel, "instrument_selection_combo", None)
+    if combo is not None:
+        refresh = lambda *_: QTimer.singleShot(0, editor, editor.update_instrument_image)  # noqa: E731
+        combo.combo_box.currentIndexChanged.connect(refresh)
+        combo.combo_box.currentTextChanged.connect(refresh)  # the list refilled: same index, new preset
+        if combo.category_combo is not None:
+            combo.category_combo.currentIndexChanged.connect(refresh)
+
+
+def selected_category(editor) -> str:
+    """The category of the preset selected in the editor's list ("" when unknown)."""
+    combo = getattr(getattr(editor, "instrument_preset", None), "instrument_selection_combo", None)
+    if combo is None:
+        return ""
+    presets = getattr(editor, "preset_preset_list", None) or getattr(combo, "_presets", None) or []
+    text = combo.combo_box.currentText()
+    preset_id = text.split(" - ")[0].strip() if " - " in text else ""
+    for preset in presets:
+        if isinstance(preset, dict) and str(preset.get("id")) == preset_id:
+            return str(preset.get("category", ""))
+    return ""
+
+
+def show_category_card(editor, accent: str) -> None:
+    """The preset's category as a card (icon and name) in the panel's picture place.
+
+    (The editors used to show a photo or drawing of the synth a preset imitates,
+    picked from its name: poor at this size, and it suggested compatibility with
+    instruments the JD-Xi only imitates.)
+    """
+    label = getattr(editor, "instrument_image_label", None)
+    if label is not None:
+        label.setPixmap(sound_card(selected_category(editor), accent))
 
 
 # The preset categories' icons (MDI / Font Awesome through qtawesome)
@@ -747,7 +768,17 @@ def tidy_preset_card(panel: QWidget) -> None:
     root = QWidget.layout(panel)  # (the preset widget's own "layout" attribute hides the method)
     if root is None:
         return
-    for layout in list(rows(root)):
+    # every layout in the panel, also inside its tabs (Analog: Presets / Cheat Presets)
+    layouts, seen = [], set()
+    for widget in [panel] + panel.findChildren(QWidget):
+        top = QWidget.layout(widget)
+        if top is None:
+            continue
+        for layout in rows(top):
+            if id(layout) not in seen:
+                seen.add(id(layout))
+                layouts.append(layout)
+    for layout in layouts:
         if layout is not root:
             layout.setContentsMargins(0, 0, 0, 0)
         if not isinstance(layout, QHBoxLayout):
@@ -785,6 +816,13 @@ def tidy_preset_card(panel: QWidget) -> None:
                 b.setSizePolicy(QSizePolicy.Policy.Expanding, b.sizePolicy().verticalPolicy())
             if QWidget.layout(w) is not None:
                 QWidget.layout(w).setContentsMargins(0, 0, 0, 0)
+    from PySide6.QtWidgets import QTabWidget
+
+    for tabs in panel.findChildren(QTabWidget):  # the Analog panel's pages: the card's margins inside
+        for i in range(tabs.count()):
+            page = tabs.widget(i)
+            if QWidget.layout(page) is not None:
+                QWidget.layout(page).setContentsMargins(10, 10, 10, 10)
     group = getattr(panel, "_preset_group", None)
     if group is not None and QWidget.layout(group) is not None:
         QWidget.layout(group).setContentsMargins(12, 8, 12, 12)  # as the other cards

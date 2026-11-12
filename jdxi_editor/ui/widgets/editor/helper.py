@@ -104,11 +104,14 @@ def create_icon_and_label(
     icon_pixmap = JDXi.UI.Icon.get_icon_pixmap(
         icon, color=JDXi.UI.Style.FOREGROUND, size=20
     )
+    layout.setSpacing(8)
     if icon_pixmap and not icon_pixmap.isNull():
         icon_label = QLabel()
         icon_label.setPixmap(icon_pixmap)
+        icon_label.setFixedWidth(icon_pixmap.width() + 4)
         layout.addWidget(icon_label)
     layout.addWidget(label)
+    layout.addStretch(1)  # icon and name together, at the left of their cell
     return layout, label
 
 
