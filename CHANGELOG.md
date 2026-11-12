@@ -58,6 +58,9 @@ on the JD-Xi display.
   DIGITAL SYNTH 2
 
 ### About, documentation and releases
+- **Panel names always fit**: where the system's font is wider than the one designed for (Segoe UI
+  missing on Linux, Windows' scaling), a name is drawn a little smaller instead of being cut; this
+  made the UI audit fail on the GitHub runners
 - **Every editor has its title badge** at the top left (Analog and Recipes were missing it); the UI
   audit checks it
 - **About** in the new look: the logo, the version as the release names it (1.0.0-alpha.1), the

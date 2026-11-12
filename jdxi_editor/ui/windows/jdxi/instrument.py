@@ -54,7 +54,7 @@ from PySide6.QtGui import (
     QMouseEvent,
     QShortcut,
 )
-from PySide6.QtWidgets import QApplication, QMenu, QMessageBox, QProgressDialog
+from PySide6.QtWidgets import QApplication, QLabel, QMenu, QMessageBox, QProgressDialog
 
 from jdxi_editor.core.jdxi import JDXi
 from jdxi_editor.core.synth.type import JDXiSynth
@@ -1444,6 +1444,23 @@ class JDXiInstrument(JDXiWindow):
         if self.isMaximized() or self.isFullScreen():
             self.showNormal()
         self.resize(self.minimumSizeHint().expandedTo(self.minimumSize()))
+        self.fit_panel_texts()
+
+    def fit_panel_texts(self) -> None:
+        """Each name on the panel fits its place: a little smaller where it would be cut.
+
+        The panel keeps the JD-Xi's proportions, so its labels have fixed
+        widths; a wider font than the one designed for (Segoe UI missing on
+        Linux, say) would cut "Digital Synth 1" or "Key Hold".
+        """
+        from jdxi_editor.ui.style.fit import fit_text
+
+        panel = getattr(self, "panel_container", None)
+        if panel is None:
+            return
+        for label in panel.findChildren(QLabel):
+            if label.isVisibleTo(panel) and label.text():
+                fit_text(label)
 
     @staticmethod
     def _new_look(window) -> None:
