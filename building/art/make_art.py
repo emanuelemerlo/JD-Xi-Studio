@@ -575,8 +575,8 @@ def write_installer_image() -> None:
     p.drawText(QRectF(0, 350, 328, 50), Qt.AlignmentFlag.AlignCenter, "JD-Xi")
     p.setPen(QColor(LED))
     p.drawText(QRectF(0, 398, 328, 50), Qt.AlignmentFlag.AlignCenter, "Studio")
-    for i, colour in enumerate(PADS):
-        p.fillPath(rounded(QRectF(76 + i * 46, 520, 36, 22), 4), QColor(colour))
+    for i in range(4):
+        p.fillPath(rounded(QRectF(76 + i * 46, 520, 36, 22), 4), QColor("#ff2a1a") if i == 0 else QColor("#5a140d"))
     p.end()
     pil = Image.open(io.BytesIO(png_bytes(image))).convert("RGB").resize((164, 314), Image.LANCZOS)
     pil.save(RES / "installer_side.bmp")

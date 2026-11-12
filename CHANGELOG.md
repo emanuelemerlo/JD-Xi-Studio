@@ -79,8 +79,9 @@ on the JD-Xi display.
 - **New pictures and icon**: one family of illustrations in the JD-Xi's look (black body, red
   display, the part colours), drawn by `building/art/make_art.py`: one per sound family (piano,
   pad, bass, strings, drum kits...) shown small at the bottom of the preset card, plus Programs,
-  Presets, Effects, Vocal FX, Arpeggio; the program icon (.png/.ico/.icns) with the JD-Xi's red
-  trim and the installer's side image
+  Presets, Effects, Vocal FX, Arpeggio; the installer's side image
+- **New program icon**: a JD-Xi in miniature (red display, knobs with their red ring, step LEDs,
+  mini keys), black and red only; simpler at 16-32 px so it stays readable in the taskbar
 - **New logo**: JD-Xi Studio's own, in the JD-Xi's colours (black panel, white labels, red
   light only), laid out as the instrument (controls on the back two thirds, 37 mini keys at the
   front, microphone), in a gentle perspective; the name with "Xi" in red, replacing the original JDXI-Editor logo in the READMEs

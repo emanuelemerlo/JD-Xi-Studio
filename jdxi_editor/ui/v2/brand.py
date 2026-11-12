@@ -1,9 +1,8 @@
 """
 JD-Xi Studio's mark: drawn in code, so it needs no image file.
 
-A dark tile with the four part colours as a step sequencer row (Digital 1
-red, Digital 2 orange, Drums purple, Analog blue) over three keys, and the
-name. The original JDXI-Editor logo stays with the original project.
+A JD-Xi in miniature on a dark tile: black, white keys and red light only,
+as the instrument's panel. The original JDXI-Editor logo stays with the original project.
 """
 
 from __future__ import annotations
@@ -18,53 +17,77 @@ PART_COLOURS = ("#eb5757", "#f2994a", "#a78bfa", "#3fa7f5")
 
 
 def draw_mark(size: int = 256) -> QPixmap:
-    """The square mark (window icon, splash)."""
+    """The square mark (window icon, splash): a JD-Xi in miniature.
+
+    Black panel, red light only, as the instrument: the red display, knobs
+    with their red ring, the step LEDs and the mini keys. Below 48 px the
+    details that would turn to mush are left out.
+    """
     pm = QPixmap(size, size)
     pm.fill(Qt.GlobalColor.transparent)
     p = QPainter(pm)
     p.setRenderHint(QPainter.RenderHint.Antialiasing)
     s = size / 256.0
+    small = size < 48
+    red = QColor("#ff2a1a")
     tile = QPainterPath()
-    tile.addRoundedRect(QRectF(8 * s, 8 * s, 240 * s, 240 * s), 52 * s, 52 * s)
+    tile.addRoundedRect(QRectF(8 * s, 8 * s, 240 * s, 240 * s), 48 * s, 48 * s)
     grad = QLinearGradient(0, 0, 0, size)
-    grad.setColorAt(0, QColor("#24262b"))
-    grad.setColorAt(1, QColor("#0e0f11"))
+    grad.setColorAt(0, QColor("#26272b"))
+    grad.setColorAt(1, QColor("#0a0a0c"))
     p.fillPath(tile, grad)
-    p.setPen(QPen(QColor("#3a3d44"), 3 * s))
+    p.setPen(QPen(QColor("#3a3c41"), max(1.0, 3 * s)))
     p.drawPath(tile)
-    # the red trim along the top edge, as on the JD-Xi's panel
+    # the red display, with a glow
+    display = QRectF(36 * s, 40 * s, (184 if small else 108) * s, 30 * s)
+    glow = QColor(red)
+    glow.setAlpha(70)
     p.setPen(Qt.PenStyle.NoPen)
-    p.fillPath(_trim(s), QColor("#ff3b1f"))
-    # the step row: four pads in the part colours
-    pad, gap, top = 40 * s, 12 * s, 58 * s
-    left = (size - (4 * pad + 3 * gap)) / 2
-    for i, colour in enumerate(PART_COLOURS):
-        r = QRectF(left + i * (pad + gap), top, pad, pad)
+    p.setBrush(glow)
+    p.drawRoundedRect(display.adjusted(-4 * s, -4 * s, 4 * s, 4 * s), 8 * s, 8 * s)
+    p.setBrush(QColor("#050505"))
+    p.drawRoundedRect(display, 5 * s, 5 * s)
+    p.setBrush(red)
+    bars = 6 if not small else 3
+    for i in range(bars):  # the display's text, as red segments
+        w = (display.width() - 20 * s) / bars
+        p.drawRoundedRect(QRectF(display.left() + 10 * s + i * w, display.top() + 10 * s, w - 6 * s, 10 * s), 2 * s, 2 * s)
+    # knobs with their red ring
+    knobs = [QPointF(184 * s, 56 * s)] if not small else []
+    knobs += [QPointF(x * s, 110 * s) for x in ((60, 128, 196) if not small else (78, 178))]
+    for i, c in enumerate(knobs):
+        r = (30 if i == 0 and not small else 22) * s
+        p.setPen(QPen(red, max(1.2, 5 * s)))
+        p.setBrush(QColor("#111214"))
+        p.drawEllipse(c, r, r)
+        if not small:
+            p.setPen(QPen(QColor("#f2f2f2"), 3.5 * s, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap))
+            p.drawLine(c, QPointF(c.x() + r * 0.45, c.y() - r * 0.55))
+    # the step LEDs
+    steps = 8 if not small else 4
+    step_w = 184 * s / steps
+    for i in range(steps):
+        r = QRectF(36 * s + i * step_w + 2 * s, 146 * s, step_w - 6 * s, 14 * s)
+        p.setPen(Qt.PenStyle.NoPen)
+        p.setBrush(red if i % 4 == 0 else QColor("#5a140d"))
+        p.drawRoundedRect(r, 3 * s, 3 * s)
+    # the mini keys
+    key_top, key_h = 176 * s, 52 * s
+    whites = 7 if not small else 4
+    kw = 184 * s / whites
+    for i in range(whites):
+        r = QRectF(36 * s + i * kw + 1.5 * s, key_top, kw - 3 * s, key_h)
         path = QPainterPath()
-        path.addRoundedRect(r, 9 * s, 9 * s)
-        p.fillPath(path, QColor(colour))
-    # three keys below
-    key_w, key_h, key_top = 46 * s, 74 * s, 126 * s
-    key_left = (size - 3 * key_w - 2 * 6 * s) / 2
-    for i in range(3):
-        r = QRectF(key_left + i * (key_w + 6 * s), key_top, key_w, key_h)
-        path = QPainterPath()
-        path.addRoundedRect(r, 7 * s, 7 * s)
-        p.fillPath(path, QColor("#f2f2f2"))
-    for i in range(2):
-        x = key_left + (i + 1) * (key_w + 6 * s) - 3 * s - 14 * s
-        r = QRectF(x, key_top, 28 * s, 44 * s)
-        path = QPainterPath()
-        path.addRoundedRect(r, 5 * s, 5 * s)
-        p.fillPath(path, QColor("#16171a"))
+        path.addRoundedRect(r, 4 * s, 4 * s)
+        p.fillPath(path, QColor("#f4f4f4"))
+    if not small:
+        for i in (0, 1, 3, 4, 5):
+            r = QRectF(36 * s + (i + 1) * kw - kw * 0.3, key_top, kw * 0.6, key_h * 0.6)
+            path = QPainterPath()
+            path.addRoundedRect(r, 3 * s, 3 * s)
+            p.fillPath(path, QColor("#0e0f11"))
     p.end()
     return pm
-
-
-def _trim(s: float) -> QPainterPath:
-    path = QPainterPath()
-    path.addRoundedRect(QRectF(60 * s, 24 * s, 136 * s, 7 * s), 3.5 * s, 3.5 * s)
-    return path
 
 
 def icon() -> QIcon:
