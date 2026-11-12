@@ -197,3 +197,44 @@ def test_the_window_imports_checks_guides_and_edits(app, tmp_path):
     assert target.exists()
     assert w.save_template("Ricetta JD-Xi - vuota.csv", str(tmp_path / "t.csv")).exists()
     w.close()
+
+
+EN = ROOT / "resources" / "recipes"
+
+
+def test_english_template_reads_like_the_italian_one():
+    """The English files are the Italian ones translated: the same recipe comes out."""
+    from jdxi_editor.recipes.reader import read_file
+
+    it_xlsx, en_xlsx = read_file(TEMPLATE), read_file(EN / "JD-Xi recipe - template.xlsx")
+    it_csv, en_csv = read_file(CSV), read_file(EN / "JD-Xi recipe - example.csv")
+    for it, en in ((it_xlsx, en_xlsx), (it_csv, en_csv)):
+        assert len(en.rows) == len(it.rows) > 0
+        assert [(r.part.replace("EFFECTS", "EFFETTI"), r.group, r.param, r.kind, r.value, r.lo, r.hi) for r in en.rows] == \
+               [(r.part, r.group, r.param, r.kind, r.value, r.lo, r.hi) for r in it.rows]
+        assert en.title == "The Jungle Gardenia lead" and en.base_tone == it.base_tone
+    assert (EN / "JD-Xi recipe - blank.csv").exists() and (EN / "JD-Xi recipe parameters.csv").exists()
+
+
+def test_templates_follow_the_interface_language(monkeypatch):
+    import jdxi_editor.i18n as i18n
+    from jdxi_editor.ui.v2 import recipes
+
+    monkeypatch.setattr(i18n, "current_language", lambda: "en")
+    assert recipes.template_name("xlsx") == "JD-Xi recipe - template.xlsx"
+    monkeypatch.setattr(i18n, "current_language", lambda: "it")
+    assert recipes.template_name("csv") == "Ricetta JD-Xi - vuota.csv"
+
+
+def test_export_into_the_english_template_uses_its_words(tmp_path):
+    import openpyxl
+
+    from jdxi_editor.recipes.reader import read_file
+
+    recipe = read_file(CSV)
+    out = tmp_path / "out.xlsx"
+    recipe.to_xlsx(out, EN / "JD-Xi recipe - template.xlsx")
+    sheet = openpyxl.load_workbook(out)["Recipe"]
+    kinds = {sheet.cell(r, 7).value for r in range(12, 12 + len(recipe.rows))}
+    assert kinds <= {"value", "range", "by ear"} and "EFFETTI" not in {sheet.cell(r, 3).value for r in range(12, 80)}
+    assert len(read_file(out).rows) == len(recipe.rows)

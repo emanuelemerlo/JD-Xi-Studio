@@ -61,10 +61,10 @@ Alpha and beta versions are marked as pre-releases. The app checks that page for
 
 ### Windows 📦
 Each release offers two downloads; take the one you want:
-- the **installer** `jdxi_editor-<version>_setup_win_x86-64.exe` (installs for the current user,
+- the **installer** `JD-Xi-Studio-<version>-setup-win64.exe` (installs for the current user,
   no administrator rights, adds Start menu entries and an uninstaller);
-- the **portable** `JDXI-Editor-<version>-win64-portable.zip` (nothing to install: unzip anywhere,
-  even on a USB stick, and run `jdxi_editor.exe`).
+- the **portable** `JD-Xi-Studio-<version>-win64-portable.zip` (nothing to install: unzip anywhere,
+  even on a USB stick, and run `JD-Xi-Studio.exe`).
 
 Windows 10 or 11, 64-bit. The files are not signed yet: if SmartScreen warns, choose
 "More info" → "Run anyway".

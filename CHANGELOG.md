@@ -2,6 +2,37 @@
 
 All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Editor) are documented in this file.
 
+# [1.0.0a3] — tag `v1.0.0-alpha.3` (a name of its own everywhere; fixes from testing alpha 2)
+
+### JD-Xi Studio, not JDXI-Editor
+- **Installer**: "JD-Xi Studio" by Emanuele Merlo, with its own AppId and folder
+  (`%LOCALAPPDATA%\Programs\JD-Xi Studio`): it no longer replaces, or is replaced by, the original
+  JDXI-Editor, and the two can be installed side by side. The program is `JD-Xi-Studio.exe`, the files
+  `JD-Xi-Studio-<version>-setup-win64.exe` and `JD-Xi-Studio-<version>-win64-portable.zip`.
+  An alpha 1 or 2 installed as "JDXI Editor" is offered for removal (settings and files are kept)
+- **An update removes the old version's files** first: pictures of an earlier version no longer stay
+  next to the new ones (the Jupiter-8 photo in the Digital editors came from there)
+- **Own settings and user folder**: `~/.jdxi_studio` (programs, recipes, recent files, logs) and its
+  own settings key; at the first start the settings and files used up to alpha 2 (the original
+  program's) are copied over, the originals are left for JDXI-Editor
+
+### Fixes
+- **Preset card** (Digital, Drums): every row as wide as the card, nothing cut or sticking out with
+  large Windows text; Previous / Next as arrows; the display fits the card
+- **The preset's category as a card** (icon and name: Bass, Strings/Pad, Lead, Brass, Keyboard,
+  Seq, FX, drum kits) in place of the picture of the synth a preset imitates, which said little and
+  suggested a compatibility the JD-Xi does not have
+- **Settings is always among the tabs** (it appeared only when opened from the menu)
+- **Log viewer** shows this session's log (the logs are one file per session, with date and time)
+- **Programs**: the area of Presets / User Programs / Playlist / Playlist Editor keeps one height
+- **Recipes in English too**: `JD-Xi recipe - template.xlsx` (with its menus and Check column, the
+  instructions and the example translated), `JD-Xi recipe - blank.csv`, `JD-Xi recipe - example.csv`,
+  `JD-Xi recipe parameters.csv`, made from the Italian files by `building/recipes/make_english.py`.
+  The Recipes page offers the files in the interface's language; the editor reads both (English
+  headers, "value / range / by ear", EFFECTS / VOCAL)
+- **Exporting a recipe to .xlsx** writes Step, From and To as numbers: the template's Check column
+  no longer marks every range row as wrong
+
 # [1.0.0a2] — tag `v1.0.0-alpha.2` — 2026-11-12 (Windows 11 fixes, JD-Xi Studio's look)
 
 The fixes from testing alpha 1 on Windows 11, JD-Xi Studio's own logo, icon and pictures,

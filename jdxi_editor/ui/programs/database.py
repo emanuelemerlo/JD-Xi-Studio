@@ -26,9 +26,9 @@ class ProgramDatabase:
         :param db_path: Path to SQLite database file. If None, uses default location.
         """
         if db_path is None:
-            from jdxi_editor.project import __package_name__
+            from jdxi_editor.project import __data_name__, __package_name__
 
-            json_folder = Path.home() / f".{__package_name__}"
+            json_folder = Path.home() / f".{__data_name__}"
             json_folder.mkdir(parents=True, exist_ok=True)
             db_path = json_folder / "user_programs.db"
 
@@ -464,13 +464,13 @@ def get_database() -> ProgramDatabase:
     """Get the global database instance."""
     global _db_instance
     if _db_instance is None:
-        from jdxi_editor.project import __package_name__
+        from jdxi_editor.project import __data_name__, __package_name__
 
         _db_instance = ProgramDatabase()
         # Migrate from JSON only if:
         # 1. JSON file exists AND
         # 2. Database is empty (hasn't been migrated yet)
-        json_file = Path.home() / f".{__package_name__}" / "user_programs.json"
+        json_file = Path.home() / f".{__data_name__}" / "user_programs.json"
         if json_file.exists():
             # Check if database already has programs
             existing_programs = _db_instance.get_all_programs()

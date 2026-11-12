@@ -97,7 +97,7 @@ jobs:
           version="${{ needs.prepare.outputs.version }}"
           # the portable app was uploaded as a folder: one zip, as before
           portable=$(find artifacts -maxdepth 1 -type d -name '*-win64-portable' | head -n 1)
-          (cd "$portable" && zip -qr "$GITHUB_WORKSPACE/release/JDXI-Editor-$version-win64-portable.zip" .)
+          (cd "$portable" && zip -qr "$GITHUB_WORKSPACE/release/JD-Xi-Studio-$version-win64-portable.zip" .)
           find artifacts -path '*-win64-setup*' -name '*.exe' -exec cp {} release/ \;
           cp artifacts/python-packages/* release/
           ls -l release

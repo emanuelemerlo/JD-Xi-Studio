@@ -893,6 +893,7 @@ class JDXiInstrument(JDXiWindow):
             "vocal_fx",
             "pattern",
             "midi_player",
+            "settings",  # always there, as the other tabs (it opened only from the menu)
         ]
         for editor_type in startup_editors:
             self.show_editor(editor_type)

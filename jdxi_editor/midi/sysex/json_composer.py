@@ -18,7 +18,7 @@ from jdxi_editor.midi.data.address.address import (
 )
 from jdxi_editor.midi.data.parameter.drum.partial import DrumPartialParam
 from jdxi_editor.midi.sysex.sections import SysExSection
-from jdxi_editor.project import __package_name__
+from jdxi_editor.project import __data_name__, __package_name__
 from jdxi_editor.midi.sysex.names import parse_sysex_byte
 
 
@@ -30,7 +30,7 @@ class JDXiJSONComposer:
         if editor:
             self.editor = editor
             self.address = editor.address
-        self.temp_folder = Path.home() / f".{__package_name__}" / "temp"
+        self.temp_folder = Path.home() / f".{__data_name__}" / "temp"
         if not os.path.exists(self.temp_folder):
             self.temp_folder.mkdir(parents=True, exist_ok=True)
 

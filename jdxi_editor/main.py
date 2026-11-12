@@ -48,7 +48,7 @@ from PySide6.QtWidgets import (
 from jdxi_editor.core.jdxi import JDXi
 from jdxi_editor.i18n import DEFAULT_LANGUAGE, install_qt_translators, set_language, tr
 from jdxi_editor.log.message import log_message
-from jdxi_editor.project import __organization_name__, __program__, __version__
+from jdxi_editor.project import __data_name__, __organization_name__, __program__, __version__
 from jdxi_editor.resources import resource_path
 from jdxi_editor.ui.style import JDXiUIDimensions
 from jdxi_editor.ui.widgets.digital.title import DigitalTitle
@@ -78,9 +78,16 @@ def main() -> None:
     """Main entry point for the JD-Xi Editor application."""
     try:
         # --- Set up logging first
+        # JD-Xi Studio's own settings and folder: the original program's copied once
+        from jdxi_editor.migrate import migrate
+
+        moved = migrate()
         settings = QSettings(__organization_name__, __program__)
         log_level = int(str(settings.value("log_level", logging.DEBUG)))
-        logger = setup_logging(use_rich=False, project_name="jdxi_editor")  # @@@
+        # the logs go to ~/.jdxi_studio/logs/jdxi_studio-<date>-<time>.log
+        logger = setup_logging(use_rich=False, project_name=__data_name__)
+        if moved["settings"] or moved["files"]:
+            logger.info(f"Copied the settings ({moved['settings']}) and files ({moved['files']}) of JDXI-Editor")
 
         # --- Create application
         app = QApplication(sys.argv)
@@ -93,10 +100,9 @@ def main() -> None:
         load_translations(app)
 
         # --- Set application metadata
-        app.setApplicationName(__program__)  # settings key: kept
+        app.setApplicationName(__program__)
         app.setApplicationVersion(__version__)
-        app.setOrganizationName("mabsoft")
-        app.setOrganizationDomain("com.mabsoft")
+        app.setOrganizationName(__organization_name__)
         app.setStyleSheet(
             """
             QTabWidget::tab-bar {

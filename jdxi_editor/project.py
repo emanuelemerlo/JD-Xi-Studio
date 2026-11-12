@@ -1,20 +1,27 @@
-"""Project metadata and version information for JD-Xi Editor."""
+"""Project metadata and version information for JD-Xi Studio."""
 
-__version__ = "1.0.0a2"  # PEP 440; the release tag is v1.0.0-alpha.2
-__program__ = "JD-Xi Editor"  # also the key of the saved settings: kept
-# The name shown in the interface: an independent edition of JDXI-Editor by
-# Mark Brooks, named apart so the two are not confused (installer, exe and
-# settings keep the original names)
+__version__ = "1.0.0a3"  # PEP 440; the release tag is v1.0.0-alpha.3
+# An independent edition of JDXI-Editor by Mark Brooks, with a name of its own
+# everywhere (interface, installer, settings, user folder), so the two can be
+# installed side by side and are never confused
+__program__ = "JD-Xi Studio"  # also the key of the saved settings
 __display_name__ = "JD-Xi Studio"
 __origin__ = "JDXI-Editor by Mark Brooks"
 __origin_author__ = "Mark Brooks"
 __maintainer__ = "Emanuele Merlo"  # this edition (JD-Xi Studio)
 __origin_url__ = "https://github.com/markxbrooks/JDXI-Editor"
 __home_url__ = "https://github.com/emanuelemerlo/JD-Xi-Studio"
-__project__ = "JD-Xi Editor"
+__project__ = "JD-Xi Studio"
 __author__ = "Emanuele Merlo, Mark Brooks"
-__package_name__ = "jdxi_editor"
-__organization_name__ = "mabsoft"
+__package_name__ = "jdxi_editor"  # the Python package (code), not a user-facing name
+__organization_name__ = "JD-Xi Studio"
+# The user's folder: ~/.jdxi_studio (settings files, programs, recipes, logs)
+__data_name__ = "jdxi_studio"
+# What JD-Xi Studio used before 1.0.0a3 (the original program's names): copied
+# once into the new places at the first start (jdxi_editor/migrate.py)
+LEGACY_ORGANIZATION = "mabsoft"
+LEGACY_PROGRAM = "JD-Xi Editor"
+LEGACY_DATA_NAME = "jdxi_editor"
 
 
 def release_name(version: str = __version__) -> str:

@@ -14,9 +14,9 @@ def folder() -> Path:
     if custom:
         path = Path(custom)
     else:
-        from jdxi_editor.project import __package_name__
+        from jdxi_editor.project import __data_name__, __package_name__
 
-        path = Path.home() / f".{__package_name__}" / "recipes"
+        path = Path.home() / f".{__data_name__}" / "recipes"
     path.mkdir(parents=True, exist_ok=True)
     return path
 

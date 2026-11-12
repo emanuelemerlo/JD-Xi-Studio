@@ -53,7 +53,7 @@ from jdxi_editor.midi.sysex.parser.parameter_block import (
 )
 from jdxi_editor.midi.sysex.parser.service import JDXiSysExService
 from jdxi_editor.midi.sysex.parser.utils import parse_sysex
-from jdxi_editor.project import __package_name__
+from jdxi_editor.project import __data_name__, __package_name__
 from picomidi import MidiSysExByte
 from picomidi.constant import Midi
 
@@ -112,7 +112,7 @@ class JDXiSysExParser:
         self.sysex_dict = {}
         self.log_sink = log_sink
         self.strict = strict
-        self.log_folder = Path.home() / f".{__package_name__}" / "logs"
+        self.log_folder = Path.home() / f".{__data_name__}" / "logs"
 
     def from_bytes(self, sysex_data: bytes) -> None:
         """

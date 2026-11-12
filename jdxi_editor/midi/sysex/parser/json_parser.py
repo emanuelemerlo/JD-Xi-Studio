@@ -17,7 +17,7 @@ from typing import Any, Dict, Optional
 
 from decologr import Decologr as log
 
-from jdxi_editor.project import __package_name__
+from jdxi_editor.project import __data_name__, __package_name__
 
 
 class JDXiJsonSysexParser:
@@ -28,7 +28,7 @@ class JDXiJsonSysexParser:
         :param json_sysex_data: Optional[str] JSON Sysex data
         """
         self.sysex_data_json = json_sysex_data
-        self.log_folder = Path.home() / f".{__package_name__}" / "logs"
+        self.log_folder = Path.home() / f".{__data_name__}" / "logs"
         self.log_folder.mkdir(parents=True, exist_ok=True)  # Safe even if it exists
 
     def from_json(self, json_sysex_data: str) -> None:

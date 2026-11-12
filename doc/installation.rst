@@ -84,11 +84,11 @@ The simplest way to install JDXI-Editor is using our pre-built packages. These i
    Download the installer or the portable zip from the releases page
    (https://github.com/emanuelemerlo/JD-Xi-Studio/releases):
 
-   - ``jdxi_editor-<version>_setup_win_x86-64.exe``: run it and follow the wizard (English or
+   - ``JD-Xi-Studio-<version>-setup-win64.exe``: run it and follow the wizard (English or
      Italian). It installs for the current user in ``%LOCALAPPDATA%\Programs\jdxi_editor``,
      without administrator rights, and adds a Start menu entry (desktop icon optional).
-   - ``JDXI-Editor-<version>-win64-portable.zip``: unzip it to a folder and run
-     ``jdxi_editor\jdxi_editor.exe``. Nothing is installed; delete the folder to remove it.
+   - ``JD-Xi-Studio-<version>-win64-portable.zip``: unzip it to a folder and run
+     ``JD-Xi-Studio\JD-Xi-Studio.exe``. Nothing is installed; delete the folder to remove it.
 
    **Windows Requirements:**
    - Windows 10 or 11 (64-bit)

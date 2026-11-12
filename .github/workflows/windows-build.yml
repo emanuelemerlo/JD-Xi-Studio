@@ -84,29 +84,29 @@ jobs:
         id: smoke
         shell: pwsh
         run: |
-          $exe = Resolve-Path dist/jdxi_editor/jdxi_editor.exe
+          $exe = Resolve-Path dist/JD-Xi-Studio/JD-Xi-Studio.exe
           $p = Start-Process -FilePath $exe -PassThru
           Start-Sleep -Seconds 30
           if ($p.HasExited) {
-            "jdxi_editor.exe exited with code $($p.ExitCode)" | Out-File logs/smoke.log
+            "JD-Xi-Studio.exe exited with code $($p.ExitCode)" | Out-File logs/smoke.log
             Get-ChildItem -Recurse $env:USERPROFILE -Filter *.log -ErrorAction SilentlyContinue |
               Where-Object { $_.FullName -match 'jdxi' } |
               ForEach-Object { "== $($_.FullName)"; Get-Content $_.FullName -Tail 60 } |
               Out-File -Append logs/smoke.log
             # Run the console Python entry point for the traceback
-            & dist/jdxi_editor/jdxi_editor.exe 2>&1 | Select-Object -First 60 | Out-File -Append logs/smoke.log
+            & dist/JD-Xi-Studio/JD-Xi-Studio.exe 2>&1 | Select-Object -First 60 | Out-File -Append logs/smoke.log
             Get-Content logs/smoke.log
             exit 1
           }
           Stop-Process -Id $p.Id -Force
-          Write-Host "jdxi_editor.exe started and kept running"
+          Write-Host "JD-Xi-Studio.exe started and kept running"
 
       - name: Portable zip
         id: zip
         shell: pwsh
         run: |
-          $name = "JDXI-Editor-${{ steps.version.outputs.label }}-win64-portable.zip"
-          Compress-Archive -Path dist/jdxi_editor -DestinationPath "dist/$name"
+          $name = "JD-Xi-Studio-${{ steps.version.outputs.label }}-win64-portable.zip"
+          Compress-Archive -Path dist/JD-Xi-Studio -DestinationPath "dist/$name"
           "PORTABLE=dist/$name" >> $env:GITHUB_ENV
 
       - name: Installer
@@ -141,14 +141,14 @@ jobs:
       - name: Upload portable
         uses: actions/upload-artifact@v4
         with:
-          name: JDXI-Editor-${{ steps.version.outputs.label }}-win64-portable
-          path: dist/jdxi_editor/
+          name: JD-Xi-Studio-${{ steps.version.outputs.label }}-win64-portable
+          path: dist/JD-Xi-Studio/
           if-no-files-found: error
 
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
-          name: JDXI-Editor-${{ steps.version.outputs.label }}-win64-setup
+          name: JD-Xi-Studio-${{ steps.version.outputs.label }}-win64-setup
           path: dist/installer/*.exe
           compression-level: 0
           if-no-files-found: error

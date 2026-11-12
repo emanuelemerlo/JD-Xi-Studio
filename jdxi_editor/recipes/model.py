@@ -17,6 +17,9 @@ COLUMNS = ["Passo", "Nome del passo", "Parte", "Gruppo", "Su", "Parametro", "Tip
 META = {"titolo": "title", "descrizione": "description", "autore": "author", "tono di partenza": "base_tone",
         "programma utente": "user_program", "title": "title", "description": "description", "author": "author",
         "starting tone": "base_tone", "base tone": "base_tone", "user program": "user_program"}
+# The English template (sheet "Recipe") writes these in English
+ENGLISH_KINDS = {"valore": "value", "intervallo": "range", "a orecchio": "by ear"}
+ENGLISH_PARTS = {"EFFETTI": "EFFECTS", "VOCE": "VOCAL"}
 VALUE, RANGE, EAR = "valore", "intervallo", "a orecchio"
 
 
@@ -108,11 +111,15 @@ class Recipe:
 
         if template is not None and Path(template).is_file():
             book = openpyxl.load_workbook(template)
-            sheet = book["Ricetta"] if "Ricetta" in book.sheetnames else book.active
+            names = [n for n in ("Ricetta", "Recipe") if n in book.sheetnames]
+            sheet = book[names[0]] if names else book.active
             header_row = _find_header_row(sheet)
             # header values in column C of the lines above the table, as in the template
             meta = {"titolo": self.title, "descrizione": self.description, "autore": self.author,
-                    "tono di partenza": self.base_tone, "programma utente": self.user_program}
+                    "tono di partenza": self.base_tone, "programma utente": self.user_program,
+                    "title": self.title, "description": self.description, "author": self.author,
+                    "starting tone": self.base_tone, "user program": self.user_program}
+            english = sheet.title == "Recipe"
             for r in range(1, header_row):
                 key = str(sheet.cell(r, 1).value or "").strip().rstrip(":").lower()
                 if key in meta:
@@ -121,8 +128,12 @@ class Recipe:
                 for c in range(1, len(COLUMNS) + 1):
                     sheet.cell(r, c).value = None
             for i, row in enumerate(self.rows):
-                for c, value in enumerate(row.cells(), start=1):
-                    sheet.cell(header_row + 1 + i, c).value = int(value) if c == 1 and value.isdigit() else (value or None)
+                cells = row.cells()
+                if english:  # the menus of the English template have the English words
+                    cells[2] = ENGLISH_PARTS.get(cells[2], cells[2])
+                    cells[6] = ENGLISH_KINDS.get(cells[6], cells[6])
+                for c, value in enumerate(cells, start=1):
+                    sheet.cell(header_row + 1 + i, c).value = _cell(c, value)
         else:
             book = openpyxl.Workbook()
             sheet = book.active
@@ -135,9 +146,20 @@ class Recipe:
         book.save(path)
 
 
+def _cell(column: int, value: str):
+    """Step, From and To as numbers (the template's checks compare numbers), the rest as text."""
+    if column in (1, 9, 10) and value:
+        try:
+            number = float(value.replace(",", "."))
+            return int(number) if number.is_integer() else number
+        except ValueError:
+            pass
+    return value or None
+
+
 def _find_header_row(sheet) -> int:
     for r in range(1, min(sheet.max_row, 40) + 1):
         values = [str(sheet.cell(r, c).value or "").strip().lower() for c in range(1, 12)]
-        if "parametro" in values and "parte" in values:
+        if ("parametro" in values and "parte" in values) or ("parameter" in values and "part" in values):
             return r
     return 1

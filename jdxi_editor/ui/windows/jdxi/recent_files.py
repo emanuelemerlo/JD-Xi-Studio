@@ -10,7 +10,7 @@ from typing import List
 
 from decologr import Decologr as log
 
-from jdxi_editor.project import __package_name__
+from jdxi_editor.project import __data_name__, __package_name__
 
 
 class RecentFilesManager:
@@ -20,7 +20,7 @@ class RecentFilesManager:
 
     def __init__(self):
         """Initialize the recent files manager."""
-        self.config_dir = Path.home() / f".{__package_name__}"
+        self.config_dir = Path.home() / f".{__data_name__}"
         self.config_dir.mkdir(parents=True, exist_ok=True)
         self.recent_files_path = self.config_dir / "recent_midi_files.json"
         self._recent_files: List[str] = []

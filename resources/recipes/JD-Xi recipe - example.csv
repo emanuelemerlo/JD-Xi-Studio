@@ -1,0 +1,65 @@
+﻿# Title: The Jungle Gardenia lead
+# Description: Dark, flute-like lead, legato, vibrato with the modulation wheel
+# Author: Emanuele
+# Starting tone: AN 064 Init Tone
+# User program: E01
+# Template version: 1
+Step;Step name;Part;Group;Target;Parameter;Value type;Value;From;To;Note
+1;Oscillator;AN;OSC;;Waveform;value;TRI;;;Triangle: almost only odd harmonics, like the original
+1;Oscillator;AN;OSC;;Sub OSC;value;OFF;;;
+1;Oscillator;AN;PITCH;;OSC Pitch;value;0;;;
+1;Oscillator;AN;PITCH;;OSC Detune;value;0;;;
+1;Oscillator;AN;PITCH;;Env Depth;value;0;;;Nessuna variazione d'intonazione all'attacco
+1;Oscillator;AN;COMMON;;Porta Sw;value;ON;;;
+1;Oscillator;AN;COMMON;;Porta Time;range;;15;25;Short portamento for the semitone climbs
+1;Oscillator;AN;COMMON;;Legato Sw;value;ON;;;
+1;Oscillator;AN;COMMON;;Bend Range U;value;2;;;
+1;Oscillator;AN;COMMON;;Bend Range D;value;-2;;;
+2;Filter;AN;FILTER;;Type;value;LPF;;;
+2;Filter;AN;FILTER;;Cutoff;range;;55;65;Start at 60 on the long note at 0:10, then lower it until the high buzz disappears
+2;Filter;AN;FILTER;;Resonance;range;;0;10;The original has no resonance peaks
+2;Filter;AN;FILTER;;Cutoff KF;value;+50;;;The tone stays similar between B4 and F#5
+2;Filter;AN;FILTER;;Velo Sens;value;0;;;
+2;Filter;AN;FILTER;;Attack;value;0;;;
+2;Filter;AN;FILTER;;Decay;value;40;;;With Depth +5: a very light accent at the start
+2;Filter;AN;FILTER;;Sustain;value;100;;;
+2;Filter;AN;FILTER;;Release;value;30;;;
+2;Filter;AN;FILTER;;Depth;value;+5;;;
+3;Amplitude;AN;AMP;;AMP Level;value;127;;;
+3;Amplitude;AN;AMP;;Attack;value;10;;;If you still hear a click, go up to 15
+3;Amplitude;AN;AMP;;Decay;value;0;;;
+3;Amplitude;AN;AMP;;Sustain;value;127;;;Long, full note
+3;Amplitude;AN;AMP;;Release;value;35;;;Short tail: the delay and the reverb lengthen it
+3;Amplitude;AN;AMP;;Level V-Sens;value;+10;;;
+4;Vibrato;AN;LFO;;Shape;value;SIN;;;
+4;Vibrato;AN;LFO;;Rate;by ear;;;;About 5 Hz: with the mod wheel halfway, count 5 swings a second
+4;Vibrato;AN;LFO;;Tempo Sync;value;OFF;;;
+4;Vibrato;AN;LFO;;Key Trigger;value;OFF;;;
+4;Vibrato;AN;LFO;;Fade Time;value;0;;;Alternativa automatica: Pitch Depth +4 e Fade Time 40
+4;Vibrato;AN;LFO;;Pitch Depth;value;0;;;
+4;Vibrato;AN;LFO;;Filter Depth;value;0;;;
+4;Vibrato;AN;LFO;;Amp Depth;value;0;;;
+4;Vibrato;AN;LFO;;Mod Pitch;range;;8;12;Wheel at maximum: light vibrato, about ±15 cents
+5;Effects;PROG;MAIN;AN;Part Output;value;EFX1;;;Goes through EFX1, EFX2, Delay and Reverb
+5;Effects;PROG;MAIN;AN;Dly Send Lev;value;40;;;
+5;Effects;PROG;MAIN;AN;Rev Send Lev;value;40;;;
+5;Effects;EFFECTS;EFFECT1;;Type;value;Distortion;;;
+5;Effects;EFFECTS;EFFECT1;;Drive;range;;10;25;"Just a little warmth; if it buzzes, lower it"
+5;Effects;EFFECTS;EFFECT1;;Presence;range;;0;20;Alta rimetterebbe gli acuti tolti dal filtro
+5;Effects;EFFECTS;EFFECT1;;Level;by ear;;;;Same volume with and without the effect
+5;Effects;EFFECTS;EFFECT1;;Output Asgn;value;EFX2;;;In series with Effect 2
+5;Effects;EFFECTS;EFFECT2;;Type;value;Flanger;;;
+5;Effects;EFFECTS;EFFECT2;;Feedback;value;0;;;With Feedback 0 the Flanger works as a chorus
+5;Effects;EFFECTS;EFFECT2;;Rate;range;;10;20;
+5;Effects;EFFECTS;EFFECT2;;Depth;range;;40;60;
+5;Effects;EFFECTS;EFFECT2;;Balance;value;D50:50W;;;
+5;Effects;EFFECTS;DELAY;;Type;value;PAN;;;Gives the stereo width
+5;Effects;EFFECTS;DELAY;;Time;range;;350;400;
+5;Effects;EFFECTS;DELAY;;Tap Time;range;;50;75;
+5;Effects;EFFECTS;DELAY;;Feedback;range;;15;25;
+5;Effects;EFFECTS;DELAY;;HF Damp;range;;3000;4000;Keeps the tails dark
+5;Effects;EFFECTS;DELAY;;Level;range;;30;40;
+5;Effects;EFFECTS;REVERB;;Type;value;HALL1;;;Or STAGE1
+5;Effects;EFFECTS;REVERB;;Time;range;;50;70;
+5;Effects;EFFECTS;REVERB;;HF Damp;value;4000;;;
+5;Effects;EFFECTS;REVERB;;Level;value;40;;;
