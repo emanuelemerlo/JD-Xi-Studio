@@ -1,6 +1,6 @@
 """Project metadata and version information for JD-Xi Editor."""
 
-__version__ = "1.0.0a1"  # PEP 440; the release tag is v1.0.0-alpha.1
+__version__ = "1.0.0a2"  # PEP 440; the release tag is v1.0.0-alpha.2
 __program__ = "JD-Xi Editor"  # also the key of the saved settings: kept
 # The name shown in the interface: an independent edition of JDXI-Editor by
 # Mark Brooks, named apart so the two are not confused (installer, exe and
