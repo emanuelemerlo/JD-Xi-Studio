@@ -130,6 +130,10 @@ class USBFileRecordingWidget(JDXiMidiGroup):
             self.on_usb_file_auto_generate_toggled
         )
         grid.addWidget(self.file_auto_generate_checkbox, row, 1, 1, 3)
+        # the names take only their width: the fields beside them get the rest
+        for column, stretch in enumerate((0, 1, 1, 0)):
+            grid.setColumnStretch(column, stretch)
+        grid.setHorizontalSpacing(12)
         return group
 
     def start_recording(self, duration_seconds: Optional[float] = None):

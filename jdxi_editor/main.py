@@ -41,6 +41,7 @@ from PySide6.QtWidgets import (
     QFrame,
     QHBoxLayout,
     QLabel,
+    QSizePolicy,
     QSplashScreen,
     QVBoxLayout,
 )
@@ -205,7 +206,7 @@ def setup_splash_screen(
         QLabel#SubtitleLabel { color: #bbbbbb; font-size: 14px; }
         QLabel#StatusLabel { color: #88ccff; font-size: 18px; font-style: italic; font-weight: 500; }
         QLabel#CreditLabel { color: #888888; font-size: 10px; }
-        QLabel#NoticeLabel { color: #d06a10; font-size: 11px; }
+        QLabel#NoticeLabel { color: #7d8088; font-size: 10px; }
         QFrame#Card { 
             background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #1c1c1c, stop:1 #0f0f0f);
             border-radius: 14px; border: 1px solid #2a2a2a; 
@@ -222,15 +223,15 @@ def setup_splash_screen(
     content = QFrame()
     content.setObjectName("Card")
     content_layout = QVBoxLayout(content)
-    content_layout.setContentsMargins(0, 0, 0, 0)
-    content_layout.setSpacing(10)
+    content_layout.setContentsMargins(28, 24, 28, 18)
+    content_layout.setSpacing(14)
 
     # --- JD-Xi Studio's mark on the left; name, origin and trademark notice on the right
     # (its own mark and name: an independent edition of JDXI-Editor, not to be confused with it)
     from jdxi_editor.project import __display_name__
     from jdxi_editor.ui.v2.brand import draw_mark, origin_line, title_font
 
-    side = min(JDXiUIDimensions.SPLASH.IMAGE_WIDTH, JDXiUIDimensions.SPLASH.IMAGE_HEIGHT, 220)
+    side = min(JDXiUIDimensions.SPLASH.IMAGE_WIDTH, JDXiUIDimensions.SPLASH.IMAGE_HEIGHT, 168)
     logo = create_icon_label_with_pixmap(draw_mark(side))
 
     title = QLabel(__display_name__)
@@ -242,51 +243,59 @@ def setup_splash_screen(
     origin.setStyleSheet("color: #a3a6ad; font-size: 14px; background: transparent;")
 
     notice = QLabel(
-        tr("'Roland' and 'JD-Xi' are trademarks of the Roland Corporation "
-        "in the United States and/or other countries.\n\n"
-        "This app is an independent, unofficial companion tool for the "
-        "Roland JD-Xi synthesizer. It is not affiliated with, endorsed by, "
-        "or sponsored by Roland Corporation in any way.\n\n"
-        "All product names, trademarks, and logos are the property of "
-        "their respective owners.")
+        tr("An independent, unofficial tool: not affiliated with, endorsed or sponsored by "
+           "Roland Corporation. Roland and JD-Xi are trademarks of Roland Corporation in the "
+           "United States and/or other countries; all other names belong to their owners.")
     )
     notice.setObjectName("NoticeLabel")
     notice.setWordWrap(True)
 
+    from jdxi_editor.project import release_name
+
+    version = QLabel(tr("Version {version}").format(version=release_name()))
+    version.setStyleSheet(
+        "color: #ff2a1a; font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 13px;"
+        " background: transparent;"
+    )
+
+    # the name, its origin and the version, beside the mark, centred on it
     side_layout = QVBoxLayout()
-    side_layout.setContentsMargins(0, 12, 12, 0)
-    side_layout.setSpacing(16)
+    side_layout.setContentsMargins(0, 0, 0, 0)
+    side_layout.setSpacing(6)
+    side_layout.addStretch()
     side_layout.addWidget(title)
     side_layout.addWidget(origin)
-    side_layout.addWidget(notice)
+    side_layout.addSpacing(6)
+    side_layout.addWidget(version)
     side_layout.addStretch()
 
     header_layout = QHBoxLayout()
-    header_layout.setSpacing(16)
-    header_layout.addWidget(logo)
+    header_layout.setSpacing(24)
+    header_layout.addWidget(logo, 0, Qt.AlignmentFlag.AlignVCenter)
     header_layout.addLayout(side_layout, 1)
     content_layout.addLayout(header_layout)
+    content_layout.addStretch(1)
 
-    # --- 16 step startup sequencer
-    progress_bar = StartupSequencer()  # fills the card's width
-    content_layout.addWidget(progress_bar)
-
-    # --- Rotating status label
+    # --- 16 step startup sequencer, then what is starting, on the display, the card's width
+    progress_bar = StartupSequencer()
+    content_layout.addWidget(progress_bar, 0, Qt.AlignmentFlag.AlignHCenter)
     status_label = DigitalTitle("Starting...")
     status_label.setObjectName("StatusLabel")
+    status_label.setMinimumWidth(0)
+    status_label.setSizePolicy(QSizePolicy.Policy.Expanding, status_label.sizePolicy().verticalPolicy())
     content_layout.addWidget(status_label)
+
+    # --- the trademark notice, small, above the credits
+    content_layout.addWidget(notice)
 
     # --- Footer credits
     from jdxi_editor.project import __home_url__
 
-    credits = QLabel(
-        tr("{program}  •  Version {version}  •  {home}\nAn independent edition of JDXI-Editor by Mark Brooks "
-           "(mabsoft.com), MIT licence").format(
-            program=__display_name__, version=__version__, home=__home_url__.replace("https://", "")
-        )
+    credits = QLabel(  # name, origin and version are at the top already
+        tr("{home}  •  MIT licence").format(home=__home_url__.replace("https://", ""))
     )
     credits.setObjectName("CreditLabel")
-    credits.setAlignment(Qt.AlignCenter)
+    credits.setAlignment(Qt.AlignLeft)
     content_layout.addWidget(credits)
 
     root.addWidget(content)
