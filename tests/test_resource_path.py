@@ -15,12 +15,12 @@ class TestResourcePath(unittest.TestCase):
     """Ensure resource_path finds assets in dev tree and macOS app bundles."""
 
     def test_dev_tree_resolves_project_resources(self):
-        path = resources.resource_path("resources/splash_screen_540_850v5.png")
+        path = resources.resource_path("resources/jdxi_icon.png")
         self.assertTrue(os.path.isabs(path))
         self.assertTrue(
-            path.endswith(os.path.join("resources", "splash_screen_540_850v5.png"))
+            path.endswith(os.path.join("resources", "jdxi_icon.png"))
         )
-        self.assertTrue(os.path.isfile(path), f"missing splash asset: {path}")
+        self.assertTrue(os.path.isfile(path), f"missing icon asset: {path}")
 
     def test_macos_app_bundle_uses_contents_resources(self):
         app_root = Path(__file__).resolve().parent.parent
@@ -30,7 +30,7 @@ class TestResourcePath(unittest.TestCase):
 
         expected = (
             app_root
-            / "dist/JD-Xi Editor.app/Contents/Resources/resources/splash_screen_540_850v5.png"
+            / "dist/JD-Xi Editor.app/Contents/Resources/resources/jdxi_icon.png"
         )
         self.assertTrue(expected.is_file(), "splash PNG not bundled in .app")
 
@@ -42,7 +42,7 @@ class TestResourcePath(unittest.TestCase):
                 fake_exe.resolve().parent.parent / "Resources",
             )
 
-            resolved = resources.resource_path("resources/splash_screen_540_850v5.png")
+            resolved = resources.resource_path("resources/jdxi_icon.png")
             self.assertEqual(Path(resolved), expected)
 
     def test_pyinstaller_meipass_takes_precedence(self):

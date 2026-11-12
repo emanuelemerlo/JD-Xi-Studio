@@ -98,3 +98,21 @@ def test_player_cards_as_in_the_mockup(app):
     assert editor.midi_file.midi_track_viewer.isVisibleTo(editor)
     assert editor.usb_recorder.isVisibleTo(editor) and editor.automation.isVisibleTo(editor)
     editor.close()
+
+
+def test_pattern_fills_the_width_with_the_side_panel(app):
+    from jdxi_editor.ui.widgets.pattern.sequencer_button import SequencerButton
+
+    editor = players.PatternSequenceEditor(midi_helper=_helper(), preset_helper=Mock())
+    editor.resize(1600, 900)
+    editor.show()
+    for _ in range(10):
+        app.processEvents()
+    assert editor.base_widget.centered_wrapper is None  # not centred with margins any more
+    assert editor.info_panel.isVisible() and editor.info_panel.width() == 320
+    editor.explain(editor.play_button)
+    assert editor.info_panel.name.text() == "Play"
+    step = editor.pattern_widget.findChildren(SequencerButton)[0]
+    editor.explain(step)
+    assert editor.info_panel.name.text() == "Step"
+    editor.close()

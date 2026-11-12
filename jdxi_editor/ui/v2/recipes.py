@@ -109,8 +109,13 @@ class RecipesEditor(QWidget):
         self.setMinimumSize(1000, 640)
         root = QVBoxLayout(self)
         root.setContentsMargins(14, 12, 14, 12)
-        self.title = _label(tr("Recipes"), 16, ACCENT, True)
-        root.addWidget(self.title)
+        from jdxi_editor.ui.v2.restyle import title_badge
+
+        self.title = title_badge(tr("Recipes"), ACCENT)  # as at the top of the other editors
+        bar = QHBoxLayout()
+        bar.addWidget(self.title)
+        bar.addStretch()
+        root.addLayout(bar)
         self.pages = QStackedWidget()
         root.addWidget(self.pages, 1)
         self.home = self._home_page()

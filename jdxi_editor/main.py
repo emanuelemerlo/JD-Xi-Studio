@@ -19,14 +19,19 @@ Functions:
 
 """
 
-import cProfile
-import io
 import logging
 import os
 import platform
-import pstats
 import sys
 from pathlib import Path
+
+if __name__ == "__main__" and not __package__:
+    # Run as a file (python jdxi_editor/main.py, VS Code's "Run Python File"):
+    # use this checkout's package, not another installed copy, and do not let
+    # the jdxi_editor folder shadow top-level modules (log, utils, resources...)
+    _here = Path(__file__).resolve().parent
+    sys.path[:] = [p for p in sys.path if Path(p or ".").resolve() != _here]
+    sys.path.insert(0, str(_here.parent))
 
 from decologr import setup_logging
 from PySide6.QtCore import QSettings
@@ -290,22 +295,9 @@ def setup_splash_screen(
 
 if __name__ == "__main__":
     try:
-        profiling = True
-
-        if profiling:
-            profiler = cProfile.Profile()
-            profiler.enable()
-
+        # Profiling only on request (JDXI_PROFILE=1): main() is profiled by its
+        # decorator, and a second profiler, or a debugger's, cannot run with it
         exit_code = main()
-
-        if profiling:
-            profiler.disable()
-            s = io.StringIO()
-            sortby = "cumtime"  # or 'tottime'
-            ps = pstats.Stats(profiler, stream=s).sort_stats(sortby)
-            ps.print_stats(50)  # Top 50 entries
-            print(s.getvalue())
-
         sys.exit(exit_code)
 
     except Exception as ex:

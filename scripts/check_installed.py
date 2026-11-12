@@ -21,7 +21,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 REQUIRED_RESOURCES = (
     "resources/jdxi_icon.png",
-    "resources/JDXI-Editor_logo_640.png",
+    "resources/jdxi_studio_logo.png",
     "resources/fonts",
     "resources/digital_synths",
     "resources/drum_kits",

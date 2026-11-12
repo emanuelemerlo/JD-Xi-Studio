@@ -1,394 +1,165 @@
-# JDXi-Editor
+# JD-Xi Studio
 
-![Roland JD-Xi Cartoon](resources/JDXI-Editor_logo_640.png)
+<p align="center">
+  <img src="resources/jdxi_studio_logo.png" alt="JD-Xi Studio" width="320" />
+</p>
 
-**JDXi-Editor**: The missing MIDI editor for the **Roland JD-Xi synthesizer**
+**JD-Xi Studio** is an editor and librarian for the **Roland JD-Xi** synthesizer: every sound, the
+pattern sequencer, the effects and the vocoder, on the computer screen instead of the JD-Xi's menus.
 
-> **This is an independent fork** of [JDXI-Editor](https://github.com/markxbrooks/JDXI-Editor) by Mark Brooks (MIT licence).
-> It goes its own way: the presets and SysEx addresses are checked against Roland's manuals, the editor runs
-> without a JD-Xi (offline mode), Windows builds come from CI, and the interface is translated (English, Italiano).
-> A new interface for desktop screens is being built, one editor at a time (version 1.0, starting with
-> the Analog editor): every parameter of the manual on screen, graphic controls, and an explanation of
-> the parameter under the pointer. The last version with the original interface is 0.10.0 beta
-> (tag `v0.10.0-beta.1`). Releases, issues and the update check of the app use this repository.
+> JD-Xi Studio is developed by **Emanuele Merlo**. It is an independent edition of
+> [JDXI-Editor](https://github.com/markxbrooks/JDXI-Editor) by **Mark Brooks**, on which it is based
+> (MIT licence). It goes its own way: a new interface for desktop screens with every parameter of
+> Roland's manuals, presets and SysEx addresses checked against those manuals, offline mode (no JD-Xi
+> needed), English and Italian, and Windows builds from CI. Releases, issues and the app's update
+> check use [this repository](https://github.com/emanuelemerlo/JDXI-Editor).
 
+<p align="center">
+  <a href="resources/keyboard_window.png"><img src="resources/keyboard_window_900.png" alt="The keyboard window" /></a>
+</p>
 
-## Unleash the hidden power of your Roland JD-Xi. 
-- Stop fighting menus and start creating. 
-- JDXi-Editor puts every sound, control, and performance tool right at your fingertips—fast, visual, and effortless. 
-- Shape your tones, browse and save presets, build playlists, and take full command of your synth without breaking your creative flow. 
-- Wherever you create—from your home studio to late-night sessions—this is the editor your JD-Xi has always deserved.
-- Designed to implement as many features as possible from Roland’s MIDI implementation—without the need to dive through hardware menus. 🎛️
+## ✨ Features
 
----
+- **Keyboard window** laid out as the instrument: part select, program and tone, octave, arpeggio,
+  the panel's sliders and the 37 keys; keep it in front of the other windows with the pin.
+- **Digital Synth 1 and 2**: every SuperNATURAL parameter, the three partials with drawn waveforms,
+  filter curves, envelopes and LFOs.
+- **Analog Synth**: all 46 parameters on one page, the filter curve and envelopes to drag.
+- **Drum Kit**: the 37 drum partials as pads, each with its four waves, pitch, filter and amplifier
+  envelopes.
+- **Effects** (Effect 1, Effect 2, Delay, Reverb, with the signal chain) and **Vocal FX** (Vocoder,
+  Auto Pitch).
+- **Arpeggio** with its timing drawn and the parts it plays.
+- **Programs on one page**: library with search, genre and banks A–H, the parts of the program, the
+  mixer; presets, user programs and playlists.
+- **Pattern sequencer**: four parts × 16 steps, measures, copy and paste, MIDI files, USB recording.
+- **MIDI file player**: track classification, channel assignment, automation; plays on the JD-Xi or
+  with FluidSynth and a SoundFont, without hardware.
+- **Recipes**: import a sound recipe (template .xlsx/.csv, Markdown, text, PDF or a pasted table) and
+  follow it step by step with the JD-Xi's values beside the recipe's.
+- **Settings**: the JD-Xi's system settings, the MIDI connection, files and tools.
+- **Parameter panel**: point at a control to read its name on the display, its range and what it
+  does, with the page of Roland's Parameter Guide.
+- **Offline mode**: opens and edits without a JD-Xi or a MIDI system; it connects when one is there.
+- **Languages**: English and Italian.
 
-## 🎛️ Features of JDXI-Editor for Roland JD-Xi Synthesizer
-- **On-Screen Keyboard**: Easily play and test sounds from your JD-Xi.
-- **Preset Selection with Search**: Quickly find and load presets.
-- **Octave Shifting**: Adjust octave ranges for precise sound control.
-- **Digital & Analog Synth Editors**: Edit JD-Xi's digital and analog synths directly.
-- **Drum Part Editor**: Customize drum sounds and patterns 🥁.
-- **Effects Editor**: Edit reverb, delay, compressor, phaser, and arpeggiator settings.
-- **Vocal Effects Editor**: Vocoder and Auto-Pitch with polymorphic UI.
-- **Pattern Editor**: 4×16 step sequencer with MIDI load/save, part muting, and USB recording.
-- **MIDI File Player**: Load MIDI files, classify tracks, assign channels, play with JD-Xi or FluidSynth.
-- **SoundFont Support**: Use .sf2/.sf3 for playback without hardware.
-- **MIDI Debugger**: Monitor and debug MIDI messages efficiently.
-- **New Analog editor** (1.0): all 46 parameters on one screen, filter curve and envelopes to drag,
-  drawn waveforms, and an information panel that explains the parameter under the pointer.
-- **Recipes** (1.0): import a recipe (template .xlsx/.csv, Markdown, text, PDF or a pasted table),
-  check it row by row, then follow it step by step with the JD-Xi's values next to the recipe's.
-- **New Vocal Effect and Arpeggio editors** (1.0): AutoPitch and Vocoder with every parameter; the
-  arpeggio with its timing drawn and the parts it plays.
-- **New Drum Kit editor** (1.0): the 37 drum partials as pads, each with its four waves, pitch,
-  filter and amplifier envelopes drawn and draggable.
-- **New Digital Synth editor** (1.0), for Digital 1 and 2: every SuperNATURAL synth parameter, the
-  three partials with drawn waveforms, filter curves, envelopes and LFOs.
-- **Keyboard and editors together** (1.0): the editor windows minimise and come back with the
-  keyboard window, and move on their own (two screens); the keyboard comes in front with a click or Ctrl+Shift+K,
-  or stays always on top.
-- **Programs on one page** (1.0): library table with search, genre and banks A–H, the parts of the
-  program, the mixer; presets, user programs and playlists below.
-- **JD-Xi Studio** (1.0): the interface's own name and mark, always shown as "based on JDXI-Editor by
-  Mark Brooks"; one language in every window.
-- **Settings** (1.0): the JD-Xi's system settings, the MIDI connection, files and tools on one page;
-  the editors window shows the editors as a row of buttons, the program and the connection.
-- **Pattern and MIDI file player in the new layout** (1.0): same functions and engine, laid out in
-  cards as in the mockups (transport, new steps, measures, sequencer, file, USB recorder; player,
-  classification, tracks, playback, automation).
-- **New Program editor** (1.0): program name, level, tempo and the four parts side by side (main,
-  pitch, offsets, velocity range, scale tune, MIDI receive) with every Program Part parameter.
-- **New Effects editor** (1.0): Effect 1, Effect 2, Delay and Reverb with every parameter of the
-  manual (side-chain compressor included), the signal chain, the delay echoes and compressor curve.
-- **Languages**: English and Italian, chosen in Preferences (see [Languages](#-languages)).
-- **Offline mode**: opens and edits without a JD-Xi or a MIDI system; it connects when one is available.
+## 🎹 Screenshots
 
----
+| | |
+|---|---|
+| **Digital Synth** <br> <a href="resources/digital_synth.png"><img src="resources/digital_synth_600.png" alt="Digital Synth" /></a> | **Analog Synth** <br> <a href="resources/analog_synth.png"><img src="resources/analog_synth_600.png" alt="Analog Synth" /></a> |
+| **Drum Kit** <br> <a href="resources/drum_editor.png"><img src="resources/drum_editor_600.png" alt="Drum Kit" /></a> | **Programs** <br> <a href="resources/programs_page.png"><img src="resources/programs_page_600.png" alt="Programs" /></a> |
+| **Effects** <br> <a href="resources/effects.png"><img src="resources/effects_600.png" alt="Effects" /></a> | **Vocal FX** <br> <a href="resources/vocal_effects.png"><img src="resources/vocal_effects_600.png" alt="Vocal FX" /></a> |
+| **Pattern** <br> <a href="resources/pattern.png"><img src="resources/pattern_600.png" alt="Pattern" /></a> | **MIDI file player** <br> <a href="resources/midi_player.png"><img src="resources/midi_player_600.png" alt="MIDI file player" /></a> |
+| **Arpeggio** <br> <a href="resources/arpeggiator.png"><img src="resources/arpeggiator_600.png" alt="Arpeggio" /></a> | **MIDI connection** <br> <a href="resources/midi_config.png"><img src="resources/midi_config_200.png" alt="MIDI connection" /></a> |
 
-Designed for musicians, sound designers, and MIDI enthusiasts looking to unlock the full potential of the Roland JD-Xi synthesizer!
+## 🚀 Download and install
 
-### 🖥️ 'Keyboard Window' Screenshot
-
-<a href="resources/main_window_0.6.gif" rel="Current view of the Roland JD-Xi Editor App">
-  <img src="resources/main_window_0.6.gif" alt="Roland JD-Xi Main Editor Window" />
-</a>
-
----
-## 🎥 Watch JDXI-Editor in Action
-
-Check out some great performances and demos of the Roland JD-Xi:
-
-- 🎹 [Pink Floyd – *Sheep* 🐑 on the Roland JD-Xi](https://www.youtube.com/watch?v=vh-i8eb2SYQ)  
-- 🎹 [Avicii – *Wake Me Up* on the Roland JD-Xi](https://www.youtube.com/watch?v=VyQxaOc6G2Y)  
-- 🎹 [Vangelis – *Blade Runner End Titles* | Synth Cover on the Roland JD-Xi](https://www.youtube.com/watch?v=mGgGibBKm9E)  
-- 🎹 [Underworld – *Born Slippy* on the Roland JD-Xi](https://www.youtube.com/watch?v=xHLttYaMxCw&list=PLVZK_NOytILiQuNulDn-tOdAUQWdNAS-y&index=18)  
-- 🎹 [*Knight Rider Theme* on the Roland JD-Xi](https://www.youtube.com/watch?v=4XpuQm7_Ohs&list=PLVZK_NOytILiQuNulDn-tOdAUQWdNAS-y&index=20)  
-- 🎹 [Twin Peaks – *Laura Palmer's Theme* on the Roland JD-Xi](https://www.youtube.com/watch?v=zSkKNoy8O9Y&list=PLVZK_NOytILiQuNulDn-tOdAUQWdNAS-y&index=29)  
-- 🎹 [The Cure – *A Forest* on the Roland JD-Xi](https://www.youtube.com/watch?v=wejcaIawCMs&list=PLVZK_NOytILiQuNulDn-tOdAUQWdNAS-y&index=25)  
-- 🎹 [Michael Jackson – *Thriller* on the Roland JD-Xi](https://www.youtube.com/watch?v=flFQlFggTug&list=PLVZK_NOytILiQuNulDn-tOdAUQWdNAS-y&index=19)  
-
----
-
-### 🎬 Featured Demo  
-
-Phil Collins – *In The Air Tonight* performed on the Roland JD-Xi  
-
-[![Watch the demo](https://img.youtube.com/vi/oquaCQE1EFs/0.jpg)](https://www.youtube.com/watch?v=oquaCQE1EFs)
-
-## 🚀 Getting Started
-
-Builds of this fork are on its [releases page](https://github.com/emanuelemerlo/JDXI-Editor/releases).
-Beta versions are marked as pre-releases. The app checks this page for updates (Help › Check for Updates):
-a beta is told about the next beta, a final release only about final releases.
+The builds are on the [releases page](https://github.com/emanuelemerlo/JDXI-Editor/releases).
+Alpha and beta versions are marked as pre-releases. The app checks that page for updates
+(Help › Check for Updates).
 
 ### Windows 📦
-Each release offers two separate downloads; take the one you want:
+Each release offers two downloads; take the one you want:
 - the **installer** `jdxi_editor-<version>_setup_win_x86-64.exe` (installs for the current user,
   no administrator rights, adds Start menu entries and an uninstaller);
 - the **portable** `JDXI-Editor-<version>-win64-portable.zip` (nothing to install: unzip anywhere,
-  even a USB stick, and run `jdxi_editor\jdxi_editor.exe`).
-Windows 10 or 11, 64-bit. The files are not signed: if SmartScreen warns, choose
-"More info" → "Run anyway". Test builds of every push are in the
-[Windows build](https://github.com/emanuelemerlo/JDXI-Editor/actions/workflows/windows-build.yml) workflow
-(Artifacts at the bottom of a run: `…-win64-setup` holds the installer, `…-win64-portable` the
-app folder, ready to run once unzipped).
+  even on a USB stick, and run `jdxi_editor.exe`).
+
+Windows 10 or 11, 64-bit. The files are not signed yet: if SmartScreen warns, choose
+"More info" → "Run anyway".
 
 ### macOS and Linux
-This fork does not publish macOS or Linux packages yet: run it with Python (below), or build a package
-with `python -m building.buildsys` (see [Building](#building)). The packages on the original project's
-releases page are of the original app.
+No packages yet: install it with Python (below), or build a package with `python -m building.buildsys`
+(see [Building](#-building)).
 
 ### Python 🐍
-Python 3.10 to 3.13. The `JDXI-Editor` package on PyPI is the original project; install this fork from GitHub,
-in a virtual environment, and start it with `jdxi-editor`:
+Python 3.10 to 3.13, in a virtual environment. Each release also carries the wheel; or install
+from GitHub, and start it with `jdxi-editor`:
 
 ```bash
-$ python -m venv jdxi-env
-$ source jdxi-env/bin/activate        # Windows: jdxi-env\Scripts\activate
-$ python -m pip install "git+https://github.com/emanuelemerlo/JDXI-Editor.git"
-$ jdxi-editor
+python -m venv jdxi-env
+source jdxi-env/bin/activate          # Windows: jdxi-env\Scripts\activate
+python -m pip install "git+https://github.com/emanuelemerlo/JDXI-Editor.git"
+jdxi-editor
 ```
 
-PyAudio needs the PortAudio library: on macOS `brew install portaudio`, on Debian/Ubuntu `sudo apt install portaudio19-dev`, before the `pip install`. The FluidSynth player needs FluidSynth itself (`brew install fluid-synth`, `sudo apt install fluidsynth`).
-
-To run from a checkout instead (for development):
-
-```bash
-$ git clone https://github.com/emanuelemerlo/JDXI-Editor.git
-$ cd JDXI-Editor
-$ python -m venv venv
-$ source venv/bin/activate
-$ python -m pip install -e ".[dev]"
-$ python -m jdxi_editor.main
-```
+The `JDXI-Editor` package on PyPI is the original project, not this one.
+PyAudio needs the PortAudio library (macOS `brew install portaudio`, Debian/Ubuntu
+`sudo apt install portaudio19-dev`) before the `pip install`; the FluidSynth player needs FluidSynth
+(`brew install fluid-synth`, `sudo apt install fluidsynth`).
 
 ## 🌍 Languages
 
-The interface is in **English** and **Italiano**. Choose it in **Help › Preferences › Interface language**
-("Same as the system" follows the operating system; the change applies at the next start). Qt's own
-buttons and file dialogs follow the same language.
+The interface is in **English** and **Italiano**: choose it in **Help › Preferences › Interface
+language** ("Same as the system" follows the operating system; the change applies at the next start).
+Parameter names (Cutoff, Resonance, Porta Time…) stay as on the JD-Xi's display and in Roland's
+manuals, so what you read matches the instrument. To add a language, see
+[jdxi_editor/i18n/README.md](jdxi_editor/i18n/README.md).
 
-Parameter names (Cutoff, Resonance, Porta Time…) stay as on the JD-Xi display and in Roland's manuals,
-in every language, so what you read on screen matches the instrument.
+## 📖 Documentation
 
-To add a language or new strings, see [jdxi_editor/i18n/README.md](jdxi_editor/i18n/README.md).
+- [CHANGELOG.md](CHANGELOG.md): what changed in each version.
+- [Features and usage](doc/features-and-usage.md): patch files (.jsz, .msz, .json, .syx), SoundFonts.
+- [Windows development](doc/dev-windows.md): Visual Studio, VS Code, local builds.
+- [Developer tools](doc/dev-tools.md): MIDI analysis and transcription tools.
+- The original project's documentation, which still describes the engine:
+  https://markxbrooks.github.io/JDXI-Editor/
 
-# 📖 Documentation
-
-## Features and Usage
-
-See **[Features and Usage](doc/features-and-usage.md)** for:
-
-- **Recent changes** — Arpeggiator SysEx sync, Effects Editor, Vocal Effects
-- **Patch loading and saving** — .jsz, .msz, .json, .syx formats; save/load flow
-- **SoundFont usage** — FluidSynth for playback, preset list from .sf2/.sf3
-
----
-
-## ℹ Available Documentation:
-### 📃 HTML Documentation:
-
-The original project's documentation, which still describes most of this fork:
-https://markxbrooks.github.io/JDXI-Editor/ — what changed here is in [CHANGELOG.md](CHANGELOG.md).
-
-### 🎹 UI Previews
-
-
-**Program Editor**  
-<a href="resources/program_editor.gif">
-  <img src="resources/program_editor_600.gif" alt="Program Editor" />
-</a>
-
-&nbsp;
-
-**Analog & Digital Synths**  
-<a href="resources/analog_synth.png">
-  <img src="resources/analog_synth_600.png" alt="Analog Synth" />
-</a>
-
-&nbsp;
-
-<a href="resources/digital_synth.png">
-  <img src="resources/digital_synth_600.png" alt="Digital Synth" />
-</a>
-
-&nbsp;
-
-**Drum Editor**  
-<a href="resources/drum_editor.png">
-  <img src="resources/drum_editor_600.png" alt="Drum Editor" />
-</a>
-
-&nbsp;
-
-**MIDI File Player**  
-<a href="resources/midi_player.png">
-  <img src="resources/midi_player_600.png" alt="MIDI File Player" />
-</a>
-
-&nbsp;
-
-**Pattern Sequencer**  
-<a href="resources/pattern.png">
-  <img src="resources/pattern_600.png" alt="Pattern Sequencer" />
-</a>
-
-&nbsp;
-
-**Effects**  
-<a href="resources/effects.png">
-  <img src="resources/effects_600.png" alt="Effects" />
-</a>
-
-&nbsp;
-
-**Vocal Effects**  
-<a href="resources/vocal_effects.png">
-  <img src="resources/vocal_effects_600.png" alt="Vocal Effects" />
-</a>
-
-&nbsp;
-
-**Arpeggiator**  
-<a href="resources/arpeggiator.png">
-  <img src="resources/arpeggiator_600.png" alt="Arpeggiator" />
-</a>
-
----
-
-## 🎛️ Features
-
-- On-screen Keyboard
-- Preset selection with search
-- Octave shifting
-- JD-Xi-style LCD Display
-- ADSR displays
-- Pitch ENV displays
-- Digital Synth Parts 1 & 2 (including 3 partials per part)
-- Analog Synth Editor
-- Drum Part Editor 🥁
-- Effects: Reverb, Delay, Compressor, Phaser, Vocoder
-- Vocal Effects Editor (Vocoder, Auto-Pitch)
-- Arpeggiator Editor
-- Pattern Editor (4×16 step sequencer, MIDI load/save)
-- MIDI File Player (track classification, channel assignment)
-- SoundFont (.sf2/.sf3) playback without hardware
-
----
-
-## ❓ Frequently Asked Questions
-### What is JDXI-Editor?
-JDXI-Editor is a Python-based MIDI editor for the Roland JD-Xi synthesizer, built with the Qt Framework and RtMidi.
-### Does JDXI-Editor work on MacOS, Linux and Windows?
-Yes, JDXI-Editor supports MacOS, Linux, and Windows!
-### What features does JDXI-Editor offer?
-JDXI-Editor provides preset selection, synth editing, drum part customization, effects editing, and more.
-
----
-
-- Learn more about the [Roland JD-Xi Synthesizer](https://www.roland.com/global/products/jd-xi/).
-- Explore the [Qt Framework](https://www.qt.io/) for building cross-platform apps.
-- Discover [RtMidi](https://www.music.mcgill.ca/~gary/rtmidi/), a real-time MIDI library.
-
----
-
-### 💡 Contribute and Share Feedback
-JDXI-Editor is a growing project! 
-- ⭐ Star this repository to support its development.
-- 🛠️ Contribute features or report issues via [GitHub Issues](https://github.com/emanuelemerlo/JDXI-Editor/issues).
-
----
-
-## Building
+## 🛠 Development
 
 ```bash
-python -m building.buildsys 2>&1 | head -50
-
-Building on: linux
-Project root: /home/brooks/PycharmProjects/JDXI-Editor
-╭─────────── linux builder ────────────╮
-│  linux builder Application Starting  │
-╰──────────────────────────────────────╯
-[02/10/26 23:12:10] INFO                        ℹ️ linux builder starting up with log file /home/brooks/.linux builder/logs/linux builder-10Feb2026-23-12-10.log...                                                         
-                    INFO                        ℹ️ 🎹 JD-Xi Editor v0.9.6 - Linux Build System                                                                                                                              
-                    INFO                        ℹ️ ==================================================                                                                                                                       
-                    INFO                        ℹ️                                                                                                                                                                          
-                             🧹 Cleaning previous builds...                                                                                                                                                                
-                    INFO                        ℹ️                                                                                                                                                                          
-                             📦 Building with PyInstaller...                                                                                                                                                               
-                    INFO                        ℹ️   This may take a few minutes... 
+git clone https://github.com/emanuelemerlo/JDXI-Editor.git
+cd JDXI-Editor
+python -m venv venv
+source venv/bin/activate              # Windows: venv\Scripts\activate
+python -m pip install -e ".[dev]"
+python -m jdxi_editor.main
 ```
 
-Mac .dmg package
-```commandline
-python3 -m building.buildsys --dmg
-```
+Tests: `pytest tests` (Qt runs off screen with `QT_QPA_PLATFORM=offscreen`).
+`python scripts/ui_audit.py` checks the interface without clicking every control (navigation,
+buttons lit, text that does not fit, labels not centred). After changing interface strings run
+`python -m building.i18n update`, translate the `.ts` files, then `python -m building.i18n compile`.
+The pictures and icons are drawn by `python building/art/make_art.py`.
 
-Mac .app
-```commandline
-python3 -m building.buildsys --app
-```
+## 📦 Building
 
-Mac .pkg
-```commandline
-python3 -m building.buildsys --pkg
-```
-
-Linux .deb or .Appimage
-```commandline
-python3 -m building.buildsys # builds both with no flag
-```
-
-Windows: the app (PyInstaller, one folder) and the installer (Inno Setup 6)
+Windows: the app (PyInstaller, one folder) and the installer (Inno Setup 6):
 ```commandline
 python -m pip install ".[soundfont,build-windows]"   # not -e: the spec bundles the installed resources
 cd %TEMP%
 pyinstaller --noconfirm --clean --distpath <repo>\dist <repo>\building\windows\jdxi_editor.spec
 cd <repo>
-iscc /DMyAppVersion=<version> jdxi_editor.iss                # -> dist\installer\
-```
-Translations: after changing interface strings run `python -m building.i18n update`, translate the
-`.ts` files, then `python -m building.i18n compile` (the tests fail while a string is untranslated).
-
-The `Windows build` workflow (`.github/workflows/windows-build.yml`) does the same on every push
-to a `fix/**` or `release/**` branch, starts the app as a smoke test, and uploads the portable app and the
-installer as two separate artifacts; on a `v*` tag it attaches them to a release (a pre-release when the tag has a `-`, e.g. `v0.10.0-beta.1`); the tag must match `__version__`.
-The older builder is still available:
-```commandline
-python -m building.buildsys
-```
-or
-```
-.\building\scripts\build.ps1
+iscc /DMyAppVersion=<version> jdxi_editor.iss        # -> dist\installer\
 ```
 
-converting wav files to midi
+macOS (`--dmg`, `--app`, `--pkg`) and Linux (.deb and AppImage): `python -m building.buildsys`.
 
-```commandline
-cd ~/Downloads/separated/htdemucs/OxygeneV
-mkdir -p midi
-basic-pitch midi bass.flac --minimum-frequency 30 --maximum-frequency 400
-```
+### Releasing
 
-```python
-import audioread; audioread.available_backends = lambda flush_cache=False: []
-from basic_pitch.inference import predict
-from basic_pitch import ICASSP_2022_MODEL_PATH
-_, midi, notes = predict('bass.flac', ICASSP_2022_MODEL_PATH, minimum_frequency=30, maximum_frequency=400)
-midi.write('midi/bass.mid'); print(len(notes), 'notes')
-"
+1. Set the version in `jdxi_editor/project.py` (`__version__ = "1.0.0a2"`, PEP 440) and add its
+   section to `CHANGELOG.md`; merge into `main`.
+2. **Actions › Release › Run workflow** on `main`. The workflow runs the tests, builds the Windows
+   installer, the portable app and the Python wheel, creates the tag (`v1.0.0-alpha.2`) and the
+   release (a pre-release for alpha, beta and rc), attaches every file and publishes it.
 
-```
-
-
-## Arpeggio trial
-
-`arpeggio-trial` damages a clean MIDI file and asks the filler to repair it from a rendering of that file. The clean file is the ground truth and is not modified.
-
-```bash
-python scripts/classify_midi_parts.py arpeggio-trial clean.mid --wav clean.wav --track BassSynth \
-  --drop 0.2 --wrong 0.05 --octave 0.05 --extra 0.05 --model full --seed 1
-```
-
-`--drop` deletes notes. `--wrong` moves a note onto another frequent pitch or a neighbour, `--octave` shifts it by an octave, and `--extra` adds a neighbour beside it. The shares are disjoint. `--model` is `current` (the existing filler), `audio`, `repeat` (audio plus the repetition prior), or `full` (those two plus the MIDI noise term). `--decoder` is `rules`, `hmm`, or `best` (default): the repeat HMM's hidden state is the figure's transposition, or stopped, and `best` keeps whichever segmentation matches the clean file on more pitches. `trial.txt` reports both scores, plus precision, recall and false repairs separately for confirmed and probable notes. Probable notes are counted and not written. `candidates.csv` carries each candidate's audio, repetition, sequence and score. The score is a weighted sum of logs.
-
-Outside any figure, an empty step takes its pitch prior from a chain learned on the track's confident notes, `P(pitch | previous) × P(next | pitch)`. The audio bar is unchanged.
-
-On a rendered G3–B♭3–C4 loop (64 repeats, 20% deletion, seed 1) the current filler, audio, repeat and full each restored 35 of 38 notes, precision 1.000, no false repairs. The audio term already clears the write bar on that rendering, so the extra terms do not change the count. With 10 missing B♭3s and 4 steps written as D4, audio, repeat and full each corrected all 4 and restored 8 of the holes: 12 of 14, recall 0.857, precision 1.000. Where the audio term prefers D4 and the repeats plus a learned B♭3→D4 confusion prefer B♭3, the full score corrects the D4 and audio alone keeps it.
-
-The earlier BassSynth drop trial, from the current filler, was recall 0.45 and 0.37 at precision 1.00 (seeds 1 and 2). That recording is not in this repo, so those two numbers were not remeasured here.
+No tag to push by hand. The `Windows build` workflow still builds every push to `fix/**`,
+`feature/**` and `release/**` branches (artifacts at the bottom of the run).
 
 ## 🙏 Credits
 
-- The original [JDXI-Editor](https://github.com/markxbrooks/JDXI-Editor) by Mark Brooks, on which this fork is built
-- [Qt](https://www.qt.io/)
-- [RtMidi](https://www.music.mcgill.ca/~gary/rtmidi/)
-- [Cursor.ai](https://cursor.so)
-- [qtawesome](https://github.com/spyder-ide/qtawesome)
-- Inspiration from many great JD-Xi editor projects that paved the way
-- **Roland**, for creating such a powerful little synth!
+- **Emanuele Merlo**: JD-Xi Studio.
+- **Mark Brooks**: the original [JDXI-Editor](https://github.com/markxbrooks/JDXI-Editor), on which
+  JD-Xi Studio is based.
+- [Qt / PySide6](https://www.qt.io/), [Mido](https://mido.readthedocs.io/),
+  [RtMidi](https://www.music.mcgill.ca/~gary/rtmidi/), [qtawesome](https://github.com/spyder-ide/qtawesome).
+- **Roland**, for such a powerful little synth.
+
+Issues and ideas: [GitHub Issues](https://github.com/emanuelemerlo/JDXI-Editor/issues).
 
 ---
 
-> Original project made with 🎹 and ☕ by Mark Brooks · this fork maintained by emanuelemerlo
-
+JD-Xi Studio is an independent, unofficial tool, not affiliated with, endorsed or sponsored by Roland
+Corporation. Roland and JD-Xi are trademarks of Roland Corporation in the United States and/or other
+countries. Licensed under the [MIT License](LICENSE).

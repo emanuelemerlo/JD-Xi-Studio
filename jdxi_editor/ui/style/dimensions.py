@@ -155,7 +155,7 @@ class LfoIconDimensions(Dimensions):
 
 
 class SplashScreenDimensions(Dimensions):
-    """Splash screen dimensions (the square JDXI-Editor_logo_640.png at the left)"""
+    """Splash screen dimensions (the JD-Xi Studio mark at the left)"""
 
     WIDTH: int = 850
     HEIGHT: int = 540
@@ -220,7 +220,7 @@ class LEDDisplayDimensions(Dimensions):
     WIDTH: int = 210
     HEIGHT: int = 70
     X = InstrumentDimensions.MARGIN + 20
-    Y = InstrumentDimensions.MARGIN + 35
+    Y = InstrumentDimensions.MARGIN + 42  # below the title, with room (Windows fonts)
 
 
 class DigitalTitleDimensions(Dimensions):
@@ -246,9 +246,9 @@ class TitleDimensions(Dimensions):
     """Title above digital (moved down)"""
 
     X = InstrumentDimensions.MARGIN + 20
-    Y = InstrumentDimensions.MARGIN
-    WIDTH: int = 200
-    HEIGHT: int = 50
+    Y = InstrumentDimensions.MARGIN - 6
+    WIDTH: int = 230
+    HEIGHT: int = 46
 
 
 class KeyboardDimensions(Dimensions):
@@ -301,7 +301,7 @@ class SequencerDimensions(Dimensions):
 class SliderContainerDimensions(Dimensions):
     """Slider Container Dimensions"""
 
-    WIDTH: int = 360
+    WIDTH: int = 385  # room for "Reverb" (it was cut on Windows)
     HEIGHT: int = 120 + 20  # Height = SliderDimensions Height
 
 
@@ -319,7 +319,7 @@ class PartsDimensions(Dimensions):
 
     X = LEDDisplayDimensions.right() + 10
     Y = InstrumentDimensions.MARGIN
-    WIDTH: int = 180
+    WIDTH: int = 165  # ends before Program / Tone
     HEIGHT: int = 220
 
 
@@ -342,19 +342,19 @@ class RoundButtonDimensions(Dimensions):
 class ToneButtonDimensions(Dimensions):
     """Tone button dimensions"""
 
-    X: int = 385
-    Y = InstrumentDimensions.MARGIN + 75
-    WIDTH: int = 150
-    HEIGHT = 80
+    X: int = 428  # right of the part buttons (they overlapped)
+    Y = InstrumentDimensions.MARGIN + 95  # as far below Program as Program is tall
+    WIDTH: int = 72
+    HEIGHT = 60
 
 
 class ProgramButtonDimensions(Dimensions):
     """Program buttons"""
 
-    X: int = 385
-    Y = InstrumentDimensions.MARGIN + 15
-    WIDTH: int = 150
-    HEIGHT = 80
+    X: int = 428
+    Y = InstrumentDimensions.MARGIN + 30
+    WIDTH: int = 72
+    HEIGHT = 60
 
 
 class OctaveButtonDimensions(Dimensions):

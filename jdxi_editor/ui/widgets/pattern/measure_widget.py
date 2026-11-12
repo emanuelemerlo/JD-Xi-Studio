@@ -41,7 +41,7 @@ class PatternMeasureWidget(QWidget):
                 row_layout.addWidget(button)
                 if i % STEPS_PER_BEAT == STEPS_PER_BEAT - 1 and i < 15:
                     row_layout.addSpacing(BEAT_GAP)
-            row_layout.addStretch()
+            row_layout.addStretch(0)  # the steps take the width (up to twice their size)
             layout.addLayout(row_layout)
 
         self.setLayout(layout)

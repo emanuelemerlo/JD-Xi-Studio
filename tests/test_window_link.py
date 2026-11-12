@@ -119,3 +119,74 @@ def test_the_editors_window_is_not_owned_by_the_keyboard(app):
     keyboard = QMainWindow()
     editors = MainEditor(keyboard)
     assert editors.parent() is None and editors.jdxi_main_window is keyboard
+
+
+def test_dialogs_come_up_above_a_keyboard_kept_on_top(app):
+    from PySide6.QtWidgets import QMessageBox
+
+    from jdxi_editor.ui.windows.jdxi.linked import DialogsInFront
+
+    keyboard = QMainWindow()
+    keyboard.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, True)
+    keyboard.show()
+    front = DialogsInFront(keyboard)
+    app.installEventFilter(front)
+    try:
+        editors = QMainWindow()  # a window of its own: its dialogs are not owned by the keyboard
+        box = QMessageBox(QMessageBox.Icon.Information, "MIDI", "ports", QMessageBox.StandardButton.Ok, editors)
+        box.open()  # window-modal, as the MIDI ports dialog
+        loose = QDialog()
+        loose.show()
+        plain = QWidget(None, Qt.WindowType.Window)  # a tool window, not a dialog: left alone
+        plain.show()
+        _spin(app, 10)
+        assert box.isVisible() and box.windowFlags() & Qt.WindowType.WindowStaysOnTopHint
+        assert loose.isVisible() and loose.windowFlags() & Qt.WindowType.WindowStaysOnTopHint
+        assert not plain.windowFlags() & Qt.WindowType.WindowStaysOnTopHint
+        for w in (box, loose, plain, editors):
+            w.close()
+    finally:
+        app.removeEventFilter(front)
+        keyboard.close()
+
+
+def test_keyboard_on_top_installs_the_dialog_filter_and_removes_it(app, tmp_path, monkeypatch):
+    monkeypatch.setenv("HOME", str(tmp_path))
+    from jdxi_editor.ui.windows.jdxi.instrument import JDXiInstrument
+
+    window = JDXiInstrument()
+    try:
+        assert not window.on_top_action.isChecked()  # always off at start
+        window.on_top_pin.click()
+        assert window._dialogs_in_front is not None and window.on_top_action.isChecked()
+        assert window.windowFlags() & Qt.WindowType.WindowStaysOnTopHint
+        assert window.settings.value("window/keyboard_on_top") is None  # not saved
+        window.set_keyboard_on_top(False)
+        assert window._dialogs_in_front is None and not window.on_top_pin.isChecked()
+    finally:
+        window.close()
+
+
+def test_the_panel_lights_only_the_editor_shown(app, tmp_path, monkeypatch):
+    monkeypatch.setenv("HOME", str(tmp_path))
+    from jdxi_editor.ui.windows.jdxi.instrument import JDXiInstrument
+
+    window = JDXiInstrument()
+
+    def lit():
+        _spin(app, 10)
+        return [k for k, b in window.part_buttons.items() if b.isChecked()]
+
+    try:
+        window.part_buttons["digital2"].click()
+        assert lit() == ["digital2"]
+        window._show_program_editor(None)  # a click on the display: Programs, no part lit
+        assert lit() == []
+        window.show_editor("digital2")
+        assert lit() == ["digital2"]
+        window.main_editor.close()  # editors closed: nothing lit
+        assert lit() == []
+        window._show_main_editor()  # back, on the Digital 2 tab
+        assert lit() == ["digital2"]
+    finally:
+        window.close()

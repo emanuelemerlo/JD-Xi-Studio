@@ -101,20 +101,9 @@ class DigitalDisplay(DigitalDisplayBase):
         oct_text = f"Oct {self.current_octave:+}" if self.current_octave else "Oct 0"
 
         orange = QColor(AppEditorStyle.LCD_ORANGE)
-        dim = QColor(AppEditorStyle.LCD_ORANGE_DIM)
-        glow_color = QColor(AppEditorStyle.LCD_ORANGE_DIM)
-        glow_color.setAlpha(90)
 
-        offsets = [(-1, -1), (1, -1), (-1, 1), (1, 1)]
-        for dx, dy in offsets:
-            painter.setPen(QPen(glow_color))
-            painter.drawText(display_x + 7 + dx, display_y + 20 + dy, program_text)
-            painter.drawText(display_x + 3 + dx, display_y + 50 + dy, tone_name_text)
-            painter.drawText(
-                display_x + display_width - 66 + dx, display_y + 50 + dy, oct_text
-            )
-
-        painter.setPen(QPen(dim))
+        # No glow: sharp text on black reads better (it blurred on Windows)
+        painter.setPen(QPen(orange))
         painter.drawText(display_x + 7, display_y + 20, program_text)
         painter.setPen(QPen(orange))
         painter.drawText(display_x + 7, display_y + 50, tone_name_text)

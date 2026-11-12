@@ -45,6 +45,6 @@ def test_header_program_connection_and_accent(app):
     tabs.addTab(QWidget(), "A")
     tabs.addTab(Coloured(), "B")
     tabs.setCurrentIndex(1)
-    assert "border: 1px solid #eb5757" in tabs.styleSheet()
+    assert "border: 1px solid #eb5757" in tabs.tabBar().styleSheet()
     tabs.setCurrentIndex(0)
-    assert "border: 1px solid #3f8cff" in tabs.styleSheet()
+    assert "border: 1px solid #3f8cff" in tabs.tabBar().styleSheet()

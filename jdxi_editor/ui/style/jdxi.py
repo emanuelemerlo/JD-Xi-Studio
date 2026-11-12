@@ -100,8 +100,8 @@ class JDXiUIStyle:
     PWM_WIDGET_HEIGHT = 200
     ADSR_PLOT_WIDTH = 300
     ADSR_PLOT_HEIGHT = 200
-    INSTRUMENT_IMAGE_WIDTH = 350
-    INSTRUMENT_IMAGE_HEIGHT = 200  # Maximum height to prevent elongation
+    INSTRUMENT_IMAGE_WIDTH = 296  # fits the preset card (340 wide)
+    INSTRUMENT_IMAGE_HEIGHT = 140  # Maximum height to prevent elongation
     TITLE_TEXT = "#FFFFFF"
     BACKGROUND = "#000000"  # 1A1A1A"
     BACKGROUND_GRADIENT = (
@@ -1436,13 +1436,7 @@ class JDXiUIStyle:
                 border-radius: 5px;
                 padding: 1px;
                 margin: 1px;
-                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                    stop: 0 #321212,
-                    stop: 0.3 #331111,
-                    stop: 0.5 #551100,
-                    stop: 0.7 #331111,
-                    stop: 1 #321212
-                );
+                background: #000000;  /* solid black: readable */
             }}
             """
 

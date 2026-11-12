@@ -9,7 +9,7 @@ read/write through it.
 from typing import Optional
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QPushButton, QWidget
+from PySide6.QtWidgets import QPushButton, QSizePolicy, QWidget
 
 from jdxi_editor.ui.editors.pattern.step_note import ChordNote, StepNoteEvent
 from jdxi_editor.ui.style import JDXiUIDimensions
@@ -31,10 +31,12 @@ class SequencerButton(QPushButton):
         self.setCheckable(True)
         # Right-click lists the step's notes (handler wired by PatternWidget)
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.setFixedSize(
-            JDXiUIDimensions.SEQUENCER.LARGE_SQUARE_SIZE,
-            JDXiUIDimensions.SEQUENCER.LARGE_SQUARE_SIZE,
-        )
+        # as tall as before; wider when the window is (up to twice): the
+        # sequencer fills the editor instead of a corner of it
+        size = JDXiUIDimensions.SEQUENCER.LARGE_SQUARE_SIZE
+        self.setMinimumSize(size, size)
+        self.setMaximumSize(size * 2, size)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
 
     @property
     def note(self) -> Optional[int]:

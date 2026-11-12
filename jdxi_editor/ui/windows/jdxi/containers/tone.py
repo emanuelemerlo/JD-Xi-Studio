@@ -18,20 +18,10 @@ def add_tone_container(
         JDXi.UI.Dimensions.TONE.HEIGHT,
     )
     tone_container.setStyleSheet(JDXi.UI.Style.TRANSPARENT)
-    tone_container_layout = QVBoxLayout(tone_container)
-    tone_container_layout.setSpacing(3)
-    tone_label_layout = QHBoxLayout()
-    tone_label = QLabel(tr("Tone"))
-    tone_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-    tone_label.setStyleSheet(JDXi.UI.Style.TRANSPARENT)
-    tone_label_layout.addWidget(tone_label)
-    tone_container_layout.addLayout(tone_label_layout)
-    tone_layout = QHBoxLayout()
-    tone_row, tone_down_button, tone_up_button = create_tone_buttons_horizontal_layout(
-        previous_tone, next_tone
-    )
-    tone_layout.addLayout(tone_row)
-    tone_container_layout.addLayout(tone_layout)
+    _row, tone_down_button, tone_up_button = create_tone_buttons_horizontal_layout(previous_tone, next_tone)
+    from jdxi_editor.ui.windows.jdxi.containers.program import nav_block
+
+    nav_block(tone_container, tr("Tone"), tone_down_button, tone_up_button)
     return tone_down_button, tone_up_button
 
 

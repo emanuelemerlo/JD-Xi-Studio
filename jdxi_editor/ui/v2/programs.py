@@ -36,7 +36,7 @@ from PySide6.QtWidgets import (
 from jdxi_editor.core.synth.type import JDXiSynth
 from jdxi_editor.i18n import tr
 from jdxi_editor.ui.editors.program import editor as _program
-from jdxi_editor.ui.v2.restyle import restyle
+from jdxi_editor.ui.v2.restyle import restyle, title_badge
 
 ACCENT = "#6fcf97"  # green, as the Program editor
 BANKS = "ABCDEFGH"
@@ -330,6 +330,10 @@ class ProgramEditor(_program.ProgramEditor):
         page = QVBoxLayout(content)
         page.setContentsMargins(12, 12, 12, 12)
         page.setSpacing(12)
+        badge = QHBoxLayout()
+        badge.addWidget(title_badge(tr("Programs"), ACCENT))
+        badge.addStretch()
+        page.addLayout(badge)
         page.addLayout(header)
         page.addLayout(top, 1)
         page.addWidget(self.more_tabs)

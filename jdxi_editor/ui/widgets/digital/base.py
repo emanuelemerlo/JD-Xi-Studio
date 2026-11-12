@@ -165,11 +165,10 @@ class DigitalDisplayBase(QWidget):
         painter.setPen(QPen(QColor("#0A0505"), 2))
         painter.drawRect(0, 0, w, h)
 
-        # Inner highlight (top) / shadow (bottom) for LCD depth
-        painter.setPen(QPen(QColor(80, 40, 20, 90), 1))
-        painter.drawLine(3, 3, w - 4, 3)
-        painter.setPen(QPen(QColor(0, 0, 0, 120), 1))
-        painter.drawLine(3, h - 4, w - 4, h - 4)
+        # a thin frame only (no glow lines): plain black reads best
+        painter.setPen(QPen(QColor("#2a2d33"), 1))
+        painter.setBrush(Qt.BrushStyle.NoBrush)
+        painter.drawRect(0, 0, w - 1, h - 1)
 
     def draw_display(self, painter: QPainter):
         """Draws the LCD-style digital with a gradient glow effect."""

@@ -54,7 +54,7 @@ from PySide6.QtGui import (
     QMouseEvent,
     QShortcut,
 )
-from PySide6.QtWidgets import QApplication, QMenu, QMessageBox, QProgressDialog
+from PySide6.QtWidgets import QApplication, QLabel, QMenu, QMessageBox, QProgressDialog
 
 from jdxi_editor.core.jdxi import JDXi
 from jdxi_editor.core.synth.type import JDXiSynth
@@ -120,7 +120,7 @@ from jdxi_editor.ui.widgets.button import SequencerSquare
 from jdxi_editor.ui.widgets.button.favorite import FavoriteButton
 from jdxi_editor.ui.widgets.viewer.log import LogViewer
 from jdxi_editor.ui.windows.jdxi.recent_files import RecentFilesManager
-from jdxi_editor.ui.windows.jdxi.linked import WindowLink
+from jdxi_editor.ui.windows.jdxi.linked import DialogsInFront, PanelFollowsEditors, WindowLink
 from jdxi_editor.ui.windows.jdxi.ui import JDXiWindow
 from jdxi_editor.ui.windows.jdxi.utils import show_message_box_from_spec
 from jdxi_editor.ui.v2.analog import AnalogToneEditor
@@ -597,20 +597,80 @@ class JDXiInstrument(JDXiWindow):
         )
         self.current_synth_type = synth_type
         self.channel = JDXiSynth.midi_channel_number(synth_type)
-        self._update_synth_button_styles()
+        self._update_synth_button_styles()  # the lit button stays the editor shown
+        previous = getattr(self, "preset_helper", None)
         self.preset_helper = self.get_preset_helper_for_current_synth()
-        self.preset_helper.preset_changed.connect(self.midi_helper.send_program_change)
+        if previous is not self.preset_helper:  # once per helper (it was connected again at every click)
+            if previous is not None:
+                try:
+                    previous.preset_changed.disconnect(self.midi_helper.send_program_change)
+                except (RuntimeError, TypeError):
+                    pass
+            self.preset_helper.preset_changed.connect(self.midi_helper.send_program_change)
+
+    PANEL_EDITORS = ("digital1", "digital2", "analog", "drums", "arpeggio")
+
+    def _mark_panel_editor(self, editor_type: str | None) -> None:
+        """Light the part (or Arpeggiator) button of the editor shown, and only that one.
+
+        Any other editor (Programs, Effects, Pattern...) or no editor shown:
+        no button lit, so the panel never points at a tab that is not there.
+        """
+        self._panel_editor = editor_type if editor_type in self.PANEL_EDITORS else None
+        if hasattr(self, "synth_buttons"):
+            self._update_synth_button_styles()
+
+    def _sync_panel_with_tab(self, index: int) -> None:
+        """The tab shown in the editors window lights its button on the panel (or none)."""
+        widget = self.main_editor.editor_tab_widget.widget(index) if self.main_editor else None
+        if widget is None or not self.main_editor.isVisible():
+            self._mark_panel_editor(None)
+            return
+        for key in self.PANEL_EDITORS:
+            config = self.editor_registry.get(key)
+            if config is not None and type(widget) is config.editor_class and (
+                not config.synth_type or getattr(widget, "SYNTH_TYPE", config.synth_type) == config.synth_type
+            ):
+                if config.synth_type and config.synth_type != self.current_synth_type:
+                    self._select_synth(config.synth_type)
+                self._mark_panel_editor(key)
+                return
+        self._mark_panel_editor(None)
+
+    def resync_panel(self) -> None:
+        tabs = self.main_editor.editor_tab_widget if self.main_editor else None
+        self._sync_panel_with_tab(tabs.currentIndex() if tabs is not None else -1)
+
+    def _panel_key_of(self, synth_type) -> str | None:
+        for key in self.PANEL_EDITORS:
+            config = self.editor_registry.get(key)
+            if config is not None and config.synth_type == synth_type:
+                return key
+        return None
 
     def _update_synth_button_styles(self):
-        """Update styles for synth buttons based on selection."""
+        """Light the button of the editor shown (a part, or Arpeggiator); none for other tabs."""
+        shown = getattr(self, "_panel_editor", None)
+        arp_open = shown == "arpeggio"
+        # an exclusive group keeps one part checked: let all go, then light only the one shown
+        groups = {b.group() for b in self.synth_buttons.values() if b.group() is not None}
+        for group in groups:
+            group.setExclusive(False)
         for synth_type, button in self.synth_buttons.items():
-            is_selected = synth_type == self.current_synth_type
+            is_selected = shown is not None and self._panel_key_of(synth_type) == shown
             button.setStyleSheet(
                 JDXi.UI.Style.BUTTON_ROUND_SELECTED
                 if not is_selected
                 else JDXi.UI.Style.BUTTON_ROUND
             )
             button.setChecked(is_selected)
+        arp = getattr(self, "arp_button", None)
+        if arp is not None:
+            arp.setStyleSheet(JDXi.UI.Style.BUTTON_ROUND if arp_open else JDXi.UI.Style.BUTTON_ROUND_SELECTED)
+            arp.setChecked(arp_open)
+        lit = any(b.isChecked() for b in self.synth_buttons.values())
+        for group in groups:
+            group.setExclusive(lit)
 
     def _program_update(self, index_change: int) -> None:
         """
@@ -846,8 +906,12 @@ class JDXiInstrument(JDXiWindow):
     def _init_window_layout(self) -> None:
         """The Window menu and the link between the keyboard and the editor windows."""
         self.window_link = WindowLink(self)
+        self._dialogs_in_front = None
         if self.main_editor is not None:
             self.window_link.add(self.main_editor)
+            # closing (or reopening) the editors window: the panel follows what is shown
+            self._panel_follows = PanelFollowsEditors(self)
+            self.main_editor.installEventFilter(self._panel_follows)
         menu = QMenu(tr("&Window"), self)
         menu.addAction(self._menu_action(tr("Show the &editors"), self._show_main_editor, "Ctrl+Shift+W"))
         menu.addAction(
@@ -880,8 +944,13 @@ class JDXiInstrument(JDXiWindow):
         geometry = settings.value("window/editors_geometry") if settings is not None else None
         if geometry:
             self.main_editor.restoreGeometry(geometry)
-        if settings is not None and str(settings.value("window/keyboard_on_top", False)).lower() == "true":
-            self.set_keyboard_on_top(True)
+        # Always on top is never restored: it starts off at every launch (kept
+        # on, a dialog opening behind the keyboard could block it at startup)
+        if settings is not None:
+            settings.remove("window/keyboard_on_top")
+        # the pin next to minimise / maximise / close
+        self.on_top_pin = self.window_buttons.pin_button
+        self.on_top_pin.toggled.connect(self.set_keyboard_on_top)
 
     def bring_keyboard_to_front(self) -> None:
         """The keyboard window in front (from an editor window too: Ctrl+Shift+K)."""
@@ -901,10 +970,22 @@ class JDXiInstrument(JDXiWindow):
             self.restoreGeometry(geometry)
             if visible:
                 self.show()  # changing the flags hides the window
+        # with the keyboard always on top, a dialog (MIDI ports, a message, a
+        # name to save...) must come up above it, not hidden behind it while
+        # it blocks the keyboard
+        app = QApplication.instance()
+        if on and self._dialogs_in_front is None and app is not None:
+            self._dialogs_in_front = DialogsInFront(self)
+            app.installEventFilter(self._dialogs_in_front)
+        elif not on and self._dialogs_in_front is not None:
+            if app is not None:
+                app.removeEventFilter(self._dialogs_in_front)
+            self._dialogs_in_front.deleteLater()
+            self._dialogs_in_front = None
         self.on_top_action.setChecked(on)
-        settings = getattr(self, "settings", None)
-        if settings is not None:
-            settings.setValue("window/keyboard_on_top", on)
+        pin = getattr(self, "on_top_pin", None)
+        if pin is not None and pin.isChecked() != on:
+            pin.setChecked(on)
 
     def _save_window_layout(self) -> None:
         settings = getattr(self, "settings", None)
@@ -926,6 +1007,7 @@ class JDXiInstrument(JDXiWindow):
             self.current_synth_type = config.synth_type
         if config.midi_channel:
             self.channel = config.midi_channel
+        self._mark_panel_editor(editor_type)  # the panel shows what is open
 
         # Merge registry kwargs with call-site kwargs
         merged_kwargs = {**config.kwargs, **kwargs}
@@ -1103,6 +1185,7 @@ class JDXiInstrument(JDXiWindow):
                 self.main_editor.editor_tab_widget.currentChanged.connect(
                     self._update_tab_bar_property
                 )
+                self.main_editor.editor_tab_widget.currentChanged.connect(self._sync_panel_with_tab)
                 self._tab_change_connected = True
             self._update_tab_bar_property(
                 self.main_editor.editor_tab_widget.currentIndex()
@@ -1356,6 +1439,29 @@ class JDXiInstrument(JDXiWindow):
         about_dialog.setAttribute(Qt.WA_DeleteOnClose)
         about_dialog.exec()
 
+    def fit_to_instrument(self) -> None:
+        """Normal size: the panel and the keys, nothing more (not maximised)."""
+        if self.isMaximized() or self.isFullScreen():
+            self.showNormal()
+        self.resize(self.minimumSizeHint().expandedTo(self.minimumSize()))
+        self.fit_panel_texts()
+
+    def fit_panel_texts(self) -> None:
+        """Each name on the panel fits its place: a little smaller where it would be cut.
+
+        The panel keeps the JD-Xi's proportions, so its labels have fixed
+        widths; a wider font than the one designed for (Segoe UI missing on
+        Linux, say) would cut "Digital Synth 1" or "Key Hold".
+        """
+        from jdxi_editor.ui.style.fit import fit_text
+
+        panel = getattr(self, "panel_container", None)
+        if panel is None:
+            return
+        for label in panel.findChildren(QLabel):
+            if label.isVisibleTo(panel) and label.text():
+                fit_text(label)
+
     @staticmethod
     def _new_look(window) -> None:
         """The new editors' look for a tool window (once): dark cards, flat buttons."""
@@ -1376,8 +1482,12 @@ class JDXiInstrument(JDXiWindow):
             self.main_editor = MainEditor(self)
         if self.isMinimized():  # the editors come back with the keyboard
             self.showNormal()
+        if self.main_editor.isMinimized():
+            self.main_editor.showNormal()
         self.main_editor.show()
+        # in front of the keyboard window (a window of its own: Windows needs both)
         self.main_editor.raise_()
+        self.main_editor.activateWindow()
 
     def _create_menu_bar(self) -> None:
         """Override to add Recent Files submenu."""
@@ -2662,6 +2772,10 @@ class JDXiInstrument(JDXiWindow):
                 geometry = self.settings.value("geometry")
                 if geometry:
                     self.restoreGeometry(geometry)
+                # Always start at the instrument's own size (position kept): a saved
+                # maximised state on Windows could not be brought back to normal size
+                self.setWindowState(Qt.WindowState.WindowNoState)
+                QTimer.singleShot(0, self, self.fit_to_instrument)
 
                 # Load preset info
                 self.current_preset_number = int(

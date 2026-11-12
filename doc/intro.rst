@@ -6,13 +6,13 @@
 Introduction
 ============
 
-Welcome to **JDXI-Editor**, a comprehensive and powerful MIDI editor designed specifically for the **Roland JD-Xi synthesizer**. Built with modern Python technologies including **PySide6 (Qt6)**, **RtMidi**, and **mido**, this application revolutionizes how musicians and sound designers interact with their JD-Xi hardware.
+Welcome to **JD-Xi Studio** (by Emanuele Merlo, based on JDXI-Editor by Mark Brooks), a comprehensive and powerful MIDI editor designed specifically for the **Roland JD-Xi synthesizer**. Built with modern Python technologies including **PySide6 (Qt6)**, **RtMidi**, and **mido**, this application revolutionizes how musicians and sound designers interact with their JD-Xi hardware.
 
-.. figure:: images/main_window_0.6.gif
+.. figure:: images/keyboard_window.png
    :alt: JD-Xi Editor Main Interface
    :width: 60%
 
-   JD-Xi Editor Main Interface
+   The keyboard window
 
 What is JDXI-Editor?
 ====================

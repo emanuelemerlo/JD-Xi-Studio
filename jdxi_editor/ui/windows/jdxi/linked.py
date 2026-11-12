@@ -129,3 +129,53 @@ class WindowLink(QObject):
             self.keyboard.move(frame.left(), min(screen.bottom() - frame.height(), y + height))
             frame = self.keyboard.frameGeometry()
         editor.move(x, y)
+
+
+class DialogsInFront(QObject):
+    """While the keyboard is kept always on top, every dialog comes up above it.
+
+    A dialog of the editors window (or one with no parent) would open behind
+    the keyboard window; when it is modal it blocks the keyboard, which then
+    seems frozen. Installed on the application by the keyboard window.
+    """
+
+    def __init__(self, keyboard: QWidget):
+        super().__init__(keyboard)
+        self.keyboard = keyboard
+
+    @staticmethod
+    def is_dialog(widget) -> bool:
+        if not isinstance(widget, QWidget) or not widget.isWindow() or isinstance(widget, QMenu):
+            return False
+        return isinstance(widget, QDialog) or widget.windowModality() != Qt.WindowModality.NonModal
+
+    def eventFilter(self, watched, event):  # noqa: N802 (Qt name)
+        if event.type() == QEvent.Type.Show and watched is not self.keyboard and self.is_dialog(watched):
+            if not watched.windowFlags() & Qt.WindowType.WindowStaysOnTopHint:
+                QTimer.singleShot(0, watched, lambda w=watched: self._to_front(w))
+        return False
+
+    @staticmethod
+    def _to_front(widget: QWidget) -> None:
+        if not widget.isVisible():
+            return
+        geometry = widget.geometry()
+        widget.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, True)
+        widget.setGeometry(geometry)
+        widget.show()  # changing the flags hides the window
+        widget.raise_()
+        widget.activateWindow()
+
+
+
+class PanelFollowsEditors(QObject):
+    """When the editors window is shown or closed, the panel lights what it shows (or nothing)."""
+
+    def __init__(self, keyboard):
+        super().__init__(keyboard)
+        self.keyboard = keyboard
+
+    def eventFilter(self, watched, event):  # noqa: N802 (Qt name)
+        if event.type() in (QEvent.Type.Show, QEvent.Type.Hide):
+            QTimer.singleShot(0, self.keyboard, self.keyboard.resync_panel)
+        return False

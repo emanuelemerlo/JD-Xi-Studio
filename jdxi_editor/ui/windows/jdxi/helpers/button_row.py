@@ -47,10 +47,7 @@ def create_button_row(
 
     # Add label with color based on text
     label = QLabel(text)
-    if text == "Analog Synth":
-        label.setStyleSheet(JDXi.UI.Style.LABEL_ANALOG_SYNTH_PART)
-    else:
-        label.setStyleSheet(JDXi.UI.Style.LABEL_SYNTH_PART)
+    label.setStyleSheet(JDXi.UI.Style.LABEL_SYNTH_PART)  # every part the same colour
     row.addWidget(label)
 
     # Add spacer to push button to right

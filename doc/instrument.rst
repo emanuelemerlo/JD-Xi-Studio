@@ -3,7 +3,7 @@ JDXi Instrument Window
 
 The **JDXi Instrument Window** is the central command center of the JDXI-Editor application—a sophisticated, real-time interface that transforms your Roland JD-Xi synthesizer into a powerful, computer-controlled instrument. This window serves as your primary gateway for sound design, performance, and comprehensive control over every aspect of your JD-Xi's capabilities.
 
-.. figure:: images/main_window_0.6.gif
+.. figure:: images/keyboard_window.png
    :alt: JDXi Instrument Window - Main Interface
    :width: 60%
 

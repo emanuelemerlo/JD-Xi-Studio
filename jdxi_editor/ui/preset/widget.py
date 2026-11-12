@@ -142,18 +142,24 @@ class InstrumentPresetWidget(QWidget):
 
     def add_image_group(self, group: QGroupBox):
         """
-        The instrument picture is no longer shown: photos of other synths
-        (Jupiter-8, TR-909...) took half the page and had nothing to do with the
-        sound. The group stays out of the layout, hidden, because
-        update_instrument_image() still writes to its label.
+        The sound's picture (one per family: piano, pad, bass, drum kit...,
+        drawn by building/art/make_art.py) at the bottom of the preset card.
+        The old photos of other synths took half the page: these are small.
         """
-        group.setParent(self)  # kept as a hidden child, never a stray window
+        group.setParent(self)  # the group itself stays hidden: only its label is shown
         group.hide()
+        label = self.instrument_image_label
+        card = getattr(self, "_preset_group", None)
+        if card is not None and card.layout() is not None:
+            label.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignBottom)
+            label.setMaximumHeight(JDXi.UI.Style.INSTRUMENT_IMAGE_HEIGHT)
+            card.layout().addWidget(label)
         self.hlayout.addStretch(1)
 
     def add_preset_group(self, group: QGroupBox):
         """add groupbox for instruments (as tall as its contents)"""
         group.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
+        self._preset_group = group
         self.hlayout.addWidget(group, 0, Qt.AlignmentFlag.AlignTop)
 
     def setup(self):

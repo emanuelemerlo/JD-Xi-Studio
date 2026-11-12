@@ -1,8 +1,8 @@
 # Changelog
 
-All notable changes to JDXI-Editor are documented in this file.
+All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Editor) are documented in this file.
 
-# [1.0.0a1] — tag `v1.0.0-alpha.1` (new interface, in progress)
+# [1.0.0a1] — tag `v1.0.0-alpha.1` (first JD-Xi Studio alpha: the new interface)
 
 The interface is being rebuilt for a desktop screen, one editor at a time. The
 last version with the original interface is **0.10.0b1** (tag `v0.10.0-beta.1`).
@@ -56,6 +56,79 @@ on the JD-Xi display.
 - **Digital Synth 1 red, Digital Synth 2 orange**, Drums purple, as on the JD-Xi panel; Effects teal,
   Vocal Effect pink (they shared colours with the parts before); the preset panel of Digital 2 says
   DIGITAL SYNTH 2
+
+### About, documentation and releases
+- **Panel names always fit**: where the system's font is wider than the one designed for (Segoe UI
+  missing on Linux, Windows' scaling), a name is drawn a little smaller instead of being cut; this
+  made the UI audit fail on the GitHub runners
+- **Every editor has its title badge** at the top left (Analog and Recipes were missing it); the UI
+  audit checks it
+- **About** in the new look: the logo, the version as the release names it (1.0.0-alpha.1), the
+  authors (Emanuele Merlo for JD-Xi Studio, Mark Brooks for the original JDXI-Editor), libraries,
+  licence and the trademark notice
+- **Documentation aligned**: README (JD-Xi Studio, features, new screenshots of every editor and of
+  the keyboard window, download, release steps, credits), README.rst, the Sphinx project name,
+  authors and version (read from `project.py`), pyproject authors, LICENSE (both copyrights);
+  developer notes moved to `doc/dev-tools.md`
+- **Release workflow** (`.github/workflows/release.yml`, Actions › Release › Run workflow): tests,
+  Windows installer and portable app, Python wheel and source package, then the tag and the release
+  with every file attached, in one run; no tag to push by hand
+- **Removed**: the Sphinx build output committed in `doc/latex` (20 MB), an old PDF of the 0.8
+  documentation, IDE files, unused root files (old PyInstaller specs, `volume_cc.py`,
+  `programs.json`), the GIFs of the old interface
+
+### Windows 11 fixes
+
+- **The keyboard window starts at its own size**, not maximised from a saved state, and the
+  maximise button brings it back to that size (it could only be minimised)
+- **The editors window comes in front** when a part, Vocoder, Effects or a menu opens an editor
+  (it opened the tab behind the keyboard window)
+- **The panel shows the editor that is open**: Arpeggiator lights while its editor is open (the
+  part lit before stayed lit), a part lights when its editor opens from a menu or its tab; Vocoder
+  and Effects do not stay lit; a preset change is sent once (every part click connected it again)
+- **Switching editors is immediate**: colouring the selected tab restyled every editor (about
+  0.9 s per click); now only the tab bar
+- **UI audit** (`scripts/ui_audit.py`, run by the tests at 100% and 150%): every panel button and
+  menu entry opens the right tab and lights the right button, no panel text cut or overlapping,
+  showing an editor stays fast, each name centred over its slider or button
+- **Pattern uses the whole window**, with the side panel as the other editors: pointing at a
+  control (Play, BPM, Tap, the steps, the mute buttons...) explains it there; the steps grow
+  with the window
+- **Part Select follows the tab shown**: only the button of the editor shown is lit; Programs
+  (a click on the display), Effects, Pattern... or the editors window closed: none lit
+- **Keep on top is a pin** next to minimise / maximise / close (also in the Window menu): it
+  is not saved and is off at every start, so a dialog can never be stuck behind the keyboard
+  at launch
+- **New pictures and icon**: one family of illustrations in the JD-Xi's look (black body, red
+  display, the part colours), drawn by `building/art/make_art.py`: one per sound family (piano,
+  pad, bass, strings, drum kits...) shown small at the bottom of the preset card, plus Programs,
+  Presets, Effects, Vocal FX, Arpeggio; the installer's side image
+- **New program icon**: a JD-Xi in miniature (red display, knobs with their red ring, step LEDs,
+  mini keys), black and red only; simpler at 16-32 px so it stays readable in the taskbar
+- **New logo**: JD-Xi Studio's own, in the JD-Xi's colours (black panel, white labels, red
+  light only), laid out as the instrument (controls on the back two thirds, 37 mini keys at the
+  front, microphone), in a gentle perspective; the name with "Xi" in red, replacing the original JDXI-Editor logo in the READMEs
+- **Obsolete files removed**: about 150 unused pictures, icon sets, GIMP sources and old splash
+  screens; the photos of other synths replaced by the new pictures
+- **Keyboard always on top**: dialogs (MIDI ports, messages, names to save) come up above the
+  keyboard; before, a dialog could open behind it and block it, so the keyboard seemed frozen
+- **Panel sliders**: each name is centred over its slider (the names were left-aligned and the
+  sliders sat at the left of their column); the names a little smaller, so "Reverb" is no
+  longer cut
+- **Panel layout**: the title in pixels (in points it grew with Windows' DPI and covered the
+  display), the display lower, Program and Tone to the right of the part buttons (they
+  overlapped), each label right above its - and + buttons, aligned alike; Vocoder and Effects
+  centred over their buttons; room for "Reverb" over its slider; Analog Synth in the same colour
+  as the other parts
+- **Displays on solid black**, without the red gradient and the glow, on the keyboard and in
+  every editor
+- **Pattern, MIDI file player and Programs** with the same badge and cards (title inside, in the
+  editor's colour) as the other new editors
+- **Starts from VS Code and from the file**: profiling is off unless `JDXI_PROFILE=1` and never
+  crashes when a debugger or another profiler is active ("Another profiling tool is already
+  active"); `python jdxi_editor/main.py` uses its own folder's code even if another copy is installed
+- **Visual Studio 2026 and VS Code**: `JD-Xi-Studio.sln`, `.vscode/` (run, debug, tests, tasks on Windows, macOS and Linux),
+  `building/windows/local_build.ps1` (exe and installer on your PC), guide in `doc/dev-windows.md`
 
 ### Preset panel, Programs tabs and tool windows in the new look
 

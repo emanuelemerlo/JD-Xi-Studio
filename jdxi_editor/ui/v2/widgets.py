@@ -876,6 +876,18 @@ class InfoPanel(QFrame):
         layout.addWidget(self.source)
         self.setMinimumWidth(240)
 
+    def show_text(self, group: str, name: str, description: str, source: str = "") -> None:
+        """A control that is not a JD-Xi parameter (Pattern, player): its name and what it does."""
+        self.pv = None
+        self.group.setText(group)
+        self.name.setText(name)
+        self.long.setText("")
+        self.value.setText("")
+        self.range.setText("")
+        self.description.setText(description)
+        self.depends.setText("")
+        self.source.setText(source)
+
     def show_param(self, pv: ParamValue) -> None:
         self.pv = pv
         if id(pv) not in self._watched:  # each value watched once
