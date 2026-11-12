@@ -71,6 +71,9 @@ on the JD-Xi display.
 - **UI audit** (`scripts/ui_audit.py`, run by the tests at 100% and 150%): every panel button and
   menu entry opens the right tab and lights the right button, no panel text cut or overlapping,
   showing an editor stays fast, each name centred over its slider or button
+- **Pattern uses the whole window**, with the side panel as the other editors: pointing at a
+  control (Play, BPM, Tap, the steps, the mute buttons...) explains it there; the steps grow
+  with the window
 - **Part Select follows the tab shown**: only the button of the editor shown is lit; Programs
   (a click on the display), Effects, Pattern... or the editors window closed: none lit
 - **Keep on top is a pin** next to minimise / maximise / close (also in the Window menu): it

@@ -5,7 +5,7 @@ learning, transport, track classification, automation, USB recorder), restyled.
 
 from __future__ import annotations
 
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import QEvent, QObject, Qt, QTimer
 from PySide6.QtWidgets import (
     QGridLayout,
     QGroupBox,
@@ -13,6 +13,8 @@ from PySide6.QtWidgets import (
     QLabel,
     QLayout,
     QSizePolicy,
+    QAbstractButton,
+    QApplication,
     QVBoxLayout,
     QWidget,
 )
@@ -72,6 +74,23 @@ def _line(*widgets, stretch: bool = True) -> QHBoxLayout:
 
 # Same class names as the editors they restyle: the main window finds open
 # editors by class name (get_existing_editor), and isinstance() keeps working.
+
+
+class _HelpOnHover(QObject):
+    """The control under the pointer is explained in the editor's side panel."""
+
+    def __init__(self, editor):
+        super().__init__(editor)
+        self.editor = editor
+
+    def eventFilter(self, watched, event):  # noqa: N802 (Qt name)
+        if event.type() == QEvent.Type.Enter and isinstance(watched, QWidget):
+            try:
+                if self.editor.isVisible() and self.editor.isAncestorOf(watched):
+                    self.editor.explain(watched)
+            except RuntimeError:  # the editor is gone
+                pass
+        return False
 
 
 class PatternSequenceEditor(_pattern.PatternSequenceEditor):
@@ -221,8 +240,93 @@ class PatternSequenceEditor(_pattern.PatternSequenceEditor):
             2: self.analog_selector,
             3: self.drum_selector,
         }
+        # the side panel, as in the other editors: what the control under the pointer does
+        from jdxi_editor.ui.v2.widgets import InfoPanel
+
+        self.info_panel = InfoPanel(PATTERN_ACCENT)
+        self.info_panel.setFixedWidth(320)
+        self.info_panel.show_text(
+            tr("Pattern"),
+            tr("Point at a control"),
+            tr("Its name and what it does appear here."),
+        )
+        self._help = {}
+        helps = (
+            (self.play_button, tr("Play"), tr("Plays the pattern from the first measure, over and over; the steps light up as they play.")),
+            (self.stop_button, tr("Stop"), tr("Stops and goes back to the first step.")),
+            (self.pause_button, tr("Pause"), tr("Stops where it is: Play goes on from there.")),
+            (self.shuffle_button, tr("Shuffle"), tr("Plays the measures in a random order.")),
+            (self.tempo_spinbox, tr("BPM"), tr("The tempo, in beats per minute.")),
+            (tap, tr("Tap"), tr("Click it in time a few times: the tempo follows your clicks.")),
+            (self.beats_per_measure_combo, tr("Steps"), tr("Steps per measure: 16 (sixteenths) or 12 (triplets).")),
+            (self.velocity_spinbox, tr("Velocity"), tr("How hard the steps you switch on are played (1-127).")),
+            (self.duration_combo, tr("Duration"), tr("How long the notes of the steps you switch on last.")),
+            (add_measure, tr("Add measure"), tr("Adds a measure after the last one (a copy of the previous one if that box is ticked).")),
+            (copy_previous, tr("Copy previous measure"), tr("New measures start as a copy of the one before.")),
+            (copy, tr("Copy section"), tr("Copies the steps from..to of the selected measure.")),
+            (paste, tr("Paste section"), tr("Pastes the copied steps into the selected measure.")),
+            (self.digital1_selector, tr("Digital Synth 1"), tr("The note the steps of this part play.")),
+            (self.digital2_selector, tr("Digital Synth 2"), tr("The note the steps of this part play.")),
+            (self.analog_selector, tr("Analog Synth"), tr("The note the steps of this part play.")),
+            (self.drum_selector, tr("Drums"), tr("The drum sound (kick, snare, hi-hat...) the steps of this part play.")),
+        )
+        for widget, name, text in helps:
+            if widget is not None:
+                self._help[id(widget)] = (name, text)
+        for button in self.mute_buttons:
+            self._help[id(button)] = (tr("Mute"), tr("Silences this part while the pattern plays; its steps stay."))
+        self._help_filter = _HelpOnHover(self)
+        app = QApplication.instance()
+        if app is not None:
+            app.installEventFilter(self._help_filter)
+
         self.layout.addStretch()
-        self._container_layout.addWidget(content)
+        outer = QWidget()
+        row = QHBoxLayout(outer)
+        row.setContentsMargins(0, 0, 12, 12)
+        row.setSpacing(12)
+        row.addWidget(content, 1)
+        side = QVBoxLayout()
+        side.setContentsMargins(0, 12, 0, 0)
+        side.addWidget(self.info_panel, 1)
+        row.addLayout(side)
+        self._container_layout.addWidget(outer)
+
+    def _init_base_widget(self) -> None:
+        """As the base class, but the content takes the whole width (it was centred, with margins)."""
+        from jdxi_editor.ui.widgets.editor.base import EditorBaseWidget
+
+        self.base_widget = EditorBaseWidget(parent=self, analog=False)
+        self.base_widget.setup_scrollable_content(center_horizontally=False)
+        self.base_widget.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self._container_layout = self.base_widget.get_container_layout()
+        if not hasattr(self, "main_layout") or self.main_layout is None:
+            self.main_layout = QVBoxLayout(self)
+            self.setLayout(self.main_layout)
+        self.main_layout.addWidget(self.base_widget)
+
+    def explain(self, widget: QWidget) -> None:
+        """Show in the side panel what *widget* (or the control it belongs to) does."""
+        w = widget
+        while w is not None and w is not self:
+            entry = self._help.get(id(w))
+            if entry is not None:
+                self.info_panel.show_text(tr("Pattern"), *entry)
+                return
+            if self.pattern_widget is not None and self.pattern_widget.isAncestorOf(w) and isinstance(w, QAbstractButton) and not w.text():
+                self.info_panel.show_text(
+                    tr("Pattern"),
+                    tr("Step"),
+                    tr("Click to switch the step on or off; right-click lists its notes."),
+                )
+                return
+            if w.toolTip():
+                name = w.text().replace("&", "") if isinstance(w, QAbstractButton) and w.text() else tr("Control")
+                self.info_panel.show_text(tr("Pattern"), name, w.toolTip())
+                return
+            if isinstance(w, QAbstractButton) and w.text():
+                return  # a button with no explanation: keep the last one shown
+            w = w.parentWidget()
 
     # The base class (re)applies its own style in these: the new look instead.
     def _apply_pattern_editor_style(self) -> None:
