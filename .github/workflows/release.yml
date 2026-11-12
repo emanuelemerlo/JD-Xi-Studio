@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       notes:
-        description: "Release notes (empty: the version's section of CHANGELOG.md)"
+        description: "Release notes text: leave EMPTY to use the version's section of CHANGELOG.md (the version itself comes from project.py)"
         required: false
         default: ""
 
@@ -53,6 +53,11 @@ jobs:
   tests:
     needs: prepare
     uses: ./.github/workflows/tests.yml
+    with:
+      # the macOS runners were cancelled before starting (15 minutes in the queue);
+      # the app shipped here is the Windows one and the Python package, tested on
+      # Linux and Windows. macOS is still tested on every push to main.
+      macos: "no"
 
   windows:
     needs: tests
