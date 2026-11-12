@@ -5,6 +5,7 @@ Profiling decorator
 import cProfile
 import io
 import logging
+import os
 import pstats
 from functools import wraps
 from typing import Callable, ParamSpec, TypeVar
@@ -32,8 +33,16 @@ def profiling_decorator(
     def decorator(func: Callable[P, R]) -> Callable[P, R]:
         @wraps(func)
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+            # Only on request (JDXI_PROFILE=1), and never when another profiler or
+            # a debugger's is active (Python allows one: it crashed the app in VS Code)
+            if os.environ.get("JDXI_PROFILE", "").strip() not in ("1", "true", "yes"):
+                return func(*args, **kwargs)
             profiler = cProfile.Profile()
-            profiler.enable()  # Start profiling
+            try:
+                profiler.enable()  # Start profiling
+            except ValueError:
+                _log.info("Profiling skipped: another profiling tool is active")
+                return func(*args, **kwargs)
 
             # Execute the wrapped function
             result = func(*args, **kwargs)

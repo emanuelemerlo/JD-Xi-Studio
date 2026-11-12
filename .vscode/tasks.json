@@ -4,26 +4,61 @@
     {
       "label": "Setup: create .venv and install",
       "type": "shell",
-      "command": "py -3.11 -m venv .venv; .venv\\Scripts\\python -m pip install --upgrade pip; .venv\\Scripts\\python -m pip install -e \".[soundfont,dev]\" pyinstaller",
+      "windows": {
+        "command": "py -3 -m venv .venv; .venv\\Scripts\\python -m pip install --upgrade pip; .venv\\Scripts\\python -m pip install -e \".[soundfont,dev]\""
+      },
+      "linux": {
+        "command": "python3 -m venv .venv && .venv/bin/python -m pip install --upgrade pip && .venv/bin/python -m pip install -e '.[soundfont,dev]'"
+      },
+      "osx": {
+        "command": "python3 -m venv .venv && .venv/bin/python -m pip install --upgrade pip && .venv/bin/python -m pip install -e '.[soundfont,dev]'"
+      },
       "problemMatcher": []
     },
     {
       "label": "Run JD-Xi Studio",
       "type": "shell",
-      "command": ".venv\\Scripts\\python -m jdxi_editor.main",
+      "windows": {
+        "command": ".venv\\Scripts\\python -m jdxi_editor.main"
+      },
+      "linux": {
+        "command": ".venv/bin/python -m jdxi_editor.main"
+      },
+      "osx": {
+        "command": ".venv/bin/python -m jdxi_editor.main"
+      },
       "problemMatcher": []
     },
     {
       "label": "Tests: all",
       "type": "shell",
-      "command": ".venv\\Scripts\\python -m pytest tests -q",
-      "group": { "kind": "test", "isDefault": true },
+      "windows": {
+        "command": ".venv\\Scripts\\python -m pytest tests -q"
+      },
+      "linux": {
+        "command": ".venv/bin/python -m pytest tests -q"
+      },
+      "osx": {
+        "command": ".venv/bin/python -m pytest tests -q"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
       "problemMatcher": []
     },
     {
       "label": "Translations: update, compile, check",
       "type": "shell",
-      "command": ".venv\\Scripts\\python -m building.i18n update; .venv\\Scripts\\python -m building.i18n compile; .venv\\Scripts\\python -m building.i18n check",
+      "windows": {
+        "command": ".venv\\Scripts\\python -m building.i18n update; .venv\\Scripts\\python -m building.i18n compile; .venv\\Scripts\\python -m building.i18n check"
+      },
+      "linux": {
+        "command": ".venv/bin/python -m building.i18n update && .venv/bin/python -m building.i18n compile && .venv/bin/python -m building.i18n check"
+      },
+      "osx": {
+        "command": ".venv/bin/python -m building.i18n update && .venv/bin/python -m building.i18n compile && .venv/bin/python -m building.i18n check"
+      },
       "problemMatcher": []
     },
     {
@@ -34,7 +69,7 @@
       "problemMatcher": []
     },
     {
-      "label": "Build: installer (Inno Setup)",
+      "label": "Build: Windows installer (Inno Setup)",
       "type": "shell",
       "command": "powershell -ExecutionPolicy Bypass -File building\\windows\\local_build.ps1 -Installer",
       "problemMatcher": []

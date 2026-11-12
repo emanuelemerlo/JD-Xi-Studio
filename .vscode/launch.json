@@ -15,7 +15,9 @@
       "request": "launch",
       "module": "jdxi_editor.main",
       "cwd": "${workspaceFolder}",
-      "env": { "JDXI_LANGUAGE": "en" },
+      "env": {
+        "JDXI_LANGUAGE": "en"
+      },
       "justMyCode": true
     },
     {
@@ -24,15 +26,32 @@
       "request": "launch",
       "module": "jdxi_editor.main",
       "cwd": "${workspaceFolder}",
-      "env": { "JDXI_LANGUAGE": "it" },
+      "env": {
+        "JDXI_LANGUAGE": "it"
+      },
       "justMyCode": true
+    },
+    {
+      "name": "JD-Xi Studio (profile on close)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "jdxi_editor.main",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "JDXI_PROFILE": "1"
+      },
+      "justMyCode": true,
+      "noDebug": true
     },
     {
       "name": "Tests: current file",
       "type": "debugpy",
       "request": "launch",
       "module": "pytest",
-      "args": ["${file}", "-q"],
+      "args": [
+        "${file}",
+        "-q"
+      ],
       "cwd": "${workspaceFolder}",
       "justMyCode": false
     }

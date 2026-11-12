@@ -2,12 +2,13 @@
 
 ## Once
 
-1. Install **Python 3.11 (64-bit)** from python.org (tick "Add python.exe to PATH" and the `py` launcher).
+1. Install **Python 3.11 or 3.12 (64-bit)** from python.org (tick "Add python.exe to PATH" and the `py` launcher).
+   The same steps work on macOS and Linux with `python3 -m venv .venv` and `.venv/bin/python`.
 2. Install **Git** (or GitHub Desktop) and clone `emanuelemerlo/JDXI-Editor`.
 3. In the repository folder create the environment and install the editor with the test tools:
 
    ```powershell
-   py -3.11 -m venv .venv
+   py -3 -m venv .venv
    .venv\Scripts\python -m pip install --upgrade pip
    .venv\Scripts\python -m pip install -e ".[soundfont,dev]" pyinstaller
    ```
@@ -46,9 +47,23 @@ powershell -ExecutionPolicy Bypass -File building\windows\local_build.ps1 -Insta
 It does what the GitHub workflow does, in its own environment (`.venv-build`, a normal install:
 the wheel build puts the resources inside the package that the exe bundles).
 
+## Running from a terminal
+
+Always from the repository folder, with the project's environment:
+
+```powershell
+.venv\Scripts\python -m jdxi_editor.main      # Windows
+.venv/bin/python -m jdxi_editor.main            # macOS, Linux
+```
+
+Running the file (`python jdxi_editor/main.py`, VS Code's "Run Python File") also works: it uses
+this folder's code even when another copy of the editor is installed.
+
 ## Useful switches
 
 - `JDXI_LANGUAGE=it` or `en`: the interface language, whatever the system one.
 - `QT_SCALE_FACTOR=1.5`: try the interface at another display scale.
+- `JDXI_PROFILE=1`: profile the session and print the report when the app closes (off by default:
+  Python allows one profiler, and a debugger counts as one).
 - Settings are in the registry under `HKEY_CURRENT_USER\Software\mabsoft\JD-Xi Editor`; the log and
   recipes in `%USERPROFILE%\.jdxi_editor`.

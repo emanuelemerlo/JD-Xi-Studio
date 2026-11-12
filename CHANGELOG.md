@@ -71,7 +71,10 @@ on the JD-Xi display.
   every editor
 - **Pattern, MIDI file player and Programs** with the same badge and cards (title inside, in the
   editor's colour) as the other new editors
-- **Visual Studio 2026 and VS Code**: `JD-Xi-Studio.sln`, `.vscode/` (run, debug, tests, tasks),
+- **Starts from VS Code and from the file**: profiling is off unless `JDXI_PROFILE=1` and never
+  crashes when a debugger or another profiler is active ("Another profiling tool is already
+  active"); `python jdxi_editor/main.py` uses its own folder's code even if another copy is installed
+- **Visual Studio 2026 and VS Code**: `JD-Xi-Studio.sln`, `.vscode/` (run, debug, tests, tasks on Windows, macOS and Linux),
   `building/windows/local_build.ps1` (exe and installer on your PC), guide in `doc/dev-windows.md`
 
 ### Preset panel, Programs tabs and tool windows in the new look

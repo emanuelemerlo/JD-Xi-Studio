@@ -9,7 +9,7 @@ $repo = (Resolve-Path "$PSScriptRoot\..\..").Path
 Set-Location $repo
 $version = (Select-String -Path jdxi_editor/project.py -Pattern '__version__ = "([^"]+)"').Matches[0].Groups[1].Value
 
-if (-not (Test-Path .venv-build)) { py -3.11 -m venv .venv-build }
+if (-not (Test-Path .venv-build)) { py -3 -m venv .venv-build }
 $py = "$repo\.venv-build\Scripts\python.exe"
 & $py -m pip install --upgrade pip
 & $py -m pip install ".[soundfont]" pyinstaller
