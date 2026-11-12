@@ -70,7 +70,10 @@ on the JD-Xi display.
   0.9 s per click); now only the tab bar
 - **UI audit** (`scripts/ui_audit.py`, run by the tests at 100% and 150%): every panel button and
   menu entry opens the right tab and lights the right button, no panel text cut or overlapping,
-  showing an editor stays fast
+  showing an editor stays fast, each name centred over its slider or button
+- **Panel sliders**: each name is centred over its slider (the names were left-aligned and the
+  sliders sat at the left of their column); the names a little smaller, so "Reverb" is no
+  longer cut
 - **Panel layout**: the title in pixels (in points it grew with Windows' DPI and covered the
   display), the display lower, Program and Tone to the right of the part buttons (they
   overlapped), each label right above its - and + buttons, aligned alike; Vocoder and Effects

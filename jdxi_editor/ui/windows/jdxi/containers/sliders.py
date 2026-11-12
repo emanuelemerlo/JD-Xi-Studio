@@ -3,7 +3,7 @@ Slider container
 """
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QHBoxLayout, QSizePolicy, QSlider, QLabel, QVBoxLayout, QWidget
 
 from jdxi_editor.core.jdxi import JDXi
 from jdxi_editor.ui.widgets.midi.slider.amp import AmpEnvelopeSlider, AmpLevelSlider
@@ -61,7 +61,36 @@ def add_slider_container(central_widget, midi_helper):
         slider_widget.setFixedHeight(slider_height)
         slider_widget.setStyleSheet(slider_style)
 
-        # layout.addWidget(label)
+        # The name centred over the slider: the slider's own label is left-aligned
+        # (so the two did not line up); this column's label, centred, replaces it
+        inner = slider_widget.layout()
+        own = None
+        if inner is not None:
+            for i in range(inner.count()):
+                child = inner.itemAt(i).widget()
+                if isinstance(child, QLabel) and child.text():
+                    own = child
+                    break
+        if own is not None:
+            label.setText(own.text())
+            label.setStyleSheet(own.styleSheet())
+            font = own.font()  # a little smaller: ten names side by side must not touch
+            if font.pointSizeF() > 0:
+                font.setPointSizeF(font.pointSizeF() * 0.85)
+            else:
+                font.setPixelSize(max(9, int(font.pixelSize() * 0.85)))
+            label.setFont(font)
+            own.hide()
+            # the slider sits in the middle of the column (its wrapper is wider
+            # than the column and kept the slider at its left edge)
+            for i in range(inner.count()):
+                child = inner.itemAt(i).widget()
+                if isinstance(child, QSlider):
+                    inner.setAlignment(child, Qt.AlignmentFlag.AlignHCenter)
+            slider_widget.setMinimumWidth(0)
+            slider_widget.setSizePolicy(QSizePolicy.Policy.Ignored, slider_widget.sizePolicy().verticalPolicy())
+            slider_widget.setFixedHeight(slider_height - label.sizeHint().height() - 2)
+            layout.addWidget(label)
         layout.addWidget(slider_widget)
 
         return container

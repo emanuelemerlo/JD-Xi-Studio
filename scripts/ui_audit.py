@@ -33,8 +33,8 @@ import rtmidi  # noqa: E402
 rtmidi.MidiIn = conftest.FakeMidiIn
 rtmidi.MidiOut = conftest.FakeMidiOut
 
-from PySide6.QtCore import QRect, QTimer  # noqa: E402
-from PySide6.QtWidgets import QAbstractButton, QApplication, QLabel, QSlider, QWidget  # noqa: E402
+from PySide6.QtCore import QRect, Qt, QTimer  # noqa: E402
+from PySide6.QtWidgets import QAbstractButton, QApplication, QLabel, QSlider, QStyle, QStyleOptionSlider, QWidget  # noqa: E402
 
 PANEL_KEYS = {"digital1": "digital1", "digital2": "digital2", "analog": "analog", "drums": "drums", "arp": "arpeggio"}
 SLOW_MS = 400  # showing an editor that is already open
@@ -128,6 +128,41 @@ def audit_panel(window, problems: list[str]) -> None:
                     room -= 6
                 if need > room + 1:
                     problems.append(f"panel: '{text}' does not fit ({need} px of text in {room} px)")
+    # a name right above its control (slider, round button) must be centred on it
+    controls = [(w, r) for w, r in leaves if isinstance(w, (QSlider, QAbstractButton)) and not text_of(w)]
+    labels = [(w, r) for w, r in leaves if isinstance(w, QLabel) and text_of(w)]
+    for control, rc in controls:
+        above = [
+            (rc.top() - rl.bottom(), w, rl)
+            for w, rl in labels
+            if -2 <= rc.top() - rl.bottom() <= 30 and rl.left() < rc.right() and rl.right() > rc.left()
+        ]
+        if not above:
+            continue
+        _gap, label, rl = min(above, key=lambda item: item[0])
+        if rl.width() > 3 * rc.width() and label.fontMetrics().horizontalAdvance(text_of(label)) > 2 * rc.width():
+            continue  # a heading over a group (Parts Select), not a control's name
+        text_width = label.fontMetrics().horizontalAdvance(text_of(label))
+        align = label.alignment()
+        if align & Qt.AlignmentFlag.AlignHCenter:
+            text_centre = rl.center().x()
+        elif align & Qt.AlignmentFlag.AlignRight:
+            text_centre = rl.right() - text_width / 2
+        else:
+            text_centre = rl.left() + label.contentsMargins().left() + text_width / 2
+        centre = rc.center().x()
+        if isinstance(control, QSlider):  # where the groove is drawn, not the widget's box
+            option = QStyleOptionSlider()
+            control.initStyleOption(option)
+            groove = control.style().subControlRect(
+                QStyle.ComplexControl.CC_Slider, option, QStyle.SubControl.SC_SliderGroove, control
+            )
+            centre = rc.left() + groove.center().x()
+        if abs(text_centre - centre) > 4:
+            problems.append(
+                f"panel: '{text_of(label)}' is not centred over its control "
+                f"({text_centre - centre:+.0f} px)"
+            )
     for i, (a, ra) in enumerate(leaves):
         for b, rb in leaves[i + 1:]:
             if a.isAncestorOf(b) or b.isAncestorOf(a):
