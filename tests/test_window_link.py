@@ -119,3 +119,46 @@ def test_the_editors_window_is_not_owned_by_the_keyboard(app):
     keyboard = QMainWindow()
     editors = MainEditor(keyboard)
     assert editors.parent() is None and editors.jdxi_main_window is keyboard
+
+
+def test_dialogs_come_up_above_a_keyboard_kept_on_top(app):
+    from PySide6.QtWidgets import QMessageBox
+
+    from jdxi_editor.ui.windows.jdxi.linked import DialogsInFront
+
+    keyboard = QMainWindow()
+    keyboard.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, True)
+    keyboard.show()
+    front = DialogsInFront(keyboard)
+    app.installEventFilter(front)
+    try:
+        editors = QMainWindow()  # a window of its own: its dialogs are not owned by the keyboard
+        box = QMessageBox(QMessageBox.Icon.Information, "MIDI", "ports", QMessageBox.StandardButton.Ok, editors)
+        box.open()  # window-modal, as the MIDI ports dialog
+        loose = QDialog()
+        loose.show()
+        plain = QWidget(None, Qt.WindowType.Window)  # a tool window, not a dialog: left alone
+        plain.show()
+        _spin(app, 10)
+        assert box.isVisible() and box.windowFlags() & Qt.WindowType.WindowStaysOnTopHint
+        assert loose.isVisible() and loose.windowFlags() & Qt.WindowType.WindowStaysOnTopHint
+        assert not plain.windowFlags() & Qt.WindowType.WindowStaysOnTopHint
+        for w in (box, loose, plain, editors):
+            w.close()
+    finally:
+        app.removeEventFilter(front)
+        keyboard.close()
+
+
+def test_keyboard_on_top_installs_the_dialog_filter_and_removes_it(app, tmp_path, monkeypatch):
+    monkeypatch.setenv("HOME", str(tmp_path))
+    from jdxi_editor.ui.windows.jdxi.instrument import JDXiInstrument
+
+    window = JDXiInstrument()
+    try:
+        window.set_keyboard_on_top(True)
+        assert window._dialogs_in_front is not None
+        window.set_keyboard_on_top(False)
+        assert window._dialogs_in_front is None
+    finally:
+        window.close()

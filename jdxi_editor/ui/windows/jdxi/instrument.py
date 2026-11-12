@@ -120,7 +120,7 @@ from jdxi_editor.ui.widgets.button import SequencerSquare
 from jdxi_editor.ui.widgets.button.favorite import FavoriteButton
 from jdxi_editor.ui.widgets.viewer.log import LogViewer
 from jdxi_editor.ui.windows.jdxi.recent_files import RecentFilesManager
-from jdxi_editor.ui.windows.jdxi.linked import WindowLink
+from jdxi_editor.ui.windows.jdxi.linked import DialogsInFront, WindowLink
 from jdxi_editor.ui.windows.jdxi.ui import JDXiWindow
 from jdxi_editor.ui.windows.jdxi.utils import show_message_box_from_spec
 from jdxi_editor.ui.v2.analog import AnalogToneEditor
@@ -890,6 +890,7 @@ class JDXiInstrument(JDXiWindow):
     def _init_window_layout(self) -> None:
         """The Window menu and the link between the keyboard and the editor windows."""
         self.window_link = WindowLink(self)
+        self._dialogs_in_front = None
         if self.main_editor is not None:
             self.window_link.add(self.main_editor)
         menu = QMenu(tr("&Window"), self)
@@ -945,6 +946,18 @@ class JDXiInstrument(JDXiWindow):
             self.restoreGeometry(geometry)
             if visible:
                 self.show()  # changing the flags hides the window
+        # with the keyboard always on top, a dialog (MIDI ports, a message, a
+        # name to save...) must come up above it, not hidden behind it while
+        # it blocks the keyboard
+        app = QApplication.instance()
+        if on and self._dialogs_in_front is None and app is not None:
+            self._dialogs_in_front = DialogsInFront(self)
+            app.installEventFilter(self._dialogs_in_front)
+        elif not on and self._dialogs_in_front is not None:
+            if app is not None:
+                app.removeEventFilter(self._dialogs_in_front)
+            self._dialogs_in_front.deleteLater()
+            self._dialogs_in_front = None
         self.on_top_action.setChecked(on)
         settings = getattr(self, "settings", None)
         if settings is not None:
