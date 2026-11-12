@@ -25,6 +25,13 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - **Settings is always among the tabs** (it appeared only when opened from the menu)
 - **Log viewer** shows this session's log (the logs are one file per session, with date and time)
 - **Programs**: the area of Presets / User Programs / Playlist / Playlist Editor keeps one height
+- **Recipes in English too**: `JD-Xi recipe - template.xlsx` (with its menus and Check column, the
+  instructions and the example translated), `JD-Xi recipe - blank.csv`, `JD-Xi recipe - example.csv`,
+  `JD-Xi recipe parameters.csv`, made from the Italian files by `building/recipes/make_english.py`.
+  The Recipes page offers the files in the interface's language; the editor reads both (English
+  headers, "value / range / by ear", EFFECTS / VOCAL)
+- **Exporting a recipe to .xlsx** writes Step, From and To as numbers: the template's Check column
+  no longer marks every range row as wrong
 
 # [1.0.0a2] — tag `v1.0.0-alpha.2` — 2026-11-12 (Windows 11 fixes, JD-Xi Studio's look)
 

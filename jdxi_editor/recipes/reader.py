@@ -24,8 +24,10 @@ _HEADER_ALIASES = {
     "parte": "Parte", "part": "Parte", "gruppo": "Gruppo", "group": "Gruppo", "su": "Su", "on": "Su",
     "parametro": "Parametro", "parameter": "Parametro", "tipo di valore": "Tipo di valore", "value type": "Tipo di valore",
     "valore": "Valore", "value": "Valore", "da": "Da", "from": "Da", "a": "A", "to": "A", "nota": "Nota", "note": "Nota",
-    "notes": "Nota", "note/commenti": "Nota",
+    "notes": "Nota", "note/commenti": "Nota", "target": "Su",
 }
+# The English template's value types
+KIND_ALIASES = {"value": VALUE, "range": RANGE, "by ear": EAR}
 RANGE_RE = re.compile(r"^\s*([+-]?\d+(?:[.,]\d+)?)\s*(?:–|—|-|…|\.\.\.?|to|a)\s*([+-]?\d+(?:[.,]\d+)?)\s*([a-z%]*)\s*$", re.I)
 EAR_WORDS = ("a orecchio", "orecchio", "by ear", "to taste", "ear")
 
@@ -68,6 +70,7 @@ def _row_from(cells: list[str], columns: dict[str, int], source: str) -> Optiona
     step_name = get("Nome del passo") or (step_match.group(2).strip(" ·.-") if step_match else "")
     row = Row(step, step_name, get("Parte"), get("Gruppo"), get("Su"), get("Parametro"),
               (get("Tipo di valore") or "").lower(), get("Valore"), get("Da"), get("A"), get("Nota"), source)
+    row.kind = KIND_ALIASES.get(row.kind, row.kind)  # the English template's words
     if row.kind not in (VALUE, RANGE, EAR):
         row.kind = classify_value(row.value, row.lo, row.hi)
     return row
@@ -117,7 +120,8 @@ def read_xlsx(path: Path) -> Recipe:
     import openpyxl
 
     book = openpyxl.load_workbook(path, data_only=True, read_only=True)
-    sheet = book["Ricetta"] if "Ricetta" in book.sheetnames else book.active
+    names = [n for n in ("Ricetta", "Recipe") if n in book.sheetnames]
+    sheet = book[names[0]] if names else book.active
     return _read_rows(sheet.iter_rows(values_only=True))
 
 

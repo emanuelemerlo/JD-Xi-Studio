@@ -48,6 +48,19 @@ from jdxi_editor.ui.v2.widgets import Card
 
 ACCENT = "#27ae60"
 TEMPLATE_DIR = Path("resources") / "recipes"
+# The template files in the interface's language (Italian, or English for any other)
+TEMPLATES = {
+    "it": {"xlsx": "Ricetta JD-Xi - modello.xlsx", "csv": "Ricetta JD-Xi - vuota.csv",
+           "parameters": "Parametri ricette JD-Xi.csv", "example": "Ricetta JD-Xi - modello.csv"},
+    "en": {"xlsx": "JD-Xi recipe - template.xlsx", "csv": "JD-Xi recipe - blank.csv",
+           "parameters": "JD-Xi recipe parameters.csv", "example": "JD-Xi recipe - example.csv"},
+}
+
+
+def template_name(kind: str) -> str:
+    from jdxi_editor.i18n import current_language
+
+    return TEMPLATES.get(current_language(), TEMPLATES["en"])[kind]
 STATUS_COLORS = {check.OK: "#27ae60", check.CONFIRM: "#f2c94c", check.FIX: "#eb5757", check.EARS: "#56ccf2"}
 BUTTON = (
     "QPushButton { background: #1b1c1f; color: #e6e6e6; border: 1px solid #3a3d44; border-radius: 6px; padding: 6px 14px; }"
@@ -179,11 +192,11 @@ class RecipesEditor(QWidget):
                                      "every parameter with its allowed values. It contains the Jungle Gardenia lead as an example."), 11, "#a3a6ad"))
         line = QHBoxLayout()
         xlsx = _button(tr("Save template .xlsx…"))
-        xlsx.clicked.connect(lambda: self.save_template("Ricetta JD-Xi - modello.xlsx"))
+        xlsx.clicked.connect(lambda: self.save_template(template_name("xlsx")))
         csv_b = _button(tr("Template .csv…"))
-        csv_b.clicked.connect(lambda: self.save_template("Ricetta JD-Xi - vuota.csv"))
+        csv_b.clicked.connect(lambda: self.save_template(template_name("csv")))
         params = _button(tr("Parameter list .csv…"))
-        params.clicked.connect(lambda: self.save_template("Parametri ricette JD-Xi.csv"))
+        params.clicked.connect(lambda: self.save_template(template_name("parameters")))
         for b in (xlsx, csv_b, params):
             line.addWidget(b)
         line.addStretch()
@@ -860,7 +873,7 @@ class RecipesEditor(QWidget):
         elif target.suffix.lower() == ".md":
             target.write_text(recipe.to_markdown(), encoding="utf-8")
         else:
-            recipe.to_xlsx(target, Path(resource_path(TEMPLATE_DIR / "Ricetta JD-Xi - modello.xlsx")))
+            recipe.to_xlsx(target, Path(resource_path(TEMPLATE_DIR / template_name("xlsx"))))
         return target
 
     # ------------------------------------------------------------- pages
