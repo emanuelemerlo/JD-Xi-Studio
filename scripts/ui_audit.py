@@ -60,6 +60,10 @@ def audit_navigation(app, window, problems: list[str], timings: dict[str, float]
         widget = tabs.currentWidget()
         if widget is None or type(widget) is not config.editor_class:
             problems.append(f"navigation: {source} opened {type(widget).__name__}, not {config.editor_class.__name__}")
+        if widget is not None and not any(
+            label.objectName() == "v2Title" and label.isVisibleTo(widget) for label in widget.findChildren(QLabel)
+        ):
+            problems.append(f"look: the {key} editor has no title badge at the top left")
         if not window.main_editor.isVisible():
             problems.append(f"navigation: {source} left the editors window hidden")
         lit = [k for k, b in window.part_buttons.items() if b.isChecked()]

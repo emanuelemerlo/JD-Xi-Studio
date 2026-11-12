@@ -58,6 +58,8 @@ on the JD-Xi display.
   DIGITAL SYNTH 2
 
 ### About, documentation and releases
+- **Every editor has its title badge** at the top left (Analog and Recipes were missing it); the UI
+  audit checks it
 - **About** in the new look: the logo, the version as the release names it (1.0.0-alpha.1), the
   authors (Emanuele Merlo for JD-Xi Studio, Mark Brooks for the original JDXI-Editor), libraries,
   licence and the trademark notice

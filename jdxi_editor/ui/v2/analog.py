@@ -89,7 +89,18 @@ class AnalogToneEditor(AnalogSynthEditor):
         self.cards.setSpacing(12)
         self._columns = 0
         scroll.setWidget(self.cards_host)
-        root.addWidget(scroll, 1)
+        # the editor's name as a badge in its colour, as at the top of the other editors
+        from jdxi_editor.ui.v2.restyle import title_badge
+
+        left = QVBoxLayout()
+        left.setSpacing(10)
+        bar = QHBoxLayout()
+        self.title_label = title_badge(tr("Analog"), ACCENT)
+        bar.addWidget(self.title_label)
+        bar.addStretch()
+        left.addLayout(bar)
+        left.addWidget(scroll, 1)
+        root.addLayout(left, 1)
 
         # Tone panel and information panel, scrolling on short screens
         side_host = QWidget()
