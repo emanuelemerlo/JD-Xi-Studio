@@ -66,7 +66,9 @@ on the JD-Xi display.
 - **Vocoder, Effects and Arpeggiator do not stay lit**: they open an editor, they are not a choice
 - **Panel layout**: the title in pixels (in points it grew with Windows' DPI and covered the
   display), the display lower, Program and Tone to the right of the part buttons (they
-  overlapped); Analog Synth in the same colour as the other parts
+  overlapped), each label right above its - and + buttons, aligned alike; Vocoder and Effects
+  centred over their buttons; room for "Reverb" over its slider; Analog Synth in the same colour
+  as the other parts
 - **Displays on solid black**, without the red gradient and the glow, on the keyboard and in
   every editor
 - **Pattern, MIDI file player and Programs** with the same badge and cards (title inside, in the

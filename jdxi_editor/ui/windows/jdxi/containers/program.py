@@ -18,22 +18,8 @@ def add_program_container(central_widget, create_program_buttons_row):
         JDXi.UI.Dimensions.PROGRAM.WIDTH,
         JDXi.UI.Dimensions.PROGRAM.HEIGHT,
     )
-    program_container_layout = QVBoxLayout(program_container)
-    program_container_layout.setSpacing(4)
-    program_container_layout.setContentsMargins(0, 0, 0, 0)
-
-    program_label_layout = QHBoxLayout()
-    program_label_layout.setSpacing(1)
-    program_label = QLabel(tr("Program"))
-    program_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-    program_label.setStyleSheet(JDXi.UI.Style.TRANSPARENT)
-    program_label_layout.addWidget(program_label)
-    program_container_layout.addLayout(program_label_layout)
-    program_layout = QHBoxLayout()
-    program_layout.setSpacing(3)
-    program_row, program_down_button, program_up_button = create_program_buttons_row()
-    program_layout.addLayout(program_row)
-    program_container_layout.addLayout(program_layout)
+    _row, program_down_button, program_up_button = create_program_buttons_row()
+    nav_block(program_container, tr("Program"), program_down_button, program_up_button)
     return program_down_button, program_up_button
 
 
@@ -61,3 +47,28 @@ def create_program_buttons_row():
     program_layout.addWidget(program_up_button)
     program_layout.addStretch()
     return program_layout, program_down_button, program_up_button
+
+
+def nav_row(down_button, up_button) -> QHBoxLayout:
+    """- and + centred with a fixed gap: the same in Program and Tone."""
+    row = QHBoxLayout()
+    row.setContentsMargins(0, 0, 0, 0)
+    row.addStretch()
+    row.addWidget(down_button)
+    row.addSpacing(14)
+    row.addWidget(up_button)
+    row.addStretch()
+    return row
+
+
+def nav_block(container, label_text: str, down_button, up_button) -> None:
+    """Label right above its - + buttons, top-aligned (Program and Tone look alike)."""
+    layout = QVBoxLayout(container)
+    layout.setContentsMargins(0, 0, 0, 0)
+    layout.setSpacing(4)
+    label = QLabel(label_text)
+    label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+    label.setStyleSheet(JDXi.UI.Style.TRANSPARENT)
+    layout.addWidget(label)
+    layout.addLayout(nav_row(down_button, up_button))
+    layout.addStretch()

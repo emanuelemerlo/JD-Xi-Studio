@@ -301,7 +301,7 @@ class SequencerDimensions(Dimensions):
 class SliderContainerDimensions(Dimensions):
     """Slider Container Dimensions"""
 
-    WIDTH: int = 360
+    WIDTH: int = 385  # room for "Reverb" (it was cut on Windows)
     HEIGHT: int = 120 + 20  # Height = SliderDimensions Height
 
 
@@ -343,18 +343,18 @@ class ToneButtonDimensions(Dimensions):
     """Tone button dimensions"""
 
     X: int = 428  # right of the part buttons (they overlapped)
-    Y = InstrumentDimensions.MARGIN + 75
+    Y = InstrumentDimensions.MARGIN + 95  # as far below Program as Program is tall
     WIDTH: int = 72
-    HEIGHT = 80
+    HEIGHT = 60
 
 
 class ProgramButtonDimensions(Dimensions):
     """Program buttons"""
 
     X: int = 428
-    Y = InstrumentDimensions.MARGIN + 15
+    Y = InstrumentDimensions.MARGIN + 30
     WIDTH: int = 72
-    HEIGHT = 80
+    HEIGHT = 60
 
 
 class OctaveButtonDimensions(Dimensions):
