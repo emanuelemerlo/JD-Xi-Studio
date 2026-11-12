@@ -2,60 +2,10 @@
 
 All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Editor) are documented in this file.
 
-# [1.0.0a1] — tag `v1.0.0-alpha.1` (first JD-Xi Studio alpha: the new interface)
+# [1.0.0a2] — tag `v1.0.0-alpha.2` — 2026-11-12 (Windows 11 fixes, JD-Xi Studio's look)
 
-The interface is being rebuilt for a desktop screen, one editor at a time. The
-last version with the original interface is **0.10.0b1** (tag `v0.10.0-beta.1`).
-Principles for every new screen: every parameter of the manual has a control (a
-test checks it); controls show what they do (graphs, drawn waveforms); the
-parameter under the pointer is explained on screen; names, groups and order as
-on the JD-Xi display.
-
-### Analog Synth editor (new)
-
-- **All 46 Analog parameters on one screen**, in six panels named and ordered as on the display:
-  OSC, PITCH, FILTER, AMP, LFO, COMMON (plus Pitch Env Velocity Sens, which is in the MIDI
-  Implementation but not on the display)
-- **Graphic controls**: waveforms drawn on their buttons (PW-SQR follows Pulse Width), the low-pass
-  response curve (drag sideways for Cutoff, up and down for Resonance), pitch, filter and amp
-  envelopes with points to drag, the LFO over time with its fade-in
-- **Knobs** with their value field: drag (Shift for fine steps), wheel, arrow keys or type the value
-  as on the display (+12 st, -2 st, +50…); double-click returns a bipolar value to 0
-- **Information panel**: name on the display, long name, value, range and unit, an explanation from
-  the Parameter Guide (with its page) and what the parameter depends on
-- **Settings without effect are greyed out**: Pulse Width and PWM Depth except with PW-SQR, the
-  filter with BYPASS, Rate with Tempo Sync ON (and Sync Note with it OFF), Porta Time with Porta Sw OFF
-- **Sending while dragging** at most every 25 ms, the last value always; values read from the JD-Xi
-  are shown without being sent back
-- Three columns on wide screens, two from 1280×720; the tone panel (presets, read from the JD-Xi,
-  .syx, random tone) stays on the right
-- The original Analog editor (`AnalogSynthEditor`) is still in the code; the app opens the new one
-
-### Keyboard and editor windows, together
-
-- **Minimise works on Windows**: the keyboard window (frameless) now has the minimise hints Windows
-  needs, so its minimise button and the taskbar work
-- **The editor windows follow the keyboard**: minimising the keyboard or an editor window minimises
-  them all; restoring the keyboard (from the taskbar too) brings back the editors that were open
-- **Each window moves on its own** (two screens work as expected); the editors window opens where
-  it was left
-- **The keyboard can come in front of the editors**: the editors window is no longer owned by the
-  keyboard window (Windows keeps owned windows above their owner), so clicking either brings it in
-  front; **Window → Show the keyboard** (Ctrl+Shift+K, from the editors too) and **Window → Keyboard
-  always on top**; closing the keyboard closes the editors
-- **Window → Line up the editors with the keyboard**: the editors window right above the keyboard
-  (below it when there is no room)
-- **Window → Show the editors** (Ctrl+Shift+W)
-- **A maximised keyboard window keeps the instrument as it is**: panel and keys are one block of
-  fixed size, centred, and the body grows around it (the Parts Select buttons, the wheels and the
-  keyboard no longer come apart from the panel); the status bar shows only while it has a message
-
-### Each editor in its own colour
-
-- **The editor's name as a badge in its colour** at the top of each new editor
-- **Digital Synth 1 red, Digital Synth 2 orange**, Drums purple, as on the JD-Xi panel; Effects teal,
-  Vocal Effect pink (they shared colours with the parts before); the preset panel of Digital 2 says
-  DIGITAL SYNTH 2
+The fixes from testing alpha 1 on Windows 11, JD-Xi Studio's own logo, icon and pictures,
+the About window with both authors, the documentation aligned, and the Release workflow.
 
 ### About, documentation and releases
 - **Panel names always fit**: where the system's font is wider than the one designed for (Segoe UI
@@ -129,6 +79,61 @@ on the JD-Xi display.
   active"); `python jdxi_editor/main.py` uses its own folder's code even if another copy is installed
 - **Visual Studio 2026 and VS Code**: `JD-Xi-Studio.sln`, `.vscode/` (run, debug, tests, tasks on Windows, macOS and Linux),
   `building/windows/local_build.ps1` (exe and installer on your PC), guide in `doc/dev-windows.md`
+
+# [1.0.0a1] — tag `v1.0.0-alpha.1` — 2026-11-11 (first JD-Xi Studio alpha: the new interface)
+
+The interface is being rebuilt for a desktop screen, one editor at a time. The
+last version with the original interface is **0.10.0b1** (tag `v0.10.0-beta.1`).
+Principles for every new screen: every parameter of the manual has a control (a
+test checks it); controls show what they do (graphs, drawn waveforms); the
+parameter under the pointer is explained on screen; names, groups and order as
+on the JD-Xi display.
+
+### Analog Synth editor (new)
+
+- **All 46 Analog parameters on one screen**, in six panels named and ordered as on the display:
+  OSC, PITCH, FILTER, AMP, LFO, COMMON (plus Pitch Env Velocity Sens, which is in the MIDI
+  Implementation but not on the display)
+- **Graphic controls**: waveforms drawn on their buttons (PW-SQR follows Pulse Width), the low-pass
+  response curve (drag sideways for Cutoff, up and down for Resonance), pitch, filter and amp
+  envelopes with points to drag, the LFO over time with its fade-in
+- **Knobs** with their value field: drag (Shift for fine steps), wheel, arrow keys or type the value
+  as on the display (+12 st, -2 st, +50…); double-click returns a bipolar value to 0
+- **Information panel**: name on the display, long name, value, range and unit, an explanation from
+  the Parameter Guide (with its page) and what the parameter depends on
+- **Settings without effect are greyed out**: Pulse Width and PWM Depth except with PW-SQR, the
+  filter with BYPASS, Rate with Tempo Sync ON (and Sync Note with it OFF), Porta Time with Porta Sw OFF
+- **Sending while dragging** at most every 25 ms, the last value always; values read from the JD-Xi
+  are shown without being sent back
+- Three columns on wide screens, two from 1280×720; the tone panel (presets, read from the JD-Xi,
+  .syx, random tone) stays on the right
+- The original Analog editor (`AnalogSynthEditor`) is still in the code; the app opens the new one
+
+### Keyboard and editor windows, together
+
+- **Minimise works on Windows**: the keyboard window (frameless) now has the minimise hints Windows
+  needs, so its minimise button and the taskbar work
+- **The editor windows follow the keyboard**: minimising the keyboard or an editor window minimises
+  them all; restoring the keyboard (from the taskbar too) brings back the editors that were open
+- **Each window moves on its own** (two screens work as expected); the editors window opens where
+  it was left
+- **The keyboard can come in front of the editors**: the editors window is no longer owned by the
+  keyboard window (Windows keeps owned windows above their owner), so clicking either brings it in
+  front; **Window → Show the keyboard** (Ctrl+Shift+K, from the editors too) and **Window → Keyboard
+  always on top**; closing the keyboard closes the editors
+- **Window → Line up the editors with the keyboard**: the editors window right above the keyboard
+  (below it when there is no room)
+- **Window → Show the editors** (Ctrl+Shift+W)
+- **A maximised keyboard window keeps the instrument as it is**: panel and keys are one block of
+  fixed size, centred, and the body grows around it (the Parts Select buttons, the wheels and the
+  keyboard no longer come apart from the panel); the status bar shows only while it has a message
+
+### Each editor in its own colour
+
+- **The editor's name as a badge in its colour** at the top of each new editor
+- **Digital Synth 1 red, Digital Synth 2 orange**, Drums purple, as on the JD-Xi panel; Effects teal,
+  Vocal Effect pink (they shared colours with the parts before); the preset panel of Digital 2 says
+  DIGITAL SYNTH 2
 
 ### Preset panel, Programs tabs and tool windows in the new look
 

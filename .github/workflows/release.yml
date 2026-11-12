@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       notes:
-        description: "Release notes (empty: GitHub writes them from the merged pull requests)"
+        description: "Release notes (empty: the version's section of CHANGELOG.md)"
         required: false
         default: ""
 
@@ -105,7 +105,25 @@ jobs:
         run: |
           set -euo pipefail
           pre=""; [ "${{ needs.prepare.outputs.prerelease }}" = "true" ] && pre="--prerelease"
-          if [ -n "$NOTES" ]; then notes=(--notes "$NOTES"); else notes=(--generate-notes); fi
+          if [ -n "$NOTES" ]; then
+            notes=(--notes "$NOTES")
+          else
+            # the version's section of the CHANGELOG (from its "# [version]" heading to the next one)
+            python3 - "${{ needs.prepare.outputs.version }}" > notes.md <<'PY'
+          import sys
+          version, out, inside = sys.argv[1], [], False
+          for line in open("CHANGELOG.md", encoding="utf-8"):
+              if line.startswith("# ["):
+                  if inside:
+                      break
+                  inside = line.startswith(f"# [{version}]")
+                  continue
+              if inside:
+                  out.append(line)
+          print("".join(out).strip() or "See CHANGELOG.md.")
+          PY
+            notes=(--notes-file notes.md)
+          fi
           # the tag is created here, on the commit that was built and tested
           gh release create "$TAG" --draft $pre "${notes[@]}" --title "JD-Xi Studio $TAG" --target "${{ github.sha }}"
           gh release upload "$TAG" release/* --clobber
