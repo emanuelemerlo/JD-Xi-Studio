@@ -45,10 +45,13 @@ class MainEditor(QMainWindow):
 
     # --- the header: name, the editors as buttons, the program and the connection
 
+    # The pane once, on the tab widget; the buttons on the tab bar alone, so changing
+    # their colour does not restyle every editor (that took most of a second)
+    PANE_STYLE = """
+        QTabWidget::pane { border: 0; border-top: 1px solid #23252a; background: #121214; top: -1px; }
+        QTabWidget::tab-bar { left: 0; }
+    """
     BAR_STYLE = """
-        QMainWindow {{ background: #0e0f11; }}
-        QTabWidget::pane {{ border: 0; border-top: 1px solid #23252a; background: #121214; top: -1px; }}
-        QTabWidget::tab-bar {{ left: 0; }}
         QTabBar {{ background: transparent; qproperty-drawBase: 0; }}
         QTabBar::tab {{
             background: #1b1c1f; color: #c9cbd1; border: 1px solid #2a2d33; border-radius: 8px;
@@ -87,6 +90,7 @@ class MainEditor(QMainWindow):
         self.editor_tab_widget.setIconSize(self.editor_tab_widget.iconSize().scaled(14, 14, Qt.AspectRatioMode.KeepAspectRatio))
         self.editor_tab_widget.tabBar().setElideMode(Qt.TextElideMode.ElideNone)
         self.editor_tab_widget.currentChanged.connect(self._tab_changed)
+        self.editor_tab_widget.setStyleSheet(self.PANE_STYLE)
         self._apply_bar_style("#3f8cff")
         helper = getattr(self.jdxi_main_window, "midi_helper", None)
         if helper is not None:
@@ -105,7 +109,7 @@ class MainEditor(QMainWindow):
 
         color = QColor(accent)
         bg = f"rgba({color.red()}, {color.green()}, {color.blue()}, 60)"
-        self.editor_tab_widget.setStyleSheet(self.BAR_STYLE.format(accent=accent, bg=bg))
+        self.editor_tab_widget.tabBar().setStyleSheet(self.BAR_STYLE.format(accent=accent, bg=bg))
 
     def _tab_changed(self, index: int) -> None:
         """The selected editor's button in its own colour."""

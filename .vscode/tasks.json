@@ -48,6 +48,20 @@
       "problemMatcher": []
     },
     {
+      "label": "UI audit (navigation, panel layout, speed)",
+      "type": "shell",
+      "windows": {
+        "command": ".venv\\Scripts\\python scripts\\ui_audit.py"
+      },
+      "linux": {
+        "command": ".venv/bin/python scripts/ui_audit.py"
+      },
+      "osx": {
+        "command": ".venv/bin/python scripts/ui_audit.py"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Translations: update, compile, check",
       "type": "shell",
       "windows": {

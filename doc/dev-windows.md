@@ -59,6 +59,15 @@ Always from the repository folder, with the project's environment:
 Running the file (`python jdxi_editor/main.py`, VS Code's "Run Python File") also works: it uses
 this folder's code even when another copy of the editor is installed.
 
+## UI audit
+
+`python scripts/ui_audit.py` (VS Code task *UI audit*) opens the app without a JD-Xi and checks, with no
+clicking by hand: every panel button and menu entry opens the right tab, brings the editors window up
+and lights the right button; no text on the panel is cut, no control overlaps another or sticks out;
+showing an editor stays fast. One line per problem. Try it at another scale:
+`$env:QT_SCALE_FACTOR=1.5; $env:QT_FONT_DPI=120; python scripts\ui_audit.py`. The tests run it at
+100% and 150% on every push (Windows, macOS, Linux).
+
 ## Useful switches
 
 - `JDXI_LANGUAGE=it` or `en`: the interface language, whatever the system one.

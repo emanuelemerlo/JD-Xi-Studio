@@ -138,7 +138,7 @@ def test_starts_and_comes_back_at_its_own_size(window):
 
 
 def test_editor_buttons_do_not_stay_lit(window):
-    for button in (window.vocal_effects_button, window.effects_button, window.part_buttons["arp"]):
+    for button in (window.vocal_effects_button, window.effects_button):
         assert not button.isCheckable()
 
 

@@ -58,12 +58,12 @@ def create_parts_container(
     drums_button.clicked.connect(lambda: on_select_synth(JDXiSynth.DRUM_KIT))
 
     # Button group ensures one active selection
-    button_group = QButtonGroup()
+    button_group = QButtonGroup(parts_container)  # kept alive with the panel
     for b in [digital1_button, digital2_button, analog_button, drums_button]:
         button_group.addButton(b)
     button_group.setExclusive(True)
 
-    arp_button.setCheckable(False)  # opens the Arpeggio editor: momentary, not a part
+    # Arpeggiator lights while its editor is open (the instrument sets it)
     for row in [digital1_row, digital2_row, drums_row, analog_row, arp_row]:
         parts_layout.addLayout(row)
 

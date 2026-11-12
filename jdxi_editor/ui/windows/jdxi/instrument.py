@@ -597,20 +597,64 @@ class JDXiInstrument(JDXiWindow):
         )
         self.current_synth_type = synth_type
         self.channel = JDXiSynth.midi_channel_number(synth_type)
+        self._panel_editor = None
         self._update_synth_button_styles()
+        previous = getattr(self, "preset_helper", None)
         self.preset_helper = self.get_preset_helper_for_current_synth()
-        self.preset_helper.preset_changed.connect(self.midi_helper.send_program_change)
+        if previous is not self.preset_helper:  # once per helper (it was connected again at every click)
+            if previous is not None:
+                try:
+                    previous.preset_changed.disconnect(self.midi_helper.send_program_change)
+                except (RuntimeError, TypeError):
+                    pass
+            self.preset_helper.preset_changed.connect(self.midi_helper.send_program_change)
+
+    PANEL_EDITORS = ("digital1", "digital2", "analog", "drums", "arpeggio")
+
+    def _mark_panel_editor(self, editor_type: str) -> None:
+        """Light the part (or Arpeggiator) button of the editor that is open."""
+        if editor_type not in self.PANEL_EDITORS:
+            return
+        self._panel_editor = editor_type
+        if hasattr(self, "synth_buttons"):
+            self._update_synth_button_styles()
+
+    def _sync_panel_with_tab(self, index: int) -> None:
+        """A tab chosen in the editors window lights its button on the panel."""
+        widget = self.main_editor.editor_tab_widget.widget(index) if self.main_editor else None
+        if widget is None:
+            return
+        for key in self.PANEL_EDITORS:
+            config = self.editor_registry.get(key)
+            if config is not None and type(widget) is config.editor_class and (
+                not config.synth_type or getattr(widget, "SYNTH_TYPE", config.synth_type) == config.synth_type
+            ):
+                if config.synth_type and config.synth_type != self.current_synth_type:
+                    self._select_synth(config.synth_type)
+                self._mark_panel_editor(key)
+                return
 
     def _update_synth_button_styles(self):
-        """Update styles for synth buttons based on selection."""
+        """Update styles for synth buttons based on selection (Arpeggiator when its editor is open)."""
+        arp_open = getattr(self, "_panel_editor", None) == "arpeggio"
+        # an exclusive group keeps one part checked: let all go while Arpeggiator is lit
+        groups = {b.group() for b in self.synth_buttons.values() if b.group() is not None}
+        for group in groups:
+            group.setExclusive(False)
         for synth_type, button in self.synth_buttons.items():
-            is_selected = synth_type == self.current_synth_type
+            is_selected = synth_type == self.current_synth_type and not arp_open
             button.setStyleSheet(
                 JDXi.UI.Style.BUTTON_ROUND_SELECTED
                 if not is_selected
                 else JDXi.UI.Style.BUTTON_ROUND
             )
             button.setChecked(is_selected)
+        arp = getattr(self, "arp_button", None)
+        if arp is not None:
+            arp.setStyleSheet(JDXi.UI.Style.BUTTON_ROUND if arp_open else JDXi.UI.Style.BUTTON_ROUND_SELECTED)
+            arp.setChecked(arp_open)
+        for group in groups:
+            group.setExclusive(not arp_open)
 
     def _program_update(self, index_change: int) -> None:
         """
@@ -926,6 +970,7 @@ class JDXiInstrument(JDXiWindow):
             self.current_synth_type = config.synth_type
         if config.midi_channel:
             self.channel = config.midi_channel
+        self._mark_panel_editor(editor_type)  # the panel shows what is open
 
         # Merge registry kwargs with call-site kwargs
         merged_kwargs = {**config.kwargs, **kwargs}
@@ -1103,6 +1148,7 @@ class JDXiInstrument(JDXiWindow):
                 self.main_editor.editor_tab_widget.currentChanged.connect(
                     self._update_tab_bar_property
                 )
+                self.main_editor.editor_tab_widget.currentChanged.connect(self._sync_panel_with_tab)
                 self._tab_change_connected = True
             self._update_tab_bar_property(
                 self.main_editor.editor_tab_widget.currentIndex()

@@ -63,7 +63,14 @@ on the JD-Xi display.
   maximise button brings it back to that size (it could only be minimised)
 - **The editors window comes in front** when a part, Vocoder, Effects or a menu opens an editor
   (it opened the tab behind the keyboard window)
-- **Vocoder, Effects and Arpeggiator do not stay lit**: they open an editor, they are not a choice
+- **The panel shows the editor that is open**: Arpeggiator lights while its editor is open (the
+  part lit before stayed lit), a part lights when its editor opens from a menu or its tab; Vocoder
+  and Effects do not stay lit; a preset change is sent once (every part click connected it again)
+- **Switching editors is immediate**: colouring the selected tab restyled every editor (about
+  0.9 s per click); now only the tab bar
+- **UI audit** (`scripts/ui_audit.py`, run by the tests at 100% and 150%): every panel button and
+  menu entry opens the right tab and lights the right button, no panel text cut or overlapping,
+  showing an editor stays fast
 - **Panel layout**: the title in pixels (in points it grew with Windows' DPI and covered the
   display), the display lower, Program and Tone to the right of the part buttons (they
   overlapped), each label right above its - and + buttons, aligned alike; Vocoder and Effects
