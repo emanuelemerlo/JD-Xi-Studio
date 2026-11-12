@@ -34,7 +34,8 @@ def test_splash_shows_the_name_and_the_origin(app):
         texts = [label.text() for label in splash.findChildren(QLabel)]
         assert "JD-Xi Studio" in texts
         assert origin_line() in texts
-        assert any("independent edition of JDXI-Editor by Mark Brooks" in t for t in texts)
+        assert any("1.0.0-alpha" in t or "1.0.0-" in t or "Version" in t for t in texts)  # the version
+        assert any("Roland" in t and "trademark" in t for t in texts)  # the trademark notice
     finally:
         splash.close()
 
