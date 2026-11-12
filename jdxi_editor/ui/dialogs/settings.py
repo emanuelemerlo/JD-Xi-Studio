@@ -87,7 +87,7 @@ class UiPreferencesDialog(QDialog):
         # Connect the combo box to a function that updates QSettings
         self.log_level_combo.currentIndexChanged.connect(self.update_log_level)
 
-        self.log_level_layout = QHBoxLayout(self)
+        self.log_level_layout = QHBoxLayout()
         self.log_icon = QLabel()
         self.log_icon.setPixmap(
             JDXi.UI.Icon.get_icon(JDXi.UI.Icon.REPORT).pixmap(self.icon_size)
@@ -97,7 +97,7 @@ class UiPreferencesDialog(QDialog):
         self.log_level_layout.addWidget(self.log_level_label)
         self.log_level_layout.addWidget(self.log_level_combo)
 
-        self.logging_layout = QHBoxLayout(self)
+        self.logging_layout = QHBoxLayout()
         self.logging_icon = QLabel()
         self.logging_checkbox = QCheckBox(tr("Enable Logging?"))
         self.logging_checkbox.setLayoutDirection(QtCore.Qt.RightToLeft)
@@ -115,7 +115,7 @@ class UiPreferencesDialog(QDialog):
         # Silence MIDI note logging (note on/off only) to reduce log volume
         from jdxi_editor.globals import SILENCE_MIDI_NOTE_LOGGING_KEY
 
-        self.silence_midi_notes_layout = QHBoxLayout(self)
+        self.silence_midi_notes_layout = QHBoxLayout()
         self.silence_midi_notes_icon = QLabel()
         self.silence_midi_notes_checkbox = QCheckBox(
             tr("Silence MIDI note logging (note on/off)")
@@ -138,7 +138,7 @@ class UiPreferencesDialog(QDialog):
 
         from jdxi_editor.globals import MIDI_SELECTION_VALIDATION_KEY
 
-        self.midi_validation_layout = QHBoxLayout(self)
+        self.midi_validation_layout = QHBoxLayout()
         self.midi_validation_icon = QLabel()
         self.midi_validation_checkbox = QCheckBox(
             tr("Validate MIDI sends against combo selection (log only)")
@@ -220,19 +220,75 @@ class UiPreferencesDialog(QDialog):
         self.buttonBox.accepted.connect(self.close)
         QtCore.QMetaObject.connectSlotsByName(self)
 
-        main_widget = QWidget()
-        main_layout.addWidget(main_widget)
+        # Two cards, as the rest of the app: the interface first, then the logs.
+        # A choice: its name and the list side by side; an option: its box, with
+        # what it does in grey below (the separate labels and icons only repeated it)
+        accent = "#ff2a1a"
+        self.setObjectName("preferences")
+        self.setStyleSheet(
+            "QDialog#preferences { background: #121214; }"
+            "QFrame#prefCard { background: #1b1c1f; border: 1px solid #2e3036; border-radius: 10px; }"
+            "QLabel { color: #e6e6e6; background: transparent; }"
+            f"QLabel#prefHead {{ color: {accent}; font-size: 11px; font-weight: 700; letter-spacing: 2px; }}"
+            "QLabel#prefHint { color: #8a8d94; font-size: 11px; }"
+            "QCheckBox { color: #e6e6e6; spacing: 8px; }"
+            "QComboBox { background: #121214; color: #ffffff; border: 1px solid #3a3d44; border-radius: 5px;"
+            " padding: 3px 8px; min-width: 170px; }"
+        )
+        for icon in (self.log_icon, self.logging_icon, self.silence_midi_notes_icon,
+                     self.midi_validation_icon, self.update_check_icon, self.language_icon):
+            icon.hide()
+        for box in (self.logging_checkbox, self.silence_midi_notes_checkbox,
+                    self.midi_validation_checkbox, self.update_check_checkbox):
+            box.setLayoutDirection(QtCore.Qt.LeftToRight)
 
-        main_content_layout = QVBoxLayout()
-        main_content_layout.addLayout(self.log_level_layout)
-        main_content_layout.addLayout(self.logging_layout)
-        main_content_layout.addLayout(self.silence_midi_notes_layout)
-        main_content_layout.addLayout(self.midi_validation_layout)
-        main_content_layout.addLayout(self.update_check_layout)
-        main_content_layout.addLayout(self.language_layout)
-        main_content_layout.addWidget(self.language_note)
-        main_widget.setLayout(main_content_layout)
+        def card(title: str):
+            frame = QtWidgets.QFrame()
+            frame.setObjectName("prefCard")
+            grid = QtWidgets.QGridLayout(frame)
+            grid.setContentsMargins(16, 12, 16, 14)
+            grid.setHorizontalSpacing(16)
+            grid.setVerticalSpacing(4)
+            head = QLabel(title.upper())
+            head.setObjectName("prefHead")
+            grid.addWidget(head, 0, 0, 1, 2)
+            grid.setColumnStretch(0, 1)
+            return frame, grid
+
+        def choice(grid, label: QLabel, combo: QComboBox) -> None:
+            row = grid.rowCount()
+            label.setText(label.text().rstrip(":"))
+            grid.addWidget(label, row, 0)
+            grid.addWidget(combo, row, 1)
+            grid.setRowMinimumHeight(row, 34)
+
+        def option(grid, box: QCheckBox, hint: QLabel) -> None:
+            row = grid.rowCount()
+            grid.addWidget(box, row, 0, 1, 2)
+            hint.setText(hint.text().rstrip(":"))
+            hint.setObjectName("prefHint")
+            hint.setWordWrap(True)
+            hint.setContentsMargins(26, 0, 0, 6)  # under the box's text
+            grid.addWidget(hint, row + 1, 0, 1, 2)
+
+        interface, grid = card(tr("Interface"))
+        choice(grid, self.language_label, self.language_combo)
+        self.language_note.setObjectName("prefHint")
+        grid.addWidget(self.language_note, grid.rowCount(), 0, 1, 2)
+        option(grid, self.update_check_checkbox, self.update_check_label)
+        logs, grid = card(tr("Logs"))
+        choice(grid, self.log_level_label, self.log_level_combo)
+        option(grid, self.logging_checkbox, self.logging_label)
+        option(grid, self.silence_midi_notes_checkbox, self.silence_midi_notes_label)
+        option(grid, self.midi_validation_checkbox, self.midi_validation_label)
+        main_layout.setContentsMargins(16, 16, 16, 12)
+        main_layout.setSpacing(12)
+        main_layout.addWidget(interface)
+        main_layout.addWidget(logs)
+        main_layout.addStretch(1)
         main_layout.addWidget(self.buttonBox)
+        self.setMinimumWidth(520)
+        self.resize(560, self.sizeHint().height())
         self.setLayout(main_layout)
 
     def load_log_level_from_settings(self):

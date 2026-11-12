@@ -197,3 +197,21 @@ def test_filter_view_draws_every_type(editor):
     assert view._response_db(30) < view._response_db(15000)
     view.mode.setValue(1)  # LPF: high frequencies cut
     assert view._response_db(30) > view._response_db(15000)
+
+
+def test_the_category_card_follows_the_list(editor, app):
+    """Choosing a category selects one of its presets: the card shows that category."""
+    combo = editor.instrument_preset.instrument_selection_combo
+    shown = []
+    original = editor.update_instrument_image
+    editor.update_instrument_image = lambda: (shown.append(editor._selected_category()), original())
+    try:
+        index = combo.category_combo.findText("Bass")
+        assert index > 0
+        combo.category_combo.setCurrentIndex(index)
+        for _ in range(5):
+            app.processEvents()
+        assert shown and shown[-1] == "Bass"
+    finally:
+        editor.update_instrument_image = original
+        combo.category_combo.setCurrentIndex(0)
