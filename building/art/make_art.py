@@ -351,131 +351,178 @@ def presets_inside(p: QPainter, r: QRectF, accent: str) -> None:
 # --- the project's logo ---------------------------------------------------------
 
 
-def panel_top(w: int = 1000, h: int = 420) -> QImage:
-    """The instrument seen from above: the flat drawing that logo() puts in perspective."""
+RED = QColor("#ff2a1a")  # the JD-Xi's panel: black, white labels and red light only
+
+
+def red_knob(p: QPainter, c: QPointF, r: float, angle: float) -> None:
+    """A black knob with the red ring of light around it, as on the JD-Xi."""
+    glow = QRadialGradient(c, r * 1.55)
+    glow.setColorAt(0.6, QColor(255, 42, 26, 120))
+    glow.setColorAt(1, QColor(255, 42, 26, 0))
+    p.setPen(Qt.PenStyle.NoPen)
+    p.setBrush(glow)
+    p.drawEllipse(c, r * 1.55, r * 1.55)
+    p.setPen(QPen(RED, r * 0.16))
+    p.setBrush(Qt.BrushStyle.NoBrush)
+    p.drawEllipse(c, r * 1.12, r * 1.12)
+    knob(p, c, r, angle)
+
+
+def red_button(p: QPainter, r: QRectF, lit: bool) -> None:
+    p.fillPath(rounded(r, 3), QColor("#0b0b0c"))
+    p.setPen(QPen(RED if lit else QColor("#7a1a12"), 2.4))
+    p.setBrush(QColor(255, 42, 26, 150) if lit else Qt.BrushStyle.NoBrush)
+    p.drawPath(rounded(r.adjusted(3, 3, -3, -3), 2))
+
+
+def label(p: QPainter, rect: QRectF, text: str, px: float = 13, colour: str = "#e6e6e6") -> None:
+    p.setPen(QColor(colour))
+    p.setFont(font(px))
+    p.drawText(rect, Qt.AlignmentFlag.AlignCenter, text)
+
+
+def panel_top(w: int = 1000, h: int = 560) -> QImage:
+    """The instrument seen from above, laid out as the JD-Xi: the controls take the
+    back two thirds, the 37 mini keys the front; black, white and red only."""
     image, p = canvas(w, h)
     rect = QRectF(4, 4, w - 8, h - 8)
     g = QLinearGradient(rect.topLeft(), rect.bottomLeft())
-    g.setColorAt(0, QColor("#26282d"))
-    g.setColorAt(1, QColor("#141518"))
-    p.fillPath(rounded(rect, 22), g)
-    p.setPen(QPen(QColor("#ff3b1f"), 4))
+    g.setColorAt(0, QColor("#1e1f22"))
+    g.setColorAt(1, QColor("#0e0f11"))
+    p.fillPath(rounded(rect, 18), g)
+    p.setPen(QPen(QColor("#3a3c41"), 2))
     p.setBrush(Qt.BrushStyle.NoBrush)
-    p.drawPath(rounded(rect.adjusted(2, 2, -2, -2), 20))  # the red frame of the panel
-    # top row: knobs with coloured rings, the display, the big value knob
-    for i, colour in enumerate(("#eb5757", "#eb5757", "#f2994a", "#f2c94c")):
-        knob(p, QPointF(70 + i * 70, 70), 24, -70 + i * 45, colour)
-    lcd(p, QRectF(360, 38, 290, 66), "JD-Xi STUDIO", None)
-    knob(p, QPointF(720, 72), 34, 40, "#ff3b1f")
-    for i in range(6):  # small buttons
-        r = QRectF(790 + (i % 3) * 64, 44 + (i // 3) * 44, 50, 28)
-        p.fillPath(rounded(r, 5), QColor("#eb5757") if i == 0 else QColor("#33353b"))
-    # part buttons and the 16 step pads
-    for i, colour in enumerate((DIGITAL, "#f2994a", DRUMS, ANALOG)):
-        c = QPointF(70 + i * 70, 150)
-        p.setPen(QPen(QColor(colour), 4))
-        p.setBrush(QColor("#0c0d0f"))
-        p.drawEllipse(c, 20, 20)
-    pad_w = (w - 380 - 15 * 8) / 16
+    p.drawPath(rounded(rect.adjusted(1, 1, -1, -1), 17))
+    # the control panel (a slightly lighter plate) over the keys
+    plate = QRectF(18, 18, w - 36, 330)
+    p.fillPath(rounded(plate, 8), QColor("#141416"))
+    p.setPen(QPen(QColor("#2c2e33"), 1.5))
+    p.drawPath(rounded(plate, 8))
+    # left: display, small buttons, volume
+    lcd(p, QRectF(150, 44, 190, 54), "JD-Xi", None)
+    for i in range(8):
+        red_button(p, QRectF(150 + (i % 4) * 48, 118 + (i // 4) * 40, 36, 28), i == 5)
+    red_knob(p, QPointF(70, 130), 22, -30)  # mic gain
+    red_knob(p, QPointF(70, 262), 26, 20)  # master volume
+    for i in range(4):  # tempo, octave
+        red_button(p, QRectF(150 + i * 48, 250, 36, 28), i == 3)
+    # centre: part select column and the big vocoder knob
+    for i in range(4):
+        c = QPointF(390, 60 + i * 50)
+        p.setPen(QPen(RED if i == 0 else QColor("#7a1a12"), 3))
+        p.setBrush(QColor("#0b0b0c"))
+        p.drawEllipse(c, 15, 15)
+    red_knob(p, QPointF(500, 110), 44, 60)
+    for i in range(4):
+        red_button(p, QRectF(372 + i * 50, 250, 36, 28), i == 0)
+    # right: filter, amp, LFO, effects
+    p.setPen(QPen(QColor("#3a3c41"), 1.5))
+    p.drawLine(QPointF(590, 30), QPointF(590, 210))
+    for i, name in enumerate(("FILTER", "AMP/ENV", "LFO", "EFFECTS")):
+        label(p, QRectF(600 + i * 96, 26, 96, 20), name, 13)
+    for i in range(8):
+        red_knob(p, QPointF(624 + i * 46, 80), 16, -90 + i * 30)
+    for i in range(5):
+        red_knob(p, QPointF(650 + i * 72, 156), 16, -40 + i * 25)
+    # the 16 step buttons along the front of the panel
     for i in range(16):
-        r = QRectF(330 + i * (pad_w + 8), 132, pad_w, 36)
-        colour = QColor(PADS[i // 4])
-        p.fillPath(rounded(r, 4), colour if i % 4 == 0 else colour.darker(300))
-    # wheels and the keyboard
+        x = 372 + i * ((w - 400) / 16)
+        red_button(p, QRectF(x, 300, (w - 400) / 16 - 8, 34), i in (0, 4, 8, 11, 12))
+    for i in range(4):
+        x = 372 + i * 4 * ((w - 400) / 16)
+        p.fillRect(QRectF(x, 290, 4 * ((w - 400) / 16) - 10, 2.5), QColor("#d9d9d9"))
+    # pitch / mod and the keys
     for i in range(2):
-        r = QRectF(40 + i * 56, 210, 40, 170)
+        r = QRectF(48 + i * 60, 400, 34, 120)
+        p.fillPath(rounded(r, 4), QColor("#060607"))
         g = QLinearGradient(r.topLeft(), r.bottomLeft())
         g.setColorAt(0, QColor("#4a4d55"))
         g.setColorAt(0.5, QColor("#1b1c1f"))
         g.setColorAt(1, QColor("#4a4d55"))
-        p.fillPath(rounded(r, 8), g)
-    keys(p, QRectF(170, 196, w - 200, h - 214), 3, {7, 9, 11}, DIGITAL)
+        p.fillPath(rounded(r.adjusted(7, 8, -7, -8), 3), g)
+    keys(p, QRectF(170, 362, w - 190, h - 380), 3)
     p.end()
     return image
 
 
 def logo(size: int = 640) -> QImage:
-    """JD-Xi Studio's logo: the instrument in perspective, its microphone, the name."""
+    """JD-Xi Studio's logo: the instrument in a gentle perspective, its microphone, the name."""
     from PySide6.QtGui import QPolygonF, QTransform
 
     image, p = canvas(size, size)
     p.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
     bg = QRadialGradient(size / 2, size * 0.42, size * 0.7)
-    bg.setColorAt(0, QColor("#22140f"))
+    bg.setColorAt(0, QColor("#20110e"))
     bg.setColorAt(0.55, QColor("#0d0d0f"))
     bg.setColorAt(1, QColor("#050506"))
     p.fillRect(QRectF(0, 0, size, size), bg)
     top = panel_top()
     tw, th = top.width(), top.height()
     s = size / 640
-    quad = QPolygonF([QPointF(110 * s, 150 * s), QPointF(530 * s, 150 * s), QPointF(610 * s, 360 * s), QPointF(30 * s, 360 * s)])
+    # a gentle tilt: the controls (at the back) keep most of their depth
+    back_y, front_y, back_in = 112 * s, 384 * s, 34 * s
+    left, right = 24 * s, 616 * s
+    quad = QPolygonF([QPointF(left + back_in, back_y), QPointF(right - back_in, back_y), QPointF(right, front_y), QPointF(left, front_y)])
     src = QPolygonF([QPointF(0, 0), QPointF(tw, 0), QPointF(tw, th), QPointF(0, th)])
     t = QTransform()
     QTransform.quadToQuad(src, quad, t)
-    # the gooseneck microphone, behind the instrument (left)
-    p.setPen(QPen(QColor("#5a5d64"), 7 * s, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap))
+    # the gooseneck microphone, plugged in at the back left
+    p.setPen(QPen(QColor("#5a5d64"), 6 * s, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap))
     p.setBrush(Qt.BrushStyle.NoBrush)
-    neck = QPainterPath(QPointF(140 * s, 175 * s))
-    neck.cubicTo(QPointF(130 * s, 110 * s), QPointF(175 * s, 90 * s), QPointF(205 * s, 70 * s))
+    neck = QPainterPath(QPointF(92 * s, 140 * s))
+    neck.cubicTo(QPointF(84 * s, 80 * s), QPointF(120 * s, 52 * s), QPointF(160 * s, 40 * s))
     p.drawPath(neck)
-    head = QRectF(190 * s, 34 * s, 40 * s, 52 * s)
     p.save()
-    p.translate(head.center())
-    p.rotate(35)
-    g = QLinearGradient(-20 * s, 0, 20 * s, 0)
+    p.translate(QPointF(176 * s, 34 * s))
+    p.rotate(70)
+    g = QLinearGradient(-16 * s, 0, 16 * s, 0)
     g.setColorAt(0, QColor("#6b6e75"))
     g.setColorAt(1, QColor("#1b1c1f"))
     p.setPen(QPen(QColor("#0a0a0b"), 1.5))
     p.setBrush(g)
-    p.drawRoundedRect(QRectF(-20 * s, -26 * s, 40 * s, 52 * s), 20 * s, 20 * s)
+    p.drawRoundedRect(QRectF(-16 * s, -22 * s, 32 * s, 44 * s), 16 * s, 16 * s)
     p.restore()
-    # the front edge (the body's thickness) and a red glow under it
-    glow = QRadialGradient(320 * s, 392 * s, 300 * s)
-    glow.setColorAt(0, QColor(255, 59, 31, 90))
-    glow.setColorAt(1, QColor(255, 59, 31, 0))
+    # a red glow on the floor and the front edge (the body's thickness)
+    glow = QRadialGradient(320 * s, front_y + 18 * s, 300 * s)
+    glow.setColorAt(0, QColor(255, 42, 26, 80))
+    glow.setColorAt(1, QColor(255, 42, 26, 0))
     p.save()
-    p.translate(320 * s, 392 * s)
-    p.scale(1, 0.16)
-    p.translate(-320 * s, -392 * s)
-    p.fillRect(QRectF(0, 300 * s, size, 200 * s), glow)
+    p.translate(320 * s, front_y + 18 * s)
+    p.scale(1, 0.14)
+    p.translate(-320 * s, -(front_y + 18 * s))
+    p.fillRect(QRectF(0, front_y - 100 * s, size, 240 * s), glow)
     p.restore()
     front = QPainterPath()
-    front.moveTo(30 * s, 360 * s)
-    front.lineTo(610 * s, 360 * s)
-    front.lineTo(604 * s, 388 * s)
-    front.lineTo(36 * s, 388 * s)
+    front.moveTo(left, front_y)
+    front.lineTo(right, front_y)
+    front.lineTo(right - 4 * s, front_y + 22 * s)
+    front.lineTo(left + 4 * s, front_y + 22 * s)
     front.closeSubpath()
-    g = QLinearGradient(0, 360 * s, 0, 388 * s)
+    g = QLinearGradient(0, front_y, 0, front_y + 22 * s)
     g.setColorAt(0, QColor("#1d1e22"))
     g.setColorAt(1, QColor("#08090a"))
     p.fillPath(front, g)
-    p.fillRect(QRectF(36 * s, 386 * s, 568 * s, 2 * s), QColor("#ff3b1f"))
-    # the panel in perspective
     p.save()
     p.setTransform(t)
     p.drawImage(0, 0, top)
     p.restore()
-    # the name
-    p.setPen(QColor("#f4f4f4"))
+    # the name: white, "Xi" in the panel's red
     p.setFont(font(84 * s))
-    name = QRectF(0, 420 * s, size, 100 * s)
     fm = p.fontMetrics()
-    left_w = fm.horizontalAdvance("JD-")
-    total = fm.horizontalAdvance("JD-Xi")
-    x0 = (size - total) / 2
+    x0 = (size - fm.horizontalAdvance("JD-Xi")) / 2
+    p.setPen(QColor("#f4f4f4"))
     p.drawText(QPointF(x0, 500 * s), "JD-")
-    p.setPen(QColor("#ff3b1f"))
-    p.drawText(QPointF(x0 + left_w, 500 * s), "Xi")
+    p.setPen(RED)
+    p.drawText(QPointF(x0 + fm.horizontalAdvance("JD-"), 500 * s), "Xi")
     f = font(34 * s)
     f.setLetterSpacing(QFont.SpacingType.AbsoluteSpacing, 16 * s)
     p.setFont(f)
     p.setPen(QColor("#d9d9d9"))
     p.drawText(QRectF(8 * s, 512 * s, size, 50 * s), Qt.AlignmentFlag.AlignHCenter, "STUDIO")
-    # the step row under the name, in the part colours
+    # the step row under the name, red as on the instrument
     for i in range(16):
         r = QRectF(size / 2 - 8 * 26 * s + i * 26 * s + 3 * s, 578 * s, 20 * s, 10 * s)
-        p.fillPath(rounded(r, 2 * s), QColor(PADS[i // 4]) if i % 4 == 0 else QColor(PADS[i // 4]).darker(320))
-    del name
+        p.fillPath(rounded(r, 2 * s), RED if i % 4 == 0 else QColor("#4a120c"))
     p.end()
     return image
 
