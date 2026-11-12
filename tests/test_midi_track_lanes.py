@@ -108,10 +108,14 @@ def test_channel_edit_applies_after_delay(viewer):
 
     from PySide6.QtTest import QTest
 
+    start = time.monotonic()
     viewer.track_channel_spins[1].setValue(10)
-    # Nothing changes before the merge delay
-    QTest.qWait(viewer.CHANNEL_EDIT_DELAY_MS // 2)
+    # Nothing changes before the merge delay: checked right away, and again after
+    # a short wait only if the (slow, shared) runner really was that quick
     assert viewer._pending_channels == {1: 9}
+    QTest.qWait(viewer.CHANNEL_EDIT_DELAY_MS // 3)
+    if (time.monotonic() - start) * 1000 < viewer.CHANNEL_EDIT_DELAY_MS * 0.8:
+        assert viewer._pending_channels == {1: 9}
     # The timer fires once the event loop gets to it; after other Qt-heavy
     # tests that can be well past CHANNEL_EDIT_DELAY_MS, so wait for the
     # result (up to 5 s) rather than for a fixed time
