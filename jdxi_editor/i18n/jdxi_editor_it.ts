@@ -221,7 +221,7 @@
         </message>
         <message>
             <location filename="../../jdxi_editor/i18n/ui_strings.py" line="21" />
-            <location filename="../../jdxi_editor/ui/preset/widget.py" line="522" />
+            <location filename="../../jdxi_editor/ui/preset/widget.py" line="528" />
             <source>Load Preset</source>
             <translation>Carica preset</translation>
         </message>
@@ -270,14 +270,14 @@
         </message>
         <message>
             <location filename="../../jdxi_editor/i18n/ui_strings.py" line="23" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/program.py" line="27" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/program.py" line="22" />
             <source>Program</source>
             <translation>Programma</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/i18n/ui_strings.py" line="23" />
             <location filename="../../jdxi_editor/ui/editors/preset/editor.py" line="349" />
-            <location filename="../../jdxi_editor/ui/preset/widget.py" line="487" />
+            <location filename="../../jdxi_editor/ui/preset/widget.py" line="493" />
             <source>Preset</source>
             <translation>Preset</translation>
         </message>
@@ -299,8 +299,8 @@
         <message>
             <location filename="../../jdxi_editor/i18n/ui_strings.py" line="24" />
             <location filename="../../jdxi_editor/ui/editors/preset/editor.py" line="345" />
-            <location filename="../../jdxi_editor/ui/preset/widget.py" line="353" />
-            <location filename="../../jdxi_editor/ui/preset/widget.py" line="495" />
+            <location filename="../../jdxi_editor/ui/preset/widget.py" line="359" />
+            <location filename="../../jdxi_editor/ui/preset/widget.py" line="501" />
             <location filename="../../jdxi_editor/ui/widgets/preset/combo_box.py" line="48" />
             <source>Search presets...</source>
             <translation>Cerca preset...</translation>
@@ -370,7 +370,7 @@
             <translation>Genere</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="234" />
+            <location filename="../../jdxi_editor/main.py" line="239" />
             <source>'Roland' and 'JD-Xi' are trademarks of the Roland Corporation in the United States and/or other countries.
 
 This app is an independent, unofficial companion tool for the Roland JD-Xi synthesizer. It is not affiliated with, endorsed by, or sponsored by Roland Corporation in any way.
@@ -383,12 +383,12 @@ Questa app è uno strumento indipendente e non ufficiale per il sintetizzatore R
 Tutti i nomi di prodotti, i marchi e i loghi appartengono ai rispettivi proprietari.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="143" />
+            <location filename="../../jdxi_editor/main.py" line="148" />
             <source>Initializing MIDI subsystem…</source>
             <translation>Avvio del sistema MIDI…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="272" />
+            <location filename="../../jdxi_editor/main.py" line="277" />
             <source>{program}  •  Version {version}  •  {home}
 An independent edition of JDXI-Editor by Mark Brooks (mabsoft.com), MIT licence</source>
             <translation>{program}  •  Versione {version}  •  {home}
@@ -859,28 +859,28 @@ versione:	{version}</translation>
             <translation>Salva questa parte come file SysEx</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/main.py" line="73" />
-            <location filename="../../jdxi_editor/ui/editors/main.py" line="129" />
+            <location filename="../../jdxi_editor/ui/editors/main.py" line="76" />
+            <location filename="../../jdxi_editor/ui/editors/main.py" line="133" />
             <source>No program</source>
             <translation>Nessun programma</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/main.py" line="78" />
+            <location filename="../../jdxi_editor/ui/editors/main.py" line="81" />
             <source>The program and the tone last received from the JD-Xi</source>
             <translation>Il programma e il tono ricevuti per ultimi dal JD-Xi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/main.py" line="141" />
+            <location filename="../../jdxi_editor/ui/editors/main.py" line="145" />
             <source>JD-Xi connected</source>
             <translation>JD-Xi collegato</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/main.py" line="143" />
+            <location filename="../../jdxi_editor/ui/editors/main.py" line="147" />
             <source>MIDI half connected</source>
             <translation>MIDI collegato a metà</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/main.py" line="145" />
+            <location filename="../../jdxi_editor/ui/editors/main.py" line="149" />
             <location filename="../../jdxi_editor/ui/v2/settings.py" line="195" />
             <source>Offline</source>
             <translation>Non collegato</translation>
@@ -951,7 +951,7 @@ versione:	{version}</translation>
             <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1158" />
             <location filename="../../jdxi_editor/ui/editors/playlist/table.py" line="275" />
             <location filename="../../jdxi_editor/ui/editors/playlist/table.py" line="331" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="2601" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="2666" />
             <source>Error</source>
             <translation>Errore</translation>
         </message>
@@ -1235,7 +1235,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1080" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1492" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1557" />
             <source>File Not Found</source>
             <translation>File non trovato</translation>
         </message>
@@ -1471,37 +1471,37 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Importa la parte da SysEx</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/preset/widget.py" line="301" />
+            <location filename="../../jdxi_editor/ui/preset/widget.py" line="307" />
             <source>Edit Tone Name</source>
             <translation>Modifica nome del tono</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/preset/widget.py" line="269" />
+            <location filename="../../jdxi_editor/ui/preset/widget.py" line="275" />
             <source>Analog Presets</source>
             <translation>Preset Analog</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/preset/widget.py" line="278" />
+            <location filename="../../jdxi_editor/ui/preset/widget.py" line="284" />
             <source>Cheat Presets</source>
             <translation>Preset extra</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/preset/widget.py" line="422" />
+            <location filename="../../jdxi_editor/ui/preset/widget.py" line="428" />
             <source>Random Patch</source>
             <translation>Suono casuale</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/preset/widget.py" line="425" />
+            <location filename="../../jdxi_editor/ui/preset/widget.py" line="431" />
             <source>Randomize analog tone parameters (Manager rndVoice)</source>
             <translation>Valori casuali per i parametri del tono Analog</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/preset/widget.py" line="536" />
+            <location filename="../../jdxi_editor/ui/preset/widget.py" line="542" />
             <source>Midi Channel</source>
             <translation>Canale MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/preset/widget.py" line="240" />
+            <location filename="../../jdxi_editor/ui/preset/widget.py" line="246" />
             <source>{synth_type} Synth</source>
             <translation>{synth_type} Synth</translation>
         </message>
@@ -1793,7 +1793,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Arpeggio per {part}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/brand.py" line="71" />
+            <location filename="../../jdxi_editor/ui/v2/brand.py" line="80" />
             <source>based on {project} by {author}</source>
             <translation>basato su {project} di {author}</translation>
         </message>
@@ -4363,7 +4363,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/programs.py" line="272" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/tone.py" line="25" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/tone.py" line="24" />
             <source>Tone</source>
             <translation>Tono</translation>
         </message>
@@ -5789,12 +5789,12 @@ Posizione prevista: {path}</translation>
             <translation>Scelta parti</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/program.py" line="49" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/program.py" line="35" />
             <source>Program Up: Navigate to the next program</source>
             <translation>Programma su: passa al programma successivo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/program.py" line="54" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/program.py" line="40" />
             <source>Program Down: Navigate to the previous program</source>
             <translation>Programma giù: passa al programma precedente</translation>
         </message>
@@ -5814,77 +5814,77 @@ Posizione prevista: {path}</translation>
             <translation>Salva preferito {i}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="92" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="121" />
             <source>Filter Cutoff: Sets the filter cutoff frequency for all MIDI channels</source>
             <translation>Filter Cutoff: frequenza di taglio del filtro su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="97" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="126" />
             <source>Filter Resonance: Sets the filter resonance (Q) for all MIDI channels</source>
             <translation>Filter Resonance: risonanza del filtro (Q) su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="102" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="131" />
             <source>Amp Level: Sets the amplifier level for all MIDI channels</source>
             <translation>Amp Level: livello dell'amplificatore su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="107" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="136" />
             <source>Amp Envelope: Sets the amplifier envelope depth for all MIDI channels</source>
             <translation>Amp Envelope: profondità dell'inviluppo d'ampiezza su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="112" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="141" />
             <source>LFO Rate: Sets the LFO rate (speed) for all MIDI channels</source>
             <translation>LFO Rate: velocità dell'LFO su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="117" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="146" />
             <source>LFO Pitch Depth: Sets the LFO pitch modulation depth for all MIDI channels</source>
             <translation>LFO Pitch Depth: modulazione d'intonazione dell'LFO su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="122" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="151" />
             <source>LFO Filter Depth: Sets the LFO filter modulation depth for all MIDI channels</source>
             <translation>LFO Filter Depth: modulazione del filtro dell'LFO su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="127" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="156" />
             <source>LFO Amp Depth: Sets the LFO amplitude modulation depth for all MIDI channels</source>
             <translation>LFO Amp Depth: modulazione d'ampiezza dell'LFO su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="132" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="161" />
             <source>Effect 1: Sets the Effect 1 send level for all MIDI channels</source>
             <translation>Effect 1: mandata all'Effect 1 su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="137" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="166" />
             <source>Effect 2: Sets the Effect 2 send level for all MIDI channels</source>
             <translation>Effect 2: mandata all'Effect 2 su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="142" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="171" />
             <source>LFO Shape: Sets the LFO waveform shape for all MIDI channels</source>
             <translation>LFO Shape: forma d'onda dell'LFO su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="146" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="175" />
             <source>Delay: Sets the delay send level for all MIDI channels</source>
             <translation>Delay: mandata al delay su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="149" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="178" />
             <source>Reverb: Sets the reverb send level for all MIDI channels</source>
             <translation>Reverb: mandata al riverbero su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/tone.py" line="51" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/tone.py" line="40" />
             <source>Tone Up: Navigate to the next preset/tone</source>
             <translation>Tono su: passa al preset/tono successivo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/tone.py" line="56" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/tone.py" line="45" />
             <source>Tone Down: Navigate to the previous preset/tone</source>
             <translation>Tono giù: passa al preset/tono precedente</translation>
         </message>
@@ -5929,27 +5929,27 @@ Posizione prevista: {path}</translation>
             <translation>Controllo degli aggiornamenti su GitHub…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="851" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="896" />
             <source>&amp;Window</source>
             <translation>Fi&amp;nestra</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="862" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="907" />
             <source>Keyboard always on &amp;top</source>
             <translation>Tastiera sempre in &amp;primo piano</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1268" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1333" />
             <source>Offline: no MIDI backend available</source>
             <translation>Offline: nessun sistema MIDI disponibile</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1271" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1336" />
             <source>MIDI not available</source>
             <translation>MIDI non disponibile</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1272" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1337" />
             <source>The system has no MIDI interface that the editor can open, so it runs offline: you can edit, open and save patches, but nothing is sent to or received from the JD-Xi.
 
 On Linux, load the ALSA sequencer (sudo modprobe snd-seq) and restart the editor.</source>
@@ -5958,19 +5958,19 @@ On Linux, load the ALSA sequencer (sudo modprobe snd-seq) and restart the editor
 Su Linux carica il sequencer ALSA (sudo modprobe snd-seq) e riavvia l'editor.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1768" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1833" />
             <source>Update User Program Database</source>
             <translation>Aggiorna l'archivio dei programmi utente</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1769" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1834" />
             <source>This will scan through all user banks (E, F, G, H) and update the program database.
 This may take several minutes. Continue?</source>
             <translation>Verranno letti tutti i banchi utente (E, F, G, H) per aggiornare l'archivio dei programmi.
 Può richiedere alcuni minuti. Continuare?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1787" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1852" />
             <source>Updating Database</source>
             <translation>Aggiornamento dell'archivio</translation>
         </message>
@@ -5981,100 +5981,100 @@ Può richiedere alcuni minuti. Continuare?</translation>
             <translation>Cerca aggiornamenti</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="852" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="897" />
             <source>Show the &amp;editors</source>
             <translation>Mostra gli &amp;editor</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="855" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="900" />
             <source>Show the &amp;keyboard</source>
             <translation>Mostra la &amp;tastiera</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="864" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="909" />
             <source>Keep the keyboard window in front of the other windows</source>
             <translation>Tiene la finestra della tastiera davanti alle altre finestre</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="871" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="916" />
             <source>&amp;Line up the editors with the keyboard</source>
             <translation>&amp;Allinea gli editor alla tastiera</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1424" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1489" />
             <source>Recent MIDI Files</source>
             <translation>MIDI file recenti</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1458" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1523" />
             <source>No recent files</source>
             <translation>Nessun file recente</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1476" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1541" />
             <source>Clear Recent Files</source>
             <translation>Svuota l'elenco dei file recenti</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1561" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1568" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1626" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1633" />
             <source>No MIDI file</source>
             <translation>Nessun MIDI file</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1562" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1627" />
             <source>Open the MIDI File player and load a MIDI file first.</source>
             <translation>Apri il lettore di MIDI file e carica prima un MIDI file.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1569" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1634" />
             <source>No MIDI file is loaded. Load a MIDI file from the File menu first.</source>
             <translation>Nessun MIDI file caricato. Caricane prima uno dal menu File.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1608" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1601" />
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1587" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1673" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1666" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1652" />
             <source>Export failed</source>
             <translation>Esportazione non riuscita</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1609" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1674" />
             <source>Could not create PDF. Is LilyPond installed?</source>
             <translation>Impossibile creare il PDF. LilyPond è installato?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1760" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1825" />
             <source>MIDI Not Connected</source>
             <translation>MIDI non collegato</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1761" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1826" />
             <source>Please connect to the JD-Xi synthesizer before updating the database.</source>
             <translation>Collega il JD-Xi prima di aggiornare l'archivio.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1857" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1922" />
             <source>Update Complete</source>
             <translation>Aggiornamento completato</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="858" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="903" />
             <source>Bring the keyboard window in front of the editors</source>
             <translation>Porta la finestra della tastiera davanti agli editor</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="873" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="918" />
             <source>Place the editors window right above the keyboard</source>
             <translation>Mette la finestra degli editor subito sopra la tastiera</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1602" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1667" />
             <source>Could not create PDF. Is LilyPond installed? See Help or preferences.</source>
             <translation>Impossibile creare il PDF. LilyPond è installato? Vedi l'Aiuto o le Preferenze.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1879" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1944" />
             <source>Reading {current_bank}{db_update_current_program:02d}...</source>
             <translation>Lettura di {current_bank}{db_update_current_program:02d}...</translation>
         </message>
@@ -6091,22 +6091,22 @@ Può richiedere alcuni minuti. Continuare?</translation>
 {message}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1055" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1119" />
             <source>Loading Analog Synth editor...</source>
             <translation>Caricamento dell'editor Analog Synth...</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1492" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1557" />
             <source>The file '{file_path}' no longer exists.</source>
             <translation>Il file '{file_path}' non esiste più.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1588" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1653" />
             <source>Could not prepare the current MIDI file for export.</source>
             <translation>Impossibile preparare il MIDI file attuale per l'esportazione.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1858" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1923" />
             <source>Successfully updated {db_update_programs_saved} programs in the database.
 
 The program list has been refreshed with the updated names.</source>
@@ -6115,29 +6115,34 @@ The program list has been refreshed with the updated names.</source>
 L'elenco dei programmi mostra ora i nomi aggiornati.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1059" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1123" />
             <source>Loading Digital Synth 1 editor...</source>
             <translation>Caricamento dell'editor Digital Synth 1...</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="2651" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="2716" />
             <source>Tone {number} {name}, {type}</source>
             <translation>Tono {number} {name}, {type}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1064" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1128" />
             <source>Loading Digital Synth 2 editor...</source>
             <translation>Caricamento dell'editor Digital Synth 2...</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="2601" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="2666" />
             <source>Error saving preset: {value1}</source>
             <translation>Errore nel salvare il preset: {value1}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1068" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1132" />
             <source>Preparing Drum Kit editor...</source>
             <translation>Preparazione dell'editor del kit Drums...</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/jdxi/linked.py" line="212" />
+            <source>Keep the keyboard in front of the other windows (until the next start)</source>
+            <translation>Tieni la tastiera davanti alle altre finestre (fino al prossimo avvio)</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/windows/jdxi/ui.py" line="284" />

@@ -32,6 +32,9 @@ def draw_mark(size: int = 256) -> QPixmap:
     p.fillPath(tile, grad)
     p.setPen(QPen(QColor("#3a3d44"), 3 * s))
     p.drawPath(tile)
+    # the red trim along the top edge, as on the JD-Xi's panel
+    p.setPen(Qt.PenStyle.NoPen)
+    p.fillPath(_trim(s), QColor("#ff3b1f"))
     # the step row: four pads in the part colours
     pad, gap, top = 40 * s, 12 * s, 58 * s
     left = (size - (4 * pad + 3 * gap)) / 2
@@ -56,6 +59,12 @@ def draw_mark(size: int = 256) -> QPixmap:
         p.fillPath(path, QColor("#16171a"))
     p.end()
     return pm
+
+
+def _trim(s: float) -> QPainterPath:
+    path = QPainterPath()
+    path.addRoundedRect(QRectF(60 * s, 24 * s, 136 * s, 7 * s), 3.5 * s, 3.5 * s)
+    return path
 
 
 def icon() -> QIcon:

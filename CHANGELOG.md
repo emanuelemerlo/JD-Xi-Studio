@@ -71,6 +71,16 @@ on the JD-Xi display.
 - **UI audit** (`scripts/ui_audit.py`, run by the tests at 100% and 150%): every panel button and
   menu entry opens the right tab and lights the right button, no panel text cut or overlapping,
   showing an editor stays fast, each name centred over its slider or button
+- **Keep on top is a pin** next to minimise / maximise / close (also in the Window menu): it
+  is not saved and is off at every start, so a dialog can never be stuck behind the keyboard
+  at launch
+- **New pictures and icon**: one family of illustrations in the JD-Xi's look (black body, red
+  display, the part colours), drawn by `building/art/make_art.py`: one per sound family (piano,
+  pad, bass, strings, drum kits...) shown small at the bottom of the preset card, plus Programs,
+  Presets, Effects, Vocal FX, Arpeggio; the program icon (.png/.ico/.icns) with the JD-Xi's red
+  trim and the installer's side image
+- **Obsolete files removed**: about 150 unused pictures, icon sets, GIMP sources and old splash
+  screens; the photos of other synths replaced by the new pictures
 - **Keyboard always on top**: dialogs (MIDI ports, messages, names to save) come up above the
   keyboard; before, a dialog could open behind it and block it, so the keyboard seemed frozen
 - **Panel sliders**: each name is centred over its slider (the names were left-aligned and the

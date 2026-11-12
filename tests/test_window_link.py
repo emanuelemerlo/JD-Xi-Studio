@@ -156,9 +156,12 @@ def test_keyboard_on_top_installs_the_dialog_filter_and_removes_it(app, tmp_path
 
     window = JDXiInstrument()
     try:
-        window.set_keyboard_on_top(True)
-        assert window._dialogs_in_front is not None
+        assert not window.on_top_action.isChecked()  # always off at start
+        window.on_top_pin.click()
+        assert window._dialogs_in_front is not None and window.on_top_action.isChecked()
+        assert window.windowFlags() & Qt.WindowType.WindowStaysOnTopHint
+        assert window.settings.value("window/keyboard_on_top") is None  # not saved
         window.set_keyboard_on_top(False)
-        assert window._dialogs_in_front is None
+        assert window._dialogs_in_front is None and not window.on_top_pin.isChecked()
     finally:
         window.close()

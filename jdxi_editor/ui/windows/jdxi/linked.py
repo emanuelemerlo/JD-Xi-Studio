@@ -165,3 +165,4 @@ class DialogsInFront(QObject):
         widget.show()  # changing the flags hides the window
         widget.raise_()
         widget.activateWindow()
+

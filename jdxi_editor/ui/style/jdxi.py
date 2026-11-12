@@ -100,8 +100,8 @@ class JDXiUIStyle:
     PWM_WIDGET_HEIGHT = 200
     ADSR_PLOT_WIDTH = 300
     ADSR_PLOT_HEIGHT = 200
-    INSTRUMENT_IMAGE_WIDTH = 350
-    INSTRUMENT_IMAGE_HEIGHT = 200  # Maximum height to prevent elongation
+    INSTRUMENT_IMAGE_WIDTH = 296  # fits the preset card (340 wide)
+    INSTRUMENT_IMAGE_HEIGHT = 140  # Maximum height to prevent elongation
     TITLE_TEXT = "#FFFFFF"
     BACKGROUND = "#000000"  # 1A1A1A"
     BACKGROUND_GRADIENT = (

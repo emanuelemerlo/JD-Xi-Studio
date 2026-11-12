@@ -41,6 +41,7 @@ class _WindowButton(QToolButton):
             "QToolButton { background: transparent; border: 0; }"
             f"QToolButton:hover {{ background: {hover}; }}"
             f"QToolButton:pressed {{ background: {'#b8352d' if kind == 'close' else '#444444'}; }}"
+            "QToolButton:checked { background: #2a1410; }"
         )
 
     def paintEvent(self, event) -> None:
@@ -50,7 +51,17 @@ class _WindowButton(QToolButton):
         p.setPen(QPen(QColor("#e6e6e6"), 1.3))
         c = QPointF(self.width() / 2, self.height() / 2)
         s = 5.0
-        if self.kind == "minimize":
+        if self.kind == "pin":  # a drawing pin, red while the window is kept on top
+            colour = QColor("#ff3b1f") if self.isChecked() else QColor("#9a9da4")
+            p.translate(c)
+            p.rotate(45)
+            p.setPen(QPen(colour, 1.5, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap))
+            p.drawLine(QPointF(0, 2), QPointF(0, 7))  # the needle
+            p.setPen(Qt.PenStyle.NoPen)
+            p.setBrush(colour)
+            p.drawRoundedRect(QRectF(-2.6, -7, 5.2, 7), 1.2, 1.2)  # the body
+            p.drawRoundedRect(QRectF(-5, -0.5, 10, 2.5), 1, 1)  # the collar
+        elif self.kind == "minimize":
             p.drawLine(QPointF(c.x() - s, c.y()), QPointF(c.x() + s, c.y()))
         elif self.kind == "maximize":
             if self.maximized:  # two overlapping squares: restore
@@ -72,6 +83,12 @@ class WindowButtons(QWidget):
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
+        # keep the window in front of the others: not saved, off at every start
+        self.pin_button = _WindowButton(
+            "pin", tr("Keep the keyboard in front of the other windows (until the next start)")
+        )
+        self.pin_button.setCheckable(True)
+        layout.addWidget(self.pin_button)
         self.minimize_button = _WindowButton("minimize", tr("Minimize"))
         self.maximize_button = _WindowButton("maximize", tr("Maximize"))
         self.close_button = _WindowButton("close", tr("Close"))

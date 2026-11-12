@@ -925,8 +925,13 @@ class JDXiInstrument(JDXiWindow):
         geometry = settings.value("window/editors_geometry") if settings is not None else None
         if geometry:
             self.main_editor.restoreGeometry(geometry)
-        if settings is not None and str(settings.value("window/keyboard_on_top", False)).lower() == "true":
-            self.set_keyboard_on_top(True)
+        # Always on top is never restored: it starts off at every launch (kept
+        # on, a dialog opening behind the keyboard could block it at startup)
+        if settings is not None:
+            settings.remove("window/keyboard_on_top")
+        # the pin next to minimise / maximise / close
+        self.on_top_pin = self.window_buttons.pin_button
+        self.on_top_pin.toggled.connect(self.set_keyboard_on_top)
 
     def bring_keyboard_to_front(self) -> None:
         """The keyboard window in front (from an editor window too: Ctrl+Shift+K)."""
@@ -959,9 +964,9 @@ class JDXiInstrument(JDXiWindow):
             self._dialogs_in_front.deleteLater()
             self._dialogs_in_front = None
         self.on_top_action.setChecked(on)
-        settings = getattr(self, "settings", None)
-        if settings is not None:
-            settings.setValue("window/keyboard_on_top", on)
+        pin = getattr(self, "on_top_pin", None)
+        if pin is not None and pin.isChecked() != on:
+            pin.setChecked(on)
 
     def _save_window_layout(self) -> None:
         settings = getattr(self, "settings", None)

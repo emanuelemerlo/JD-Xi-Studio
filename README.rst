@@ -1,8 +1,9 @@
 JDXI-Editor
 ===========
 
-.. image:: ./resources/jdxi_cartoon_600.png
-   :alt: Roland JD-Xi Cartoon
+.. image:: ./resources/jdxi_icon.png
+   :alt: JD-Xi Studio
+   :width: 128
 
 .. note::
    This is an independent fork of `JDXI-Editor <https://github.com/markxbrooks/JDXI-Editor>`_ by
