@@ -1,205 +1,35 @@
-JDXI-Editor
-===========
+JD-Xi Studio
+============
 
 .. image:: ./resources/jdxi_studio_logo.png
    :alt: JD-Xi Studio
    :width: 320
 
+**JD-Xi Studio** is an editor and librarian for the **Roland JD-Xi** synthesizer: every sound, the
+pattern sequencer, the effects and the vocoder, on the computer screen instead of the JD-Xi's menus.
+
 .. note::
-   This is an independent fork of `JDXI-Editor <https://github.com/markxbrooks/JDXI-Editor>`_ by
-   Mark Brooks. See README.md for what is different, how to install it and how to choose the
-   interface language (English, Italiano).
+   JD-Xi Studio is developed by **Emanuele Merlo**. It is an independent edition of
+   `JDXI-Editor <https://github.com/markxbrooks/JDXI-Editor>`_ by **Mark Brooks**, on which it is
+   based (MIT licence). The README on GitHub has the full description, the screenshots and how to
+   install it: https://github.com/emanuelemerlo/JDXI-Editor
 
-**JDXI-Editor**: A powerful MIDI editor for the **Roland JD-Xi synthesizer**, built with **Python**, **Qt Framework**, and **RtMidi**. Simplify MIDI editing, preset selection, and sound design without hardware menus. Perfect for musicians and sound designers!
+.. image:: ./resources/keyboard_window_900.png
+   :alt: The keyboard window
 
-It's designed to implement as many features as possible from Roland's MIDI implementation—without the need to dive through hardware menus. 
-
-.. warning::
-   This app is a work in progress and not yet feature-complete—but feel free to try it out and share your feedback!
-
-Features of JDXI-Editor for Roland JD-Xi Synthesizer
-----------------------------------------------------
-- **On-Screen Keyboard**: Easily play and test sounds from your JD-Xi.
-- **Preset Selection with Search**: Quickly find and load presets.
-- **Octave Shifting**: Adjust octave ranges for precise sound control.
-- **Digital & Analog Synth Editors**: Edit JD-Xi's digital and analog synths directly.
-- **Drum Part Editor**: Customize drum sounds and patterns .
-- **Effects Editor**: Edit reverb, delay, vocoder, and arpeggiator settings.
-- **MIDI Debugger**: Monitor and debug MIDI messages efficiently.
-
-Designed for musicians, sound designers, and MIDI enthusiasts looking to unlock the full potential of the Roland JD-Xi synthesizer!
-
-Current App Preview
--------------------
-
-.. image:: ./resources/main_window_0.6.gif
-   :alt: Roland JD-Xi Main Editor Window
-
-Roland JD-Xi MIDI Editor Video Demo
------------------------------------
-Watch how **JDXI-Editor** simplifies sound design and MIDI editing for the **Roland JD-Xi synthesizer**:
-
-.. image:: https://img.youtube.com/vi/vw-T-9LJkng/0.jpg
-   :target: https://www.youtube.com/watch?v=vw-T-9LJkng
-   :alt: Watch the demo
-
-Getting Started
-===============
-
-MacOS and Linux
----------------
-This fork does not publish macOS or Linux packages yet: run it with Python (below).
-
-Windows 
-----------
-Builds are on the `releases page <https://github.com/emanuelemerlo/JDXI-Editor/releases>`_
-
-Each release offers an installer (``jdxi_editor-<version>_setup_win_x86-64.exe``, installs for the
-current user, no administrator rights) and a portable zip (unzip and run ``jdxi_editor\jdxi_editor.exe``).
-Windows 10 or 11, 64-bit.
-
-Python 
----------
-If you're a Python developer, you may wish to run the program from a Python environment:
-
-.. code-block:: bash
-
-   $ git clone https://github.com/emanuelemerlo/JDXI-Editor.git
-   $ cd JDXI-Editor
-   $ python -m venv venv
-   $ source venv/bin/activate
-   $ python -m pip install -e ".[dev]"
-   $ python -m jdxi_editor.main
-
-Documentation
-=============
-Access JD-Xi documentation in the format that works best for you:
-
-Available Formats:
-------------------
-
-HTML Documentation:
-~~~~~~~~~~~~~~~~~~~
-https://markxbrooks.github.io/JDXI-Editor/ (the original project; changes of this fork are in CHANGELOG.md)
-
-PDF Documentation:
-~~~~~~~~~~~~~~~~~~
-Coming soon!
-
-UI Previews
-===========
-
-Digital & Analog Synths
------------------------
-
-.. image:: ./resources/analog_synth_600.png
-   :alt: Analog Synth
-   :target: ./resources/analog_synth.png
-
-.. image:: ./resources/digital_synth_600.png
-   :alt: Digital Synths
-   :target: ./resources/digital_synth.png
-
-Midi File Player
-----------------
-
-.. image:: ./resources/midi_player_600.png
-   :alt: Midi File Player
-   :target: ./resources/midi_player.png
-
-Pattern Sequencer
------------------
-
-.. image:: ./resources/pattern_600.png
-   :alt: Pattern Sequencer
-   :target: ./resources/pattern.png
-
-Effects and Arpeggiator
-------------------------
-
-.. image:: ./resources/effects_600.png
-   :alt: Effects and Arpeggiator
-   :target: ./resources/effects.png
-
-Vocal Effects
--------------
-
-.. image:: ./resources/vocal_effects_600.png
-   :alt: Vocal Effects Window
-   :target: ./resources/vocal_effects.png
-
-Log Viewer and MIDI Debugger
------------------------------
-
-.. image:: ./resources/logs_and_midi_600.png
-   :alt: Logs and MIDI Debugger
-   :target: ./resources/logs_and_midi.png
-
-MIDI Configuration
-------------------
-
-.. image:: ./resources/midi_config_200.png
-   :alt: MIDI Configuration Window
-   :target: ./resources/midi_config.png
-
-Features
-========
-
-- On-screen Keyboard
-- Preset selection with search
-- Octave shifting
-- JD-Xi-style LCD Display
-- ADSR displays
-- Pitch ENV displays
-- Digital Synth Parts 1 & 2 (including 3 partials per part)
-- Analog Synth Editor
-- Drum Part Editor 
-- Effects: Reverb, Delay, Vocoder
-- Arpeggiator Editor
-
-Coming Soon
-===========
-
-- Pattern Sequencer (one measure is implemented)
-- PW Display widget is sorely needed
-
-Frequently Asked Questions
-=========================
-
-What is JDXI-Editor?
---------------------
-JDXI-Editor is a Python-based MIDI editor for the Roland JD-Xi synthesizer, built with the Qt Framework and RtMidi.
-
-Does JDXI-Editor work on MacOS, Linux and Windows?
----------------------------------------------------
-Yes, JDXI-Editor supports MacOS, Linux and Windows (10 and 11, 64-bit).
-
-What features does JDXI-Editor offer?
--------------------------------------
-JDXI-Editor provides preset selection, synth editing, drum part customization, effects editing, and more.
-
-Links
-=====
-
-- Learn more about the `Roland JD-Xi Synthesizer <https://www.roland.com/global/products/jd-xi/>`_.
-- Explore the `Qt Framework <https://www.qt.io/>`_ for building cross-platform apps.
-- Discover `RtMidi <https://www.music.mcgill.ca/~gary/rtmidi/>`_, a real-time MIDI library.
-
-Contribute and Share Feedback
-=============================
-JDXI-Editor is a growing project! 
--  Star this repository to support its development.
--  Contribute features or report issues via `GitHub Issues <https://github.com/emanuelemerlo/JDXI-Editor/issues>`_.
+Download
+--------
+The builds are on the `releases page <https://github.com/emanuelemerlo/JDXI-Editor/releases>`_:
+for Windows an installer (``jdxi_editor-<version>_setup_win_x86-64.exe``, for the current user,
+no administrator rights) and a portable zip, plus the Python wheel. On macOS and Linux install the
+wheel with Python 3.10 to 3.13 and start it with ``jdxi-editor``.
 
 Credits
-=======
+-------
+- **Emanuele Merlo**: JD-Xi Studio.
+- **Mark Brooks**: the original `JDXI-Editor <https://github.com/markxbrooks/JDXI-Editor>`_.
+- `Qt / PySide6 <https://www.qt.io/>`_, `Mido <https://mido.readthedocs.io/>`_,
+  `RtMidi <https://www.music.mcgill.ca/~gary/rtmidi/>`_.
 
-- `Qt <https://www.qt.io/>`_
-- `RtMidi <https://www.music.mcgill.ca/~gary/rtmidi/>`_
-- `Cursor.ai <https://cursor.so>`_
-- `qtawesome <https://github.com/spyder-ide/qtawesome>`_
-- Inspiration from many great JD-Xi editor projects that paved the way
-- **Roland**, for creating such a powerful little synth!
-
-.. note::
-   Made with  and  by @markxbrooks
+JD-Xi Studio is an independent, unofficial tool, not affiliated with, endorsed or sponsored by Roland
+Corporation. Roland and JD-Xi are trademarks of Roland Corporation. MIT License.

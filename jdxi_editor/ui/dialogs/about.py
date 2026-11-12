@@ -1,102 +1,160 @@
 """
-btk_dialog for about box
+About JD-Xi Studio: the logo, the version, who made it (this edition and the
+original project it is based on), the libraries and the trademark notice.
 """
 
-import os
+from __future__ import annotations
+
 from typing import Optional
 
-from PySide6.QtCore import QRect, QSettings
-from PySide6.QtGui import QPixmap, Qt
-from PySide6.QtWidgets import (
-    QDialog,
-    QDialogButtonBox,
-    QGroupBox,
-    QLabel,
-)
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import QDialog, QFrame, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 
-from jdxi_editor.project import __display_name__, __package_name__, __program__, __version__
-from jdxi_editor.ui.v2.brand import origin_line
-from jdxi_editor.resources import resource_path
-from jdxi_editor.ui.common import JDXi, QVBoxLayout, QWidget
 from jdxi_editor.i18n import tr
+from jdxi_editor.project import (
+    __display_name__,
+    __home_url__,
+    __maintainer__,
+    __origin_author__,
+    __origin_url__,
+    release_name,
+)
+from jdxi_editor.resources import resource_path
+
+ACCENT = "#ff2a1a"  # the JD-Xi's red
+STYLE = f"""
+QDialog#about {{ background: #121214; }}
+QLabel {{ color: #c9cbd1; background: transparent; }}
+QLabel a {{ color: {ACCENT}; }}
+QFrame#aboutCard {{ background: #1b1c1f; border: 1px solid #2e3036; border-radius: 10px; }}
+QLabel#aboutName {{ color: #ffffff; font-size: 22px; font-weight: 800; letter-spacing: 1px; }}
+QLabel#aboutVersion {{ color: {ACCENT}; font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 13px; }}
+QLabel#aboutHead {{ color: {ACCENT}; font-size: 11px; font-weight: 700; letter-spacing: 2px; }}
+QLabel#aboutSmall {{ color: #8a8d94; font-size: 11px; }}
+QPushButton {{ background: #1b1c1f; color: #e6e6e6; border: 1px solid #3a3d44; border-radius: 6px;
+    padding: 6px 22px; }}
+QPushButton:hover {{ border-color: {ACCENT}; }}
+"""
+
+
+def _link(url: str, text: str) -> str:
+    return f"<a style='color: {ACCENT}; text-decoration: none' href='{url}'>{text}</a>"
+
+
+def _card(head: str, *labels: QLabel) -> QFrame:
+    card = QFrame()
+    card.setObjectName("aboutCard")
+    layout = QVBoxLayout(card)
+    layout.setContentsMargins(16, 12, 16, 14)
+    layout.setSpacing(6)
+    title = QLabel(head.upper())
+    title.setObjectName("aboutHead")
+    layout.addWidget(title)
+    for label in labels:
+        layout.addWidget(label)
+    return card
+
+
+def _text(html: str, small: bool = False) -> QLabel:
+    label = QLabel(html)
+    label.setTextFormat(Qt.TextFormat.RichText)
+    label.setWordWrap(True)
+    label.setOpenExternalLinks(True)
+    if small:
+        label.setObjectName("aboutSmall")
+    return label
 
 
 class UiAboutDialog(QDialog):
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
-        self.version_label = None
-        self.settings = QSettings("mabsoft", __package_name__)
+        self.setObjectName("about")
+        self.version_label: Optional[QLabel] = None
 
     def setup_ui(self, parent: QWidget = None) -> None:
-        """
-        setup_ui
+        """Build the dialog (kept as a separate step: the caller then exec()s it)."""
+        self.setWindowTitle(tr("About {program}").format(program=__display_name__))
+        self.setStyleSheet(STYLE)
+        self.setMinimumWidth(640)
+        root = QHBoxLayout(self)
+        root.setContentsMargins(20, 20, 20, 16)
+        root.setSpacing(20)
 
-        :param parent: QWidget
-        :return: None
-        """
-        self.resize(508, 300)
-        self.setWindowTitle(tr('about {program}').format(program=__display_name__))
-        self.setStyleSheet(
-            JDXi.UI.Style.SPLASH_SCREEN + JDXi.UI.Style.CREDITS_LABEL_STYLE
+        # left: the logo
+        logo = QLabel()
+        pixmap = QPixmap(resource_path("resources/jdxi_studio_logo.png"))
+        if pixmap.isNull():  # the drawn mark when the picture is missing
+            from jdxi_editor.ui.v2.brand import draw_mark
+
+            pixmap = draw_mark(220)
+        logo.setPixmap(
+            pixmap.scaled(240, 240, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
         )
-        main_layout = QVBoxLayout(self)
-        group_box_layout = QVBoxLayout()
-        group_box = QGroupBox(__display_name__)
-        group_box_layout.addWidget(group_box)
-        image_layout = QVBoxLayout()
-        group_box.setLayout(image_layout)
-        image_label = QLabel()
-        from jdxi_editor.ui.v2.brand import draw_mark
+        logo.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
+        root.addWidget(logo, 0, Qt.AlignmentFlag.AlignTop)
 
-        image_pixmap = draw_mark(200)  # JD-Xi Studio's own mark
-
-        # Scale the pixmap to 200x200 while keeping aspect ratio
-        scaled_pixmap = image_pixmap.scaled(
-            200, 200, Qt.KeepAspectRatio, Qt.SmoothTransformation
+        # right: who, what, with what
+        right = QVBoxLayout()
+        right.setSpacing(10)
+        name = QLabel(__display_name__)
+        name.setObjectName("aboutName")
+        self.version_label = QLabel(tr("Version {version}").format(version=release_name()))
+        self.version_label.setObjectName("aboutVersion")
+        right.addWidget(name)
+        right.addWidget(self.version_label)
+        right.addWidget(
+            _text(tr("An editor and librarian for the Roland JD-Xi synthesizer: every sound, the "
+                     "pattern sequencer, the effects and the vocoder, from the computer."))
         )
-
-        image_label.setPixmap(scaled_pixmap)
-        image_label.setFixedSize(200, 200)  # Optional: set the label size as well
-        image_label.setAlignment(Qt.AlignHCenter)
-        image_layout.addWidget(image_label, alignment=Qt.AlignHCenter)
-
-        version_label = QLabel()
-        version_label.setText(
-            tr('{program}\nversion:\t{version}').format(program=__display_name__, version=__version__)
-            + "\n" + origin_line()
+        right.addWidget(
+            _card(
+                tr("Authors"),
+                _text(
+                    tr("{name} — this edition (JD-Xi Studio)").format(
+                        name=_link(__home_url__, __maintainer__)
+                    )
+                ),
+                _text(
+                    tr("{name} — the original JDXI-Editor, on which it is based").format(
+                        name=_link(__origin_url__, __origin_author__)
+                    )
+                ),
+            )
         )
-        image_layout.addWidget(version_label)
-
-        button_box = QDialogButtonBox(self)
-        button_box.setGeometry(QRect(150, 250, 341, 32))
-        button_box.setOrientation(Qt.Horizontal)
-        button_box.setStandardButtons(QDialogButtonBox.Ok)
-        button_box.setObjectName("buttonBox")
-        button_box.accepted.connect(self.close)
-        credits_label = QLabel()
-        credits_label.setTextFormat(Qt.RichText)
-        credits_label.setText(
-            tr("<br><b>Credits:</b><br>"
-            "This application uses the following libraries:<br>"
-            "&bull; <a style='color: blue' href='https://mido.readthedocs.io/'>Mido</a> – MIDI message parsing and sending<br>"
-            "&bull; <a style='color: blue' href='https://www.music.mcgill.ca/~gary/rtmidi/'>RtMidi</a> – Low-level MIDI communication<br>"
-            "&bull; <a style='color: blue' href='https://www.qt.io/'>Qt</a> – Cross-platform application framework<br>"
-            "Source code available on <a style='color: blue' href='https://github.com/emanuelemerlo/JDXI-Editor'>GitHub</a><br>"
-            "JD-Xi Studio is an independent edition of <a style='color: blue' href='https://github.com/markxbrooks/JDXI-Editor'>JDXI-Editor</a> by Mark Brooks<br>"
-            "Licensed under the <a style='color: blue' href='https://opensource.org/licenses/MIT'>MIT License</a><br>"
-            "'Roland' and 'JD-Xi' are Trademarks of the Roland Corporation <br> in the United States and/or other countries<br>"
-            "This app is an independent, unofficial companion tool for the Roland JDXi synthesizer<br>"
-            "This app is not affiliated with, endorsed by, or sponsored by Roland Corporation in any way<br>"
-            "All product names, trademarks, and logos are the property of their respective owners.<br>")
+        right.addWidget(
+            _card(
+                tr("Made with"),
+                _text(
+                    " · ".join(
+                        (
+                            _link("https://www.qt.io/", "Qt / PySide6"),
+                            _link("https://mido.readthedocs.io/", "Mido"),
+                            _link("https://www.music.mcgill.ca/~gary/rtmidi/", "RtMidi"),
+                        )
+                    )
+                    + "<br>"
+                    + tr("Source code on {github}, under the {license}.").format(
+                        github=_link(__home_url__, "GitHub"),
+                        license=_link("https://opensource.org/licenses/MIT", tr("MIT License")),
+                    )
+                ),
+            )
         )
-        credits_label.setStyleSheet(JDXi.UI.Style.CREDITS_LABEL_STYLE)
-        credits_label.setOpenExternalLinks(True)
-        credits_label.setAlignment(Qt.AlignCenter)
-        divider = QLabel("<hr>")
-        group_box_layout.addWidget(divider)
-        group_box_layout.addWidget(credits_label)
-        main_layout.addLayout(group_box_layout)
-        group_box_layout.addWidget(button_box)
-
-        # show all the widgets
-        self.show()
+        right.addWidget(
+            _text(
+                tr("An independent, unofficial tool: not affiliated with, endorsed or sponsored by "
+                   "Roland Corporation. Roland and JD-Xi are trademarks of Roland Corporation in the "
+                   "United States and/or other countries; all other names belong to their owners."),
+                small=True,
+            )
+        )
+        right.addStretch()
+        buttons = QHBoxLayout()
+        buttons.addStretch()
+        close = QPushButton(tr("Close"))
+        close.setDefault(True)
+        close.clicked.connect(self.accept)
+        buttons.addWidget(close)
+        right.addLayout(buttons)
+        root.addLayout(right, 1)

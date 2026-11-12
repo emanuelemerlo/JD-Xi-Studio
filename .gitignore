@@ -221,3 +221,4 @@ doc/autoapi/
 # Visual Studio user files
 .vs/
 *.pyproj.user
+/doc/latex/

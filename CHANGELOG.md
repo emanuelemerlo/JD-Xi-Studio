@@ -1,8 +1,8 @@
 # Changelog
 
-All notable changes to JDXI-Editor are documented in this file.
+All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Editor) are documented in this file.
 
-# [1.0.0a1] — tag `v1.0.0-alpha.1` (new interface, in progress)
+# [1.0.0a1] — tag `v1.0.0-alpha.1` (first JD-Xi Studio alpha: the new interface)
 
 The interface is being rebuilt for a desktop screen, one editor at a time. The
 last version with the original interface is **0.10.0b1** (tag `v0.10.0-beta.1`).
@@ -56,6 +56,21 @@ on the JD-Xi display.
 - **Digital Synth 1 red, Digital Synth 2 orange**, Drums purple, as on the JD-Xi panel; Effects teal,
   Vocal Effect pink (they shared colours with the parts before); the preset panel of Digital 2 says
   DIGITAL SYNTH 2
+
+### About, documentation and releases
+- **About** in the new look: the logo, the version as the release names it (1.0.0-alpha.1), the
+  authors (Emanuele Merlo for JD-Xi Studio, Mark Brooks for the original JDXI-Editor), libraries,
+  licence and the trademark notice
+- **Documentation aligned**: README (JD-Xi Studio, features, new screenshots of every editor and of
+  the keyboard window, download, release steps, credits), README.rst, the Sphinx project name,
+  authors and version (read from `project.py`), pyproject authors, LICENSE (both copyrights);
+  developer notes moved to `doc/dev-tools.md`
+- **Release workflow** (`.github/workflows/release.yml`, Actions › Release › Run workflow): tests,
+  Windows installer and portable app, Python wheel and source package, then the tag and the release
+  with every file attached, in one run; no tag to push by hand
+- **Removed**: the Sphinx build output committed in `doc/latex` (20 MB), an old PDF of the 0.8
+  documentation, IDE files, unused root files (old PyInstaller specs, `volume_cc.py`,
+  `programs.json`), the GIFs of the old interface
 
 ### Windows 11 fixes
 

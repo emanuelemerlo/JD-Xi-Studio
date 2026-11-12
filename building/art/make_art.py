@@ -555,6 +555,8 @@ def write_icons() -> None:
     frames[-1].save(RES / "jdxi_icon.ico", sizes=[(s, s) for s in sizes], append_images=frames[:-1])
     for name in ("jdxi_icon.icns", "jdxi_editor.icns", "jdxi_icon_512.icns"):
         big.save(RES / name)
+    for name in ("jdxi_icon.icns", "jdxi_icon_512.icns"):  # the macOS builders read these
+        big.save(ROOT / name)
 
 
 def write_installer_image() -> None:

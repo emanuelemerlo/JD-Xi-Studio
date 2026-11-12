@@ -12,11 +12,14 @@ sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'JD-Xi Editor'
-copyright = '2025, Mark Mrooks'
-author = 'JD-Xi Contributors'
-release = '0.9.6'
-version = '0.9.6'
+project = 'JD-Xi Studio'
+copyright = '2025-2026, Emanuele Merlo; based on JDXI-Editor (2025, Mark Brooks)'
+author = 'Emanuele Merlo, Mark Brooks'
+import os as _os, re as _re
+# the version the app shows (jdxi_editor/project.py), read as text: no import of the package
+with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..', 'jdxi_editor', 'project.py')) as _f:
+    release = _re.search(r'__version__ = "([^"]+)"', _f.read()).group(1)
+version = release
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

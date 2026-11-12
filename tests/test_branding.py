@@ -37,3 +37,17 @@ def test_splash_shows_the_name_and_the_origin(app):
         assert any("independent edition of JDXI-Editor by Mark Brooks" in t for t in texts)
     finally:
         splash.close()
+
+
+def test_about_names_both_authors():
+    from PySide6.QtWidgets import QApplication, QLabel
+
+    from jdxi_editor.ui.dialogs.about import UiAboutDialog
+
+    app = QApplication.instance() or QApplication([])  # noqa: F841
+    dialog = UiAboutDialog()
+    dialog.setup_ui(dialog)
+    text = " ".join(label.text() for label in dialog.findChildren(QLabel))
+    assert "Emanuele Merlo" in text and "Mark Brooks" in text
+    assert "1.0.0" in dialog.version_label.text()
+    dialog.close()

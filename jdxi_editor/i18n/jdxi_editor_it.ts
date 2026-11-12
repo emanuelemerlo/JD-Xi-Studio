@@ -485,21 +485,60 @@ Edizione indipendente di JDXI-Editor di Mark Brooks (mabsoft.com), licenza MIT</
             <translation>Simili: {names}.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="79" />
-            <source>&lt;br&gt;&lt;b&gt;Credits:&lt;/b&gt;&lt;br&gt;This application uses the following libraries:&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://mido.readthedocs.io/'&gt;Mido&lt;/a&gt; – MIDI message parsing and sending&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.music.mcgill.ca/~gary/rtmidi/'&gt;RtMidi&lt;/a&gt; – Low-level MIDI communication&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.qt.io/'&gt;Qt&lt;/a&gt; – Cross-platform application framework&lt;br&gt;Source code available on &lt;a style='color: blue' href='https://github.com/emanuelemerlo/JDXI-Editor'&gt;GitHub&lt;/a&gt;&lt;br&gt;JD-Xi Studio is an independent edition of &lt;a style='color: blue' href='https://github.com/markxbrooks/JDXI-Editor'&gt;JDXI-Editor&lt;/a&gt; by Mark Brooks&lt;br&gt;Licensed under the &lt;a style='color: blue' href='https://opensource.org/licenses/MIT'&gt;MIT License&lt;/a&gt;&lt;br&gt;'Roland' and 'JD-Xi' are Trademarks of the Roland Corporation &lt;br&gt; in the United States and/or other countries&lt;br&gt;This app is an independent, unofficial companion tool for the Roland JDXi synthesizer&lt;br&gt;This app is not affiliated with, endorsed by, or sponsored by Roland Corporation in any way&lt;br&gt;All product names, trademarks, and logos are the property of their respective owners.&lt;br&gt;</source>
-            <translation>&lt;br&gt;&lt;b&gt;Riconoscimenti:&lt;/b&gt;&lt;br&gt;Questa applicazione usa le seguenti librerie:&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://mido.readthedocs.io/'&gt;Mido&lt;/a&gt; – lettura e invio dei messaggi MIDI&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.music.mcgill.ca/~gary/rtmidi/'&gt;RtMidi&lt;/a&gt; – comunicazione MIDI di basso livello&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.qt.io/'&gt;Qt&lt;/a&gt; – framework per applicazioni multipiattaforma&lt;br&gt;Codice sorgente su &lt;a style='color: blue' href='https://github.com/emanuelemerlo/JDXI-Editor'&gt;GitHub&lt;/a&gt;&lt;br&gt;JD-Xi Studio è un'edizione indipendente di &lt;a style='color: blue' href='https://github.com/markxbrooks/JDXI-Editor'&gt;JDXI-Editor&lt;/a&gt; di Mark Brooks&lt;br&gt;Distribuito con &lt;a style='color: blue' href='https://opensource.org/licenses/MIT'&gt;licenza MIT&lt;/a&gt;&lt;br&gt;'Roland' e 'JD-Xi' sono marchi di Roland Corporation &lt;br&gt; negli Stati Uniti e/o in altri paesi&lt;br&gt;Questa app è uno strumento indipendente e non ufficiale per il sintetizzatore Roland JD-Xi&lt;br&gt;Non è affiliata, approvata o sponsorizzata in alcun modo da Roland Corporation&lt;br&gt;Tutti i nomi di prodotti, i marchi e i loghi appartengono ai rispettivi proprietari.&lt;br&gt;</translation>
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="155" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/window_buttons.py" line="94" />
+            <source>Close</source>
+            <translation>Chiudi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="38" />
-            <source>about {program}</source>
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="107" />
+            <source>An editor and librarian for the Roland JD-Xi synthesizer: every sound, the pattern sequencer, the effects and the vocoder, from the computer.</source>
+            <translation>Editor e archivio per il sintetizzatore Roland JD-Xi: ogni suono, il pattern sequencer, gli effetti e il vocoder, dal computer.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="112" />
+            <source>Authors</source>
+            <translation>Autori</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="127" />
+            <source>Made with</source>
+            <translation>Realizzato con</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="146" />
+            <source>An independent, unofficial tool: not affiliated with, endorsed or sponsored by Roland Corporation. Roland and JD-Xi are trademarks of Roland Corporation in the United States and/or other countries; all other names belong to their owners.</source>
+            <translation>Uno strumento indipendente e non ufficiale: non è affiliato, approvato né sponsorizzato da Roland Corporation. Roland e JD-Xi sono marchi di Roland Corporation negli Stati Uniti e/o in altri paesi; tutti gli altri nomi appartengono ai rispettivi proprietari.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="77" />
+            <source>About {program}</source>
             <translation>Informazioni su {program}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="65" />
-            <source>{program}
-version:	{version}</source>
-            <translation>{program}
-versione:	{version}</translation>
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="102" />
+            <source>Version {version}</source>
+            <translation>Versione {version}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="114" />
+            <source>{name} — this edition (JD-Xi Studio)</source>
+            <translation>{name} — questa edizione (JD-Xi Studio)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="119" />
+            <source>{name} — the original JDXI-Editor, on which it is based</source>
+            <translation>{name} — il JDXI-Editor originale, su cui si basa</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="137" />
+            <source>Source code on {github}, under the {license}.</source>
+            <translation>Codice sorgente su {github}, con {license}.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="139" />
+            <source>MIT License</source>
+            <translation>licenza MIT</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/dialogs/program_change.py" line="64" />
@@ -6547,11 +6586,6 @@ L'elenco dei programmi mostra ora i nomi aggiornati.</translation>
             <translation>Ingrandisci</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/window_buttons.py" line="94" />
-            <source>Close</source>
-            <translation>Chiudi</translation>
-        </message>
-        <message>
             <location filename="../../jdxi_editor/ui/windows/jdxi/window_buttons.py" line="115" />
             <source>Restore</source>
             <translation>Ripristina</translation>
@@ -6995,6 +7029,20 @@ Esempio: F0 41 10 00 00 00 0E 12 19 01 20 00 01 F7</translation>
             <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="106" />
             <source>Edit Patch Name</source>
             <translation>Modifica il nome della patch</translation>
+        </message>
+        <message>
+            <source>&lt;br&gt;&lt;b&gt;Credits:&lt;/b&gt;&lt;br&gt;This application uses the following libraries:&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://mido.readthedocs.io/'&gt;Mido&lt;/a&gt; – MIDI message parsing and sending&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.music.mcgill.ca/~gary/rtmidi/'&gt;RtMidi&lt;/a&gt; – Low-level MIDI communication&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.qt.io/'&gt;Qt&lt;/a&gt; – Cross-platform application framework&lt;br&gt;Source code available on &lt;a style='color: blue' href='https://github.com/emanuelemerlo/JDXI-Editor'&gt;GitHub&lt;/a&gt;&lt;br&gt;JD-Xi Studio is an independent edition of &lt;a style='color: blue' href='https://github.com/markxbrooks/JDXI-Editor'&gt;JDXI-Editor&lt;/a&gt; by Mark Brooks&lt;br&gt;Licensed under the &lt;a style='color: blue' href='https://opensource.org/licenses/MIT'&gt;MIT License&lt;/a&gt;&lt;br&gt;'Roland' and 'JD-Xi' are Trademarks of the Roland Corporation &lt;br&gt; in the United States and/or other countries&lt;br&gt;This app is an independent, unofficial companion tool for the Roland JDXi synthesizer&lt;br&gt;This app is not affiliated with, endorsed by, or sponsored by Roland Corporation in any way&lt;br&gt;All product names, trademarks, and logos are the property of their respective owners.&lt;br&gt;</source>
+            <translation type="vanished">&lt;br&gt;&lt;b&gt;Riconoscimenti:&lt;/b&gt;&lt;br&gt;Questa applicazione usa le seguenti librerie:&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://mido.readthedocs.io/'&gt;Mido&lt;/a&gt; – lettura e invio dei messaggi MIDI&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.music.mcgill.ca/~gary/rtmidi/'&gt;RtMidi&lt;/a&gt; – comunicazione MIDI di basso livello&lt;br&gt;&amp;bull; &lt;a style='color: blue' href='https://www.qt.io/'&gt;Qt&lt;/a&gt; – framework per applicazioni multipiattaforma&lt;br&gt;Codice sorgente su &lt;a style='color: blue' href='https://github.com/emanuelemerlo/JDXI-Editor'&gt;GitHub&lt;/a&gt;&lt;br&gt;JD-Xi Studio è un'edizione indipendente di &lt;a style='color: blue' href='https://github.com/markxbrooks/JDXI-Editor'&gt;JDXI-Editor&lt;/a&gt; di Mark Brooks&lt;br&gt;Distribuito con &lt;a style='color: blue' href='https://opensource.org/licenses/MIT'&gt;licenza MIT&lt;/a&gt;&lt;br&gt;'Roland' e 'JD-Xi' sono marchi di Roland Corporation &lt;br&gt; negli Stati Uniti e/o in altri paesi&lt;br&gt;Questa app è uno strumento indipendente e non ufficiale per il sintetizzatore Roland JD-Xi&lt;br&gt;Non è affiliata, approvata o sponsorizzata in alcun modo da Roland Corporation&lt;br&gt;Tutti i nomi di prodotti, i marchi e i loghi appartengono ai rispettivi proprietari.&lt;br&gt;</translation>
+        </message>
+        <message>
+            <source>about {program}</source>
+            <translation type="vanished">Informazioni su {program}</translation>
+        </message>
+        <message>
+            <source>{program}
+version:	{version}</source>
+            <translation type="vanished">{program}
+versione:	{version}</translation>
         </message>
         <message>
             <source>based on {origin}</source>

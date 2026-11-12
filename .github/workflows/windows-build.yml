@@ -3,17 +3,19 @@ name: Windows build
 # Builds the Windows app (PyInstaller, one folder) and its installer (Inno Setup),
 # opens it for a smoke test, and uploads both as artifacts. On a v* tag the
 # files are also attached to a GitHub release (a pre-release for v*-beta.N tags).
+# The Release workflow (release.yml) calls it too, and publishes the files itself.
 on:
   push:
     branches: ["fix/**", "feature/**", "release/**"]
     tags: ["v*"]
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: write
 
 concurrency:
-  group: windows-build-${{ github.ref }}
+  group: windows-build-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
