@@ -27,7 +27,7 @@ from PySide6.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequ
 
 from jdxi_editor.project import __organization_name__, __program__, __version__
 
-REPOSITORY = "emanuelemerlo/JDXI-Editor"  # this fork has its own releases
+REPOSITORY = "emanuelemerlo/JD-Xi-Studio"  # this fork has its own releases
 RELEASES_API_URL = f"https://api.github.com/repos/{REPOSITORY}/releases?per_page=10"
 RELEASES_PAGE_URL = f"https://github.com/{REPOSITORY}/releases"
 PIP_UPGRADE_COMMAND = (

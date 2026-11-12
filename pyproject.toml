@@ -67,10 +67,10 @@ dev = ["pytest>=8", "mypy", "black", "isort", "flake8", "soundfile", "librosa"]
 build-windows = ["pyinstaller>=6"]
 
 [project.urls]
-Homepage = "https://github.com/emanuelemerlo/JDXI-Editor"
+Homepage = "https://github.com/emanuelemerlo/JD-Xi-Studio"
 "Original project" = "https://github.com/markxbrooks/JDXI-Editor"
-Repository = "https://github.com/emanuelemerlo/JDXI-Editor.git"
-Issues = "https://github.com/emanuelemerlo/JDXI-Editor/issues"
+Repository = "https://github.com/emanuelemerlo/JD-Xi-Studio.git"
+Issues = "https://github.com/emanuelemerlo/JD-Xi-Studio/issues"
 
 [project.scripts]
 jdxi_manager = "jdxi_editor.main:main"

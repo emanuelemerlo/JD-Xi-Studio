@@ -12,14 +12,14 @@ pattern sequencer, the effects and the vocoder, on the computer screen instead o
    JD-Xi Studio is developed by **Emanuele Merlo**. It is an independent edition of
    `JDXI-Editor <https://github.com/markxbrooks/JDXI-Editor>`_ by **Mark Brooks**, on which it is
    based (MIT licence). The README on GitHub has the full description, the screenshots and how to
-   install it: https://github.com/emanuelemerlo/JDXI-Editor
+   install it: https://github.com/emanuelemerlo/JD-Xi-Studio
 
 .. image:: ./resources/keyboard_window_900.png
    :alt: The keyboard window
 
 Download
 --------
-The builds are on the `releases page <https://github.com/emanuelemerlo/JDXI-Editor/releases>`_:
+The builds are on the `releases page <https://github.com/emanuelemerlo/JD-Xi-Studio/releases>`_:
 for Windows an installer (``jdxi_editor-<version>_setup_win_x86-64.exe``, for the current user,
 no administrator rights) and a portable zip, plus the Python wheel. On macOS and Linux install the
 wheel with Python 3.10 to 3.13 and start it with ``jdxi-editor``.

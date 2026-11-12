@@ -246,5 +246,5 @@ def test_pre_releases_are_offered_only_to_pre_release_copies():
 
 
 def test_the_fork_checks_its_own_releases():
-    assert upd.REPOSITORY == "emanuelemerlo/JDXI-Editor"
-    assert "emanuelemerlo/JDXI-Editor" in upd.RELEASES_API_URL
+    assert upd.REPOSITORY == "emanuelemerlo/JD-Xi-Studio"
+    assert "emanuelemerlo/JD-Xi-Studio" in upd.RELEASES_API_URL

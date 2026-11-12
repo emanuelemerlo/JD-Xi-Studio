@@ -138,7 +138,7 @@ from jdxi_editor.ui.windows.patch.manager import PatchManager
 from jdxi_editor.utils.file import documentation_file_path, os_file_open
 from jdxi_editor.i18n import tr
 
-DOCUMENTATION_URL = "https://github.com/emanuelemerlo/JDXI-Editor#readme"
+DOCUMENTATION_URL = "https://github.com/emanuelemerlo/JD-Xi-Studio#readme"
 from picomidi.constant import Midi
 from picoui.specs.widgets import MessageBoxSpec
 
