@@ -231,6 +231,7 @@ class V2Editor(SynthBase):
     """Base of the new editors: values, sending, receiving, information."""
 
     ACCENT = "#f2994a"
+    CAN_RELOAD = False  # the tone editors: a Reload button (the preset again)
     TEMPORARY_AREA = "TEMPORARY_PROGRAM"
     AREA = "PROGRAM"  # shown before the group in the information panel
 
@@ -253,6 +254,14 @@ class V2Editor(SynthBase):
                 pv.valueChanged.connect(lambda v, spec=spec: self._queue_send(spec, v))
                 self.values[spec] = pv
                 self.block_of[spec] = block
+        # the user's changes: undo / redo, and a warning before they are lost
+        from jdxi_editor.ui.v2.history import PROGRAM, EditHistory, part_of_synth
+
+        synth = getattr(self, "SYNTH_TYPE", None)
+        self.history = EditHistory(
+            part_of_synth(synth) if synth is not None else PROGRAM, self._history_label(), self
+        )
+        self.history.watch(self.values.values())
         # a plain dict: the registry would merge parameters that share a name
         self.controls = dict(self.values)
         self.midi_requests = [b.request for b in blocks if b.request is not None]
@@ -292,6 +301,18 @@ class V2Editor(SynthBase):
 
             label.setText(short_name(title).upper())  # as on its tab, translated
             label.setVisible(bool(title))
+        history = getattr(self, "history", None)
+        if history is not None:
+            history.label = self._history_label()
+
+    def _history_label(self) -> str:
+        from jdxi_editor.ui.v2.names import short_name
+
+        title = self.windowTitle()
+        return short_name(title) if title else tr("Program")
+
+    def reload_sound(self) -> None:
+        """Back to the sound as stored (tone editors: the preset again)."""
 
     # -------------------------------------------------------------- layout
     def _build_frame(self) -> None:
@@ -311,7 +332,15 @@ class V2Editor(SynthBase):
         )
         self.title_label.setVisible(bool(self.windowTitle()))
         bar.addWidget(self.title_label)
+        from jdxi_editor.ui.v2.restyle import edit_controls
+
+        self.modified_label, self.edit_buttons = edit_controls(
+            self, reload=self.reload_sound if self.CAN_RELOAD else None
+        )
+        bar.addWidget(self.modified_label)
         bar.addStretch()
+        for button in self.edit_buttons:
+            bar.addWidget(button)
         self.read_status = QLabel("")
         self.read_status.setStyleSheet("color: #a3a6ad; font-size: 11px;")
         bar.addWidget(self.read_status)
@@ -572,6 +601,7 @@ def tone_editor_base():
         """A tone editor (Digital, Drums): adds the existing tone preset panel on the side."""
 
         AREA = "TONE"
+        CAN_RELOAD = True
         TEMPORARY_AREA = None  # values come from the DT1 messages
         SYNTH_TYPE = None  # JDXiSynth.DIGITAL_SYNTH_1 ...
         PRESET_KIND = "Digital"  # the preset panel's list: "Digital", "Drums"
@@ -582,6 +612,9 @@ def tone_editor_base():
 
         def update_instrument_image(self) -> None:
             show_category_card(self, self.ACCENT)
+
+        def reload_sound(self) -> None:
+            reload_preset(self)
 
         def _selected_category(self) -> str:
             return selected_category(self)
@@ -831,3 +864,18 @@ def tidy_preset_card(panel: QWidget) -> None:
     if title is not None:  # the display: as wide as the card
         title.setMinimumWidth(0)
         title.setSizePolicy(QSizePolicy.Policy.Expanding, title.sizePolicy().verticalPolicy())
+
+
+def reload_preset(editor) -> None:
+    """The preset shown in the editor's panel loaded again: the sound as stored, read back."""
+    from jdxi_editor.ui.v2.history import confirm_discard
+
+    preset = getattr(editor, "instrument_preset", None)
+    if preset is None or not hasattr(preset, "_on_load_preset"):
+        return
+    history = getattr(editor, "history", None)
+    if history is not None and not confirm_discard(
+        [history.part], tr("Reloading the preset brings back the sound as stored.")
+    ):
+        return
+    preset._on_load_preset()

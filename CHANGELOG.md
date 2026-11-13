@@ -16,6 +16,18 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   own settings key; at the first start the settings and files used up to alpha 2 (the original
   program's) are copied over, the originals are left for JDXI-Editor
 
+### Changes: undo, reload, no loss by mistake
+- **Undo / Redo** (Ctrl+Z, Ctrl+Y or Ctrl+Shift+Z, and two buttons at the top of every editor):
+  the editor shown, or the last one edited; a slider drag is one change; the value undone is sent to
+  the JD-Xi at once
+- **Modified**: an editor with changes not saved to a file shows "● Modified" next to its name and
+  a dot on its tab
+- **Asked first**: before a preset, a program or a patch file replaces edited sounds, and at
+  closing: *Save to file…* (then repeat), *Discard the changes* or *Cancel*. Only the parts that
+  change count (a Digital 1 preset does not ask about Analog). Preferences › *Ask before losing
+  unsaved changes* turns it off. What is done on the JD-Xi itself cannot be stopped
+- **Reload** (Digital, Drums, Analog): the preset again, the sound as stored
+
 ### Logs
 - **Log viewer**: fixed-width text with the columns lined up (the emoji before each message are left
   out, the level column says it); a **Warnings and errors** tab with their count, showing only the

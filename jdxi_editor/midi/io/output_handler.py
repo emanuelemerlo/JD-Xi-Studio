@@ -17,6 +17,7 @@ Example usage:
 
 """
 
+from contextlib import contextmanager
 import logging
 from typing import Iterable, Optional
 
@@ -42,6 +43,10 @@ from picomidi.utils.formatting import (
     format_message_to_hex_string as format_midi_message_to_hex_string,
 )
 
+
+
+# Asked before a program change goes out: channel (0-15) -> send it? (set by the main window)
+PROGRAM_CHANGE_GUARD = None
 
 class MidiOutHandler(MidiIOController):
     """Helper class for MIDI communication with the JD-Xi."""
@@ -297,6 +302,31 @@ class MidiOutHandler(MidiIOController):
             return False
 
     def send_program_change(self, program: int, channel: int = 0) -> bool:
+        """A program change, once the guard allows it (unsaved edits: see ui.v2.history)."""
+        if not self._program_change_allowed(channel):
+            return False
+        with self._program_change_passed():
+            return self._send_program_change(program, channel)
+
+    def _program_change_allowed(self, channel: int) -> bool:
+        if getattr(self, "_program_change_ok", False) or PROGRAM_CHANGE_GUARD is None:
+            return True
+        try:
+            return bool(PROGRAM_CHANGE_GUARD(channel))
+        except Exception as ex:  # a broken guard must not stop the MIDI
+            log.error(scope="MidiOutHandler", message=f"Program change guard: {ex}")
+            return True
+
+    @contextmanager
+    def _program_change_passed(self):
+        before = getattr(self, "_program_change_ok", False)
+        self._program_change_ok = True  # the messages of this change are not asked again
+        try:
+            yield
+        finally:
+            self._program_change_ok = before
+
+    def _send_program_change(self, program: int, channel: int = 0) -> bool:
         """
         Send address program change message.
 
@@ -490,6 +520,15 @@ class MidiOutHandler(MidiIOController):
         )
 
     def send_bank_select_and_program_change(
+        self, channel: int, bank_msb: int, bank_lsb: int, program: int
+    ) -> bool:
+        """Bank select and program change, once the guard allows it."""
+        if not self._program_change_allowed(channel):
+            return False
+        with self._program_change_passed():
+            return self._send_bank_select_and_program_change(channel, bank_msb, bank_lsb, program)
+
+    def _send_bank_select_and_program_change(
         self, channel: int, bank_msb: int, bank_lsb: int, program: int
     ) -> bool:
         """

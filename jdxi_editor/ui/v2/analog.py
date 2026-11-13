@@ -67,6 +67,11 @@ class AnalogToneEditor(AnalogSynthEditor):
         self._pending: dict = {}
         super().__init__(midi_helper=midi_helper, preset_helper=preset_helper, parent=parent)
 
+    def reload_sound(self) -> None:
+        from jdxi_editor.ui.v2.framework import reload_preset
+
+        reload_preset(self)
+
     # ------------------------------------------------------------------ layout
     def setup_ui(self) -> None:
         self.setMinimumSize(1000, 640)
@@ -103,7 +108,16 @@ class AnalogToneEditor(AnalogSynthEditor):
         bar = QHBoxLayout()
         self.title_label = title_badge(tr("Analog"), ACCENT)
         bar.addWidget(self.title_label)
+        # the user's changes: undo / redo, reload, and a warning before they are lost
+        from jdxi_editor.ui.v2.history import ANALOG, EditHistory
+        from jdxi_editor.ui.v2.restyle import edit_controls
+
+        self.history = EditHistory(ANALOG, tr("Analog"), self)
+        self.modified_label, self.edit_buttons = edit_controls(self, reload=self.reload_sound)
+        bar.addWidget(self.modified_label)
         bar.addStretch()
+        for button in self.edit_buttons:
+            bar.addWidget(button)
         left.addLayout(bar)
         left.addWidget(scroll, 1)
         root.addLayout(left, 1)
@@ -173,6 +187,7 @@ class AnalogToneEditor(AnalogSynthEditor):
             pv.valueChanged.connect(lambda v, param=param: self._queue_send(param, v))
             self.values[param] = pv
         self.controls.update(self.values)
+        self.history.watch(self.values.values())
 
         P = AnalogParam
         hub = self.info_hub

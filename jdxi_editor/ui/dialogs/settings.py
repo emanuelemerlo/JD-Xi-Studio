@@ -275,6 +275,13 @@ class UiPreferencesDialog(QDialog):
         self.language_note.setObjectName("prefHint")
         grid.addWidget(self.language_note, grid.rowCount(), 0, 1, 2)
         option(grid, self.update_check_checkbox, self.update_check_label)
+        from jdxi_editor.ui.v2.history import asks_before_discarding
+
+        self.confirm_discard_checkbox = QCheckBox(tr("Ask before losing unsaved changes"))
+        self.confirm_discard_checkbox.setChecked(asks_before_discarding(self.settings))
+        option(grid, self.confirm_discard_checkbox, QLabel(
+            tr("Before a preset, a program or a patch file replaces edited sounds, and at closing")
+        ))
         logs, grid = card(tr("Logs"))
         choice(grid, self.log_level_label, self.log_level_combo)
         # "Enable Logging?" never switched anything (the log is always written): the level
@@ -364,6 +371,10 @@ class UiPreferencesDialog(QDialog):
             settings.setValue(
                 AUTO_CHECK_KEY, bool(self.update_check_checkbox.isChecked())
             )
+            from jdxi_editor.ui.v2.history import set_asks_before_discarding
+
+            if hasattr(self, "confirm_discard_checkbox"):
+                set_asks_before_discarding(self.confirm_discard_checkbox.isChecked(), settings)
             set_language_setting(self.language_combo.currentData(), settings)
             settings.sync()
             log_settings()

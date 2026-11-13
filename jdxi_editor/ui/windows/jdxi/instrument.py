@@ -187,6 +187,7 @@ class JDXiInstrument(JDXiWindow):
         self._update_synth_button_styles()
         self._set_callbacks()
         self._init_preset_helpers()
+        self._init_edit_history()
         self.editor_registry = {
             "vocal_fx": EditorConfig(
                 title="Vocal Effects",
@@ -409,6 +410,59 @@ class JDXiInstrument(JDXiWindow):
         except (json.JSONDecodeError, TypeError):
             pass
 
+    def _init_edit_history(self) -> None:
+        """Undo / Redo for the editors, and a warning before unsaved changes are lost."""
+        from PySide6.QtGui import QKeySequence, QShortcut
+
+        from jdxi_editor.midi.io import output_handler
+        from jdxi_editor.ui.v2 import history
+
+        output_handler.PROGRAM_CHANGE_GUARD = history.program_change_allowed
+        history.save_callback = self._patch_save
+        self._edit_shortcuts = []
+        for keys, action in (
+            (QKeySequence.StandardKey.Undo, "undo"),
+            (QKeySequence.StandardKey.Redo, "redo"),
+            (QKeySequence("Ctrl+Y"), "redo"),
+        ):
+            shortcut = QShortcut(keys, self)
+            shortcut.setContext(Qt.ShortcutContext.ApplicationShortcut)  # both windows
+            shortcut.activated.connect(lambda action=action: self.edit_history_step(action))
+            self._edit_shortcuts.append(shortcut)
+
+    def active_history(self):
+        """The history Ctrl+Z works on: the editor shown, else the last one edited."""
+        from jdxi_editor.ui.v2 import history
+
+        tabs = getattr(getattr(self, "main_editor", None), "editor_tab_widget", None)
+        editor = tabs.currentWidget() if tabs is not None else None
+        found = getattr(editor, "history", None)
+        if isinstance(found, history.EditHistory) and editor.isVisible():
+            return found
+        return history.last_edited()
+
+    def edit_history_step(self, action: str) -> bool:
+        target = self.active_history()
+        if target is None:
+            return False
+        return target.undo() if action == "undo" else target.redo()
+
+    def _follow_modified(self, editor, title: str) -> None:
+        """A dot before the editor's tab name while its changes are not saved."""
+        from jdxi_editor.ui.v2.names import short_name
+
+        history = getattr(editor, "history", None)
+        if history is None or not hasattr(history, "modifiedChanged"):
+            return
+        tabs = self.main_editor.editor_tab_widget
+
+        def mark(modified: bool) -> None:
+            index = tabs.indexOf(editor)
+            if index >= 0:
+                tabs.setTabText(index, ("● " if modified else "") + short_name(title))
+
+        history.modifiedChanged.connect(mark)
+
     def closeEvent(self, event: QCloseEvent) -> None:
         """
         Handle window close event
@@ -416,6 +470,11 @@ class JDXiInstrument(JDXiWindow):
         :param event: QCloseEvent
         :return: None
         """
+        from jdxi_editor.ui.v2.history import ALL_PARTS, confirm_discard
+
+        if not confirm_discard(ALL_PARTS, tr("Closing the program loses them.")):
+            event.ignore()
+            return
         try:
             # Wait for any USB recording threads to avoid "Destroyed while still running"
             self._wait_for_usb_recording_threads()
@@ -1173,6 +1232,7 @@ class JDXiInstrument(JDXiWindow):
             # Names only, as in the mockups: every editor fits on one row
             tab_index = self.main_editor.editor_tab_widget.addTab(editor, short_name(title))
             self.main_editor.editor_tab_widget.setTabToolTip(tab_index, title)
+            self._follow_modified(editor, title)
 
             # Store the tab index for Analog Synth to enable styling
             if title == "Analog Synth":
