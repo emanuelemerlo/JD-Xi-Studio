@@ -28,16 +28,21 @@ DONE_KEY = "migrated_from_jdxi_editor"
 SKIP = {"logs", "temp"}  # the old program's logs and temporary files stay where they are
 
 
-def migrate(home: Path | None = None) -> dict[str, int]:
+def migrate(
+    home: Path | None = None,
+    new: QSettings | None = None,
+    old: QSettings | None = None,
+) -> dict[str, int]:
     """Copy the old settings and user files once; returns what was copied."""
     home = home or Path.home()
-    new = QSettings(__organization_name__, __program__)
+    new = new if new is not None else QSettings(__organization_name__, __program__)
     copied = {"settings": 0, "files": 0}
     if new.value(DONE_KEY, False, type=bool):
         return copied
-    old = QSettings(LEGACY_ORGANIZATION, LEGACY_PROGRAM)
-    if not new.allKeys():
-        for key in old.allKeys():
+    old = old if old is not None else QSettings(LEGACY_ORGANIZATION, LEGACY_PROGRAM)
+    present = set(new.allKeys())
+    for key in old.allKeys():
+        if key not in present:  # what JD-Xi Studio already has is kept
             new.setValue(key, old.value(key))
             copied["settings"] += 1
     source, target = home / f".{LEGACY_DATA_NAME}", home / f".{__data_name__}"
