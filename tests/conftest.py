@@ -1,3 +1,4 @@
+import pytest
 """
 Shared test setup: the tests run on in-memory MIDI ports instead of rtmidi's.
 
@@ -140,3 +141,11 @@ def pytest_configure(config) -> None:
     if not _wants_real_midi(config):
         rtmidi.MidiIn = FakeMidiIn
         rtmidi.MidiOut = FakeMidiOut
+
+
+@pytest.fixture(autouse=True)
+def _no_unsaved_changes_dialog(monkeypatch):
+    """Tests change values: the "unsaved changes" question (a modal dialog) answers Discard."""
+    from jdxi_editor.ui.v2 import history
+
+    monkeypatch.setattr(history, "ask", lambda labels, action, parent=None: "discard")
