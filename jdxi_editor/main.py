@@ -84,9 +84,14 @@ def main() -> None:
 
         moved = migrate()
         settings = QSettings(__organization_name__, __program__)
-        log_level = int(str(settings.value("log_level", logging.DEBUG)))
-        # the logs go to ~/.jdxi_studio/logs/jdxi_studio-<date>-<time>.log
+        # the logs go to ~/.jdxi_studio/logs/jdxi_studio-<date>-<time>.log, kept two weeks
+        from jdxi_editor.log_files import LOG_KEEP_DAYS, apply_log_level, prune_logs, saved_level
+
+        pruned = prune_logs()
         logger = setup_logging(use_rich=False, project_name=__data_name__)
+        apply_log_level(saved_level(settings), logger)  # Preferences > Logs > level
+        if pruned:
+            logger.info(f"Deleted {pruned} log files older than {LOG_KEEP_DAYS} days")
         if moved["settings"] or moved["files"]:
             logger.info(f"Copied the settings ({moved['settings']}) and files ({moved['files']}) of JDXI-Editor")
 
