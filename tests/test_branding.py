@@ -60,9 +60,9 @@ def test_old_settings_and_files_are_copied_once(tmp_path, monkeypatch):
 
     from jdxi_editor import migrate, project
 
-    QSettings.setDefaultFormat(QSettings.Format.IniFormat)
-    QSettings.setPath(QSettings.Format.IniFormat, QSettings.Scope.UserScope, str(tmp_path / "settings"))
-    old = QSettings(project.LEGACY_ORGANIZATION, project.LEGACY_PROGRAM)
+    ini = QSettings.Format.IniFormat  # files in tmp_path: the real settings are never touched
+    old = QSettings(str(tmp_path / "old.ini"), ini)
+    new = QSettings(str(tmp_path / "new.ini"), ini)
     old.setValue("midi/input_port", "JD-Xi")
     old.sync()
     legacy = tmp_path / f".{project.LEGACY_DATA_NAME}"
@@ -70,18 +70,14 @@ def test_old_settings_and_files_are_copied_once(tmp_path, monkeypatch):
     (legacy / "recipes" / "one.json").write_text("{}")
     (legacy / "logs").mkdir()
     (legacy / "logs" / "old.log").write_text("old")
-    try:
-        copied = migrate.migrate(home=tmp_path)
-        new = QSettings(project.__organization_name__, project.__program__)
-        assert new.value("midi/input_port") == "JD-Xi" and copied["settings"] >= 1
-        target = tmp_path / f".{project.__data_name__}"
-        assert (target / "recipes" / "one.json").exists()
-        assert not (target / "logs").exists()  # the old program's logs stay where they are
-        new.setValue("midi/input_port", "changed")
-        assert migrate.migrate(home=tmp_path) == {"settings": 0, "files": 0}  # only once
-        assert new.value("midi/input_port") == "changed"
-    finally:
-        QSettings.setDefaultFormat(QSettings.Format.NativeFormat)
+    copied = migrate.migrate(home=tmp_path, new=new, old=old)
+    assert new.value("midi/input_port") == "JD-Xi" and copied["settings"] >= 1
+    target = tmp_path / f".{project.__data_name__}"
+    assert (target / "recipes" / "one.json").exists()
+    assert not (target / "logs").exists()  # the old program's logs stay where they are
+    new.setValue("midi/input_port", "changed")
+    assert migrate.migrate(home=tmp_path, new=new, old=old) == {"settings": 0, "files": 0}  # only once
+    assert new.value("midi/input_port") == "changed"
 
 
 def test_log_viewer_reads_the_newest_session_log(tmp_path):
