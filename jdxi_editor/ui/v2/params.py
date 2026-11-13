@@ -77,6 +77,7 @@ class ParamValue(QObject):
         self.minimum = minimum
         self.maximum = maximum
         self._value = 0 if minimum <= 0 <= maximum else minimum
+        self.previous = self._value
         self._watchers: list[Callable[[int], None]] = []
         self._enabled = True
         self._enabled_watchers: list[Callable[[bool], None]] = []
@@ -89,6 +90,7 @@ class ParamValue(QObject):
         value = self.clamp(value)
         if value == self._value:
             return
+        self.previous = self._value  # for the edit history (undo)
         self._value = value
         for watcher in list(self._watchers):
             watcher(value)

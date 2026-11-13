@@ -1059,12 +1059,15 @@ class MidiFilePlayer(SynthEditor):
                     scope=self.__class__.__name__,
                     message=f"Sending live MIDI: Ch {display_ch} -> preset {preset_num} ({spec.get('Name', '?')})",
                 )
-                self.midi_helper.send_bank_select_and_program_change(
-                    channel=channel,
-                    bank_msb=spec["MSB"],
-                    bank_lsb=spec["LSB"],
-                    program=max(0, spec["PC"] - 1),
-                )
+                from jdxi_editor.ui.v2.history import paused
+
+                with paused():  # the file's own sounds: played, not asked
+                    self.midi_helper.send_bank_select_and_program_change(
+                        channel=channel,
+                        bank_msb=spec["MSB"],
+                        bank_lsb=spec["LSB"],
+                        program=max(0, spec["PC"] - 1),
+                    )
                 sent_count += 1
             log.parameter(
                 scope=self.__class__.__name__,

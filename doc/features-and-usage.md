@@ -83,6 +83,21 @@ This document covers recent changes, patch loading/saving, and SoundFont usage.
 | Program Editor | No |
 | MIDI File Player | MIDI saved separately in .msz |
 
+### Undo, Reload and unsaved changes
+
+- **Undo / Redo**: Ctrl+Z and Ctrl+Y (or Ctrl+Shift+Z), or the buttons at the top of each editor.
+  They act on the editor shown (else the last one edited); a slider drag is one change, and the
+  value undone is sent to the JD-Xi at once.
+- **● Modified** next to the editor's name (and a dot on its tab) while its changes are not saved
+  to a file (`.jsz`, `.msz`, `.syx`).
+- **Asked first** before a preset, a program or a patch file replaces edited parts, and at closing:
+  *Save to file…*, *Discard the changes* or *Cancel*. Off in Preferences › *Ask before losing
+  unsaved changes*. Changes made on the JD-Xi itself are not seen beforehand.
+- **Reload** (Digital, Drums, Analog): loads the preset again, back to the sound as stored.
+
+The edits go to the JD-Xi's temporary area as they are made: to keep them, save to a file or
+press WRITE on the JD-Xi.
+
 ### Save Source
 
 The editor **saves from the current UI control values** only. There is no "request current patch from synth" step before save. If a control was never updated from the synth, the saved value may not match the hardware.

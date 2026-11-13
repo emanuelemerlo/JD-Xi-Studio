@@ -80,6 +80,8 @@ def zip_directory(folder_path, zip_path):
                 zipf.write(file_path, arcname)
 
 
+from jdxi_editor.ui.v2.history import ALL_PARTS, confirm_discard, mark_all_saved
+
 class PatchManager(QMainWindow):
     def __init__(
         self,
@@ -437,6 +439,7 @@ class PatchManager(QMainWindow):
                 if file_path.lower().endswith(".syx"):
                     if self.midi_helper.save_patch_as_syx(file_path, temp_folder):
                         log.message(f"SysEx patch saved to {file_path}")
+                        mark_all_saved()
                     else:
                         log.warning("Failed to save .syx file")
                     return
@@ -451,8 +454,11 @@ class PatchManager(QMainWindow):
 
                 file_type = "Music Bundle" if file_path.endswith(".msz") else "Patch"
                 log.message(f"{file_type} saved to {file_path}")
+                mark_all_saved()
             else:
-                # Load patch (JSON files)
+                # Load patch (JSON files): it replaces the sounds, unsaved changes first
+                if not confirm_discard(ALL_PARTS, tr("Loading the patch replaces every part's sound.")):
+                    return
                 self.midi_helper.load_patch(file_path)
 
                 # Load MIDI file from bundle if it's an .msz file

@@ -43,6 +43,10 @@ def test_open_rtmidi_port_falls_back_to_a_null_port():
 
 
 def test_open_rtmidi_port_uses_the_real_class_when_it_works():
+    try:
+        rtmidi.MidiOut().delete()
+    except Exception as ex:  # no ALSA sequencer (CI runners, containers): nothing real to open
+        pytest.skip(f"no MIDI backend here: {ex}")
     port, error = open_rtmidi_port(rtmidi.MidiOut)
     assert error is None
     assert not isinstance(port, NullMidiPort)

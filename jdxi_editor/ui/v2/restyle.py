@@ -173,3 +173,49 @@ def title_badge(text: str, accent: str) -> QLabel:
     )
     label.setSizePolicy(label.sizePolicy().horizontalPolicy(), label.sizePolicy().verticalPolicy())
     return label
+
+
+def edit_controls(editor, reload=None):
+    """A "Modified" mark and the Undo / Redo (/ Reload) buttons for an editor with a history."""
+    import qtawesome as qta
+    from PySide6.QtCore import QSize
+    from PySide6.QtWidgets import QToolButton
+
+    from jdxi_editor.i18n import tr
+
+    history = editor.history
+    mark = QLabel(tr("● Modified"))
+    mark.setObjectName("v2Modified")
+    mark.setStyleSheet("QLabel#v2Modified { color: #ffb347; font-size: 12px; font-weight: 700; padding-left: 8px; }")
+    mark.setToolTip(tr("Changes not saved to a file: changing the sound from the program asks first"))
+    mark.setVisible(history.modified)
+    history.modifiedChanged.connect(mark.setVisible)
+
+    def button(icon: str, tip: str, slot) -> QToolButton:
+        b = QToolButton()
+        b.setObjectName("v2EditButton")
+        b.setIcon(qta.icon(icon, color="#e6e6e6", color_disabled="#55585f"))
+        b.setIconSize(QSize(20, 20))
+        b.setToolTip(tip)
+        b.setAutoRaise(True)
+        b.setStyleSheet(
+            "QToolButton#v2EditButton { border: 1px solid #3a3d44; border-radius: 5px; padding: 3px; background: #1b1c1f; }"
+            "QToolButton#v2EditButton:hover { border-color: #ff2a1a; }"
+            "QToolButton#v2EditButton:disabled { border-color: #26282d; }"
+        )
+        b.clicked.connect(slot)
+        return b
+
+    undo = button("mdi.undo", tr("Undo the last change (Ctrl+Z)"), history.undo)
+    redo = button("mdi.redo", tr("Redo (Ctrl+Y)"), history.redo)
+    buttons = [undo, redo]
+    if reload is not None:
+        buttons.append(button("mdi.reload", tr("Reload the preset: back to the sound as stored, the changes are lost"), reload))
+
+    def update() -> None:
+        undo.setEnabled(history.can_undo())
+        redo.setEnabled(history.can_redo())
+
+    history.stateChanged.connect(update)
+    update()
+    return mark, buttons

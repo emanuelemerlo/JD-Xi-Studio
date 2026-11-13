@@ -21,6 +21,8 @@ from __future__ import annotations
 import os
 from typing import Callable, Optional
 
+import pytest
+
 # The tests check English texts: run in English whatever the machine's
 # language or Preferences (tests of the translations set it themselves)
 os.environ.setdefault("JDXI_LANGUAGE", "en")
@@ -140,3 +142,16 @@ def pytest_configure(config) -> None:
     if not _wants_real_midi(config):
         rtmidi.MidiIn = FakeMidiIn
         rtmidi.MidiOut = FakeMidiOut
+
+
+
+def _discard(labels, action, parent=None):
+    return "discard"
+
+
+def pytest_configure(config):
+    """Tests change values: the "unsaved changes" question (a modal dialog, which would wait
+    forever) answers Discard, also when a module-wide window closes after the tests."""
+    from jdxi_editor.ui.v2 import history
+
+    history.ask = _discard
