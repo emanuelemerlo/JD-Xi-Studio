@@ -302,9 +302,10 @@ class SynthEditor(SynthBase):
         """Return the appropriate preset handler based on the current synth preset_type."""
         handler = self.preset_helpers.get(self.preset_type)
         if handler is None:
-            log.warning(
+            # Vocal FX (and the program) have no tone list of their own: not an error
+            (log.debug if str(self.preset_type).upper().endswith(("VOCAL_FX", "PROGRAM")) else log.warning)(
                 scope=self.__class__.__name__,
-                message=f"Unknown synth preset_type: {self.preset_type}, defaulting to digital_1",
+                message=f"No tone list for {self.preset_type}, using Digital 1's",
             )
             return self.preset_helpers[JDXi.Synth.DIGITAL_SYNTH_1]  # Safe fallback
         return handler
