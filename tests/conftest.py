@@ -1,4 +1,3 @@
-import pytest
 """
 Shared test setup: the tests run on in-memory MIDI ports instead of rtmidi's.
 
@@ -21,6 +20,8 @@ from __future__ import annotations
 
 import os
 from typing import Callable, Optional
+
+import pytest
 
 # The tests check English texts: run in English whatever the machine's
 # language or Preferences (tests of the translations set it themselves)
