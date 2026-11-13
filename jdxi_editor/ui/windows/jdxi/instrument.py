@@ -551,9 +551,10 @@ class JDXiInstrument(JDXiWindow):
         """
         helper = self.preset_helpers.get(self.current_synth_type)
         if helper is None:
-            log.warning(
+            # Vocal FX (and the program) have no tone list of their own: not an error
+            (log.debug if str(self.current_synth_type).upper().endswith(("VOCAL_FX", "PROGRAM")) else log.warning)(
                 scope="JDXiInstrument",
-                message=f"Unknown synth preset_type: {self.current_synth_type}, defaulting to digital_1",
+                message=f"No tone list for {self.current_synth_type}, using Digital 1's",
             )
             return self.preset_helpers[JDXiSynth.DIGITAL_SYNTH_1]  # Safe fallback
         return helper
