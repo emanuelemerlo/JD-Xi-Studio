@@ -144,9 +144,14 @@ def pytest_configure(config) -> None:
         rtmidi.MidiOut = FakeMidiOut
 
 
-@pytest.fixture(autouse=True)
-def _no_unsaved_changes_dialog(monkeypatch):
-    """Tests change values: the "unsaved changes" question (a modal dialog) answers Discard."""
+
+def _discard(labels, action, parent=None):
+    return "discard"
+
+
+def pytest_configure(config):
+    """Tests change values: the "unsaved changes" question (a modal dialog, which would wait
+    forever) answers Discard, also when a module-wide window closes after the tests."""
     from jdxi_editor.ui.v2 import history
 
-    monkeypatch.setattr(history, "ask", lambda labels, action, parent=None: "discard")
+    history.ask = _discard
