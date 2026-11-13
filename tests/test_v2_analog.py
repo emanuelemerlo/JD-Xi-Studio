@@ -143,11 +143,17 @@ def test_envelope_points_can_be_dragged(editor):
         e for e in editor.findChildren(w.EnvelopeView) if e.a.param is P.AMP_ENV_ATTACK_TIME
     )
     r = view.plot_rect()
-    target = QPointF(r.left() + r.width() * 0.27 * 0.5, r.top())  # half of the attack slot
-    _press(view, view.handles()[0][0])
+    original = (view.d.value(), view.s.value())
+    start = view.handles()[1][0]
+    target = QPointF(start.x() + r.width() * 0.08, r.top() + r.height() * 0.2)
+    _press(view, start)
+    _press(view, QPointF(start.x() + 4, start.y() - 2), QMouseEvent.Type.MouseMove)
     _press(view, target, QMouseEvent.Type.MouseMove)
     _press(view, target, QMouseEvent.Type.MouseButtonRelease)
-    assert abs(view.a.value() - 64) <= 2
+    changed = (view.d.value(), view.s.value())
+    assert changed != original
+    assert editor.history.undo() and (view.d.value(), view.s.value()) == original
+    assert editor.history.redo() and (view.d.value(), view.s.value()) == changed
 
 
 def test_filter_curve_drag_sets_cutoff_and_resonance(editor):

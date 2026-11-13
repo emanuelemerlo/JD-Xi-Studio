@@ -67,6 +67,36 @@ def test_a_drag_is_one_edit(app):
     assert not history.can_undo()
 
 
+def test_grouped_edit_is_one_undo_redo(app):
+    a, b = _pv(app, 10), _pv(app, 20)
+    history = _history(app, h.ANALOG, a, b)
+    history.begin_group()
+    a.setValue(30)
+    a.setValue(40)
+    b.setValue(50)
+    history.end_group()
+
+    assert history.undo() and (a.value(), b.value()) == (10, 20)
+    assert not history.can_undo() and history.can_redo()
+    assert history.redo() and (a.value(), b.value()) == (40, 50)
+
+
+def test_revert_restores_values_and_clears_history(app, monkeypatch):
+    from types import SimpleNamespace
+
+    from jdxi_editor.ui.v2.framework import restore_sound
+
+    a, b = _pv(app, 10), _pv(app, 20)
+    history = _history(app, h.ANALOG, a, b)
+    a.setValue(30)
+    b.setValue(50)
+    monkeypatch.setattr(h, "ask", lambda *args, **kwargs: "discard")
+
+    restore_sound(SimpleNamespace(history=history))
+    assert (a.value(), b.value()) == (10, 20)
+    assert not history.modified and not history.can_undo() and not history.can_redo()
+
+
 def test_values_from_the_jdxi_are_not_edits(app):
     a = _pv(app, 0)
     history = _history(app, h.DIGITAL_1, a)
@@ -146,9 +176,11 @@ def test_editors_record_and_undo(app, monkeypatch):
             pv.setValue(pv.minimum if start != pv.minimum else pv.maximum)
             assert editor.history.modified and editor.edit_buttons[0].isEnabled()
             assert len(editor.edit_buttons) == 3  # undo, redo, reload
+            assert editor.edit_buttons[2].isEnabled()
             assert not editor.modified_label.isHidden()
             editor.history.undo()
             assert pv.value() == start and editor.modified_label.isHidden()
+            assert not editor.edit_buttons[2].isEnabled()  # nothing to restore
         finally:
             editor.close()
             editor.deleteLater()
@@ -179,3 +211,13 @@ def test_deleted_editors_are_left_out(app):
     QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
     assert history not in h.histories([h.DRUMS])
     assert h.confirm_discard([h.DRUMS], "x")  # no crash on the deleted one
+
+
+def test_a_press_without_release_does_not_leave_a_group_open(app):
+    a = _pv(app, 10)
+    history = _history(app, h.ANALOG, a)
+    history.begin_group()  # pressed, no release
+    a.setValue(20)
+    history.end_group()  # what the next press does first
+    a.setValue(30)
+    assert history._group_depth == 0 and history.undo() and a.value() == 20

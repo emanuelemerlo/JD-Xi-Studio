@@ -614,7 +614,7 @@ def tone_editor_base():
             show_category_card(self, self.ACCENT)
 
         def reload_sound(self) -> None:
-            reload_preset(self)
+            restore_sound(self)
 
         def _selected_category(self) -> str:
             return selected_category(self)
@@ -866,16 +866,16 @@ def tidy_preset_card(panel: QWidget) -> None:
         title.setSizePolicy(QSizePolicy.Policy.Expanding, title.sizePolicy().verticalPolicy())
 
 
-def reload_preset(editor) -> None:
-    """The preset shown in the editor's panel loaded again: the sound as stored, read back."""
+def restore_sound(editor) -> None:
+    """Restore the editor's values from before its recorded edits."""
     from jdxi_editor.ui.v2.history import confirm_discard
 
-    preset = getattr(editor, "instrument_preset", None)
-    if preset is None or not hasattr(preset, "_on_load_preset"):
-        return
     history = getattr(editor, "history", None)
-    if history is not None and not confirm_discard(
-        [history.part], tr("Reloading the preset brings back the sound as stored.")
-    ):
+    if history is None:
         return
-    preset._on_load_preset()
+    confirm_discard(
+        [history.part],
+        tr("Reloading restores the values from before the changes in this editor."),
+        editor,
+        restore=True,
+    )

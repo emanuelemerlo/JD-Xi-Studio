@@ -210,11 +210,15 @@ def edit_controls(editor, reload=None):
     redo = button("mdi.redo", tr("Redo (Ctrl+Y)"), history.redo)
     buttons = [undo, redo]
     if reload is not None:
-        buttons.append(button("mdi.reload", tr("Reload the preset: back to the sound as stored, the changes are lost"), reload))
+        buttons.append(button("mdi.reload", tr("Restore the original values and discard this editor's changes"), reload))
+
+    restore = buttons[2] if reload is not None else None
 
     def update() -> None:
         undo.setEnabled(history.can_undo())
         redo.setEnabled(history.can_redo())
+        if restore is not None:  # nothing changed in this editor: nothing to restore
+            restore.setEnabled(history.can_undo())
 
     history.stateChanged.connect(update)
     update()

@@ -26,7 +26,8 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   closing: *Save to file…* (then repeat), *Discard the changes* or *Cancel*. Only the parts that
   change count (a Digital 1 preset does not ask about Analog). Preferences › *Ask before losing
   unsaved changes* turns it off. What is done on the JD-Xi itself cannot be stopped
-- **Reload** (Digital, Drums, Analog): the preset again, the sound as stored
+- **Reload** (Digital, Drums, Analog): back to the values from before the editor's changes (off when nothing changed)
+  (asked first); a drag on a graph (envelope, filter, LFO…) is one step of Undo
 
 ### Logs
 - **Log viewer**: fixed-width text with the columns lined up (the emoji before each message are left
