@@ -163,13 +163,23 @@ class EditHistory(QObject):
 
 
 # ---------------------------------------------------------------- all editors
+def _alive(history) -> bool:
+    """Its editor not deleted (a signal of a deleted QObject would crash)."""
+    try:
+        from shiboken6 import isValid
+    except ImportError:  # pragma: no cover
+        return True
+    return history is not None and isValid(history)
+
+
 def histories(parts: Iterable[str] = ALL_PARTS) -> list[EditHistory]:
     parts = set(parts)
-    return [h for h in list(_histories) if h.part in parts]
+    return [h for h in list(_histories) if _alive(h) and h.part in parts]
 
 
 def last_edited() -> Optional[EditHistory]:
-    return _last_edited() if _last_edited is not None else None
+    found = _last_edited() if _last_edited is not None else None
+    return found if _alive(found) else None
 
 
 def mark_all_saved() -> None:

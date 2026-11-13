@@ -21,6 +21,8 @@ def asks(monkeypatch, tmp_path):
     settings = QSettings(str(tmp_path / "s.ini"), QSettings.Format.IniFormat)
     monkeypatch.setattr(h, "asks_before_discarding", lambda settings_=None: settings.value(h.CONFIRM_KEY, True, type=bool))
     monkeypatch.setattr(h, "_paused", 0)
+    for other in h.histories():  # editors of earlier tests: nothing modified
+        other.reset()
     return settings
 
 
@@ -162,3 +164,18 @@ def test_program_editors_have_undo_but_no_reload(app):
     finally:
         editor.close()
         editor.deleteLater()
+
+
+def test_deleted_editors_are_left_out(app):
+    from PySide6.QtCore import QCoreApplication, QEvent
+    from PySide6.QtWidgets import QWidget
+
+    owner = QWidget()
+    a = _pv(app, 0)
+    history = h.EditHistory(h.DRUMS, "Drums", owner)
+    history.watch([a])
+    a.setValue(9)
+    owner.deleteLater()
+    QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
+    assert history not in h.histories([h.DRUMS])
+    assert h.confirm_discard([h.DRUMS], "x")  # no crash on the deleted one
