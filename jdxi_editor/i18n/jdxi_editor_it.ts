@@ -374,24 +374,24 @@
             <translation>Genere</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="246" />
+            <location filename="../../jdxi_editor/main.py" line="251" />
             <location filename="../../jdxi_editor/ui/dialogs/about.py" line="146" />
             <source>An independent, unofficial tool: not affiliated with, endorsed or sponsored by Roland Corporation. Roland and JD-Xi are trademarks of Roland Corporation in the United States and/or other countries; all other names belong to their owners.</source>
             <translation>Uno strumento indipendente e non ufficiale: non è affiliato, approvato né sponsorizzato da Roland Corporation. Roland e JD-Xi sono marchi di Roland Corporation negli Stati Uniti e/o in altri paesi; tutti gli altri nomi appartengono ai rispettivi proprietari.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="155" />
+            <location filename="../../jdxi_editor/main.py" line="160" />
             <source>Initializing MIDI subsystem…</source>
             <translation>Avvio del sistema MIDI…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="255" />
+            <location filename="../../jdxi_editor/main.py" line="260" />
             <location filename="../../jdxi_editor/ui/dialogs/about.py" line="102" />
             <source>Version {version}</source>
             <translation>Versione {version}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="295" />
+            <location filename="../../jdxi_editor/main.py" line="300" />
             <source>{home}  •  MIT licence</source>
             <translation>{home}  •  licenza MIT</translation>
         </message>
@@ -538,72 +538,72 @@
             <translation>Attuale: CC#0 {msb} · CC#32 {lsb} · PC {program}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="95" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="92" />
             <source>Log file error reporting level:</source>
             <translation>Livello di dettaglio del file di log:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="102" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="99" />
             <source>Enable Logging?</source>
             <translation>Attivare il log?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="110" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="107" />
             <source>Logging On or Off:</source>
             <translation>Log attivo o spento:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="121" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="118" />
             <source>Silence MIDI note logging (note on/off)</source>
             <translation>Non registrare le note MIDI (note on/off)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="134" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="131" />
             <source>Reduce log volume from MIDI notes:</source>
             <translation>Riduci il log delle note MIDI:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="144" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="141" />
             <source>Validate MIDI sends against combo selection (log only)</source>
             <translation>Confronta gli invii MIDI con la voce scelta (solo nel log)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="157" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="154" />
             <source>MIDI selection cross-validation:</source>
             <translation>Verifica incrociata della selezione MIDI:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="175" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="172" />
             <source>Check GitHub for new releases once a day (on by default):</source>
             <translation>Cerca nuove versioni su GitHub una volta al giorno (attivo di serie):</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="177" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="174" />
             <source>Check for updates automatically</source>
             <translation>Cerca aggiornamenti automaticamente</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="192" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="189" />
             <source>Interface language:</source>
             <translation>Lingua dell'interfaccia:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="195" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="192" />
             <source>Same as the system</source>
             <translation>Come il sistema</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="200" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="197" />
             <source>The new language is used from the next start.</source>
             <translation>La nuova lingua si applica dal prossimo avvio.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="274" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="273" />
             <source>Interface</source>
             <translation>Interfaccia</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="279" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="278" />
             <source>Logs</source>
             <translation>Registro</translation>
         </message>
@@ -4592,6 +4592,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/programs.py" line="110" />
+            <location filename="../../jdxi_editor/ui/widgets/viewer/log.py" line="84" />
             <source>All</source>
             <translation>Tutti</translation>
         </message>
@@ -5936,29 +5937,39 @@ Nota: se il Sync del JD-Xi è MIDI o AUTO, Start avvia anche il suo pattern sequ
             <translation>Aggiorna l'elenco dei dispositivi USB</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/viewer/log.py" line="41" />
+            <location filename="../../jdxi_editor/ui/widgets/viewer/log.py" line="65" />
             <location filename="../../jdxi_editor/ui/windows/jdxi/ui.py" line="467" />
             <source>Log Viewer</source>
             <translation>Visualizzatore log</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/viewer/log.py" line="70" />
+            <location filename="../../jdxi_editor/ui/widgets/viewer/log.py" line="90" />
             <source>Clear Log</source>
             <translation>Svuota log</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/viewer/log.py" line="75" />
-            <location filename="../../jdxi_editor/ui/widgets/viewer/log.py" line="158" />
+            <location filename="../../jdxi_editor/ui/widgets/viewer/log.py" line="93" />
+            <location filename="../../jdxi_editor/ui/widgets/viewer/log.py" line="195" />
             <source>Fast Refresh (500ms)</source>
             <translation>Aggiornamento veloce (500 ms)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/viewer/log.py" line="161" />
+            <location filename="../../jdxi_editor/ui/widgets/viewer/log.py" line="198" />
             <source>Slow Refresh (30s)</source>
             <translation>Aggiornamento lento (30 s)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/viewer/log.py" line="122" />
+            <location filename="../../jdxi_editor/ui/widgets/viewer/log.py" line="101" />
+            <source>{file}  •  log files older than {days} days are deleted at start</source>
+            <translation>{file}  •  i file di log più vecchi di {days} giorni vengono eliminati all'avvio</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/widgets/viewer/log.py" line="132" />
+            <source>Warnings and errors ({count})</source>
+            <translation>Avvisi ed errori ({count})</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/widgets/viewer/log.py" line="152" />
             <source>Log file not found.
 
 Expected location: {path}</source>

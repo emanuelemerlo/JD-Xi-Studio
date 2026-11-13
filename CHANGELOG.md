@@ -16,6 +16,17 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   own settings key; at the first start the settings and files used up to alpha 2 (the original
   program's) are copied over, the originals are left for JDXI-Editor
 
+### Logs
+- **Log viewer**: fixed-width text with the columns lined up (the emoji before each message are left
+  out, the level column says it); a **Warnings and errors** tab with their count, showing only the
+  lines from WARNING up and what follows them (e.g. a traceback); no more broken or repeated lines
+  (the file was read by characters but positioned by bytes, and *Clear* read it all again)
+- **Kept two weeks**: log files older than 14 days are deleted at start
+- **The level in Preferences works**: every level can be chosen and is kept (the row number was
+  saved in its place, so it always came back as DEBUG) and applied at start; the "Enable Logging?"
+  box, which switched nothing, is gone
+- Selecting Vocal FX no longer logs a warning about an "unknown synth"
+
 ### Fixes
 - **Preset card** (Digital, Drums): every row as wide as the card, nothing cut or sticking out with
   large Windows text; Previous / Next as arrows; the display fits the card

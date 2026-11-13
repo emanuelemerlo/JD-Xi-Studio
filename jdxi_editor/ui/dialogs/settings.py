@@ -75,17 +75,14 @@ class UiPreferencesDialog(QDialog):
         self.log_level_combo.addItems(self.log_levels.keys())
         # Load the log level from QSettings
         # self.load_log_level_from_settings()
-        log_level = int(self.settings.value("log_level", logging.DEBUG))
-        # Reverse lookup: find the key name for the numeric value
-        try:
-            level_name = next((k for k, v in self.log_levels.items() if v == log_level))
-        except StopIteration:
-            level_name = "DEBUG"  # default
-        index = list(self.log_levels.keys()).index(level_name)
-        if index >= 0:
-            self.log_level_combo.setCurrentIndex(index)
-        # Connect the combo box to a function that updates QSettings
-        self.log_level_combo.currentIndexChanged.connect(self.update_log_level)
+        from jdxi_editor.log_files import saved_level
+
+        level = saved_level(self.settings)
+        self.log_level_combo.setCurrentIndex(list(self.log_levels.values()).index(level))
+        # the signal gives the row: the level is the row's value (it used to save the row number)
+        self.log_level_combo.currentIndexChanged.connect(
+            lambda row: self.update_log_level(list(self.log_levels.values())[row])
+        )
 
         self.log_level_layout = QHBoxLayout()
         self.log_icon = QLabel()
@@ -234,6 +231,8 @@ class UiPreferencesDialog(QDialog):
             "QCheckBox { color: #e6e6e6; spacing: 8px; }"
             "QComboBox { background: #121214; color: #ffffff; border: 1px solid #3a3d44; border-radius: 5px;"
             " padding: 3px 8px; min-width: 170px; }"
+            "QComboBox QAbstractItemView { background: #121214; color: #e6e6e6; border: 1px solid #3a3d44;"
+            f" selection-background-color: {accent}; selection-color: #ffffff; outline: 0; }}"
         )
         for icon in (self.log_icon, self.logging_icon, self.silence_midi_notes_icon,
                      self.midi_validation_icon, self.update_check_icon, self.language_icon):
@@ -278,7 +277,10 @@ class UiPreferencesDialog(QDialog):
         option(grid, self.update_check_checkbox, self.update_check_label)
         logs, grid = card(tr("Logs"))
         choice(grid, self.log_level_label, self.log_level_combo)
-        option(grid, self.logging_checkbox, self.logging_label)
+        # "Enable Logging?" never switched anything (the log is always written): the level
+        # above decides what goes in it
+        self.logging_checkbox.hide()
+        self.logging_label.hide()
         option(grid, self.silence_midi_notes_checkbox, self.silence_midi_notes_label)
         option(grid, self.midi_validation_checkbox, self.midi_validation_label)
         main_layout.setContentsMargins(16, 16, 16, 12)
@@ -330,21 +332,11 @@ class UiPreferencesDialog(QDialog):
         """
         Update log level for the current logger and all handlers
         """
-        log.parameter("level", level)
-        logger = logging.getLogger(__package_name__)
-        logger.setLevel(level)
+        from jdxi_editor.log_files import apply_log_level
 
-        for handler in logger.handlers:
-            handler.setLevel(level)
-
-        # Also apply to root logger and its handlers (optional, if you use root logging)
-        logging.root.setLevel(level)
-        for handler in logging.root.handlers:
-            handler.setLevel(level)
-
+        apply_log_level(level)
         self.settings.setValue("log_level", level)
         self.settings.sync()
-        print(f"✅ Updated log level to {logging.getLevelName(level)}")
 
     def on_save_settings(self):
         """
