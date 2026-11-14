@@ -418,6 +418,7 @@ class JDXiInstrument(JDXiWindow):
         from jdxi_editor.ui.v2 import history
 
         output_handler.PROGRAM_CHANGE_GUARD = history.program_change_allowed
+        output_handler.PROGRAM_CHANGE_DONE = history.program_change_done
         history.save_callback = self._patch_save
         self._edit_shortcuts = []
         for keys, action in (
@@ -431,7 +432,8 @@ class JDXiInstrument(JDXiWindow):
             self._edit_shortcuts.append(shortcut)
 
     def active_history(self):
-        """The history Ctrl+Z works on: the editor shown, else the last one edited."""
+        """The history Ctrl+Z works on: the editor shown, only (a tab without one: nothing,
+        rather than undoing in an editor out of sight)."""
         from jdxi_editor.ui.v2 import history
 
         tabs = getattr(getattr(self, "main_editor", None), "editor_tab_widget", None)
@@ -439,7 +441,7 @@ class JDXiInstrument(JDXiWindow):
         found = getattr(editor, "history", None)
         if isinstance(found, history.EditHistory) and editor.isVisible():
             return found
-        return history.last_edited()
+        return None
 
     def edit_history_step(self, action: str) -> bool:
         target = self.active_history()

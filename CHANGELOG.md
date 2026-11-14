@@ -19,7 +19,10 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 ### Changes: undo, reload, no loss by mistake
 - **Undo / Redo** (Ctrl+Z, Ctrl+Y or Ctrl+Shift+Z, and two buttons at the top of every editor):
   the editor shown, or the last one edited; a slider drag is one change; the value undone is sent to
-  the JD-Xi at once
+  the JD-Xi at once; up to 30 steps (Reload goes back to the start, however many); a step that
+  cannot be applied stays where it was and changes nothing; a value the JD-Xi sends drops the
+  steps on that value (they would bring back what it no longer has); Ctrl+Z works on the editor
+  shown, never on one out of sight
 - **Modified**: an editor with changes not saved to a file shows "● Modified" next to its name and
   a dot on its tab
 - **Asked first**: before a preset, a program or a patch file replaces edited sounds, and at

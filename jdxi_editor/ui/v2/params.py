@@ -95,6 +95,9 @@ class ParamValue(QObject):
         for watcher in list(self._watchers):
             watcher(value)
         self.valueChanged.emit(value)  # silent while signals are blocked
+        history = getattr(self, "_edit_history", None)
+        if history is not None and self.signalsBlocked():  # a value from the JD-Xi
+            history.external_change(self)
 
     # --- for widgets
     def clamp(self, value) -> int:

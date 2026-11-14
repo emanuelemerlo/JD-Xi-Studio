@@ -218,7 +218,7 @@ def edit_controls(editor, reload=None):
         undo.setEnabled(history.can_undo())
         redo.setEnabled(history.can_redo())
         if restore is not None:  # nothing changed in this editor: nothing to restore
-            restore.setEnabled(history.can_undo())
+            restore.setEnabled(history.can_restore())
 
     history.stateChanged.connect(update)
     update()

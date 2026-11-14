@@ -221,3 +221,73 @@ def test_a_press_without_release_does_not_leave_a_group_open(app):
     history.end_group()  # what the next press does first
     a.setValue(30)
     assert history._group_depth == 0 and history.undo() and a.value() == 20
+
+
+# ---------------------------------------------------------------- review: limits and safety
+def test_undo_is_limited_and_reload_still_restores_all(app, monkeypatch):
+    monkeypatch.setattr(h, "MAX_STEPS", 3)
+    monkeypatch.setattr(h, "MERGE_SECONDS", 0)
+    values = [_pv(app, 0) for _ in range(5)]
+    history = _history(app, h.ANALOG, *values)
+    for i, pv in enumerate(values):
+        pv.setValue(i + 10)
+    assert len(history._undo) == 3
+    while history.undo():
+        pass
+    assert history.modified  # the two oldest steps are gone: not back at the start
+    assert [pv.value() for pv in values] == [10, 11, 0, 0, 0]
+    assert history.can_restore()
+    history.revert()  # Reload: every value from before the changes
+    assert [pv.value() for pv in values] == [0] * 5
+    assert not history.modified and not history.can_restore()
+
+
+def test_a_failed_undo_keeps_the_step_and_the_values(app, monkeypatch):
+    a, b = _pv(app, 1), _pv(app, 2)
+    history = _history(app, h.ANALOG, a, b)
+    history.begin_group()
+    a.setValue(10)
+    b.setValue(20)
+    history.end_group()
+    real = h.EditHistory._apply
+
+    def failing(self, pv, value):
+        if pv is a:
+            raise RuntimeError("MIDI gone")
+        real(self, pv, value)
+
+    monkeypatch.setattr(h.EditHistory, "_apply", failing)
+    assert not history.undo()
+    assert (a.value(), b.value()) == (10, 20)  # b set back too
+    assert history.can_undo() and not history.can_redo()
+    monkeypatch.setattr(h.EditHistory, "_apply", real)
+    assert history.undo() and (a.value(), b.value()) == (1, 2)
+
+
+def test_a_value_from_the_jdxi_drops_the_steps_on_it(app):
+    a, b = _pv(app, 0), _pv(app, 0)
+    history = _history(app, h.ANALOG, a, b)
+    a.setValue(5)
+    history._sealed = True
+    b.setValue(6)
+    history.undo()  # b back to 0, one redo
+    a._edit_history = history
+    a.blockSignals(True)
+    a.setValue(99)  # the JD-Xi sends another value for a
+    a.blockSignals(False)
+    assert a.value() == 99
+    assert not history.undo() or a.value() == 99  # nothing brings a back to 0 or 5
+    assert history.redo() and b.value() == 6 and a.value() == 99
+
+
+def test_program_change_resets_only_once_sent(app):
+    a = _pv(app, 0)
+    history = _history(app, h.DIGITAL_1, a)
+    a.setValue(7)
+    assert h.confirm_discard([h.DIGITAL_1], "x", defer=True)
+    assert history.modified  # not yet
+    h.program_change_done(0, False)  # not sent (port closed): the changes are still there
+    assert history.modified and history.can_undo()
+    assert h.confirm_discard([h.DIGITAL_1], "x", defer=True)
+    h.program_change_done(0, True)
+    assert not history.modified and not history.can_undo()
