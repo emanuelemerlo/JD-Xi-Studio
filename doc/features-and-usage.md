@@ -1,4 +1,4 @@
-# JDXI-Editor Features and Usage
+# JD-Xi Studio Features and Usage
 
 This document covers recent changes, patch loading/saving, and SoundFont usage.
 
@@ -86,15 +86,17 @@ This document covers recent changes, patch loading/saving, and SoundFont usage.
 ### Undo, Reload and unsaved changes
 
 - **Undo / Redo**: Ctrl+Z and Ctrl+Y (or Ctrl+Shift+Z), or the buttons at the top of each editor.
-  They act on the editor shown (else the last one edited); a slider drag is one change, and the
-  value undone is sent to the JD-Xi at once.
+  They act on the editor shown only. A slider drag, or a drag on a graph (envelope, filter, LFO…),
+  is one step even when it moves two values; the value undone is sent to the JD-Xi at once. Up to
+  30 steps; a step that cannot be applied changes nothing. A value the JD-Xi sends drops the steps
+  on that value.
 - **● Modified** next to the editor's name (and a dot on its tab) while its changes are not saved
   to a file (`.jsz`, `.msz`, `.syx`).
 - **Asked first** before a preset, a program or a patch file replaces edited parts, and at closing:
   *Save to file…*, *Discard the changes* or *Cancel*. Off in Preferences › *Ask before losing
   unsaved changes*. Changes made on the JD-Xi itself are not seen beforehand.
-- **Reload** (Digital, Drums, Analog): back to the values from before the editor's changes (off when nothing changed)
-  (asked first). A drag on a graph (envelope, filter, LFO…) is one step of Undo, whatever it moves.
+- **Reload** (Digital, Drums, Analog): back to the values from before the editor's changes,
+  however many (asked first; off when nothing differs).
 
 The edits go to the JD-Xi's temporary area as they are made: to keep them, save to a file or
 press WRITE on the JD-Xi.
@@ -106,6 +108,14 @@ The editor **saves from the current UI control values** only. There is no "reque
 For more detail, see [Patch Saving Gap Analysis](patch-saving-gap-analysis.md).
 
 ---
+
+### Screen sizes
+
+The editors are designed for about 2560x1440 (4K at 150%). On a screen with less than 1150 px of
+usable height (1080p at 125%: 1536x864; 2496x1664 at 175%: 1426x951) they use a compact layout:
+smaller knobs, graphs and spacing with the text the same size; Digital puts each partial's
+sections on two tabs and Programs puts the library among the lower tabs. Narrower than 1800 px,
+the side panel is narrower; narrower than 1500 px, some rows of cards become columns.
 
 ## 3. SoundFont Usage
 

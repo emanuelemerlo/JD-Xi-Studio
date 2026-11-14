@@ -38,6 +38,10 @@ pattern sequencer, the effects and the vocoder, on the computer screen instead o
 - **Recipes**: import a sound recipe (template .xlsx/.csv, Markdown, text, PDF or a pasted table) and
   follow it step by step with the JD-Xi's values beside the recipe's.
 - **Settings**: the JD-Xi's system settings, the MIDI connection, files and tools.
+- **Undo, Redo and Reload** in every editor (Ctrl+Z / Ctrl+Y, a drag is one step), a "Modified"
+  mark and a question before unsaved changes are lost to a preset, a program, a patch or closing.
+- **From 1080p to 4K**: a compact layout on low screens (1080p at 125%), the text the same size.
+- **Log viewer** with a tab for warnings and errors; the logs are kept two weeks.
 - **Parameter panel**: point at a control to read its name on the display, its range and what it
   does, with the page of Roland's Parameter Guide.
 - **Offline mode**: opens and edits without a JD-Xi or a MIDI system; it connects when one is there.
@@ -138,10 +142,10 @@ macOS (`--dmg`, `--app`, `--pkg`) and Linux (.deb and AppImage): `python -m buil
 
 ### Releasing
 
-1. Set the version in `jdxi_editor/project.py` (`__version__ = "1.0.0a2"`, PEP 440) and add its
+1. Set the version in `jdxi_editor/project.py` (`__version__ = "1.0.0a4"`, PEP 440) and add its
    section to `CHANGELOG.md`; merge into `main`.
 2. **Actions › Release › Run workflow** on `main`. The workflow runs the tests, builds the Windows
-   installer, the portable app and the Python wheel, creates the tag (`v1.0.0-alpha.2`) and the
+   installer, the portable app and the Python wheel, creates the tag (`v1.0.0-alpha.4`) and the
    release (a pre-release for alpha, beta and rc), attaches every file and publishes it.
 
 No tag to push by hand. The `Windows build` workflow still builds every push to `fix/**`,
