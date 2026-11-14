@@ -385,7 +385,8 @@ class V2Editor(SynthBase):
             side_scroll.setWidgetResizable(True)
             side_scroll.setFrameShape(QScrollArea.Shape.NoFrame)
             side_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-            side_scroll.setFixedWidth(density.side_width(340) + 16)
+            # the panel plus the scroll bar (wider on macOS): never a sideways scroll
+            side_scroll.setFixedWidth(density.side_width(340) + side_scroll.verticalScrollBar().sizeHint().width() + 6)
             side_scroll.setWidget(side_host)
             root.addWidget(side_scroll)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)

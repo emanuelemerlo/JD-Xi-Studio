@@ -133,7 +133,7 @@ class Knob(QWidget):
         self._drag_value = 0.0
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
-        self.setMinimumWidth(64)
+        self.setMinimumWidth(58 if density.compact() else 64)  # macOS fonts are wider: some slack
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0 if density.compact() else 2)
@@ -148,7 +148,7 @@ class Knob(QWidget):
         layout.addWidget(self.dial, 0, Qt.AlignmentFlag.AlignHCenter)
         self.field = QLineEdit()
         self.field.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.field.setFixedWidth(62)
+        self.field.setFixedWidth(56 if density.compact() else 62)
         self.field.setStyleSheet(
             "QLineEdit { background: #121214; color: #ffffff; border: 1px solid #3a3d44; border-radius: 5px;"
             " font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 12px;"
