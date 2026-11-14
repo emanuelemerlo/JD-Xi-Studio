@@ -147,6 +147,8 @@ macOS (`--dmg`, `--app`, `--pkg`) and Linux (.deb and AppImage): `python -m buil
 2. **Actions › Release › Run workflow** on `main`. The workflow runs the tests, builds the Windows
    installer, the portable app and the Python wheel, creates the tag (`v1.0.0-alpha.4`) and the
    release (a pre-release for alpha, beta and rc), attaches every file and publishes it.
+3. Verify it on the instrument: [`doc/hardware-test-plan.md`](doc/hardware-test-plan.md) (the
+   automatic part is `python scripts/hardware_check.py`, with the app closed).
 
 No tag to push by hand. The `Windows build` workflow still builds every push to `fix/**`,
 `feature/**` and `release/**` branches (artifacts at the bottom of the run).
