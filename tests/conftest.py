@@ -26,6 +26,10 @@ import pytest
 # The tests check English texts: run in English whatever the machine's
 # language or Preferences (tests of the translations set it themselves)
 os.environ.setdefault("JDXI_LANGUAGE", "en")
+# the editors' density from the screen: the offscreen screen is 800x600, so it is fixed to the
+# full layout here (tests/test_density.py builds the compact one)
+os.environ.setdefault("JDXI_COMPACT", "0")
+os.environ.setdefault("JDXI_NARROW", "0")
 
 import rtmidi
 

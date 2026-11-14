@@ -13,7 +13,7 @@ key signatures in the manual.
 from __future__ import annotations
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QButtonGroup, QGridLayout, QHBoxLayout, QPushButton, QWidget
+from PySide6.QtWidgets import QButtonGroup, QGridLayout, QHBoxLayout, QVBoxLayout, QPushButton, QWidget
 
 from jdxi_editor.i18n import tr
 from jdxi_editor.midi.data.address.address import JDXiSysExAddress
@@ -21,6 +21,7 @@ from jdxi_editor.ui.v2.framework import Block, PSpec, V2Editor, rq1
 from jdxi_editor.ui.v2.params import ParamValue
 from jdxi_editor.ui.v2.program import pan_parse, pan_text
 from jdxi_editor.ui.v2.widgets import report_to
+from jdxi_editor.ui.v2 import density
 
 ACCENT = "#e86fb0"  # pink: purple is Drums
 KEYS = ("C", "Db", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B",
@@ -166,7 +167,13 @@ class VocalEffectEditor(V2Editor):
         out.body.addWidget(self.control(s("OUTPUT_ASSIGN")))
         out.body.addLayout(self.knob_row([s("LEVEL"), s("PAN")]))
         out.body.addLayout(self.knob_row([s("DELAY_SEND_LEVEL"), s("REVERB_SEND_LEVEL")]))
-        cards.addWidget(out, 1, align)
+        if density.very_narrow():  # a narrow screen: OUTPUT above VOCODER, beside AUTOPITCH
+            side = QVBoxLayout()
+            side.setSpacing(12)
+            side.addWidget(out)
+            cards.addLayout(side, 1)
+        else:
+            cards.addWidget(out, 1, align)
 
         auto = self.card("AUTOPITCH", tr("Parameter Guide, p. 28"))
         self.cards = {"AUTOPITCH": auto}
@@ -180,7 +187,11 @@ class VocalEffectEditor(V2Editor):
         for name in ("VOCODER_SWITCH", "VOCODER_ENVELOPE", "VOCODER_MIC_HPF"):
             voc.body.addWidget(self.control(s(name)))
         voc.body.addLayout(self.knob_row([s("VOCODER_MIC_SENS"), s("VOCODER_SYNTH_LEVEL"), s("VOCODER_MIC_MIX"), s("VOCODER_PARAM_0F")]))
-        cards.addWidget(voc, 1, align)
+        if density.very_narrow():
+            side.addWidget(voc)
+            side.addStretch()
+        else:
+            cards.addWidget(voc, 1, align)
         self.panels_layout.addLayout(cards)
         self.panels_layout.addWidget(self.note(
             tr("Vocoder/AutoPitch can be used for one part only; with it, the analog part cannot be selected (Parameter Guide, p. 4). "

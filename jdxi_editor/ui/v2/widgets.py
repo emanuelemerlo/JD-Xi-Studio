@@ -40,6 +40,8 @@ from PySide6.QtWidgets import (
 from jdxi_editor.i18n import tr
 from jdxi_editor.ui.v2.params import ParamValue
 
+from jdxi_editor.ui.v2 import density
+
 BG = QColor("#121214")
 PANEL = QColor("#1b1c1f")
 TRACK = QColor("#2e3036")
@@ -93,8 +95,8 @@ class Card(QFrame):
             "QFrame#v2card { background: #1b1c1f; border: 1px solid #2e3036; border-radius: 10px; }"
         )
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(14, 10, 14, 12)
-        layout.setSpacing(8)
+        layout.setContentsMargins(density.px(14), density.px(10), density.px(14), density.px(12))
+        layout.setSpacing(density.px(8))
         head = QHBoxLayout()
         title_label = QLabel(title)
         title_label.setStyleSheet(
@@ -124,6 +126,7 @@ class Knob(QWidget):
 
     def __init__(self, value: ParamValue, accent: str, hub: Optional[InfoHub] = None, parent=None):
         super().__init__(parent)
+        self.SIZE = density.px(46)  # smaller on a low screen
         self.pv = value
         self.accent = QColor(accent)
         self._drag_origin: Optional[QPointF] = None
@@ -133,7 +136,7 @@ class Knob(QWidget):
         self.setMinimumWidth(64)
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(2)
+        layout.setSpacing(0 if density.compact() else 2)
         self.name = QLabel(value.info.label)
         self.name.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.name.setStyleSheet("color: #c9cbd1; font-size: 11px; background: transparent;")
@@ -148,8 +151,9 @@ class Knob(QWidget):
         self.field.setFixedWidth(62)
         self.field.setStyleSheet(
             "QLineEdit { background: #121214; color: #ffffff; border: 1px solid #3a3d44; border-radius: 5px;"
-            " font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 12px; padding: 1px 2px; }"
-            "QLineEdit:disabled { color: #6b6e75; }"
+            " font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 12px;"
+            + (" padding: 0px 2px; }" if density.compact() else " padding: 1px 2px; }")
+            + "QLineEdit:disabled { color: #6b6e75; }"
         )
         self.field.editingFinished.connect(self._typed)
         layout.addWidget(self.field, 0, Qt.AlignmentFlag.AlignHCenter)
@@ -161,7 +165,7 @@ class Knob(QWidget):
         value.watch_enabled(self._enable)
 
     def sizeHint(self) -> QSize:
-        return QSize(66, self.SIZE + 44)
+        return QSize(66, self.SIZE + (38 if density.compact() else 44))
 
     def _show(self, value: int) -> None:
         if not self.field.hasFocus():
@@ -308,7 +312,7 @@ class ChoiceButtons(QWidget):
         for v, text in zip(self.values, labels):
             button = self._make_button(v, text)
             button.setCheckable(True)
-            button.setMinimumHeight(28)
+            button.setMinimumHeight(density.px(28, 22))
             button.setStyleSheet(
                 "QPushButton { background: transparent; color: #c9cbd1; border: 0; border-radius: 5px;"
                 " padding: 2px 9px; font-size: 11px; font-weight: 600; }"
@@ -421,7 +425,7 @@ class _WaveButton(QPushButton):
         super().__init__("")
         self.wave = name
         self.owner = owner
-        self.setMinimumSize(owner.button_width, 44)
+        self.setMinimumSize(owner.button_width, density.px(44, 40))
         self.setToolTip(name)
 
     def paintEvent(self, event) -> None:
@@ -502,7 +506,7 @@ class _Graph(QWidget):
         super().__init__(parent)
         self.accent = QColor(accent)
         self.hub = hub
-        self.setMinimumHeight(height)
+        self.setMinimumHeight(max(56, round(height * 0.62)) if density.compact() else height)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self.setMouseTracking(True)
         self._drag: Optional[int] = None

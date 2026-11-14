@@ -41,6 +41,7 @@ from jdxi_editor.ui.v2.widgets import (
     LfoView,
     WaveButtons,
 )
+from jdxi_editor.ui.v2 import density
 
 ACCENT = "#eb5757"  # Digital 1 red, as on the JD-Xi panel
 ACCENT_2 = "#f2994a"  # Digital 2 orange
@@ -247,6 +248,7 @@ def partial_block(synth: int, partial: int) -> Block:
                  request=rq1(_bytes(synth, 0x20 + partial), 0x3D))
 
 
+
 class DigitalFilterView(FilterCurveView):
     """The filter response for every type of the digital partial: LPF, HPF, BPF, peaking; -12 or -24 dB."""
 
@@ -325,7 +327,7 @@ class DigitalToneEditor(tone_editor_base()):
         top.addStretch()
         card.body.addLayout(top)
         grid = QGridLayout()
-        grid.setHorizontalSpacing(18)
+        grid.setHorizontalSpacing(density.px(18))
         switches = ["MONO_SWITCH", "LEGATO_SWITCH", "PORTAMENTO_SWITCH", "PORTAMENTO_MODE", "UNISON_SWITCH", "UNISON_SIZE", "RING_SWITCH"]
         for i, name in enumerate(switches):
             grid.addWidget(self.control(s(name)), i // 4, i % 4)
@@ -374,9 +376,34 @@ class DigitalToneEditor(tone_editor_base()):
     def _partial_page(self, partial: int) -> QWidget:
         page = QWidget()
         page.setStyleSheet("background: transparent;")
-        grid = QGridLayout(page)
-        grid.setContentsMargins(0, 0, 0, 0)
-        grid.setSpacing(12)
+        if density.compact():
+            # a low screen: OSC / FILTER / AMP and LFO / MOD LFO / MISC on two tabs, not one
+            # under the other
+            from PySide6.QtWidgets import QTabWidget
+
+            outer = QVBoxLayout(page)
+            outer.setContentsMargins(0, 0, 0, 0)
+            tabs = QTabWidget()
+            tabs.setDocumentMode(True)
+            pages = []
+            for title in (tr("OSC · FILTER · AMP"), tr("LFO · MOD LFO · MISC")):
+                section = QWidget()
+                section.setStyleSheet("background: transparent;")
+                section_grid = QGridLayout(section)
+                section_grid.setContentsMargins(0, density.px(8), 0, 0)
+                section_grid.setSpacing(density.px(12))
+                tabs.addTab(section, title)
+                pages.append(section_grid)
+            outer.addWidget(tabs)
+            grid, lower, lower_row = pages[0], pages[1], 0
+            self._section_tabs = getattr(self, "_section_tabs", [])
+            self._section_tabs.append(tabs)
+            tabs.currentChanged.connect(self._same_section)  # every partial on the same tab
+        else:
+            grid = QGridLayout(page)
+            grid.setContentsMargins(0, 0, 0, 0)
+            grid.setSpacing(density.px(12))
+            lower, lower_row = grid, 1
         v = lambda name: self.partial(name, partial)  # noqa: E731
         s = lambda name: v(name).param  # noqa: E731
         top = Qt.AlignmentFlag.AlignTop
@@ -431,17 +458,23 @@ class DigitalToneEditor(tone_editor_base()):
                 card.body.addLayout(self.knob_row([s("MOD_LFO_RATE"), s("MOD_LFO_RATE_CONTROL")]))
             card.body.addLayout(self.knob_row([s(prefix + "PITCH_DEPTH"), s(prefix + "FILTER_DEPTH"), s(prefix + "AMP_DEPTH"),
                                                s(prefix + "PAN_DEPTH")]))
-            grid.addWidget(card, 1, col, top)
+            lower.addWidget(card, lower_row, col, top)
 
         misc = self.card("MISC", tr("Parameter Guide, p. 19 (whole tone)"))
         for name in ("ENVELOPE_LOOP_MODE", "ENVELOPE_LOOP_SYNC_NOTE", "CHROMATIC_PORTAMENTO"):
             misc.body.addWidget(self.control(self.spec(name)))
         misc.body.addLayout(self.knob_row([self.spec("ATTACK_TIME_INTERVAL_SENS"), self.spec("RELEASE_TIME_INTERVAL_SENS"),
                                            self.spec("PORTAMENTO_TIME_INTERVAL_SENS")]))
-        grid.addWidget(misc, 1, 2, top)
-        for c in range(3):
-            grid.setColumnStretch(c, 1)
+        lower.addWidget(misc, lower_row, 2, top)
+        for layout in {id(grid): grid, id(lower): lower}.values():
+            for c in range(3):
+                layout.setColumnStretch(c, 1)
         return page
+
+    def _same_section(self, index: int) -> None:
+        for tabs in getattr(self, "_section_tabs", []):
+            if tabs.currentIndex() != index:
+                tabs.setCurrentIndex(index)
 
     # --- which controls have an effect
     def _link_dependencies(self) -> None:

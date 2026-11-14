@@ -23,6 +23,7 @@ from jdxi_editor.i18n import tr
 from jdxi_editor.ui.editors.midi_player import editor as _player
 from jdxi_editor.ui.editors.pattern import pattern as _pattern
 from jdxi_editor.ui.v2.restyle import flatten_round_buttons, restyle, title_badge
+from jdxi_editor.ui.v2 import density
 
 PATTERN_ACCENT = "#f2c94c"  # as in the mockup
 PLAYER_ACCENT = "#3f8cff"
@@ -48,7 +49,9 @@ def _card(title: str, *rows, note: str = "") -> QGroupBox:
             layout.addLayout(row)
         else:
             layout.addWidget(row)
-    if note:
+    if note and density.compact():
+        box.setToolTip(note)  # a low screen: the explanation on the pointer, not under the card
+    elif note:
         label = QLabel(note)
         label.setWordWrap(True)
         label.setStyleSheet("color: #8b8e96; font-size: 11px;")
@@ -172,7 +175,7 @@ class PatternSequenceEditor(_pattern.PatternSequenceEditor):
         controls.addLayout(buttons)
         controls.addLayout(_line(self.tempo_label, self.tempo_spinbox, tap))
         controls.addLayout(_line(QLabel(tr("Steps:")), self.beats_per_measure_combo))
-        self.digital_title.setFixedWidth(300)
+        self.digital_title.setFixedWidth(240 if density.narrow() else 300)
         top = QHBoxLayout()
         top.setSpacing(12)
         top.addWidget(self.digital_title, 0, Qt.AlignmentFlag.AlignTop)
@@ -219,8 +222,15 @@ class PatternSequenceEditor(_pattern.PatternSequenceEditor):
         first = QHBoxLayout()
         first.setSpacing(12)
         first.addWidget(transport, 3)
-        first.addWidget(new_steps, 2)
-        first.addWidget(measures, 3)
+        if density.very_narrow():  # a narrow screen: the two small cards one above the other
+            column = QVBoxLayout()
+            column.setSpacing(12)
+            column.addWidget(new_steps)
+            column.addWidget(measures)
+            first.addLayout(column, 3)
+        else:
+            first.addWidget(new_steps, 2)
+            first.addWidget(measures, 3)
         last = QHBoxLayout()
         last.setSpacing(12)
         last.addWidget(files, 1)
@@ -244,7 +254,7 @@ class PatternSequenceEditor(_pattern.PatternSequenceEditor):
         from jdxi_editor.ui.v2.widgets import InfoPanel
 
         self.info_panel = InfoPanel(PATTERN_ACCENT)
-        self.info_panel.setFixedWidth(320)
+        self.info_panel.setFixedWidth(density.side_width(320))
         self.info_panel.show_text(
             tr("Pattern"),
             tr("Point at a control"),

@@ -34,7 +34,10 @@ class SequencerButton(QPushButton):
         # as tall as before; wider when the window is (up to twice): the
         # sequencer fills the editor instead of a corner of it
         size = JDXiUIDimensions.SEQUENCER.LARGE_SQUARE_SIZE
-        self.setMinimumSize(size, size)
+        from jdxi_editor.ui.v2 import density
+
+        # a narrow screen: the 16 steps, the part headers and the side panel still fit
+        self.setMinimumSize(round(size * 0.82) if density.very_narrow() else size, size)
         self.setMaximumSize(size * 2, size)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
 

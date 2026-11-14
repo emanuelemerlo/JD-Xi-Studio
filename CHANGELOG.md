@@ -32,6 +32,16 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - **Reload** (Digital, Drums, Analog): back to the values from before the editor's changes (off when nothing changed)
   (asked first); a drag on a graph (envelope, filter, LFO…) is one step of Undo
 
+### Screens from 1080p to 4K
+- **Compact layout** on low screens (available height under 1150 px: 1080p at 125%, 2496x1664
+  at 175%): smaller knobs, graphs and spacing, the text the same size; in Digital the partial's
+  sections on two tabs (OSC · FILTER · AMP / LFO · MOD LFO · MISC); in Programs the library is
+  the first of the lower tabs, beside parts and mixer; in Pattern the notes go into tooltips
+- **Narrow screens** (under 1800 px wide): a narrower side panel; under 1500 px some rows of
+  cards become columns (Pattern, Vocal FX) and the steps are narrower — no sideways scrolling
+- **Effects**: each effect card is as tall as the type shown (Thru no longer leaves a large
+  empty area)
+
 ### Logs
 - **Log viewer**: fixed-width text with the columns lined up (the emoji before each message are left
   out, the level column says it); a **Warnings and errors** tab with their count, showing only the
