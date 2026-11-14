@@ -29,6 +29,7 @@ from jdxi_editor.midi.sysex.request.midi_requests import MidiRequests
 from jdxi_editor.ui.v2.framework import Block, PSpec, V2Editor
 from jdxi_editor.ui.v2.params import ParamValue
 from jdxi_editor.ui.v2.widgets import ChoiceButtons, _Graph
+from jdxi_editor.ui.v2 import density
 
 ACCENT = "#2dd4bf"  # teal: orange is Digital 2
 
@@ -240,11 +241,13 @@ def effect_blocks() -> list[Block]:
 
 
 # ---------------------------------------------------------------- views
+
 class ChainView(_Graph):
     """How the sound goes through the effects, with the selected types."""
 
     def __init__(self, editor: "EffectsEditor"):
         super().__init__(ACCENT, editor.info_hub, 86)
+        self.setMinimumHeight(86)  # boxes and the line under them: not smaller on a low screen
         self.editor = editor
         self.efx1 = editor.pv("EFX1_TYPE")
         self.efx2 = editor.pv("EFX2_TYPE")
@@ -482,7 +485,7 @@ class EffectsEditor(V2Editor):
         card.body.addWidget(ChoiceButtons(self.values[type_spec], ACCENT, self.info_hub))
         if block_key == "EFFECT_1":
             card.body.addWidget(self.control(self.spec("EFX1_OUTPUT_ASSIGN")))
-        pages = QStackedWidget()
+        pages = density.FitStack()  # as tall as the type shown (Thru: no empty space)
         self.pages[name] = pages
         unverified_notes = unverified()
         for typ in types:

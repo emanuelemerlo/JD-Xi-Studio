@@ -47,6 +47,7 @@ from jdxi_editor.ui.v2.widgets import (
     NoteCombo,
     report_to,
 )
+from jdxi_editor.ui.v2 import density
 
 SEND_INTERVAL_MS = 25
 ROLAND_DT1 = (0x41, 0x10, 0x00, 0x00, 0x00, 0x0E, 0x12)  # after F0: Roland, device 10h, JD-Xi, DT1
@@ -75,6 +76,7 @@ NIBBLE_ZERO = 32768  # 4-nibble parameters: 32768 is 0
 
 
 @dataclass(eq=False)  # identity: two effect types may share one address
+
 class PSpec:
     """One parameter: address, encoding, range and what to say about it."""
 
@@ -318,10 +320,10 @@ class V2Editor(SynthBase):
     def _build_frame(self) -> None:
         self.setMinimumSize(960, 600)
         root = QHBoxLayout(self)
-        root.setContentsMargins(12, 12, 12, 12)
-        root.setSpacing(12)
+        root.setContentsMargins(*(4 * [density.px(12)]))
+        root.setSpacing(density.px(12))
         left = QVBoxLayout()
-        left.setSpacing(10)
+        left.setSpacing(density.px(10))
         bar = QHBoxLayout()
         # The editor's name as a badge in its colour: Digital 1 and 2, say, tell apart at a glance
         self.title_label = QLabel(self.windowTitle().upper())
@@ -358,7 +360,7 @@ class V2Editor(SynthBase):
         host.setStyleSheet("background: transparent;")
         self.panels_layout = QVBoxLayout(host)
         self.panels_layout.setContentsMargins(0, 0, 0, 0)
-        self.panels_layout.setSpacing(12)
+        self.panels_layout.setSpacing(density.px(12))
         self.scroll.setWidget(host)
         left.addWidget(self.scroll, 1)
         root.addLayout(left, 1)
@@ -366,24 +368,25 @@ class V2Editor(SynthBase):
         self.info_hub.shown.connect(self.info_panel.show_param)
         above = self.side_widgets()
         if not above:
-            self.info_panel.setFixedWidth(320)
+            self.info_panel.setFixedWidth(density.side_width(320))
             root.addWidget(self.info_panel)
         else:  # presets and information, scrolling on short screens
             side_host = QWidget()
             side_host.setStyleSheet("background: transparent;")
             side = QVBoxLayout(side_host)
             side.setContentsMargins(0, 0, 0, 0)
-            side.setSpacing(12)
+            side.setSpacing(density.px(12))
             for widget in above:
                 side.addWidget(widget)
-            self.info_panel.setFixedWidth(340)
-            self.info_panel.setMinimumHeight(260)
+            self.info_panel.setFixedWidth(density.side_width(340))
+            self.info_panel.setMinimumHeight(120 if density.compact() else 260)
             side.addWidget(self.info_panel, 1)
             side_scroll = QScrollArea()
             side_scroll.setWidgetResizable(True)
             side_scroll.setFrameShape(QScrollArea.Shape.NoFrame)
             side_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-            side_scroll.setFixedWidth(356)
+            # the panel plus the scroll bar (wider on macOS): never a sideways scroll
+            side_scroll.setFixedWidth(density.side_width(340) + side_scroll.verticalScrollBar().sizeHint().width() + 6)
             side_scroll.setWidget(side_host)
             root.addWidget(side_scroll)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
@@ -636,7 +639,7 @@ def tone_editor_base():
                 self.instrument_group_layout,
             ) = self.instrument_preset.create_instrument_image_group()
             self.instrument_preset.add_image_group(self.instrument_image_group)
-            self.instrument_preset.setFixedWidth(340)
+            self.instrument_preset.setFixedWidth(density.side_width(340))
             JDXi.UI.Theme.apply_editor_style(self.instrument_preset)
             finish_preset_panel(self, self.ACCENT)
             self.read_button.hide()  # the preset panel has its own "Read from JD-Xi"
@@ -686,7 +689,11 @@ def show_category_card(editor, accent: str) -> None:
     """
     label = getattr(editor, "instrument_image_label", None)
     if label is not None:
-        label.setPixmap(sound_card(selected_category(editor), accent))
+        if density.compact():  # a low screen: a lower card
+            label.setFixedHeight(78)
+            label.setPixmap(sound_card(selected_category(editor), accent, height=70))
+        else:
+            label.setPixmap(sound_card(selected_category(editor), accent))
 
 
 # The preset categories' icons (MDI / Font Awesome through qtawesome)

@@ -47,9 +47,11 @@ from jdxi_editor.ui.v2.widgets import (
     WaveButtons,
     section_label,
 )
+from jdxi_editor.ui.v2 import density
 
 ACCENT = "#3fa7f5"  # Analog blue
 SEND_INTERVAL_MS = 25
+
 
 
 class AnalogToneEditor(AnalogSynthEditor):
@@ -84,7 +86,7 @@ class AnalogToneEditor(AnalogSynthEditor):
 
         root = QHBoxLayout(self)
         root.setContentsMargins(12, 12, 12, 12)
-        root.setSpacing(12)
+        root.setSpacing(density.px(12))
         self.main_layout = root
 
         scroll = QScrollArea()
@@ -97,14 +99,14 @@ class AnalogToneEditor(AnalogSynthEditor):
         self.cards_host.setStyleSheet("background: transparent;")
         self.cards = QHBoxLayout(self.cards_host)
         self.cards.setContentsMargins(0, 0, 0, 0)
-        self.cards.setSpacing(12)
+        self.cards.setSpacing(density.px(12))
         self._columns = 0
         scroll.setWidget(self.cards_host)
         # the editor's name as a badge in its colour, as at the top of the other editors
         from jdxi_editor.ui.v2.restyle import title_badge
 
         left = QVBoxLayout()
-        left.setSpacing(10)
+        left.setSpacing(density.px(10))
         bar = QHBoxLayout()
         self.title_label = title_badge(tr("Analog"), ACCENT)
         bar.addWidget(self.title_label)
@@ -127,7 +129,7 @@ class AnalogToneEditor(AnalogSynthEditor):
         side_host.setStyleSheet("background: transparent;")
         side = QVBoxLayout(side_host)
         side.setContentsMargins(0, 0, 0, 0)
-        side.setSpacing(12)
+        side.setSpacing(density.px(12))
         # Tone choice, reading from the JD-Xi, .syx: the existing preset panel
         self.instrument_preset = InstrumentPresetWidget(parent=self)
         self.instrument_preset.setup_header_layout()
@@ -140,7 +142,7 @@ class AnalogToneEditor(AnalogSynthEditor):
             self.instrument_group_layout,
         ) = self.instrument_preset.create_instrument_image_group()
         self.instrument_preset.add_image_group(self.instrument_image_group)
-        self.instrument_preset.setFixedWidth(340)
+        self.instrument_preset.setFixedWidth(density.side_width(340))
         # the app's theme for the preset panel only (its buttons need it)
         from jdxi_editor.core.jdxi import JDXi
 
@@ -160,15 +162,15 @@ class AnalogToneEditor(AnalogSynthEditor):
         finish_preset_panel(self, ACCENT)
         side.addWidget(self.instrument_preset)
         self.info_panel = InfoPanel(ACCENT)
-        self.info_panel.setFixedWidth(340)
+        self.info_panel.setFixedWidth(density.side_width(340))
         self.info_hub.shown.connect(self.info_panel.show_param)
-        self.info_panel.setMinimumHeight(260)
+        self.info_panel.setMinimumHeight(120 if density.compact() else 260)
         side.addWidget(self.info_panel, 1)
         side_scroll = QScrollArea()
         side_scroll.setWidgetResizable(True)
         side_scroll.setFrameShape(QScrollArea.Shape.NoFrame)
         side_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        side_scroll.setFixedWidth(356)
+        side_scroll.setFixedWidth(density.side_width(340) + side_scroll.verticalScrollBar().sizeHint().width() + 6)
         side_scroll.setWidget(side_host)
         root.addWidget(side_scroll)
 
@@ -353,7 +355,7 @@ class AnalogToneEditor(AnalogSynthEditor):
                     item.layout().takeAt(0)
         for names in self.LAYOUTS[columns]:
             column = QVBoxLayout()
-            column.setSpacing(12)
+            column.setSpacing(density.px(12))
             for name in names:
                 column.addWidget(self.panels[name])
             column.addStretch(1)

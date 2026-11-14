@@ -37,6 +37,7 @@ from jdxi_editor.core.synth.type import JDXiSynth
 from jdxi_editor.i18n import tr
 from jdxi_editor.ui.editors.program import editor as _program
 from jdxi_editor.ui.v2.restyle import restyle, title_badge
+from jdxi_editor.ui.v2 import density
 
 ACCENT = "#6fcf97"  # green, as the Program editor
 BANKS = "ABCDEFGH"
@@ -134,7 +135,7 @@ class ProgramLibrary(QWidget):
         header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
         header.setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
         header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
-        self.table.setMinimumHeight(320)
+        self.table.setMinimumHeight(density.px(320, 200))
         self.table.setWordWrap(False)
         self.table.setTextElideMode(Qt.TextElideMode.ElideRight)
         self.table.verticalHeader().setDefaultSectionSize(28)
@@ -324,7 +325,14 @@ class ProgramEditor(_program.ProgramEditor):
         # grows and shrinks as the tabs change
         pages = [self.more_tabs.widget(i) for i in range(self.more_tabs.count())]
         tallest = max((page.sizeHint().height() for page in pages), default=320)
-        self.more_tabs.setFixedHeight(max(360, tallest + self.more_tabs.tabBar().sizeHint().height() + 12))
+        if density.compact():
+            # a low screen: the library is the first of these tabs, beside the parts and the
+            # mixer, instead of the tabs under it
+            top.replaceWidget(library_card, self.more_tabs)
+            self.more_tabs.insertTab(0, library_card, tr("Library"))
+            self.more_tabs.setCurrentIndex(0)
+        else:
+            self.more_tabs.setFixedHeight(max(360, tallest + self.more_tabs.tabBar().sizeHint().height() + 12))
         # the decorative icon rows of the old pages say nothing: hidden
         for label in self.more_tabs.findChildren(QLabel, "decorIcon"):
             label.hide()
@@ -340,7 +348,8 @@ class ProgramEditor(_program.ProgramEditor):
         page.addLayout(badge)
         page.addLayout(header)
         page.addLayout(top, 1)
-        page.addWidget(self.more_tabs)
+        if not density.compact():
+            page.addWidget(self.more_tabs)
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QScrollArea.Shape.NoFrame)
