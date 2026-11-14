@@ -2,6 +2,36 @@
 
 All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Editor) are documented in this file.
 
+# [1.0.0a4] — tag `v1.0.0-alpha.4` (screens from 1080p to 4K; safer Undo and Reload)
+
+### Screens from 1080p to 4K
+- **Compact layout** on low screens (available height under 1150 px: 1080p at 125%, 2496x1664
+  at 175%): smaller knobs, graphs and spacing, the text the same size; in Digital the partial's
+  sections on two tabs (OSC · FILTER · AMP / LFO · MOD LFO · MISC), kept in step across partials;
+  in Programs the library is the first of the lower tabs, beside parts and mixer; in Pattern the
+  card notes go into tooltips
+- **Narrow screens** (under 1800 px wide): a narrower side panel; under 1500 px some rows of
+  cards become columns (Pattern, Vocal FX) and the steps are narrower: no sideways scrolling
+- The side panel is as wide as its content plus the system's scroll bar (macOS: no 2 px
+  sideways scroll)
+- **Effects**: each effect card is as tall as the type shown (Thru no longer leaves a large
+  empty area); the chain diagram keeps its height
+
+### Undo, Redo and Reload
+- **A drag on a graph** (envelope, filter, LFO, effects…) is one step of Undo, even when it moves
+  two values (e.g. Decay and Sustain); Undo puts them back in reverse order, Redo in order
+- **Reload** (Digital, Drums, Analog) brings back the values from before the editor's changes,
+  without reloading the preset from the JD-Xi (it works offline too); asked first, and off while
+  nothing differs
+- **Up to 30 steps** of Undo: more are hard to follow among controls and tabs; Reload still goes
+  back to the start, however many changes
+- **All or nothing**: a step that cannot be applied changes nothing and stays where it was
+- **Values from the JD-Xi**: one the instrument sends drops the steps on that value, so Undo and
+  Redo never bring back something it no longer has
+- **Ctrl+Z / Ctrl+Y** act on the editor shown only, never on one out of sight
+- A program change resets the replaced parts' history only once it is sent (port closed: the
+  changes and their Undo stay)
+
 # [1.0.0a3] — tag `v1.0.0-alpha.3` (a name of its own everywhere; fixes from testing alpha 2)
 
 ### JD-Xi Studio, not JDXI-Editor
@@ -19,28 +49,14 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 ### Changes: undo, reload, no loss by mistake
 - **Undo / Redo** (Ctrl+Z, Ctrl+Y or Ctrl+Shift+Z, and two buttons at the top of every editor):
   the editor shown, or the last one edited; a slider drag is one change; the value undone is sent to
-  the JD-Xi at once; up to 30 steps (Reload goes back to the start, however many); a step that
-  cannot be applied stays where it was and changes nothing; a value the JD-Xi sends drops the
-  steps on that value (they would bring back what it no longer has); Ctrl+Z works on the editor
-  shown, never on one out of sight
+  the JD-Xi at once
 - **Modified**: an editor with changes not saved to a file shows "● Modified" next to its name and
   a dot on its tab
 - **Asked first**: before a preset, a program or a patch file replaces edited sounds, and at
   closing: *Save to file…* (then repeat), *Discard the changes* or *Cancel*. Only the parts that
   change count (a Digital 1 preset does not ask about Analog). Preferences › *Ask before losing
   unsaved changes* turns it off. What is done on the JD-Xi itself cannot be stopped
-- **Reload** (Digital, Drums, Analog): back to the values from before the editor's changes (off when nothing changed)
-  (asked first); a drag on a graph (envelope, filter, LFO…) is one step of Undo
-
-### Screens from 1080p to 4K
-- **Compact layout** on low screens (available height under 1150 px: 1080p at 125%, 2496x1664
-  at 175%): smaller knobs, graphs and spacing, the text the same size; in Digital the partial's
-  sections on two tabs (OSC · FILTER · AMP / LFO · MOD LFO · MISC); in Programs the library is
-  the first of the lower tabs, beside parts and mixer; in Pattern the notes go into tooltips
-- **Narrow screens** (under 1800 px wide): a narrower side panel; under 1500 px some rows of
-  cards become columns (Pattern, Vocal FX) and the steps are narrower — no sideways scrolling
-- **Effects**: each effect card is as tall as the type shown (Thru no longer leaves a large
-  empty area)
+- **Reload** (Digital, Drums, Analog): the preset again, the sound as stored
 
 ### Logs
 - **Log viewer**: fixed-width text with the columns lined up (the emoji before each message are left

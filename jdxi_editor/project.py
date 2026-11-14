@@ -1,6 +1,6 @@
 """Project metadata and version information for JD-Xi Studio."""
 
-__version__ = "1.0.0a3"  # PEP 440; the release tag is v1.0.0-alpha.3
+__version__ = "1.0.0a4"  # PEP 440; the release tag is v1.0.0-alpha.4
 # An independent edition of JDXI-Editor by Mark Brooks, with a name of its own
 # everywhere (interface, installer, settings, user folder), so the two can be
 # installed side by side and are never confused
