@@ -342,18 +342,18 @@ class RoundButtonDimensions(Dimensions):
 class ToneButtonDimensions(Dimensions):
     """Tone button dimensions"""
 
-    X: int = 428  # right of the part buttons (they overlapped)
+    X: int = 418  # between the part buttons and the panel's split, away from it
     Y = InstrumentDimensions.MARGIN + 95  # as far below Program as Program is tall
-    WIDTH: int = 72
+    WIDTH: int = 70
     HEIGHT = 60
 
 
 class ProgramButtonDimensions(Dimensions):
     """Program buttons"""
 
-    X: int = 428
+    X: int = 418
     Y = InstrumentDimensions.MARGIN + 30
-    WIDTH: int = 72
+    WIDTH: int = 70
     HEIGHT = 60
 
 

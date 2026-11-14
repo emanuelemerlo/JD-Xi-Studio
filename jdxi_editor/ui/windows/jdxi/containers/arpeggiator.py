@@ -38,7 +38,10 @@ def add_octave_and_arp_buttons(container: QWidget, send_octave: Callable):
 
     grid = QGridLayout(root)
     grid.setHorizontalSpacing(20)
-    grid.setVerticalSpacing(6)
+    # the headers away from the display and close to their labels: one group each
+    grid.setContentsMargins(0, 25, 0, 0)
+    grid.setVerticalSpacing(1)
+    grid.setRowStretch(3, 1)  # rows at their own height, the space above the headers
 
     # Column layout:
     # 0 = Octave Down
