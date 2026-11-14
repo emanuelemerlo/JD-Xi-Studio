@@ -247,6 +247,7 @@ class ChainView(_Graph):
 
     def __init__(self, editor: "EffectsEditor"):
         super().__init__(ACCENT, editor.info_hub, 86)
+        self.setMinimumHeight(86)  # boxes and the line under them: not smaller on a low screen
         self.editor = editor
         self.efx1 = editor.pv("EFX1_TYPE")
         self.efx2 = editor.pv("EFX2_TYPE")
