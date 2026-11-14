@@ -129,6 +129,7 @@ def add_favorite_button_container(central_widget):
     """
     # --- Add label with color based on text
     favourite_button_label = QLabel(text)
+    favourite_button_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)  # over the button, as the others
     # --- Add spacer to push button to right
     row.addStretch()
     # --- Add button

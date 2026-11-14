@@ -238,6 +238,21 @@ class JDXiWindow(QMainWindow):
             on_save_favorite=self._save_favorite,
         )
         self.favorite_button = add_favorite_button_container(container_widget)
+        # The step lines above the steps, as on the JD-Xi (the same as in the Pattern editor),
+        # measured on the buttons so they line up at any scale
+        from jdxi_editor.ui.widgets.pattern.step_guide import StepGuide
+
+        self.step_guide = StepGuide(
+            lambda: self.sequencer_buttons, container_widget, row_spacing=5, margin=2, line_width=2
+        )
+        guide_left = JDXi.UI.Dimensions.SEQUENCER.CONTAINER.X + 6  # right of Fav.
+        self.step_guide.setGeometry(
+            guide_left,
+            JDXi.UI.Dimensions.SEQUENCER.STEPS_TOP - self.step_guide.height() - 3,
+            JDXi.UI.Dimensions.INSTRUMENT.WIDTH - guide_left,
+            self.step_guide.height(),
+        )
+        self.step_guide.raise_()
         add_slider_container(container_widget, self.midi_helper)
         self.panel_container = container_widget
         layout.addWidget(container_widget)
@@ -562,11 +577,16 @@ class JDXiWindow(QMainWindow):
         self.midi_in_indicator = LEDIndicator()
         self.midi_out_indicator = LEDIndicator()
 
+        # each light right after its label, as a pair
         row = QHBoxLayout()
+        row.setSpacing(6)
+        row.addStretch()  # centred under the wheels
         row.addWidget(QLabel("MIDI IN:"))
         row.addWidget(self.midi_in_indicator)
+        row.addSpacing(18)
         row.addWidget(QLabel("MIDI OUT:"))
         row.addWidget(self.midi_out_indicator)
+        row.addStretch()
         return row
 
     def _update_display(self):

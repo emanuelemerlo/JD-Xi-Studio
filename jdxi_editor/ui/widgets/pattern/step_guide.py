@@ -38,14 +38,19 @@ class StepGuide(QWidget):
         self,
         step_buttons: Callable[[], Sequence[QWidget]],
         parent: Optional[QWidget] = None,
+        row_spacing: int = ROW_SPACING,
+        margin: int = MARGIN,
+        line_width: int = LINE_WIDTH,
     ):
         """
         :param step_buttons: returns the step buttons the lines are drawn over
             (one row of the current measure)
+        :param row_spacing, margin, line_width: smaller over smaller steps (the keyboard window)
         """
         super().__init__(parent)
         self._step_buttons = step_buttons
-        self.setFixedHeight(2 * MARGIN + (len(GUIDE_ROWS) - 1) * ROW_SPACING + LINE_WIDTH)
+        self.row_spacing, self.margin, self.line_width = row_spacing, margin, line_width
+        self.setFixedHeight(2 * margin + (len(GUIDE_ROWS) - 1) * row_spacing + line_width)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
 
@@ -61,7 +66,7 @@ class StepGuide(QWidget):
             edges.append((left, left + button.width() - 1))
         result = []
         for row, (length, count) in enumerate(GUIDE_ROWS):
-            y = MARGIN + row * ROW_SPACING
+            y = self.margin + row * self.row_spacing
             for group in range(count):
                 first, last = group * length, (group + 1) * length - 1
                 if last < len(edges):
@@ -70,7 +75,7 @@ class StepGuide(QWidget):
 
     def paintEvent(self, event: QPaintEvent) -> None:
         painter = QPainter(self)
-        pen = QPen(QColor(LINE_COLOR), LINE_WIDTH)
+        pen = QPen(QColor(LINE_COLOR), self.line_width)
         pen.setCapStyle(Qt.PenCapStyle.FlatCap)
         painter.setPen(pen)
         for x1, x2, y in self.segments():

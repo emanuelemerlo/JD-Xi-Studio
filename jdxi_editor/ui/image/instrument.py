@@ -113,7 +113,7 @@ def draw_instrument_pixmap() -> QPixmap:
     draw_gloss_panel(painter, left_half, sheen=True)
     draw_gloss_panel(painter, right_half, sheen=False)
 
-    draw_sequencer(painter)
+    # the step lines are a StepGuide over the steps (ui.py): drawn from the buttons themselves
     painter.end()
     return pixmap
 
