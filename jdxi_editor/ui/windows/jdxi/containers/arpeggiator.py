@@ -31,13 +31,14 @@ def add_octave_and_arp_buttons(container: QWidget, send_octave: Callable):
     root.setGeometry(
         JDXi.UI.Dimensions.OCTAVE.X,
         JDXi.UI.Dimensions.OCTAVE.Y,
-        JDXi.UI.Dimensions.OCTAVE.WIDTH + JDXi.UI.Dimensions.ARPEGGIATOR.WIDTH,
+        # narrower than the two groups' boxes: Key Hold clear of the part names on its right
+        JDXi.UI.Dimensions.OCTAVE.WIDTH + JDXi.UI.Dimensions.ARPEGGIATOR.WIDTH - 22,
         max(JDXi.UI.Dimensions.OCTAVE.HEIGHT, JDXi.UI.Dimensions.ARPEGGIATOR.HEIGHT),
     )
     root.setStyleSheet("background: transparent;")
 
     grid = QGridLayout(root)
-    grid.setHorizontalSpacing(20)
+    grid.setHorizontalSpacing(6)
     # the headers away from the display and close to their labels: one group each
     grid.setContentsMargins(0, 25, 0, 0)
     grid.setVerticalSpacing(1)

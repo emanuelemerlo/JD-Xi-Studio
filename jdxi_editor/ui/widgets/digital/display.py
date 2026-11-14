@@ -90,7 +90,7 @@ class DigitalDisplay(DigitalDisplayBase):
         display_font = lcd_font(font_size, bold=True, primary=self.digital_font_family)
         painter.setFont(display_font)
 
-        tone_name_text = f" {self.active_synth}:{self.tone_name}"
+        tone_name_text = f"{self.active_synth}:{self.tone_name}"  # the same left edge as the program
         tone_name_text = (
             tone_name_text[:21] + "…" if len(tone_name_text) > 22 else tone_name_text
         )

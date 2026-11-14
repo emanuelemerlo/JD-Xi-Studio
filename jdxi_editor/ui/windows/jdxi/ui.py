@@ -580,6 +580,7 @@ class JDXiWindow(QMainWindow):
         # each light right after its label, as a pair
         row = QHBoxLayout()
         row.setSpacing(6)
+        row.addStretch()  # centred under the wheels
         row.addWidget(QLabel("MIDI IN:"))
         row.addWidget(self.midi_in_indicator)
         row.addSpacing(18)
