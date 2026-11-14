@@ -202,6 +202,7 @@ def test_envelope_drag(editor):
     view = editor.pages[4].sections.currentWidget().findChildren(dr.StepEnvelopeView)[0]
     r = view.plot_rect()
     start = view.points()[1]
+    original = (view.times[0].value(), view.levels[1].value())
     target = QPointF(start.x() + 10, r.top())
     for kind, pos in ((QMouseEvent.Type.MouseButtonPress, start), (QMouseEvent.Type.MouseMove, target),
                       (QMouseEvent.Type.MouseButtonRelease, target)):
@@ -209,6 +210,8 @@ def test_envelope_drag(editor):
                                                  Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier))
     assert view.levels[1].value() == 127
     assert view.times[0].value() > 0
+    assert editor.history.undo()
+    assert (view.times[0].value(), view.levels[1].value()) == original
 
 
 def test_export_gives_every_block_as_one_message(editor, tmp_path):

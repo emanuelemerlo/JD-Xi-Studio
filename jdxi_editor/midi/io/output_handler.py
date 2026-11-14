@@ -47,6 +47,8 @@ from picomidi.utils.formatting import (
 
 # Asked before a program change goes out: channel (0-15) -> send it? (set by the main window)
 PROGRAM_CHANGE_GUARD = None
+# Told after it: channel, sent (the histories of the parts replaced start again)
+PROGRAM_CHANGE_DONE = None
 
 class MidiOutHandler(MidiIOController):
     """Helper class for MIDI communication with the JD-Xi."""
@@ -306,7 +308,9 @@ class MidiOutHandler(MidiIOController):
         if not self._program_change_allowed(channel):
             return False
         with self._program_change_passed():
-            return self._send_program_change(program, channel)
+            sent = self._send_program_change(program, channel)
+        self._program_change_done(channel, sent)
+        return sent
 
     def _program_change_allowed(self, channel: int) -> bool:
         if getattr(self, "_program_change_ok", False) or PROGRAM_CHANGE_GUARD is None:
@@ -316,6 +320,14 @@ class MidiOutHandler(MidiIOController):
         except Exception as ex:  # a broken guard must not stop the MIDI
             log.error(scope="MidiOutHandler", message=f"Program change guard: {ex}")
             return True
+
+    def _program_change_done(self, channel: int, sent: bool) -> None:
+        if getattr(self, "_program_change_ok", False) or PROGRAM_CHANGE_DONE is None:
+            return  # the inner message of a bank select + program change
+        try:
+            PROGRAM_CHANGE_DONE(channel, bool(sent))
+        except Exception as ex:
+            log.error(scope="MidiOutHandler", message=f"Program change done: {ex}")
 
     @contextmanager
     def _program_change_passed(self):
@@ -526,7 +538,9 @@ class MidiOutHandler(MidiIOController):
         if not self._program_change_allowed(channel):
             return False
         with self._program_change_passed():
-            return self._send_bank_select_and_program_change(channel, bank_msb, bank_lsb, program)
+            sent = self._send_bank_select_and_program_change(channel, bank_msb, bank_lsb, program)
+        self._program_change_done(channel, sent)
+        return sent
 
     def _send_bank_select_and_program_change(
         self, channel: int, bank_msb: int, bank_lsb: int, program: int

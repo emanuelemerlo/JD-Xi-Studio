@@ -24,6 +24,9 @@ from jdxi_editor.i18n import tr
 
 CONFIRM_KEY = "edits/confirm_discard"
 MERGE_SECONDS = 1.0  # changes of one value closer than this are one edit (a drag)
+# Undo goes back this many steps: more and it is hard to tell where each one lands among the
+# controls and tabs; Reload brings back the sound from before every change, however many
+MAX_STEPS = 30
 
 # the parts a program change on a MIDI channel replaces
 DIGITAL_1, DIGITAL_2, ANALOG, DRUMS, PROGRAM = "digital_1", "digital_2", "analog", "drums", "program"
@@ -51,12 +54,22 @@ def part_of_synth(synth_type) -> str:
 
 
 class _Edit:
-    __slots__ = ("value", "old", "new", "time", "id")
+    __slots__ = ("changes", "time", "id")
 
     def __init__(self, value, old: int, new: int):
-        self.value, self.old, self.new = value, old, new
+        self.changes = {value: [old, new]}
         self.time = time.monotonic()
         self.id = next(_ids)
+
+    def record(self, value, old: int, new: int) -> None:
+        change = self.changes.get(value)
+        if change is None:
+            if old != new:
+                self.changes[value] = [old, new]
+            return
+        change[1] = new
+        if change[0] == new:
+            del self.changes[value]
 
 
 class EditHistory(QObject):
@@ -73,6 +86,10 @@ class EditHistory(QObject):
         self._saved_id = 0  # the id of the last edit when saved (0: nothing)
         self._sealed = True  # the last edit is not merged with the next one
         self._replaying = False
+        self._group_depth = 0
+        self._group: Optional[_Edit] = None
+        self._origin: dict = {}  # value -> what it was before the first change (Reload)
+        self._floor_id = 0  # the id of the last step dropped (MAX_STEPS): an empty Undo is not the start
         self._modified = False
         _histories.add(self)
 
@@ -80,6 +97,7 @@ class EditHistory(QObject):
     def watch(self, values: Iterable) -> None:
         """Record the changes of these ParamValue (they keep their previous value)."""
         for pv in values:
+            pv._edit_history = self
             pv.valueChanged.connect(lambda new, pv=pv: self._record(pv, new))
 
     def _record(self, pv, new: int) -> None:
@@ -87,18 +105,74 @@ class EditHistory(QObject):
         if self._replaying:
             return
         old = getattr(pv, "previous", new)
+        self._origin.setdefault(pv, old)
+        if self._group_depth:
+            if self._group is None:
+                if old != new:
+                    self._group = _Edit(pv, old, new)
+            else:
+                self._group.record(pv, old, new)
+            if self._group is not None:
+                _last_edited = weakref.ref(self)
+            self._update()
+            return
         top = self._undo[-1] if self._undo else None
-        if (top is not None and not self._sealed and top.value is pv
+        if (top is not None and not self._sealed and len(top.changes) == 1
+                and pv in top.changes
                 and time.monotonic() - top.time < MERGE_SECONDS):
-            top.new, top.time = new, time.monotonic()
-            if top.new == top.old:  # back where it started: no edit
+            top.record(pv, old, new)
+            top.time = time.monotonic()
+            if not top.changes:  # back where it started: no edit
                 self._undo.pop()
         else:
-            self._undo.append(_Edit(pv, old, new))
+            self._push(_Edit(pv, old, new))
         self._sealed = False
         self._redo.clear()
         _last_edited = weakref.ref(self)
         self._update()
+
+    def begin_group(self) -> None:
+        """Group the parameter changes in one gesture into a single history step."""
+        if self._group_depth == 0:
+            self._group = None
+            self._sealed = True
+        self._group_depth += 1
+
+    def end_group(self) -> None:
+        if self._group_depth == 0:
+            return
+        self._group_depth -= 1
+        if self._group_depth:
+            return
+        edit, self._group = self._group, None
+        if edit is not None and edit.changes:
+            self._push(edit)
+            self._redo.clear()
+            self._sealed = True
+        self._update()
+
+    def _push(self, edit: _Edit) -> None:
+        self._undo.append(edit)
+        while len(self._undo) > MAX_STEPS:
+            self._floor_id = self._undo.pop(0).id
+
+    def external_change(self, pv) -> None:
+        """The JD-Xi sent another value: the steps on it would bring back a value it no longer has."""
+        if self._replaying:
+            return
+        changed = False
+        for stack in (self._undo, self._redo):
+            for edit in list(stack):
+                if edit.changes.pop(pv, None) is not None:
+                    changed = True
+                    if not edit.changes:
+                        stack.remove(edit)
+        if self._group is not None and self._group.changes.pop(pv, None) is not None:
+            changed = True
+        if self._origin.pop(pv, None) is not None:  # its value from the JD-Xi is the start now
+            changed = True
+        if changed:
+            self._update()
 
     # ------------------------------------------------------------ undo / redo
     def can_undo(self) -> bool:
@@ -108,24 +182,67 @@ class EditHistory(QObject):
         return bool(self._redo)
 
     def undo(self) -> bool:
+        while self._group_depth:
+            self.end_group()
         if not self._undo:
             return False
-        edit = self._undo.pop()
-        self._apply(edit.value, edit.old)
+        edit = self._undo[-1]
+        if not self._apply_all([(pv, old) for pv, (old, _new) in reversed(list(edit.changes.items()))]):
+            return False  # nothing changed: the step stays where it was
+        self._undo.pop()
         self._redo.append(edit)
         self._sealed = True
         self._update()
         return True
 
     def redo(self) -> bool:
+        while self._group_depth:
+            self.end_group()
         if not self._redo:
             return False
-        edit = self._redo.pop()
-        self._apply(edit.value, edit.new)
+        edit = self._redo[-1]
+        if not self._apply_all([(pv, new) for pv, (_old, new) in edit.changes.items()]):
+            return False
+        self._redo.pop()
         self._undo.append(edit)
         self._sealed = True
         self._update()
         return True
+
+    def revert(self) -> None:
+        """Restore the values from before this history's edits and clear history."""
+        while self._group_depth:
+            self.end_group()
+        if not self._apply_all(list(self._origin.items())):
+            return  # the values and the history stay as they were
+        self._undo.clear()
+        self._redo.clear()
+        self._origin.clear()
+        self._floor_id = 0
+        self._saved_id = 0
+        self._sealed = True
+        self._update()
+
+    def _apply_all(self, values: list) -> bool:
+        """Set these values; if one fails, the ones already set go back (all or nothing)."""
+        done = []
+        try:
+            for pv, value in values:
+                before = pv.value()
+                if before != value:
+                    self._apply(pv, value)
+                    done.append((pv, before))
+            return True
+        except Exception as ex:
+            for pv, before in reversed(done):
+                try:
+                    self._apply(pv, before)
+                except Exception:
+                    pass
+            from decologr import Decologr as log
+
+            log.error(scope="EditHistory", message=f"Undo / Redo not applied: {ex}")
+            return False
 
     def _apply(self, pv, value: int) -> None:
         """Set the value as the user would: the controls follow and it is sent to the JD-Xi."""
@@ -142,20 +259,33 @@ class EditHistory(QObject):
 
     def mark_saved(self) -> None:
         """The values are in a file now."""
-        self._saved_id = self._undo[-1].id if self._undo else 0
+        while self._group_depth:
+            self.end_group()
+        self._saved_id = self._undo[-1].id if self._undo else self._floor_id
         self._sealed = True
         self._update()
 
     def reset(self) -> None:
         """A new sound: nothing to undo, nothing modified."""
+        self._group_depth = 0
+        self._group = None
         self._undo.clear()
         self._redo.clear()
+        self._origin.clear()
+        self._floor_id = 0
         self._saved_id = 0
         self._sealed = True
         self._update()
 
+    def can_restore(self) -> bool:
+        """Something differs from the sound before the changes (Reload)."""
+        return any(pv.value() != value for pv, value in self._origin.items())
+
     def _update(self) -> None:
-        modified = (self._undo[-1].id if self._undo else 0) != self._saved_id
+        current_id = self._undo[-1].id if self._undo else self._floor_id
+        if self._group is not None and self._group.changes:
+            current_id = self._group.id
+        modified = current_id != self._saved_id
         if modified != self._modified:
             self._modified = modified
             self.modifiedChanged.emit(modified)
@@ -225,8 +355,10 @@ def ask(labels: list[str], action: str, parent=None) -> str:
     return "cancel"
 
 
-def confirm_discard(parts: Iterable[str], action: str, parent=None) -> bool:
-    """Before replacing these parts' sound: True to go on (their histories start again)."""
+def confirm_discard(
+    parts: Iterable[str], action: str, parent=None, *, restore=False, defer=False
+) -> bool:
+    """Confirm replacing or restoring these parts; restore replays edits in reverse."""
     affected = histories(parts)
     modified = [h for h in affected if h.modified]
     if modified and asks_before_discarding():
@@ -237,8 +369,15 @@ def confirm_discard(parts: Iterable[str], action: str, parent=None) -> bool:
             return False
         if answer != "discard":
             return False
+    if defer:  # reset once the change is done (program_change_done)
+        global _pending
+        _pending = affected
+        return True
     for history in affected:
-        history.reset()
+        if restore:
+            history.revert()
+        else:
+            history.reset()
     return True
 
 
@@ -267,4 +406,18 @@ def program_change_allowed(channel: int) -> bool:
         if parts == ALL_PARTS
         else tr("Changing the sound replaces them.")
     )
-    return confirm_discard(parts, action)
+    return confirm_discard(parts, action, defer=True)
+
+
+_pending: list = []
+
+
+def program_change_done(channel: int, sent: bool) -> None:
+    """After the program change: a new sound, so its parts' histories start again; not sent,
+    the sound and its changes are still there."""
+    global _pending
+    pending, _pending = _pending, []
+    if sent:
+        for history in pending:
+            if _alive(history):
+                history.reset()

@@ -507,6 +507,7 @@ class _Graph(QWidget):
         self.setMouseTracking(True)
         self._drag: Optional[int] = None
         self._hover: Optional[int] = None
+        self._edit_history = None
 
     def plot_rect(self) -> QRectF:
         return QRectF(self.rect()).adjusted(10, 10, -10, -16)
@@ -538,10 +539,16 @@ class _Graph(QWidget):
             p.drawEllipse(pt, 6 if active else 5, 6 if active else 5)
 
     def mousePressEvent(self, event) -> None:
+        self._end_edit_group()  # a press without its release (e.g. a double click)
         self._drag = self._handle_at(event.position())
         if self._drag is None:
             self._drag = self.nearest_handle(event.position())
         if self._drag is not None:
+            handles = self.handles()
+            if self._drag < len(handles):
+                self._edit_history = getattr(handles[self._drag][1], "_edit_history", None)
+                if self._edit_history is not None:
+                    self._edit_history.begin_group()
             self.drag_to(self._drag, event.position())
         self.update()
 
@@ -564,8 +571,20 @@ class _Graph(QWidget):
                 self.unsetCursor()
 
     def mouseReleaseEvent(self, event) -> None:
+        self._end_edit_group()
         self._drag = None
         self.update()
+
+    def _end_edit_group(self) -> None:
+        """The drag is one step of the editor's history."""
+        if self._edit_history is not None:
+            self._edit_history.end_group()
+            self._edit_history = None
+
+    def hideEvent(self, event) -> None:
+        self._end_edit_group()  # hidden while dragging: no release will come
+        self._drag = None
+        super().hideEvent(event)
 
     def leaveEvent(self, event) -> None:
         self._hover = None

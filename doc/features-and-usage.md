@@ -93,7 +93,8 @@ This document covers recent changes, patch loading/saving, and SoundFont usage.
 - **Asked first** before a preset, a program or a patch file replaces edited parts, and at closing:
   *Save to file…*, *Discard the changes* or *Cancel*. Off in Preferences › *Ask before losing
   unsaved changes*. Changes made on the JD-Xi itself are not seen beforehand.
-- **Reload** (Digital, Drums, Analog): loads the preset again, back to the sound as stored.
+- **Reload** (Digital, Drums, Analog): back to the values from before the editor's changes (off when nothing changed)
+  (asked first). A drag on a graph (envelope, filter, LFO…) is one step of Undo, whatever it moves.
 
 The edits go to the JD-Xi's temporary area as they are made: to keep them, save to a file or
 press WRITE on the JD-Xi.

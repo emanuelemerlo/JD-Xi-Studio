@@ -68,9 +68,9 @@ class AnalogToneEditor(AnalogSynthEditor):
         super().__init__(midi_helper=midi_helper, preset_helper=preset_helper, parent=parent)
 
     def reload_sound(self) -> None:
-        from jdxi_editor.ui.v2.framework import reload_preset
+        from jdxi_editor.ui.v2.framework import restore_sound
 
-        reload_preset(self)
+        restore_sound(self)
 
     # ------------------------------------------------------------------ layout
     def setup_ui(self) -> None:
