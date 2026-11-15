@@ -30,7 +30,7 @@ def create_parts_container(
     parts_layout = QVBoxLayout(parts_container)
     parts_layout.setSpacing(3)
 
-    parts_label = QLabel(tr("Parts Select"))
+    parts_label = QLabel("Part Select")  # as printed on the JD-Xi panel (and in the manual)
     parts_label.setStyleSheet(JDXi.UI.Style.PARTS_SELECT)
     parts_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
     parts_layout.addWidget(parts_label)

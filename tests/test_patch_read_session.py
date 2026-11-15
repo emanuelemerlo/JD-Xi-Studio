@@ -130,10 +130,13 @@ class _JsonOnlyHelper(QObject):
         return True
 
 
-def _pump(seconds=0.05):
-    end = time.monotonic() + seconds
+def _pump(seconds=0.05, until=None):
+    """Process events for `seconds`, or up to 2 s until `until()` is true (slow CI runners)."""
+    end = time.monotonic() + (2.0 if until is not None else seconds)
     while time.monotonic() < end:
         _APP.processEvents()
+        if until is not None and until():
+            return
         time.sleep(0.005)
 
 
@@ -167,7 +170,7 @@ class TestDt1Matching(unittest.TestCase):
         for address in ([0x19, 0x42, 0, 0], [0x19, 0x01, 0, 0], [0x18, 0x00, 0x02, 0]):
             data = _dt1(bytes(address))
             helper.midi_message_incoming.emit(mido.Message("sysex", data=data[1:-1]))
-        _pump()
+        _pump(until=lambda: bool(finished))
         self.assertEqual(len(finished), 1)
         self.assertTrue(finished[0].complete, finished[0].summary())
         self.assertFalse(session._connected)
@@ -183,7 +186,7 @@ class TestDt1Matching(unittest.TestCase):
         finished = []
         start_read_session(helper, [_RQ1_ANALOG], timeout_ms=200, on_finished=finished.append)
         helper.midi_sysex_json.emit(json.dumps({"ADDRESS": "19420000"}))
-        _pump(0.4)
+        _pump(until=lambda: bool(finished))  # the 200 ms timeout
         self.assertEqual(finished[0].sections[0].status, SectionStatus.TIMEOUT)
 
     def test_other_messages_and_other_addresses_are_ignored(self):
@@ -194,7 +197,7 @@ class TestDt1Matching(unittest.TestCase):
         helper.midi_message_incoming.emit(
             mido.Message("sysex", data=_dt1(bytes([0x19, 0x01, 0, 0]))[1:-1])
         )
-        _pump(0.4)
+        _pump(until=lambda: bool(finished))  # the 200 ms timeout
         self.assertFalse(finished[0].complete)
 
     def test_json_fallback_understands_parser_addresses(self):
@@ -202,7 +205,7 @@ class TestDt1Matching(unittest.TestCase):
         finished = []
         start_read_session(helper, [_RQ1_ANALOG], timeout_ms=2000, on_finished=finished.append)
         helper.midi_sysex_json.emit(json.dumps({"ADDRESS": "12194200"}))
-        _pump()
+        _pump(until=lambda: bool(finished))
         self.assertTrue(finished and finished[0].complete)
 
 

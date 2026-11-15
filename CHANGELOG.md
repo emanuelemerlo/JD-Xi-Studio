@@ -10,6 +10,12 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - Tidier tables (columns as wide as their text, taller rows, the actions on the left of their
   column); an empty library says what goes there
 
+### Italian
+- The Italian translation uses the words of the JD-Xi's Italian manual: *tono* (not *timbro*),
+  *arpeggio*, *sequencer di pattern*, *file MIDI*, *drum kit*, *Velocity*, *reverb*, *Vocal FX*,
+  *log*; the panel's names stay as printed (Part Select, Program, Tone, Mute);
+  `doc/italian-glossary.md` lists them
+
 ### Tabs
 - **Core tabs** always there (Programs, Digital 1 and 2, Analog, Drums, Arpeggio, Effects,
   Vocal FX, Pattern, MIDI File); **Program parts, Recipes and Settings** open and close: a **+**
