@@ -21,7 +21,8 @@ def add_tone_container(
     _row, tone_down_button, tone_up_button = create_tone_buttons_horizontal_layout(previous_tone, next_tone)
     from jdxi_editor.ui.windows.jdxi.containers.program import nav_block
 
-    nav_block(tone_container, tr("Tone"), tone_down_button, tone_up_button)
+    nav_block(tone_container, "Tone",  # panel label: "Tone [-] [+]" in the manual
+              tone_down_button, tone_up_button)
     return tone_down_button, tone_up_button
 
 

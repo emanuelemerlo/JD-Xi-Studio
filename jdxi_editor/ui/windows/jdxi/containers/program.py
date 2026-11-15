@@ -19,7 +19,8 @@ def add_program_container(central_widget, create_program_buttons_row):
         JDXi.UI.Dimensions.PROGRAM.HEIGHT,
     )
     _row, program_down_button, program_up_button = create_program_buttons_row()
-    nav_block(program_container, tr("Program"), program_down_button, program_up_button)
+    nav_block(program_container, "Program",  # panel label, as on the JD-Xi
+              program_down_button, program_up_button)
     return program_down_button, program_up_button
 
 
