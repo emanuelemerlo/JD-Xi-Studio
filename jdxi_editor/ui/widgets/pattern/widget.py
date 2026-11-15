@@ -16,6 +16,7 @@ from jdxi_editor.ui.editors.pattern.helper import (
     set_sequencer_style,
 )
 from jdxi_editor.ui.widgets.pattern.measure_strip import MeasureStrip
+from jdxi_editor.i18n import tr
 from jdxi_editor.ui.widgets.pattern.step_guide import StepGuide
 from jdxi_editor.ui.widgets.pattern.measure_widget import PatternMeasureWidget
 from jdxi_editor.ui.widgets.pattern.sequencer_button import SequencerButton
@@ -105,7 +106,10 @@ class PatternWidget(QWidget):
         self._rows_layout.setSpacing(12)
         self._rows_layout.addLayout(self.sequencer_display, 1)
         # The JD-Xi's step-length lines, above the first row of steps
-        self.step_guide = StepGuide(self._guide_buttons)
+        self.step_guide = StepGuide(self._guide_buttons, notes=True)
+        self.step_guide.setToolTip(
+            tr("Step lengths printed on the JD-Xi: 1/8 triplets (3 steps), 1/32 (8 steps), 1/16 (4 steps)")
+        )
         self._sequencer_right_layout.addWidget(self.step_guide)
         self._sequencer_right_layout.addLayout(self._rows_layout)
         self._sequencer_right_layout.addStretch()

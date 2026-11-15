@@ -107,7 +107,8 @@ def test_save_button_opens_a_save_dialog(editor, monkeypatch, tmp_path):
 
 
 def test_step_guide_lines_span_their_steps(editor):
-    """Lines of 3 (over steps 1-12), 8 and 4 steps, each from its first step's left edge to its last's right edge."""
+    """Lines of 3 (over steps 1-12), 8 and 4 steps, each from its first step's middle (its note on
+    the left half, as on the JD-Xi) to its last's right edge."""
     from PySide6.QtCore import QPoint
 
     editor.resize(1400, 900)
@@ -122,13 +123,16 @@ def test_step_guide_lines_span_their_steps(editor):
     def right(i):
         return left(i) + buttons[i].width() - 1
 
+    def start(i):  # the note sits on the left half of the first step, the line from its middle
+        return (left(i) + right(i)) // 2 + 2
+
     rows = {}
     for x1, x2, y in guide.segments():
         rows.setdefault(y, []).append((x1, x2))
     threes, eights, fours = (rows[y] for y in sorted(rows))
-    assert threes == [(left(i), right(i + 2)) for i in (0, 3, 6, 9)]
-    assert eights == [(left(0), right(7)), (left(8), right(15))]
-    assert fours == [(left(i), right(i + 3)) for i in (0, 4, 8, 12)]
+    assert threes == [(start(i), right(i + 2)) for i in (0, 3, 6, 9)]
+    assert eights == [(start(0), right(7)), (start(8), right(15))]
+    assert fours == [(start(i), right(i + 3)) for i in (0, 4, 8, 12)]
 
 
 def test_sequencer_is_in_a_pattern_sequencer_group(editor):
