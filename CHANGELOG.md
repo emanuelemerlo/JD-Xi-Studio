@@ -31,8 +31,9 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   undoes it, changes the octave and plays a note, and checks each result on the JD-Xi; then
   asks you to choose a tone, press OCTAVE and play on the JD-Xi and checks that the window
   follows. A report is saved in `~/.jdxi_studio/reports`
-  It also edits a free user tone («Init Tone») of Analog and of Digital 1 — oscillator, filter,
-  amp, envelopes, LFO — checks every value on the JD-Xi, undoes the edits and checks again
+  It also makes a dozen edits to the Analog and the Digital 1 tone — oscillator, filter, amp,
+  envelopes, LFO — checks every value on the JD-Xi, undoes the edits and checks again (in the
+  JD-Xi's temporary memory: nothing is written, and the starting program is loaded again)
 - Effects: a type chosen in the app whose parameters are all 0 (via MIDI the JD-Xi loads no
   settings for a new type) gets audible starting values — it was silent (Balance D100:0W,
   Depth 0, Level 0)
@@ -50,6 +51,8 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   how many Undo steps the edits made
 - An orange pencil on the tab of an editor with changes not saved (it was a dot before the
   name), and «✎ Modified» in the editor
+- A reply logged with the fields of a request parsed at the same time (the input and output
+  handlers shared one parser)
 - The messages sent were never heard by their listeners (a signal of the MIDI helper's second
   base class): the MIDI OUT light blinks again, the MIDI monitor shows them
 
