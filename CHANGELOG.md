@@ -4,6 +4,8 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+# [1.0.0a5] — tag `v1.0.0-alpha.5` (the window follows the JD-Xi; self-test with the instrument)
+
 ### The window follows the JD-Xi (hardware tests, round 1)
 - At start, once the ports are open, the window reads the program and the tones: the display
   no longer starts on «Init Tone»
