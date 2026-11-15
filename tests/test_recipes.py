@@ -284,3 +284,30 @@ def test_the_way_back_is_always_at_the_top(app, monkeypatch):
     w.back_shortcut.activated.emit()  # Esc
     assert w.pages.currentWidget() is w.home
     w.close()
+
+
+def test_take_the_values_from_the_jdxi(app, monkeypatch):
+    """With no rows it says what to do; with rows it reads the parts and fills each value."""
+    import time
+
+    from jdxi_editor.ui.v2 import recipes as module
+    from jdxi_editor.ui.v2.recipes import RecipesEditor
+
+    monkeypatch.setattr(module, "CAPTURE_DELAY_MS", 10)
+    editors = Editors()
+    w = RecipesEditor(editors=editors)
+    w.show_editor_page()
+    w.capture_current()
+    assert "add rows" in w.ed_status.text()
+    w.add_editor_row()  # AN · FILTER
+    param = w.ed_table.cellWidget(0, 5)
+    param.setCurrentIndex(param.findText("Cutoff"))
+    cutoff = next(p for p in editors("analog").values if p.name == "FILTER_CUTOFF")
+    editors("analog").values[cutoff].setValue(77)
+    w.capture_current()
+    deadline = time.monotonic() + 2
+    while "taken" not in w.ed_status.text().lower() and time.monotonic() < deadline:
+        app.processEvents()
+    assert w.ed_table.item(0, 7).text() == "77"
+    assert "taken from the JD-Xi: 1" in w.ed_status.text()
+    w.close()

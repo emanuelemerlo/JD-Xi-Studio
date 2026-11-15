@@ -16,7 +16,8 @@ import shutil
 from pathlib import Path
 from typing import Callable, Optional
 
-from PySide6.QtCore import Qt, Signal
+from decologr import Decologr as log
+from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -47,6 +48,7 @@ from jdxi_editor.resources import resource_path
 from jdxi_editor.ui.v2.widgets import Card
 
 ACCENT = "#27ae60"
+CAPTURE_DELAY_MS = 800  # the editors read the JD-Xi before the values are taken
 TEMPLATE_DIR = Path("resources") / "recipes"
 # The template files in the interface's language (Italian, or English for any other)
 TEMPLATES = {
@@ -939,8 +941,42 @@ class RecipesEditor(QWidget):
             self._editor_changed()
 
     def capture_current(self) -> None:
-        """Each row's value as the JD-Xi has it now (to write a recipe from a sound)."""
+        """Each row's value as the JD-Xi has it now (to write a recipe from a sound).
+
+        The editors of the rows' parts read the JD-Xi first, so the values are
+        the instrument's and not what an editor showed before.
+        """
         rows = self._editor_rows()
+        targets = []
+        for row in rows:
+            c = check.check_row(Row(**{**row.__dict__, "kind": VALUE, "value": "0"}))
+            if c.target is not None:
+                targets.append(c.target)
+        if not targets:
+            # it fills the rows there are: with none (or none understood) it did nothing, silently
+            self.ed_status.setText(tr(
+                "No row to fill: add rows with Part, Group and Parameter first; "
+                "«Take the values from the JD-Xi» writes in each one the value it has now."))
+            return
+        requested = set()
+        for target in targets:
+            key = getattr(target, "editor_key", None)
+            if key in requested:
+                continue
+            requested.add(key)
+            editor = self.editors(key) if key else None
+            request = getattr(editor, "data_request", None)
+            if callable(request):
+                try:
+                    request()
+                except Exception as ex:  # reading again is a nicety: the values shown are used
+                    log.warning(f"Recipes: reading {key} failed: {ex}", scope="RecipesEditor")
+        self.ed_status.setText(tr("Reading the JD-Xi…"))
+        QTimer.singleShot(CAPTURE_DELAY_MS, self, self._capture_now)
+
+    def _capture_now(self) -> None:
+        rows = self._editor_rows()
+        filled = 0
         table = self.ed_table
         table.blockSignals(True)
         for i, row in enumerate(rows):
@@ -949,12 +985,14 @@ class RecipesEditor(QWidget):
                 continue
             text = recipe_apply.current_text(c, self.editors)
             if text and text != "—":
+                filled += 1
                 table.setItem(i, 7, QTableWidgetItem(text.split(" / ")[0]))
                 kind = table.cellWidget(i, 6)
                 if isinstance(kind, QComboBox):
                     kind.setCurrentText(VALUE)
         table.blockSignals(False)
         self._editor_changed()
+        self.ed_status.setText(tr("Values taken from the JD-Xi: {n}").format(n=filled))
 
     def save_from_editor(self) -> None:
         recipe = self._editor_to_recipe()
