@@ -21,6 +21,7 @@ Dependencies:
 """
 
 import json
+import logging
 import os
 from typing import Any, Callable, Dict, List, Optional
 
@@ -422,6 +423,7 @@ class MidiInHandler(MidiIOController):
 
             log.message(
                 f"[MIDI SysEx received]: {hex_string} {filtered_data}",
+                level=logging.DEBUG,  # the window reads the JD-Xi every few seconds
                 silent=False,
                 scope=self.__class__.__name__,
             )
@@ -488,6 +490,7 @@ class MidiInHandler(MidiIOController):
                 filtered_data = {}
             log.message(
                 f"[MIDI SysEx received]: {hex_string} {filtered_data}",
+                level=logging.DEBUG,  # the window reads the JD-Xi every few seconds
                 silent=False,
                 scope=self.__class__.__name__,
             )
@@ -500,7 +503,7 @@ class MidiInHandler(MidiIOController):
                     scope=self.__class__.__name__,
                 )
                 self._emit_program_or_tone_name(parsed_data)
-                log.message(f"json sysex: {json.dumps(parsed_data)}")
+                log.message(f"json sysex: {json.dumps(parsed_data)}", level=logging.DEBUG)
                 self._device_sysex_json.emit(json.dumps(parsed_data))
                 log.json(parsed_data, silent=True)
             except Exception as parse_ex:
@@ -773,6 +776,7 @@ class MidiInHandler(MidiIOController):
         if area == AreaMSB.TEMPORARY_PROGRAM.name:
             log.message(
                 f"Emitting program name: {tone_name} to {area}",
+                level=logging.DEBUG,
                 scope=self.__class__.__name__,
             )
             self.update_program_name.emit(tone_name)
@@ -788,7 +792,9 @@ class MidiInHandler(MidiIOController):
         synth_type = JDXiMapSynthType.MAP.get(area)
         if synth_type:
             log.message(
-                f"Emitting tone name: {tone_name} to {area} (synth type: {synth_type}, scope=self.__class__.__name__)"
+                f"Emitting tone name: {tone_name} to {area} (synth type: {synth_type})",
+                level=logging.DEBUG,
+                scope=self.__class__.__name__,
             )
             self.update_tone_name.emit(tone_name, synth_type)
         else:

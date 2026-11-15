@@ -4,6 +4,20 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+### The window follows the JD-Xi (hardware tests, round 1)
+- At start, once the ports are open, the window reads the program and the tones: the display
+  no longer starts on «Init Tone»
+- The part shown is read again every two seconds (not while a MIDI file or pattern plays, not
+  just after a click, key or value from the app): a tone chosen on the JD-Xi appears on the
+  display, the OCTAVE − / + light as on the instrument and the panel sliders (Cutoff, Resonance,
+  Level, LFO) move to the tone's values without sending them back
+- A program change from the JD-Xi on a part's channel reads that part; only the program channel
+  changes the program number (a tone change used to change it)
+- The notes played on the JD-Xi light the window's keys
+- The window's Octave − / + write the part shown (they always wrote Digital 1)
+- The preset panel's ‹ › load the tone, as the JD-Xi's buttons do (they only moved the list)
+- Requests and received SysEx are logged at DEBUG (the reading every two seconds would fill the log)
+
 ### Recipes
 - The side panel of the other tabs: what the page is for, and for the row chosen its part,
   parameter, the recipe's value against the JD-Xi's and the recipe's note

@@ -3,7 +3,7 @@
 from typing import TYPE_CHECKING, Any, Optional
 
 from decologr import Decologr as log
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QTabWidget, QVBoxLayout
 import picomidi
 
@@ -36,6 +36,8 @@ from picoui.helpers.layout import create_group
 from picoui.specs.widgets import ComboBoxSpec
 from picoui.widget.helper import create_combo_box, create_combo_row
 from jdxi_editor.i18n import tr
+
+STEP_LOAD_DELAY_MS = 350  # ‹ › load the tone once the clicks pause
 
 if TYPE_CHECKING:
     from jdxi_editor.ui.editors.synth.editor import SynthEditor
@@ -567,16 +569,29 @@ class InstrumentPresetWidget(QWidget):
             label.setVisible(bool(text))  # hidden while empty: the button takes the row
 
     def _on_prev_preset(self) -> None:
-        combo = self.instrument_selection_combo.combo_box
-        idx = combo.currentIndex()
-        if idx > 0:
-            combo.setCurrentIndex(idx - 1)
+        self._step_preset(-1)
 
     def _on_next_preset(self) -> None:
+        self._step_preset(+1)
+
+    def _step_preset(self, step: int) -> None:
+        """‹ ›: the previous or next tone, loaded on the JD-Xi as its own buttons do.
+
+        Loading waits for a short pause, so clicking through the list sends the
+        tone stopped on rather than every tone passed.
+        """
         combo = self.instrument_selection_combo.combo_box
-        idx = combo.currentIndex()
-        if idx < combo.count() - 1:
-            combo.setCurrentIndex(idx + 1)
+        idx = combo.currentIndex() + step
+        if not 0 <= idx < combo.count():
+            return
+        combo.setCurrentIndex(idx)
+        timer = getattr(self, "_step_load_timer", None)
+        if timer is None:
+            timer = self._step_load_timer = QTimer(self)
+            timer.setSingleShot(True)
+            timer.setInterval(STEP_LOAD_DELAY_MS)
+            timer.timeout.connect(self._on_load_preset)
+        timer.start()
 
     def _on_read_from_jdxi(self) -> None:
         parent = self.parent

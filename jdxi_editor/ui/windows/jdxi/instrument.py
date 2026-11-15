@@ -58,6 +58,7 @@ from PySide6.QtWidgets import QApplication, QLabel, QMenu, QMessageBox, QProgres
 
 from jdxi_editor.core.jdxi import JDXi
 from jdxi_editor.core.synth.type import JDXiSynth
+from jdxi_editor.ui.windows.jdxi.follow import ANALOG_OCTAVE, InstrumentFollower
 from jdxi_editor.globals import silence_midi_note_logging
 from jdxi_editor.midi.channel.channel import MidiChannel
 from jdxi_editor.midi.data.address.address import (
@@ -278,6 +279,10 @@ class JDXiInstrument(JDXiWindow):
         self.current_synth_type = JDXiSynth.DIGITAL_SYNTH_1
         self.channel = MidiChannel.DIGITAL_SYNTH_1
         self._init_update_checker()
+        # What is changed on the JD-Xi itself shows here (tone names, octave,
+        # sliders, keys); the state is read once the ports are open
+        self.follower = InstrumentFollower(self)
+        self.follower.start()
 
     def _init_update_checker(self) -> None:
         """Check GitHub Releases shortly after startup (at most once a day)."""
@@ -639,10 +644,14 @@ class JDXiInstrument(JDXiWindow):
         """
         program number
 
-        :param channel: int midi channel (discarded)
+        :param channel: int MIDI channel (1-16)
         :param program_number: int Program number
         :return: None
         """
+        if channel != MidiChannel.PROGRAM + 1:
+            # a tone chosen for one part (its channel): not the program; the
+            # follower reads that part again
+            return
         self.current_program_number = program_number + 1
         self.data_request()
         self._update_display()
@@ -659,6 +668,9 @@ class JDXiInstrument(JDXiWindow):
         )
         self.current_synth_type = synth_type
         self.channel = JDXiSynth.midi_channel_number(synth_type)
+        follower = getattr(self, "follower", None)
+        if follower is not None:
+            follower.poll_now()  # the part's tone, octave and slider values
         self._update_synth_button_styles()  # the lit button stays the editor shown
         previous = getattr(self, "preset_helper", None)
         self.preset_helper = self.get_preset_helper_for_current_synth()
@@ -2559,6 +2571,9 @@ class JDXiInstrument(JDXiWindow):
             self.midi_in_indicator.set_active(self.midi_helper.midi_in is not None)
             self.midi_out_indicator.set_active(self.midi_helper.midi_out is not None)
             self._save_settings()
+            follower = getattr(self, "follower", None)
+            if follower is not None:
+                follower.read_all()  # the newly connected JD-Xi's state
         except Exception as ex:
             log.error(
                 message="Error setting MIDI ports", exception=ex, scope="JDXiInstrument"
@@ -2591,11 +2606,19 @@ class JDXiInstrument(JDXiWindow):
                 scope="JDXiInstrument",
                 message=f"Sending octave change SysEx, new octave: {self.current_octave} (value: {hex(octave_value)})",
             )
+            # the part shown (it was always Digital 1); Drums have no octave
+            umb, lsb = {
+                JDXiSynth.DIGITAL_SYNTH_2: (JDXiSysExOffsetTemporaryToneUMB.DIGITAL_SYNTH_2, DigitalCommonParam.OCTAVE_SHIFT.lsb),
+                JDXiSynth.ANALOG_SYNTH: (JDXiSysExOffsetTemporaryToneUMB.ANALOG_SYNTH, ANALOG_OCTAVE),
+            }.get(
+                getattr(self, "current_synth_type", None),
+                (JDXiSysExOffsetTemporaryToneUMB.DIGITAL_SYNTH_1, DigitalCommonParam.OCTAVE_SHIFT.lsb),
+            )
             address = JDXiSysExAddress(
                 msb=JDXiSysExAddressStartMSB.TEMPORARY_TONE,
-                umb=JDXiSysExOffsetTemporaryToneUMB.DIGITAL_SYNTH_1,
+                umb=umb,
                 lmb=JDXiSysExOffsetProgramLMB.COMMON,
-                lsb=DigitalCommonParam.OCTAVE_SHIFT.lsb,
+                lsb=lsb,
             )
             sysex_message = JDXiSysEx(
                 sysex_address=address,

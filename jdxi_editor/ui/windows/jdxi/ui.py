@@ -253,7 +253,7 @@ class JDXiWindow(QMainWindow):
             self.step_guide.height(),
         )
         self.step_guide.raise_()
-        add_slider_container(container_widget, self.midi_helper)
+        self.panel_sliders = add_slider_container(container_widget, self.midi_helper)
         self.panel_container = container_widget
         layout.addWidget(container_widget)
 

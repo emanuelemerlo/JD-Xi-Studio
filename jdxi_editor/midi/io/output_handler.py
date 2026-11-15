@@ -163,11 +163,13 @@ class MidiOutHandler(MidiIOController):
                         in (0x80, 0x90)  # note off, note on
                     )
                 )
+                is_rq1 = len(message_list) > 7 and message_list[0] == Midi.sysex.START and message_list[7] == 0x11
                 if not skip_note_log:
                     log.message(
                         scope="MidiOutHandler",
                         message=f"[MIDI QC passed] [ Sending message: {formatted_message} ] {filtered_data}",
-                        level=logging.INFO,
+                        # requests (RQ1) only at DEBUG: the window reads the JD-Xi every few seconds
+                        level=logging.DEBUG if is_rq1 else logging.INFO,
                         silent=False,
                     )
                 # Send the message

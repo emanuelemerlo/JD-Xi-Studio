@@ -75,6 +75,11 @@ Senza domande (solo i punti 1–3): `--auto`. Solo le porte: `--list`.
 | 3.3 | Clicca il display | Si apre *Programmi*; nessun tasto Part Select resta acceso |
 | 3.4 | Octave −/+ e Arpeggio on/off | Il JD-Xi segue (LED sul pannello) |
 | 3.5 | Spillo nella barra della finestra: fissa in primo piano, poi chiudi e riapri il programma | Fissata durante la sessione; alla riapertura **non** fissata |
+| 3.6 | All'avvio, senza toccare nulla | Entro 2–3 secondi il display mostra il programma e il tono della parte del JD-Xi (non «Init Tone»); gli slider del pannello sono sui valori del tono |
+| 3.7 | Scegli la parte nell'app, poi cambia tono **dal JD-Xi** | Entro ~2 secondi il display mostra il nuovo tono e gli slider si spostano sui suoi valori |
+| 3.8 | OCTAVE −/+ **sul JD-Xi** | Entro ~2 secondi si accende Octave − o + nell'app |
+| 3.9 | Suona sulla tastiera del JD-Xi | I tasti corrispondenti si illuminano nella finestra (con l'ottava spostata, quelli dell'ottava suonata) |
+| 3.10 | Nella scheda di un tono, frecce ‹ › del pannello preset | Il JD-Xi carica subito il tono (come i suoi tasti); cliccando più volte di fila viene caricato solo quello su cui ti fermi |
 
 ---
 
