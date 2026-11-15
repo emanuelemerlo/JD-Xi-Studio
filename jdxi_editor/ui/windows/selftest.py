@@ -515,7 +515,7 @@ def step_tone_on_jdxi(test: SelfTest):
     changed = yield Until(
         lambda: window.preset_manager.current_preset_names.get(synth) != before,
         20000,
-        tr("On the JD-Xi: select ANALOG and turn the TONE knob (20 seconds)"),
+        tr("On the JD-Xi: select ANALOG and change tone with the TONE +/− buttons (20 seconds)"),
     )
     after = window.preset_manager.current_preset_names.get(synth)
     if changed:
@@ -571,7 +571,7 @@ def step_restore(test: SelfTest):
     return OK, program_id
 
 
-# The edits a user makes to a free user tone (Init Tone): parameters of the
+# The edits a user makes to a tone: parameters of the
 # oscillator, filter, amp, envelopes and LFO, each set to another value.
 ANALOG_EDITS = (
     "OSC_WAVEFORM", "OSC_PITCH_COARSE", "OSC_PULSE_WIDTH", "FILTER_CUTOFF", "FILTER_RESONANCE",
@@ -585,7 +585,6 @@ DIGITAL_EDITS = (
     ("PARTIAL_1", "LFO_RATE"), ("PARTIAL_1", "LFO_PITCH_DEPTH"), ("COMMON", "PORTAMENTO_SWITCH"),
     ("COMMON", "PARTIAL2_SWITCH"),
 )
-INIT_TONE = "Init Tone"
 
 
 def another_value(pv) -> int:
@@ -624,7 +623,7 @@ def _edits_of(part: str, editor) -> tuple[list, list]:
 
 
 def tone_edits(part: str, editor_key: str, panel_name: str):
-    """A free user tone (Init Tone) of *part*: edits through its editor, checked on the
+    """The tone of *part* (any: the JD-Xi's temporary memory, nothing written): edits through its editor, checked on the
     JD-Xi; then Undo of every edit, checked too. A KO names the parameters."""
 
     def read_blocks(blocks):
@@ -645,21 +644,11 @@ def tone_edits(part: str, editor_key: str, panel_name: str):
             return SKIPPED, tr("no parameters to edit")
         common = blocks[0] if part == "ANALOG_SYNTH" else (DIGITAL1_COMMON, 0x40)
 
-        # 1. a free user tone, chosen on the JD-Xi (the user tones are where Init Tone is)
+        # 1. the tone there is: no free user tone is needed. The edits are made in
+        # the JD-Xi's temporary memory (nothing is written), undone, and the
+        # starting program is loaded again at the end.
         name = name_of((yield Read(*common)))
-        on_init = same_name(name, INIT_TONE)
-        if not on_init:
-            on_init = yield Until(
-                lambda: same_name(window.preset_manager.current_preset_names.get(synth), INIT_TONE), 40000,
-                tr("On the JD-Xi: select {part} and choose a free user tone («Init Tone») "
-                   "with the TONE knob (40 seconds)").format(part=panel_name),
-            )
-            if on_init:
-                yield Wait(1500)  # the knob left alone
-            name = name_of((yield Read(*common))) or name
         where = f"«{name}»" if name else "?"
-        if not on_init:
-            where += " — " + tr("not a free user tone")
         # 2. the tone as it is
         before = yield from read_blocks(blocks)
         if not before:
@@ -679,7 +668,7 @@ def tone_edits(part: str, editor_key: str, panel_name: str):
         after = yield from read_blocks(blocks)
         now = name_of((yield Read(*common)))
         if name and now and not same_name(name, now):
-            return KO, tr("the tone on the JD-Xi changed during the test: «{a}» → «{b}» (leave the TONE knob alone)").format(
+            return KO, tr("the tone on the JD-Xi changed during the test: «{a}» → «{b}» (leave the TONE buttons alone)").format(
                 a=name, b=now)
         label_of = {address: label for _pv, address, label in edits}
         wrong = [f"{label_of.get(a, f'{a:07X}')}: {v}/{after.get(a, '?')}" for a, v in sent.items() if after.get(a) != v]
@@ -724,8 +713,8 @@ def default_steps() -> List[Step]:
         Step(tr("Analog: load a preset"), step_analog_tone),
         Step(tr("Keyboard window: tone arrow (Digital 1)"), step_digital_tone_arrows),
         Step(tr("Analog editor: edit and Undo"), step_edit_and_undo),
-        Step(tr("Analog: edits to an Init Tone, then Undo"), tone_edits("ANALOG_SYNTH", "analog", "ANALOG")),
-        Step(tr("Digital 1: edits to an Init Tone, then Undo"), tone_edits("DIGITAL_SYNTH_1", "digital1", "DIGITAL 1")),
+        Step(tr("Analog: a dozen edits to the tone, then Undo"), tone_edits("ANALOG_SYNTH", "analog", "ANALOG")),
+        Step(tr("Digital 1: a dozen edits to the tone, then Undo"), tone_edits("DIGITAL_SYNTH_1", "digital1", "DIGITAL 1")),
         Step(tr("Octave + and back"), step_octave),
         Step(tr("On-screen keyboard: a note"), step_note),
         Step(tr("JD-Xi → app: a tone chosen on the JD-Xi"), step_tone_on_jdxi),

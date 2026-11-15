@@ -186,7 +186,7 @@ def test_init_tone_edits_and_undo_on_a_fake_jdxi(window, jdxi):
     run(test, limit_s=40)
     for step in steps:
         assert step.status == st.OK, (step.title, step.detail)
-        assert "Init Tone" in step.detail and "all undone" in step.detail
+        assert "all undone" in step.detail
 
 
 def valid_analog_tone() -> list:
