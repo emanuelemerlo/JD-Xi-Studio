@@ -306,3 +306,29 @@ def _dispose(window) -> None:
     window.deleteLater()
     QApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
     QApplication.processEvents()
+
+
+def test_a_reading_on_its_way_does_not_undo_an_edit(window):
+    """The window reads the Analog tone, the user moves Cutoff, then the reply (with the old
+    Cutoff) arrives: the editor keeps the new value and its Undo step (seen on the JD-Xi)."""
+    from jdxi_editor.midi.data.parameter.analog.address import AnalogParam
+
+    editor = window._tab_editor("analog")
+    pv = editor.values[AnalogParam.FILTER_CUTOFF]
+    pv.blockSignals(True)
+    pv.setValue(44)
+    pv.blockSignals(False)
+    helper = window.midi_helper
+    helper.send_raw_message(bytes.fromhex("F0 41 10 00 00 00 0E 11 19 42 00 00 00 00 00 40 65 F7"))
+    steps = len(editor.history._undo)
+    pv.setValue(110)
+    settle()
+    values = [0] * 0x40
+    for param in AnalogParam:
+        if param.address < 0x40 and param in editor.values:
+            values[param.address] = param.convert_to_midi(editor.values[param].value())
+    values[0x21] = 44  # read before the edit
+    receive(window, dt1([0x19, 0x42, 0x00, 0x00], values))
+    assert pv.value() == 110
+    assert len(editor.history._undo) == steps + 1
+    assert editor.history.undo() and pv.value() == 44

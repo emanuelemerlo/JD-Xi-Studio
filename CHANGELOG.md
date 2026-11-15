@@ -36,6 +36,9 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - Effects: a type chosen in the app whose parameters are all 0 (via MIDI the JD-Xi loads no
   settings for a new type) gets audible starting values — it was silent (Balance D100:0W,
   Depth 0, Level 0)
+- A reading of the JD-Xi on its way while a value is edited no longer puts the old value back
+  (and no longer loses the edit's Undo step): the reply's bytes written after the request are
+  the editor's
 - A value put back by hand (Arpeggio ON, then OFF) no longer leaves the editor marked modified
 - Arpeggio ON (in its tab or with the panel button) with no part set to arpeggiate: the part
   selected arpeggiates (ON did nothing to hear). The panel button works through the Arpeggio
