@@ -61,6 +61,12 @@ def window():
 
 @pytest.fixture
 def jdxi(window, monkeypatch):
+    import time
+
+    deadline = time.monotonic() + 0.5  # what earlier tests left on its way arrives first
+    while time.monotonic() < deadline:
+        QApplication.processEvents()
+        time.sleep(0.01)
     fake = FakeJDXi(window.midi_helper)
     fake.write(st.PROGRAM_COMMON, list(b"Unleash Xi  "))
     system = [0] * 0x2B

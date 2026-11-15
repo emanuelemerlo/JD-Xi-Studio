@@ -47,6 +47,7 @@ from jdxi_editor.midi.io.request_queue import (
 from jdxi_editor.midi.io.synth_memory import SYSEX_END, SynthMemory, address_to_linear
 
 RQ1_COMMAND = 0x11
+REPLY_WINDOW_S = 2.0  # a reply comes within milliseconds; older requests are not matched
 
 
 def _roland_body(message: Sequence[int]) -> Optional[list]:
@@ -159,8 +160,10 @@ class JDXiDevice:
             return None
         start = address_to_linear(body[7:11])
         asked = self._requested.pop(start, None)
-        if asked is None:
-            return None  # not a reply to a request (sent by the JD-Xi itself)
+        if asked is None or self.clock() - asked > REPLY_WINDOW_S:
+            # not a reply to a request (sent by the JD-Xi itself), or to one that
+            # got no reply long ago
+            return None
         values = body[11:-1]
         changed = False
         for offset, value in enumerate(values):

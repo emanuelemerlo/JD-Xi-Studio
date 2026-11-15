@@ -122,3 +122,18 @@ def test_a_reply_asked_for_before_a_write_keeps_the_written_value():
     assert device.fresh(reply) is None
     # a DT1 the JD-Xi sends by itself (a knob turned): left as it is
     assert device.fresh(bytes.fromhex("F0 41 10 00 00 00 0E 12 19 42 00 21 30 4C F7")) is None
+
+
+def test_a_request_without_reply_long_ago_is_not_matched():
+    from jdxi_editor.midi.io.device import JDXiDevice
+
+    now = [0.0]
+    device = JDXiDevice(lambda m: None)
+    device.clock = lambda: now[0]
+    device.sent(bytes.fromhex("F0 41 10 00 00 00 0E 11 19 42 00 00 00 00 00 40 65 F7"))  # no reply
+    now[0] = 30.0
+    device.sent(bytes.fromhex("F0 41 10 00 00 00 0E 12 19 42 00 21 6E 16 F7"))
+    now[0] = 31.0
+    values = [0] * 0x40
+    body = [0x41, 0x10, 0, 0, 0, 0x0E, 0x12, 0x19, 0x42, 0, 0] + values
+    assert device.fresh(body + [(128 - sum(body[7:]) % 128) % 128]) is None
