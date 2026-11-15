@@ -425,7 +425,16 @@ class _WaveButton(QPushButton):
         super().__init__("")
         self.wave = name
         self.owner = owner
-        self.setMinimumSize(owner.button_width, density.px(44, 40))
+        self.setMinimumSize(self.minimum_wave_size())
+
+    def minimum_wave_size(self):
+        from PySide6.QtCore import QSize
+        from PySide6.QtGui import QFontMetrics
+
+        # room for a wave above the name whatever the font size (scaled screens)
+        metrics = QFontMetrics(QFont(self.font().family(), 8, QFont.Weight.DemiBold))
+        return QSize(max(self.owner.button_width, metrics.horizontalAdvance(self.wave) + 12),
+                     max(density.px(44, 40), metrics.height() + 26))
         self.setToolTip(name)
 
     def paintEvent(self, event) -> None:
@@ -434,11 +443,21 @@ class _WaveButton(QPushButton):
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
         color = QColor("#0e1116") if self.isChecked() else QColor("#c9cbd1")
         color = _dim(color, self.isEnabled())
-        r = QRectF(self.rect()).adjusted(10, 8, -10, -18)
-        p.setPen(QPen(color, 2))
-        p.drawPath(_wave_path(self.wave, r, self.owner.duty()))
-        p.setFont(QFont(self.font().family(), 8, QFont.Weight.DemiBold))
-        p.drawText(QRectF(self.rect()).adjusted(0, 0, 0, -3), Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignBottom, self.wave)
+        font = QFont(self.font().family(), 8, QFont.Weight.DemiBold)
+        p.setFont(font)
+        from PySide6.QtGui import QFontMetricsF
+
+        text_h = QFontMetricsF(font).height()
+        rect = QRectF(self.rect())
+        # the name in its own band at the bottom, the wave in what is left above it:
+        # with fixed margins the two overlapped on a scaled screen (175%)
+        text_rect = QRectF(rect.left(), rect.bottom() - text_h - 3, rect.width(), text_h + 1)
+        wave = QRectF(rect.left() + 10, rect.top() + 5, rect.width() - 20, text_rect.top() - rect.top() - 8)
+        if wave.height() >= 6:
+            p.setPen(QPen(color, 1.6))
+            p.drawPath(_wave_path(self.wave, wave, self.owner.duty()))
+        p.setPen(color)
+        p.drawText(text_rect, Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter, self.wave)
         p.end()
 
 
@@ -449,6 +468,8 @@ class WaveButtons(ChoiceButtons):
         self.pulse_width = pulse_width
         self.button_width = button_width
         super().__init__(value, accent, hub, labels=list(value.info.choices), show_name=show_name, parent=parent)
+        for button in self.buttons:  # ChoiceButtons set them as low as text buttons
+            button.setMinimumSize(button.minimum_wave_size())
         if pulse_width is not None:
             pulse_width.watch(lambda _v: [b.update() for b in self.buttons])
 

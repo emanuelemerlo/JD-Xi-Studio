@@ -161,20 +161,27 @@ class ArpeggioEditor(V2Editor):
         return 0
 
     def _switched(self, value: int) -> None:
-        """ON with no part set to arpeggiate: the part selected arpeggiates."""
-        if not value:
-            return
+        """ON with no part set to arpeggiate: the part selected arpeggiates.
+        OFF again: that part's switch goes back too (nothing left modified)."""
         zones = [self.pv("ZONE_ARPEGGIO_SWITCH", f"ZONE_{part}") for part in range(len(PARTS))]
+        auto = getattr(self, "_auto_zone", None)
+        if not value:
+            self._auto_zone = None
+            if auto is not None and zones[auto].value():
+                zones[auto].setValue(0)
+            return
         if any(zone.value() for zone in zones):
             return
+        part = self._current_part()
         history = getattr(self, "history", None)
         if history is not None:
             history.begin_group()
         try:
-            zones[self._current_part()].setValue(1)
+            zones[part].setValue(1)
         finally:
             if history is not None:
                 history.end_group()
+        self._auto_zone = part
 
     def build_panels(self) -> None:
         s = self.spec

@@ -68,6 +68,9 @@ def jdxi(window, monkeypatch):
     fake.write(st.SYSTEM_COMMON, system)
     fake.write(st.ANALOG_CUTOFF, [64])
     fake.write(st.ANALOG_OCTAVE, [64])
+    for name in ("send_midi_message", "send_raw_message"):  # left by other modules' fixtures
+        if name in window.midi_helper.__dict__:
+            monkeypatch.delitem(window.midi_helper.__dict__, name)
     monkeypatch.setattr(st, "device_for", lambda helper: fake)
     monkeypatch.setattr(window.midi_helper, "send_raw_message", fake.sent)
     monkeypatch.setattr(window.midi_helper, "midi_out", object(), raising=False)

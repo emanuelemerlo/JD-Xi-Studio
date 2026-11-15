@@ -122,7 +122,8 @@ def test_on_with_no_part_set_arpeggiates_the_part_selected(editor):
     switch.setValue(1)
     assert [z.value() for z in zones] == [1, 0, 0, 0]  # Digital 1 when no window says otherwise
     editor.pv("ARPEGGIO_SWITCH").setValue(0)
-    zones[0].setValue(0)
+    assert [z.value() for z in zones] == [0, 0, 0, 0]  # OFF: the part's switch back too
+    assert not editor.history.modified  # ON then OFF: nothing changed
     zones[2].setValue(1)
     editor.pv("ARPEGGIO_SWITCH").setValue(1)
     assert [z.value() for z in zones] == [0, 0, 1, 0]  # a part already set: left as it is

@@ -173,14 +173,22 @@ _HELPER_METHODS = (
 @pytest.fixture(autouse=True)
 def _restore_the_shared_midi_helper():
     """Some tests replace a sending method on the shared MidiIOHelper (a singleton) and leave it:
-    the next tests then sent nothing through the real path. Their replacements go after each test."""
-    yield
+    the next tests then sent nothing through the real path. What a test replaced is put back
+    after it (replacements made by module fixtures, before the test, are kept)."""
     try:
         from jdxi_editor.midi.io.helper import MidiIOHelper
     except Exception:  # pragma: no cover
+        yield
         return
+    helper = MidiIOHelper._instance
+    before = {name: helper.__dict__[name] for name in _HELPER_METHODS
+              if helper is not None and name in helper.__dict__}
+    yield
     helper = MidiIOHelper._instance
     if helper is None:
         return
     for name in _HELPER_METHODS:
-        helper.__dict__.pop(name, None)
+        if name in before:
+            helper.__dict__[name] = before[name]
+        else:
+            helper.__dict__.pop(name, None)
