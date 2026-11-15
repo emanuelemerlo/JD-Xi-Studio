@@ -2,6 +2,15 @@
 
 All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Editor) are documented in this file.
 
+# [Unreleased]
+
+### Tabs
+- **Core tabs** always there (Programs, Digital 1 and 2, Analog, Drums, Arpeggio, Effects,
+  Vocal FX, Pattern, MIDI File); **Program parts, Recipes and Settings** open and close: a **+**
+  at the top right of the editors window (or a right click on the tabs) opens them, a small ×
+  closes them; the editor keeps its values when closed, and the open ones come back at the next
+  start
+
 # [1.0.0a4] — tag `v1.0.0-alpha.4` (screens from 1080p to 4K; safer Undo and Reload)
 
 ### Screens from 1080p to 4K
