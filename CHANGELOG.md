@@ -30,6 +30,11 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   follows. A report is saved in `~/.jdxi_studio/reports`
   It also edits a free user tone («Init Tone») of Analog and of Digital 1 — oscillator, filter,
   amp, envelopes, LFO — checks every value on the JD-Xi, undoes the edits and checks again
+- Effects: a type chosen in the app whose parameters are all 0 (via MIDI the JD-Xi loads no
+  settings for a new type) gets audible starting values — it was silent (Balance D100:0W,
+  Depth 0, Level 0)
+- An orange pencil on the tab of an editor with changes not saved (it was a dot before the
+  name), and «✎ Modified» in the editor
 - The messages sent were never heard by their listeners (a signal of the MIDI helper's second
   base class): the MIDI OUT light blinks again, the MIDI monitor shows them
 

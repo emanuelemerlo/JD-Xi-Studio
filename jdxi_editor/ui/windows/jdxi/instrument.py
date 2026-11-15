@@ -50,6 +50,7 @@ from PySide6.QtGui import (
     QAction,
     QCloseEvent,
     QDesktopServices,
+    QIcon,
     QKeySequence,
     QMouseEvent,
     QShortcut,
@@ -456,8 +457,13 @@ class JDXiInstrument(JDXiWindow):
         return target.undo() if action == "undo" else target.redo()
 
     def _follow_modified(self, editor, title: str) -> None:
-        """A dot before the editor's tab name while its changes are not saved."""
+        """A pencil on the editor's tab while its changes are not saved.
+
+        (It was a dot before the name: not clear enough that the values were
+        changed.) The name stays as it is, so the tab does not change width.
+        """
         from jdxi_editor.ui.v2.names import short_name
+        from jdxi_editor.ui.v2.restyle import modified_icon
 
         history = getattr(editor, "history", None)
         if history is None or not hasattr(history, "modifiedChanged"):
@@ -466,8 +472,10 @@ class JDXiInstrument(JDXiWindow):
 
         def mark(modified: bool) -> None:
             index = tabs.indexOf(editor)
-            if index >= 0:
-                tabs.setTabText(index, ("● " if modified else "") + short_name(title))
+            if index < 0:
+                return
+            tabs.setTabText(index, short_name(title))
+            tabs.setTabIcon(index, modified_icon() if modified else QIcon())
 
         history.modifiedChanged.connect(mark)
 

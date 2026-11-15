@@ -17,6 +17,17 @@ from PySide6.QtWidgets import QGroupBox, QLabel, QLayout, QPushButton, QTabWidge
 from jdxi_editor.ui.style.editor_style import BODY_PROPERTY, FLAT_PROPERTY, SHEEN_PROPERTY
 
 
+MODIFIED_SIGN = "\u270e"  # ✎ the pencil of the tabs (was a dot)
+MODIFIED_COLOUR = "#ffb347"
+
+
+def modified_icon():
+    """The pencil on the tab of an editor with changes not saved."""
+    import qtawesome as qta
+
+    return qta.icon("mdi.pencil", color=MODIFIED_COLOUR)
+
+
 def stylesheet(root_class: str, accent: str) -> str:
     return f"""
     {root_class} {{ background: #121214; }}
@@ -184,7 +195,7 @@ def edit_controls(editor, reload=None):
     from jdxi_editor.i18n import tr
 
     history = editor.history
-    mark = QLabel(tr("● Modified"))
+    mark = QLabel(f"{MODIFIED_SIGN} " + tr("Modified"))
     mark.setObjectName("v2Modified")
     mark.setStyleSheet("QLabel#v2Modified { color: #ffb347; font-size: 12px; font-weight: 700; padding-left: 8px; }")
     mark.setToolTip(tr("Changes not saved to a file: changing the sound from the program asks first"))
