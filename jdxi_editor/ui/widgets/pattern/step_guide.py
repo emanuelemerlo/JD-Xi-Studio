@@ -110,7 +110,7 @@ class StepGuide(QWidget):
         stem = max(6.0, self.row_spacing * 0.55)  # from the head's middle up
         head_w, head_h = 5.0, 3.6
         colour = QColor(LINE_COLOR)
-        text_w = 5.0 if triplet else 0.0
+        text_w = 5.0  # room for the triplet's 3 on every row: the notes of a column line up
         stem_x = right - text_w - 1.0
         painter.setPen(QPen(colour, 1.1))
         painter.setBrush(colour)
