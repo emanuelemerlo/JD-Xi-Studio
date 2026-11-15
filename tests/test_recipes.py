@@ -238,3 +238,20 @@ def test_export_into_the_english_template_uses_its_words(tmp_path):
     kinds = {sheet.cell(r, 7).value for r in range(12, 12 + len(recipe.rows))}
     assert kinds <= {"value", "range", "by ear"} and "EFFETTI" not in {sheet.cell(r, 3).value for r in range(12, 80)}
     assert len(read_file(out).rows) == len(recipe.rows)
+
+
+def test_recipes_tab_has_the_side_panel():
+    from PySide6.QtWidgets import QApplication
+
+    from jdxi_editor.ui.v2.recipes import RecipesEditor
+
+    app = QApplication.instance() or QApplication([])  # noqa: F841
+    editor = RecipesEditor()
+    editor.resize(1600, 900)
+    editor.show()
+    app.processEvents()
+    assert editor.info_panel.isVisible()
+    assert editor.info_panel.name.text()  # the home page explained
+    assert editor.library_list.count() >= 1  # a line saying what goes there, when empty
+    assert editor._selected_path() is None or editor._selected_path().exists()
+    editor.close()

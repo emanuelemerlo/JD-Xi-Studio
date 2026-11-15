@@ -120,9 +120,15 @@ class RecipesEditor(QWidget):
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self.setStyleSheet("RecipesEditor { background: #121214; } QLabel { color: #c9cbd1; }")
         self.setMinimumSize(1000, 640)
-        root = QVBoxLayout(self)
-        root.setContentsMargins(14, 12, 14, 12)
+        outer = QHBoxLayout(self)
+        outer.setContentsMargins(14, 12, 14, 12)
+        outer.setSpacing(14)
+        root = QVBoxLayout()
+        root.setSpacing(10)
+        outer.addLayout(root, 1)
+        from jdxi_editor.ui.v2 import density
         from jdxi_editor.ui.v2.restyle import title_badge
+        from jdxi_editor.ui.v2.widgets import InfoPanel
 
         self.title = title_badge(tr("Recipes"), ACCENT)  # as at the top of the other editors
         bar = QHBoxLayout()
@@ -131,6 +137,12 @@ class RecipesEditor(QWidget):
         root.addLayout(bar)
         self.pages = QStackedWidget()
         root.addWidget(self.pages, 1)
+        # the side panel of the other editors: what the row under the cursor is and says
+        self.info_panel = InfoPanel(ACCENT)
+        self.info_panel.setFixedWidth(density.side_width(320))
+        self.info_panel.head.setText(tr("RECIPE"))
+        outer.addWidget(self.info_panel)
+        self.pages.currentChanged.connect(lambda _i: self._explain_page())
         self.home = self._home_page()
         self.check_page = self._check_page()
         self.guide_page = self._guide_page()
@@ -138,6 +150,51 @@ class RecipesEditor(QWidget):
         for page in (self.home, self.check_page, self.guide_page, self.editor_page):
             self.pages.addWidget(page)
         self.refresh_library()
+        self._explain_page()
+
+    # ------------------------------------------------------------ side panel
+    def _explain_page(self) -> None:
+        """What the page shown is for, until a row is chosen."""
+        page = self.pages.currentWidget()
+        if page is self.check_page:
+            self.info_panel.show_text(
+                tr("Check"), tr("What the editor understood"),
+                tr("Each row of the file, as read and as understood. Recognized: ready. To confirm: a "
+                   "likely meaning, choose it. To fix: not understood, correct it or exclude it. By ear: "
+                   "the recipe says to tune it listening. Choose a row to see its explanation here."))
+        elif page is self.guide_page:
+            self.info_panel.show_text(
+                tr("Guide"), tr("Step by step"),
+                tr("Set the values of each step (one by one or all the missing ones), listen, then go "
+                   "to the next step. Choose a row to see the recipe's note for it."))
+        elif page is self.editor_page:
+            self.info_panel.show_text(
+                tr("Editor"), tr("Write or correct a recipe"),
+                tr("The menus offer only the parts, groups and parameters that exist; the Check column "
+                   "says at once if a row is understood."))
+        else:
+            self.info_panel.show_text(
+                tr("Recipes"), tr("Sounds as lists of steps"),
+                tr("A recipe says, step by step, which parameters to set and to what value. Fill in the "
+                   "template, import a file or a pasted text, or write one in the editor: it is checked "
+                   "row by row, and nothing goes to the JD-Xi until you decide."))
+
+    def _explain_row(self, c: "check.Checked", current: str = "", state: str = "") -> None:
+        t = c.target
+        group = f"{t.part}: {t.group}" if t is not None else (c.row.group or tr("Not understood"))
+        name = (t.label if t is not None else c.row.param) or c.row.source or "—"
+        note = c.row.note or (c.message if c.status != check.OK else "")
+        if c.status == check.EARS:
+            note = (note + " — " if note else "") + tr(
+                "Values \"by ear\" are not set automatically: the editor opens the control and leaves the tuning to you.")
+        self.info_panel.show_text(group, name, note or status_text(c.status), c.row.source or "")
+        self.info_panel.value.setText(recipe_value_text(c.row))
+        details = [tr("Recipe: {value}").format(value=recipe_value_text(c.row))]
+        if current:
+            details.append(tr("On the JD-Xi: {value}").format(value=current))
+        if state:
+            details.append(state)
+        self.info_panel.range.setText(" · ".join(details))
 
     # ------------------------------------------------------------ editors
     def editors(self, key: str):
@@ -167,7 +224,7 @@ class RecipesEditor(QWidget):
         self.library_list.setStyleSheet("QListWidget { background: #121214; color: #e6e6e6; border: 1px solid #2a2d33; }"
                                         "QListWidget::item { padding: 6px; } QListWidget::item:selected { background: #2a3a30; }")
         self.library_list.itemDoubleClicked.connect(lambda _i: self.open_selected())
-        self.library_list.setMinimumHeight(420)
+        self.library_list.setMinimumHeight(260)
         lib.body.addWidget(self.library_list, 1)
         buttons = QHBoxLayout()
         open_b = _button(tr("Open"), True)
@@ -232,6 +289,14 @@ class RecipesEditor(QWidget):
         return page
 
     def refresh_library(self) -> None:
+        self._refresh_library()
+        empty = self.library_list.count() == 0
+        if empty:  # say what goes here, not an empty box
+            item = QListWidgetItem(tr("No recipes yet: import one or fill in the template (on the right)."))
+            item.setFlags(Qt.ItemFlag.NoItemFlags)
+            self.library_list.addItem(item)
+
+    def _refresh_library(self) -> None:
         self.library_list.clear()
         for title, path in library.saved():
             item = QListWidgetItem(title)
@@ -240,7 +305,8 @@ class RecipesEditor(QWidget):
 
     def _selected_path(self) -> Optional[Path]:
         item = self.library_list.currentItem()
-        return Path(item.data(Qt.ItemDataRole.UserRole)) if item else None
+        data = item.data(Qt.ItemDataRole.UserRole) if item else None
+        return Path(data) if data else None  # not the "no recipes yet" line
 
     def open_selected(self, edit: bool = False) -> None:
         path = self._selected_path()
@@ -335,8 +401,11 @@ class RecipesEditor(QWidget):
         self.check_table.verticalHeader().setVisible(False)
         self.check_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.check_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        header = self.check_table.horizontalHeader()
-        header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
+        self.check_table.verticalHeader().setDefaultSectionSize(34)
+        self.check_table.setWordWrap(False)
+        self.check_table.currentCellChanged.connect(
+            lambda row, *_: self._explain_row(self.checked[row]) if 0 <= row < len(self.checked) else None
+        )
         col.addWidget(self.check_table, 1)
         self.notes_label = _label("", 11, "#8a8d94")
         col.addWidget(self.notes_label)
@@ -401,8 +470,13 @@ class RecipesEditor(QWidget):
                     item.setForeground(QColor(STATUS_COLORS.get(c.status, "#e6e6e6") if not c.excluded else "#6b6e75"))
                 table.setItem(i, col, item)
             table.setCellWidget(i, 4, self._row_action(i, c))
-        table.resizeColumnsToContents()
-        table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
+        header = table.horizontalHeader()
+        for column, mode in enumerate((
+            QHeaderView.ResizeMode.ResizeToContents, QHeaderView.ResizeMode.ResizeToContents,
+            QHeaderView.ResizeMode.ResizeToContents, QHeaderView.ResizeMode.Stretch,
+            QHeaderView.ResizeMode.ResizeToContents,
+        )):
+            header.setSectionResizeMode(column, mode)
         self.notes_label.setText(tr("Notes: {notes}").format(notes=" · ".join(recipe.notes[:6]) + (" …" if len(recipe.notes) > 6 else ""))
                                  if recipe.notes else "")
         blocking = any(c.status == check.FIX and not c.excluded for c in self.checked)
@@ -497,6 +571,7 @@ class RecipesEditor(QWidget):
         self.guide_table.verticalHeader().setVisible(False)
         self.guide_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.guide_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.guide_table.verticalHeader().setDefaultSectionSize(36)
         self.guide_table.currentCellChanged.connect(lambda row, *_: self._show_note(row))
         col.addWidget(self.guide_table, 1)
         self.guide_note = _label("", 12, "#e6e6e6")
@@ -601,9 +676,12 @@ class RecipesEditor(QWidget):
             go = _button(tr("Go to the control"))
             go.clicked.connect(lambda _=False, c=c: self.go_to_control(c))
             line.addWidget(go)
+            line.addStretch()  # the buttons at the left of the column
             table.setCellWidget(i, 5, box)
-        table.resizeColumnsToContents()
-        table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+        header = table.horizontalHeader()
+        for column in range(5):  # the columns as wide as their text, the actions take the rest
+            header.setSectionResizeMode(column, QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(5, QHeaderView.ResizeMode.Stretch)
         missing = [c for c in rows if c.status != check.EARS and not recipe_apply.is_done(c, self.editors)]
         self.set_all_button.setEnabled(bool(missing))
         self.set_all_button.setText(tr("Set the {n} missing values of the step").format(n=len(missing)) if missing
@@ -619,7 +697,10 @@ class RecipesEditor(QWidget):
             if c.status == check.EARS:
                 text = (text + " — " if text else "") + tr("Values \"by ear\" are not set automatically: the editor opens the control and leaves the tuning to you.")
             self.guide_note.setText(text)
-            self.guide_note.setVisible(bool(text))
+            self.guide_note.setVisible(False)  # shown in the side panel, with the values
+            item = self.guide_table.item(row, 3)
+            state = self.guide_table.item(row, 4)
+            self._explain_row(c, item.text() if item else "", state.text() if state else "")
 
     def set_row(self, c: check.Checked) -> None:
         recipe_apply.apply(c, self.editors)

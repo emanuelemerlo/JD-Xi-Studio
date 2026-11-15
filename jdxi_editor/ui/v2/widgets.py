@@ -866,6 +866,7 @@ class InfoPanel(QFrame):
         layout.setContentsMargins(16, 12, 16, 14)
         layout.setSpacing(6)
         head = QLabel(tr("PARAMETER"))
+        self.head = head  # its heading (Recipes: RECIPE)
         head.setStyleSheet(f"color: {accent}; font-weight: 700; letter-spacing: 2px; font-size: 12px;")
         layout.addWidget(head)
         self.group = QLabel()

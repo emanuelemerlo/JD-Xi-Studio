@@ -4,6 +4,12 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+### Recipes
+- The side panel of the other tabs: what the page is for, and for the row chosen its part,
+  parameter, the recipe's value against the JD-Xi's and the recipe's note
+- Tidier tables (columns as wide as their text, taller rows, the actions on the left of their
+  column); an empty library says what goes there
+
 ### Italian
 - The Italian translation uses the words of the JD-Xi's Italian manual: *tono* (not *timbro*),
   *arpeggio*, *sequencer di pattern*, *file MIDI*, *drum kit*, *Velocity*, *reverb*, *Vocal FX*,
