@@ -14,6 +14,9 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - A program change from the JD-Xi on a part's channel reads that part; only the program channel
   changes the program number (a tone change used to change it)
 - The notes played on the JD-Xi light the window's keys
+- Playing the JD-Xi's keyboard selects in the window the part selected on the JD-Xi (its notes
+  come on that part's channel): the window's tone buttons, octave and sliders act on the part
+  being played
 - The window's Octave − / + write the part shown (they always wrote Digital 1)
 - The preset panel's ‹ › load the tone, as the JD-Xi's buttons do (they only moved the list)
 - Requests and received SysEx are logged at DEBUG (the reading every two seconds would fill the log)

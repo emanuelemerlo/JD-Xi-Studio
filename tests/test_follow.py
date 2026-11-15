@@ -269,3 +269,19 @@ def test_messages_sent_are_heard():
     helper.midi_message_outgoing.emit([0xB0, 7, 100])
     helper.midi_message_outgoing.disconnect(heard.append)
     assert heard == [[0xB0, 7, 100]]
+
+
+def test_the_window_selects_the_part_played_on_the_jdxi(window, monkeypatch):
+    """Notes in a row on a part's channel: that part is selected in the window too."""
+    monkeypatch.setattr(follow, "FOLLOW_PAUSE_S", 0.0)
+    window._select_synth(JDXiSynth.DIGITAL_SYNTH_1)
+    window.follower._recent_channels.clear()
+    for note in (60, 62):
+        receive(window, mido.Message("note_on", note=note, velocity=80, channel=2))
+    assert window.current_synth_type == JDXiSynth.DIGITAL_SYNTH_1  # not yet: two notes
+    receive(window, mido.Message("note_on", note=64, velocity=80, channel=2))
+    assert window.current_synth_type == JDXiSynth.ANALOG_SYNTH
+    # a pattern playing several parts: no jumping
+    for channel in (0, 9, 0, 1, 0, 9):
+        receive(window, mido.Message("note_on", note=60, velocity=80, channel=channel))
+    assert window.current_synth_type == JDXiSynth.ANALOG_SYNTH

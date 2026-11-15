@@ -13,7 +13,8 @@ What is changed on the instrument itself reaches the window:
   while the app is minimised, or for a few seconds after a click, a key or a
   value sent from the app (a reply on its way must not undo what was just set)
 - a program change from the JD-Xi on a part's channel reads that part at once
-- the notes played on the JD-Xi light the window's keys
+- the notes played on the JD-Xi light the window's keys, and their channel
+  tells the part selected on the JD-Xi: the window selects it too
 
 The replies go through the usual path (tone names, editors), so an editor that
 is open follows too.
@@ -66,6 +67,8 @@ DIGITAL_COMMON_OCTAVE = 0x15
 ANALOG_OCTAVE = 0x34
 ZONE_OCTAVE = 0x19
 OCTAVE_CENTRE = 64
+FOLLOW_NOTES = 3  # notes in a row on a part's channel before the window selects that part
+FOLLOW_PAUSE_S = 2.0
 
 # panel slider -> offset in the Digital partial 1 / in the Analog tone
 DIGITAL_SLIDERS = {
@@ -150,6 +153,8 @@ class InstrumentFollower(QObject):
         self._tone_octave: Dict[str, int] = {}
         self._zone_octave: Dict[str, int] = {}
         self._part = None
+        self._recent_channels: list = []
+        self._part_followed_at = -FOLLOW_PAUSE_S
 
         self.timer = QTimer(self)
         self.timer.setInterval(POLL_INTERVAL_MS)
@@ -243,6 +248,8 @@ class InstrumentFollower(QObject):
         if kind in ("note_on", "note_off"):
             on = kind == "note_on" and getattr(message, "velocity", 0) > 0
             self.light_key(message.note, on)
+            if on:
+                self.follow_part(getattr(message, "channel", None))
         elif kind == "program_change":
             channel = getattr(message, "channel", None)
             if channel == program_channel.channel():
@@ -297,6 +304,31 @@ class InstrumentFollower(QObject):
                 f"The JD-Xi takes program changes on channel {program_channel.channel() + 1}",
                 scope="InstrumentFollower",
             )
+
+    # ------------------------------------------------------------ part
+    def follow_part(self, channel) -> None:
+        """The JD-Xi plays its keyboard on the channel of the part selected on it:
+        the window selects that part too, so its tone buttons, octave and sliders
+        act on the part being played (they acted on the part selected in the app,
+        and a tone chosen there was not heard until the two were aligned).
+
+        Only after a few notes in a row on that channel, and not more than once
+        in a while: a pattern playing several parts does not make it jump."""
+        part = next((p for p, (ch, _t, _z) in PARTS.items() if ch == channel), None)
+        recent = self._recent_channels
+        recent.append(channel)
+        del recent[:-FOLLOW_NOTES]
+        if part is None or part == self.current_part():
+            return
+        if len(recent) < FOLLOW_NOTES or any(c != channel for c in recent):
+            return
+        now = time.monotonic()
+        if now - self._part_followed_at < FOLLOW_PAUSE_S:
+            return
+        self._part_followed_at = now
+        select = getattr(self.window, "_select_synth", None)
+        if callable(select):
+            select(part)
 
     # ------------------------------------------------------------ octave
     def _octave_read(self, part, store: Dict, octave: int) -> None:
