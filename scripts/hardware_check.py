@@ -33,7 +33,8 @@ REPLY_TIMEOUT = 1.5  # s: il JD-Xi risponde in qualche decina di ms
 # Aree temporanee (MIDI Implementation del JD-Xi) e un parametro "sicuro" per la prova di scrittura
 AREAS = {
     # nome: (indirizzo, dimensione, offset del parametro di prova, nome del parametro, offset del nome)
-    "Programma": ((0x18, 0x00, 0x00, 0x00), 0x40, 0x10, "Program Level", 0x00),
+    # the JD-Xi answers 36 bytes (0x24) for the program's common area
+    "Programma": ((0x18, 0x00, 0x00, 0x00), 0x24, 0x10, "Program Level", 0x00),
     "Digital 1": ((0x19, 0x01, 0x00, 0x00), 0x40, 0x0C, "Tone Level", 0x00),
     "Digital 2": ((0x19, 0x21, 0x00, 0x00), 0x40, 0x0C, "Tone Level", 0x00),
     "Analog": ((0x19, 0x42, 0x00, 0x00), 0x40, 0x2A, "Amp Level", 0x00),
@@ -284,27 +285,68 @@ def listening(session: Session, found: dict[str, list[int]]) -> None:
     )
 
 
+SYSTEM_COMMON = (0x02, 0x00, 0x00, 0x00)
+PROGRAM_CTRL_CH, RX_PROGRAM_CHANGE, RX_BANK_SELECT = 0x11, 0x29, 0x2A
+# preset programs (bank select MSB 85, LSB 64; program change 0 = A01)
+PRESETS = ((1, "Dist Seq"), (0, "Unleash Xi"))  # A02, then back to A01
+
+
+def receive_settings(session: Session) -> Optional[int]:
+    """The JD-Xi's SYSTEM settings for program changes; the channel to use (0-15), None if off."""
+    values = session.request(SYSTEM_COMMON, 0x2B)
+    if values is None or -1 in (values[PROGRAM_CTRL_CH], values[RX_PROGRAM_CHANGE], values[RX_BANK_SELECT]):
+        session.record("Impostazioni SYSTEM per i cambi di programma", "KO", "non lette")
+        return 15
+    channel, rx_pc, rx_bank = values[PROGRAM_CTRL_CH], values[RX_PROGRAM_CHANGE], values[RX_BANK_SELECT]
+    channel_text = "OFF" if channel >= 16 else str(channel + 1)
+    ok = channel < 16 and rx_pc == 1 and rx_bank == 1
+    session.record(
+        "Impostazioni SYSTEM per i cambi di programma",
+        "OK" if ok else "KO",
+        f"Program Ctrl Ch {channel_text}, Rx Program Change {'ON' if rx_pc else 'OFF'}, "
+        f"Rx Bank Select {'ON' if rx_bank else 'OFF'}"
+        + ("" if ok else " — sul JD-Xi: MENU › SYSTEM, poi riprova"),
+    )
+    return channel if channel < 16 else None
+
+
+def program_name(session: Session) -> Optional[str]:
+    values = session.request(AREAS["Programma"][0], AREAS["Programma"][1])
+    return tone_name(values, 0) if values and -1 not in values[:12] else None
+
+
 def program_change(session: Session) -> None:
     import mido
 
     answer = session.ask(
-        "Provo un cambio di programma (A01, poi A02)? Il suono corrente non salvato si perde",
+        "Provo un cambio di programma (A02, poi di nuovo A01)? Il suono corrente non salvato si perde",
         "rispondi n se sul JD-Xi c'è qualcosa da salvare con WRITE",
     )
     if answer != "s":
         session.record("Cambio di programma", "SALTATO")
         return
-    names = []
-    for program in (0, 1):  # A01, A02 (banco preset: MSB 85, LSB 64)
-        session.send(mido.Message("control_change", channel=15, control=0, value=85))
-        session.send(mido.Message("control_change", channel=15, control=32, value=64))
-        session.send(mido.Message("program_change", channel=15, program=program))
-        time.sleep(0.6)
-        values = session.request(AREAS["Programma"][0], AREAS["Programma"][1])
-        names.append(tone_name(values, 0) if values else None)
-    ok = all(names) and names[0] != names[1]
-    session.record("Cambio di programma (A01 → A02)", "OK" if ok else "KO", f"nomi letti {names}")
-    session.human_check("Display del JD-Xi", "Il display del JD-Xi mostra il programma A02?")
+    channel = receive_settings(session)
+    if channel is None:
+        session.record("Cambio di programma", "SALTATO", "Program Ctrl Ch è OFF")
+        return
+    for program, expected in PRESETS:
+        label = f"A{program + 1:02d}"
+        session.send(mido.Message("control_change", channel=channel, control=0, value=85))
+        session.send(mido.Message("control_change", channel=channel, control=32, value=64))
+        session.send(mido.Message("program_change", channel=channel, program=program))
+        name, deadline = None, time.monotonic() + 3.0  # the JD-Xi needs a moment to load it
+        while time.monotonic() < deadline:
+            time.sleep(0.3)
+            name = program_name(session)
+            if name == expected:
+                break
+        session.record(
+            f"Cambio di programma → {label} «{expected}»",
+            "OK" if name == expected else "KO",
+            f"letto «{name}» (canale {channel + 1})",
+        )
+        if program == 1:
+            session.human_check("Display del JD-Xi", f"Il display del JD-Xi mostra il programma {label} «{expected}»?")
 
 
 # ---------------------------------------------------------------- report
