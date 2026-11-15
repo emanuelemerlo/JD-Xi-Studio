@@ -61,12 +61,22 @@ class MidiOutHandler(MidiIOController):
         super().__init__(parent)
         self.parent = parent
         self.channel = 1
-        self.sysex_parser = JDXiSysExParser()
+        self.sysex_out_parser = JDXiSysExParser()  # its own: the input side parses at the same time, on another thread
 
     import threading
 
     # Global lock for all MIDI output operations
     _midi_send_lock = threading.RLock()
+
+    def _outgoing_parser(self) -> JDXiSysExParser:
+        """The parser for the log line of a message sent. Not the input handler's: on the
+        MIDI helper both handlers shared one, and a reply parsed on the MIDI thread while a
+        request was parsed for the log got the request's fields (seen in the log as
+        «received» data with the request's area)."""
+        parser = getattr(self, "sysex_out_parser", None)
+        if parser is None:
+            parser = self.sysex_out_parser = JDXiSysExParser()
+        return parser
 
     def send_raw_message(self, message: Iterable[int]) -> bool:
         """
@@ -129,7 +139,7 @@ class MidiOutHandler(MidiIOController):
                 if message_list and message_list[0] == Midi.sysex.START:
                     # This is a SysEx message, try to parse it
                     try:
-                        parsed_data = self.sysex_parser.parse_bytes(bytes(message))
+                        parsed_data = self._outgoing_parser().parse_bytes(bytes(message))
                         filtered_data = {
                             k: v
                             for k, v in parsed_data.items()
