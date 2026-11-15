@@ -255,3 +255,32 @@ def test_recipes_tab_has_the_side_panel():
     assert editor.library_list.count() >= 1  # a line saying what goes there, when empty
     assert editor._selected_path() is None or editor._selected_path().exists()
     editor.close()
+
+
+def test_the_way_back_is_always_at_the_top(app, monkeypatch):
+    """‹ All recipes (and Esc) next to the title on every page but the library; the breadcrumb says where."""
+    from PySide6.QtWidgets import QMessageBox
+
+    from jdxi_editor.ui.v2.recipes import RecipesEditor
+
+    w = RecipesEditor(editors=Editors())
+    w.resize(1400, 900)
+    w.show()
+    app.processEvents()
+    assert not w.back_button.isVisible()
+    w.paste.setPlainText(PASTED)
+    w.import_text()
+    assert w.back_button.isVisible() and "Check" in w.where.text()
+    w.go_back()
+    assert w.pages.currentWidget() is w.home and not w.back_button.isVisible()
+    w.show_editor_page()
+    assert "Editor" in w.where.text()
+    w.add_editor_row()  # an unsaved change: asked before leaving
+    asked = []
+    monkeypatch.setattr(QMessageBox, "question", lambda *a, **k: asked.append(a) or QMessageBox.StandardButton.Cancel)
+    w.go_back()
+    assert asked and w.pages.currentWidget() is w.editor_page
+    monkeypatch.setattr(QMessageBox, "question", lambda *a, **k: QMessageBox.StandardButton.Discard)
+    w.back_shortcut.activated.emit()  # Esc
+    assert w.pages.currentWidget() is w.home
+    w.close()

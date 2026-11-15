@@ -133,8 +133,23 @@ class RecipesEditor(QWidget):
         self.title = title_badge(tr("Recipes"), ACCENT)  # as at the top of the other editors
         bar = QHBoxLayout()
         bar.addWidget(self.title)
+        # Where you are and the way back, always in the same place (the way
+        # back was a «Recipes» button among the page's own buttons)
+        self.back_button = _button("‹  " + tr("All recipes"))
+        self.back_button.setToolTip(tr("Back to the library of recipes (Esc)"))
+        self.back_button.clicked.connect(self.go_back)
+        self.back_button.hide()
+        self.where = _label("", 13, "#a3a6ad")
+        bar.addSpacing(10)
+        bar.addWidget(self.back_button)
+        bar.addWidget(self.where)
         bar.addStretch()
         root.addLayout(bar)
+        from PySide6.QtGui import QKeySequence, QShortcut
+
+        self.back_shortcut = QShortcut(QKeySequence(Qt.Key.Key_Escape), self)
+        self.back_shortcut.setContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+        self.back_shortcut.activated.connect(self.go_back)
         self.pages = QStackedWidget()
         root.addWidget(self.pages, 1)
         # the side panel of the other editors: what the row under the cursor is and says
@@ -143,6 +158,7 @@ class RecipesEditor(QWidget):
         self.info_panel.head.setText(tr("RECIPE"))
         outer.addWidget(self.info_panel)
         self.pages.currentChanged.connect(lambda _i: self._explain_page())
+        self.pages.currentChanged.connect(lambda _i: self._show_where())
         self.home = self._home_page()
         self.check_page = self._check_page()
         self.guide_page = self._guide_page()
@@ -551,11 +567,8 @@ class RecipesEditor(QWidget):
         top = QHBoxLayout()
         self.guide_title = _label("", 16, "#ffffff", True)
         top.addWidget(self.guide_title, 1)
-        back = _button(tr("Recipes"))
-        back.clicked.connect(self.show_home)
         edit = _button(tr("Edit the recipe"))
         edit.clicked.connect(self.show_editor_page)
-        top.addWidget(back)
         top.addWidget(edit)
         col.addLayout(top)
         self.guide_sub = _label("", 12, "#a3a6ad")
@@ -777,12 +790,10 @@ class RecipesEditor(QWidget):
         try_b.clicked.connect(lambda: (self._editor_to_recipe(), self.show_check()))
         save = _button(tr("Save recipe"), True)
         save.clicked.connect(self.save_from_editor)
-        back = _button(tr("Recipes"))
-        back.clicked.connect(self.show_home)
         for b in (add, remove, capture):
             bottom.addWidget(b)
         bottom.addStretch()
-        for b in (back, export, try_b, save):
+        for b in (export, try_b, save):
             bottom.addWidget(b)
         col.addLayout(bottom)
         return page
@@ -804,7 +815,16 @@ class RecipesEditor(QWidget):
         table.horizontalHeader().setSectionResizeMode(10, QHeaderView.ResizeMode.Stretch)
         table.setColumnWidth(11, 220)
         self._editor_changed()
+        self._editor_snapshot = self._editor_state()
         self.pages.setCurrentWidget(self.editor_page)
+
+    def _editor_state(self) -> tuple:
+        """What the editor holds (to tell unsaved changes)."""
+        fields = tuple(f.text() for f in (self.ed_title, self.ed_base, self.ed_program, self.ed_description))
+        return fields, tuple(repr(row) for row in self._editor_rows())
+
+    def editor_has_changes(self) -> bool:
+        return self._editor_state() != getattr(self, "_editor_snapshot", None)
 
     def _combo(self, items: list[str], current: str, editable: bool = False) -> QComboBox:
         combo = QComboBox()
@@ -898,6 +918,9 @@ class RecipesEditor(QWidget):
             table.setItem(i, len(COLUMNS), item)
             bad += c.status == check.FIX
         table.blockSignals(False)
+        if not rows:
+            self.ed_status.setText(tr("No rows yet: «Add row» to start"))
+            return
         self.ed_status.setText(tr("All {n} rows are valid").format(n=len(rows)) if not bad
                                else tr("{bad} of {n} rows to fix").format(bad=bad, n=len(rows)))
 
@@ -937,6 +960,7 @@ class RecipesEditor(QWidget):
         recipe = self._editor_to_recipe()
         self.recipe_path = library.save(recipe, self.recipe_path)
         self.refresh_library()
+        self._editor_snapshot = self._editor_state()
         self.ed_status.setText(tr("Saved in the library: {path}").format(path=self.recipe_path.name))
 
     def export_recipe(self, path: Optional[str] = None) -> Optional[Path]:
@@ -961,3 +985,41 @@ class RecipesEditor(QWidget):
     def show_home(self) -> None:
         self.refresh_library()
         self.pages.setCurrentWidget(self.home)
+
+    def _show_where(self) -> None:
+        """The breadcrumb: Recipes › Check / Guide / Editor › the recipe's title."""
+        page = self.pages.currentWidget()
+        names = {
+            self.check_page: tr("Check before importing"),
+            self.guide_page: tr("Guide"),
+            self.editor_page: tr("Editor"),
+        }
+        if page is self.home or page not in names:
+            self.back_button.hide()
+            self.where.setText("")
+            return
+        title = (self.recipe.title if self.recipe is not None else "") or ""
+        self.back_button.show()
+        self.where.setText(f"›  {names[page]}" + (f"  ›  {title}" if title else ""))
+
+    def go_back(self) -> None:
+        """‹ All recipes (or Esc): the library, after asking if the editor has unsaved rows."""
+        if self.pages.currentWidget() is self.home:
+            return
+        if self.pages.currentWidget() is self.editor_page and self.editor_has_changes():
+            from PySide6.QtWidgets import QMessageBox
+
+            answer = QMessageBox.question(
+                self,
+                tr("Recipe not saved"),
+                tr("The changes to this recipe are not saved. Leave the editor anyway?"),
+                QMessageBox.StandardButton.Save
+                | QMessageBox.StandardButton.Discard
+                | QMessageBox.StandardButton.Cancel,
+                QMessageBox.StandardButton.Cancel,
+            )
+            if answer == QMessageBox.StandardButton.Cancel:
+                return
+            if answer == QMessageBox.StandardButton.Save:
+                self.save_from_editor()
+        self.show_home()
