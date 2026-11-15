@@ -256,3 +256,16 @@ def test_a_one_parameter_dt1_sets_that_parameter_only():
     parsed = parse_sysex(bytes([0xF0, 0x41, 0x10, 0, 0, 0, 0x0E, 0x12, *address, *values, checksum, 0xF7]))
     assert parsed["FILTER_CUTOFF"] == 110
     assert "FILTER_RESONANCE" not in parsed and "LFO_RATE" not in parsed
+
+
+def test_messages_sent_are_heard():
+    """midi_message_outgoing reaches its listeners (a signal of the second QObject base did not)."""
+    from jdxi_editor.midi.io.helper import MidiIOHelper
+
+    QApplication.instance() or QApplication([])
+    helper = MidiIOHelper()
+    heard = []
+    helper.midi_message_outgoing.connect(heard.append)
+    helper.midi_message_outgoing.emit([0xB0, 7, 100])
+    helper.midi_message_outgoing.disconnect(heard.append)
+    assert heard == [[0xB0, 7, 100]]

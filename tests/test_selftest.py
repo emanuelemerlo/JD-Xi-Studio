@@ -35,10 +35,13 @@ class FakeJDXi:
                 QTimer.singleShot(5, lambda r=reply: self.helper._handle_midi_message(r))
         return len(messages)
 
+    keep = True  # False: a JD-Xi that ignores the DT1s
+
     def sent(self, message):
         m = list(message)
-        if m and m[0] == 0xF0 and len(m) > 12 and m[7] == 0x12:
+        if self.keep and m and m[0] == 0xF0 and len(m) > 12 and m[7] == 0x12:
             self.write(tuple(m[8:12]), m[12:-2])
+        self.helper.midi_message_outgoing.emit(message)  # as the real send_raw_message
         return True
 
 
@@ -161,3 +164,45 @@ def test_dialog_opens_from_the_help_menu(window):
     assert dialog.isVisible()
     assert dialog.table.rowCount() == len(dialog.test.steps) >= 10
     dialog.close()
+
+
+def test_init_tone_edits_and_undo_on_a_fake_jdxi(window, jdxi):
+    """Analog and Digital 1: edits to an Init Tone reach the JD-Xi, Undo brings every value back."""
+    jdxi.write(st.ANALOG_TONE, valid_analog_tone())
+    for block in window._tab_editor("digital1").blocks:  # every byte a value the parameter can have
+        values = [0] * block.size()
+        for spec in block.params:
+            offset = spec.offset & 0x7F
+            if offset < len(values) and not spec.nibbled:
+                values[offset] = int(spec.convert_to_midi(min(max(0, spec.lo), spec.hi)))
+        jdxi.write(tuple(block.address_bytes()), values)
+    jdxi.write(st.DIGITAL1_COMMON, list(b"Init Tone   "))
+    steps = [
+        st.Step("analog", st.tone_edits("ANALOG_SYNTH", "analog", "ANALOG")),
+        st.Step("digital", st.tone_edits("DIGITAL_SYNTH_1", "digital1", "DIGITAL 1")),
+    ]
+    test = st.SelfTest(window, steps)
+    run(test, limit_s=40)
+    for step in steps:
+        assert step.status == st.OK, (step.title, step.detail)
+        assert "Init Tone" in step.detail and "all undone" in step.detail
+
+
+def valid_analog_tone() -> list:
+    from jdxi_editor.midi.data.parameter.analog.address import AnalogParam
+
+    values = [0] * 0x40
+    for param in AnalogParam:
+        if param.address < 0x40:
+            values[param.address] = 64 if param.min_val <= 64 <= param.max_val else param.min_val
+    values[:12] = list(b"Init Tone   ")
+    return values
+
+
+def test_edits_the_jdxi_does_not_keep_are_ko(window, jdxi, monkeypatch):
+    jdxi.write(st.ANALOG_TONE, valid_analog_tone())
+    jdxi.keep = False  # the JD-Xi ignores the DT1s
+    steps = [st.Step("analog", st.tone_edits("ANALOG_SYNTH", "analog", "ANALOG"))]
+    test = st.SelfTest(window, steps)
+    run(test, limit_s=30)
+    assert steps[0].status == st.KO and "not on the JD-Xi" in steps[0].detail

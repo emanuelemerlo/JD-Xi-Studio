@@ -99,6 +99,12 @@ def rq1(address: tuple, size: int) -> list:
     return [0xF0, 0x41, 0x10, 0x00, 0x00, 0x00, 0x0E, 0x11] + body + [checksum, 0xF7]
 
 
+def absolute(address) -> int:
+    """A 4-byte Roland address as one number (7 bits a byte)."""
+    a = list(address)
+    return (a[0] << 21) | (a[1] << 14) | (a[2] << 7) | a[3]
+
+
 def name_of(values: Optional[list]) -> Optional[str]:
     if not values or len(values) < 12:
         return None
@@ -143,7 +149,9 @@ class SelfTest(QObject):
         self._poll.timeout.connect(self._check_until)
         self._until_deadline = 0.0
         self.running = False
+        self.sent: dict = {}  # absolute address -> byte, from the DT1s the app sends
         self.helper.midi_message_incoming.connect(self._incoming)
+        self.helper.midi_message_outgoing.connect(self._outgoing)
 
     # --- control
     def start(self) -> None:
@@ -255,6 +263,19 @@ class SelfTest(QObject):
         # later, not inside the delivery of the reply: what the step does next
         # (an edit, an Undo) must not be taken for an echo of received data
         QTimer.singleShot(0, self, lambda values=parsed[1]: self._send(values))
+
+    def _outgoing(self, message) -> None:
+        """Record what the app writes to the JD-Xi (to compare with what it then holds)."""
+        try:
+            data = [int(b) for b in (message.bytes() if hasattr(message, "bytes") else message)]
+        except (TypeError, ValueError):
+            return
+        parsed = parse_dt1(data)
+        if parsed is None:
+            return
+        base = absolute(parsed[0])
+        for i, value in enumerate(parsed[1]):
+            self.sent[base + i] = value
 
     def _finish_step(self, status: str, detail: str) -> None:
         step = self.steps[self.index]
@@ -548,6 +569,140 @@ def step_restore(test: SelfTest):
     return OK, program_id
 
 
+# The edits a user makes to a free user tone (Init Tone): parameters of the
+# oscillator, filter, amp, envelopes and LFO, each set to another value.
+ANALOG_EDITS = (
+    "OSC_WAVEFORM", "OSC_PITCH_COARSE", "OSC_PULSE_WIDTH", "FILTER_CUTOFF", "FILTER_RESONANCE",
+    "FILTER_ENV_DEPTH", "FILTER_ENV_DECAY_TIME", "AMP_LEVEL", "AMP_ENV_ATTACK_TIME",
+    "AMP_ENV_RELEASE_TIME", "LFO_RATE", "LFO_PITCH_DEPTH",
+)
+DIGITAL_EDITS = (
+    ("PARTIAL_1", "OSC_WAVE"), ("PARTIAL_1", "OSC_PITCH"), ("PARTIAL_1", "FILTER_MODE"),
+    ("PARTIAL_1", "FILTER_CUTOFF"), ("PARTIAL_1", "FILTER_RESONANCE"), ("PARTIAL_1", "FILTER_ENV_DEPTH"),
+    ("PARTIAL_1", "AMP_LEVEL"), ("PARTIAL_1", "AMP_ENV_ATTACK_TIME"), ("PARTIAL_1", "AMP_ENV_RELEASE_TIME"),
+    ("PARTIAL_1", "LFO_RATE"), ("PARTIAL_1", "LFO_PITCH_DEPTH"), ("COMMON", "PORTAMENTO_SWITCH"),
+    ("COMMON", "PARTIAL2_SWITCH"),
+)
+INIT_TONE = "Init Tone"
+
+
+def another_value(pv) -> int:
+    """A value a user would choose: inside the range, not the one it has."""
+    lo, hi, current = pv.minimum, pv.maximum, pv.value()
+    for fraction in (0.3, 0.7, 0.5, 0.1, 0.9):
+        value = lo + round((hi - lo) * fraction)
+        if value != current:
+            return value
+    return hi if current != hi else lo
+
+
+def _edits_of(part: str, editor) -> tuple[list, list]:
+    """(the ParamValues to edit, the blocks (address, size) that hold them)."""
+    if part == "ANALOG_SYNTH":
+        from jdxi_editor.midi.data.parameter.analog.address import AnalogParam
+
+        pvs = [editor.values[getattr(AnalogParam, n)] for n in ANALOG_EDITS
+               if getattr(AnalogParam, n, None) in editor.values]
+        return pvs, [(ANALOG_TONE, 0x40)]
+    pvs, blocks = [], []
+    for key, name in DIGITAL_EDITS:
+        try:
+            pvs.append(editor.pv(name, key))
+        except KeyError:
+            continue
+    for block in editor.blocks:
+        if block.key in {key for key, _ in DIGITAL_EDITS}:
+            blocks.append((tuple(block.address_bytes()), block.size()))
+    return pvs, blocks
+
+
+def tone_edits(part: str, editor_key: str, panel_name: str):
+    """A free user tone (Init Tone) of *part*: edits through its editor, checked on the
+    JD-Xi; then Undo of every edit, checked too."""
+
+    def step(test: SelfTest):
+        window = test.window
+        synth = window_synth(part)
+        window._select_synth(synth)
+        editor = window._tab_editor(editor_key)
+        pvs, blocks = _edits_of(part, editor)
+        if not pvs:
+            return SKIPPED, tr("no parameters to edit")
+        common = blocks[0] if part == "ANALOG_SYNTH" else (DIGITAL1_COMMON, 0x40)
+
+        # 1. a free user tone, chosen on the JD-Xi (the user tones are where Init Tone is)
+        name = name_of((yield Read(*common)))
+        on_init = same_name(name, INIT_TONE)
+        if not on_init:
+            current = {"name": name}
+
+            def chosen():
+                return same_name(window.preset_manager.current_preset_names.get(synth), INIT_TONE)
+
+            on_init = yield Until(
+                chosen, 40000,
+                tr("On the JD-Xi: select {part} and choose a free user tone («Init Tone») "
+                   "with the TONE knob (40 seconds)").format(part=panel_name),
+            )
+            if on_init:
+                yield Wait(800)
+            name = name_of((yield Read(*common))) or current["name"]
+        # 2. the tone as it is
+        before = {}
+        for address, size in blocks:
+            values = yield Read(address, size)
+            if not values:
+                return KO, tr("no reply")
+            base = absolute(address)
+            before.update({base + i: v for i, v in enumerate(values)})
+        # 3. the edits, one by one as by hand
+        test.sent.clear()
+        history = editor.history
+        made = 0
+        for pv in pvs:
+            pv.setValue(another_value(pv))
+            made += 1
+            yield Wait(150)
+        yield Wait(500)
+        sent = dict(test.sent)
+        if not sent:
+            return KO, tr("the edits sent nothing to the JD-Xi")
+        after = {}
+        for address, size in blocks:
+            values = yield Read(address, size)
+            base = absolute(address)
+            after.update({base + i: v for i, v in enumerate(values or [])})
+        wrong = [f"{a:07X}: {v}/{after.get(a, '?')}" for a, v in sent.items() if after.get(a) != v]
+        if wrong:
+            return KO, tr("{n} of {total} values not on the JD-Xi (sent/read): {list}").format(
+                n=len(wrong), total=len(sent), list=", ".join(wrong[:6]))
+        # 4. Undo every edit
+        undone = 0
+        while undone < made and history.undo():
+            undone += 1
+            yield Wait(120)
+        yield Wait(500)
+        restored = {}
+        for address, size in blocks:
+            values = yield Read(address, size)
+            base = absolute(address)
+            restored.update({base + i: v for i, v in enumerate(values or [])})
+        back = [f"{a:07X}: {before.get(a)}/{restored.get(a, '?')}" for a in sent if restored.get(a) != before.get(a)]
+        where = f"«{name}»" if name else "?"
+        if not on_init:
+            where += " — " + tr("not a free user tone")
+        if undone < made:
+            return KO, tr("{where}: {n} edits checked; Undo undid {u} of {made}").format(
+                where=where, n=len(sent), u=undone, made=made)
+        if back:
+            return KO, tr("{where}: {n} edits checked; after Undo {k} values differ (before/now): {list}").format(
+                where=where, n=len(sent), k=len(back), list=", ".join(back[:6]))
+        return OK, tr("{where}: {made} edits ({n} values) on the JD-Xi, all undone").format(
+            where=where, made=made, n=len(sent))
+
+    return step
+
+
 def window_synth(name: str):
     from jdxi_editor.core.synth.type import JDXiSynth
 
@@ -563,6 +718,8 @@ def default_steps() -> List[Step]:
         Step(tr("Analog: load a preset"), step_analog_tone),
         Step(tr("Keyboard window: tone arrow (Digital 1)"), step_digital_tone_arrows),
         Step(tr("Analog editor: edit and Undo"), step_edit_and_undo),
+        Step(tr("Analog: edits to an Init Tone, then Undo"), tone_edits("ANALOG_SYNTH", "analog", "ANALOG")),
+        Step(tr("Digital 1: edits to an Init Tone, then Undo"), tone_edits("DIGITAL_SYNTH_1", "digital1", "DIGITAL 1")),
         Step(tr("Octave + and back"), step_octave),
         Step(tr("On-screen keyboard: a note"), step_note),
         Step(tr("JD-Xi → app: a tone chosen on the JD-Xi"), step_tone_on_jdxi),

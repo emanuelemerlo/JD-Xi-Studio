@@ -26,6 +26,7 @@ from dataclasses import dataclass
 from typing import Any, Optional
 
 import mido
+from PySide6.QtCore import Signal
 from decologr import Decologr as log
 
 from jdxi_editor.midi.data.address.address import (
@@ -91,6 +92,11 @@ class MidiIOHelper(MidiInHandler, MidiOutHandler):
     """
 
     _instance = None
+
+    # Declared again here: with two QObject bases, a signal of the second one
+    # (MidiOutHandler) was listed but never delivered, so nothing heard the
+    # messages sent (MIDI OUT light, MIDI monitor, the window's follower)
+    midi_message_outgoing = Signal(object)
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:

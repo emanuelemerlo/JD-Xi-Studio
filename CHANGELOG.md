@@ -28,6 +28,10 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   undoes it, changes the octave and plays a note, and checks each result on the JD-Xi; then
   asks you to choose a tone, press OCTAVE and play on the JD-Xi and checks that the window
   follows. A report is saved in `~/.jdxi_studio/reports`
+  It also edits a free user tone («Init Tone») of Analog and of Digital 1 — oscillator, filter,
+  amp, envelopes, LFO — checks every value on the JD-Xi, undoes the edits and checks again
+- The messages sent were never heard by their listeners (a signal of the MIDI helper's second
+  base class): the MIDI OUT light blinks again, the MIDI monitor shows them
 
 ### Recipes
 - The side panel of the other tabs: what the page is for, and for the row chosen its part,

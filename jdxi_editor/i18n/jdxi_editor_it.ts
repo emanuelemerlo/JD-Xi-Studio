@@ -20,7 +20,7 @@
             <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="175" />
             <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="222" />
             <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="325" />
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="634" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="791" />
             <source>Stop</source>
             <translation>Stop</translation>
         </message>
@@ -484,7 +484,7 @@
         <message>
             <location filename="../../jdxi_editor/ui/dialogs/about.py" line="155" />
             <location filename="../../jdxi_editor/ui/windows/jdxi/window_buttons.py" line="94" />
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="636" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="793" />
             <source>Close</source>
             <translation>Chiudi</translation>
         </message>
@@ -4179,8 +4179,8 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/players.py" line="329" />
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="602" />
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="294" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="759" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="315" />
             <source>Step</source>
             <translation>Passo</translation>
         </message>
@@ -6924,7 +6924,7 @@ L'elenco dei programmi mostra ora i nomi aggiornati.</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="323" />
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="633" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="790" />
             <source>Start</source>
             <translation>Avvia</translation>
         </message>
@@ -7285,285 +7285,336 @@ Esempio: F0 41 10 00 00 00 0E 12 19 01 20 00 01 F7</translation>
             <translation>Nome:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="323" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="344" />
             <source>no reply: check the MIDI ports (Edit › MIDI Configuration) and the USB cable</source>
             <translation>nessuna risposta: controlla le porte MIDI (Modifica › Configurazione MIDI) e il cavo USB</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="335" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="356" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="655" />
             <source>no reply</source>
             <translation>nessuna risposta</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="354" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="375" />
             <source>no program in the library</source>
             <translation>nessun programma nella libreria</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="391" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="412" />
             <source>no Analog presets</source>
             <translation>nessun preset Analog</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="445" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="466" />
             <source>Undo did nothing</source>
             <translation>Annulla non ha fatto nulla</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="481" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="502" />
             <source>Did the JD-Xi play a note (middle C, Analog)?</source>
             <translation>Il JD-Xi ha suonato una nota (Do centrale, Analog)?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="481" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="502" />
             <source>turn the volume up</source>
             <translation>alza il volume</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="484" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="505" />
             <source>no sound</source>
             <translation>nessun suono</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="496" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="517" />
             <source>On the JD-Xi: select ANALOG and turn the TONE knob (20 seconds)</source>
             <translation>Sul JD-Xi: seleziona ANALOG e gira la manopola TONE (20 secondi)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="511" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="532" />
             <source>On the JD-Xi: press OCTAVE + or − (15 seconds)</source>
             <translation>Sul JD-Xi: premi OCTAVE + o − (15 secondi)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="525" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="546" />
             <source>On the JD-Xi: play a few notes (15 seconds)</source>
             <translation>Sul JD-Xi: suona qualche nota (15 secondi)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="528" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="549" />
             <source>no notes received: on the JD-Xi, MENU › SYSTEM › MIDI › Tx</source>
             <translation>nessuna nota ricevuta: sul JD-Xi, MENU › SYSTEM › MIDI › Tx</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="529" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="550" />
             <source>Did the keys you played light up in the keyboard window?</source>
             <translation>I tasti che hai suonato si sono illuminati nella finestra tastiera?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="532" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="553" />
             <source>notes received, keys not lit</source>
             <translation>note ricevute, tasti non illuminati</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="541" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="562" />
             <source>the starting program is not in the library: choose it on the JD-Xi</source>
             <translation>il programma iniziale non è nella libreria: sceglilo sul JD-Xi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="559" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="714" />
             <source>Connection: the JD-Xi answers</source>
             <translation>Collegamento: il JD-Xi risponde</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="560" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="715" />
             <source>SYSTEM › MIDI settings</source>
             <translation>Impostazioni SYSTEM › MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="561" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="716" />
             <source>Programs: load a program</source>
             <translation>Programmi: carica un programma</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="562" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="717" />
             <source>Display: shows the program</source>
             <translation>Display: mostra il programma</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="563" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="718" />
             <source>Analog: load a preset</source>
             <translation>Analog: carica un preset</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="564" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="719" />
             <source>Keyboard window: tone arrow (Digital 1)</source>
             <translation>Finestra tastiera: freccia del tono (Digital 1)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="565" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="720" />
             <source>Analog editor: edit and Undo</source>
             <translation>Editor Analog: modifica e Annulla</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="566" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="721" />
+            <source>Analog: edits to an Init Tone, then Undo</source>
+            <translation>Analog: modifiche a un Init Tone, poi Annulla</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="722" />
+            <source>Digital 1: edits to an Init Tone, then Undo</source>
+            <translation>Digital 1: modifiche a un Init Tone, poi Annulla</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="723" />
             <source>Octave + and back</source>
             <translation>Octave + e ritorno</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="567" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="724" />
             <source>On-screen keyboard: a note</source>
             <translation>Tastiera a schermo: una nota</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="568" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="725" />
             <source>JD-Xi → app: a tone chosen on the JD-Xi</source>
             <translation>JD-Xi → app: un tono scelto sul JD-Xi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="569" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="726" />
             <source>JD-Xi → app: OCTAVE</source>
             <translation>JD-Xi → app: OCTAVE</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="570" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="727" />
             <source>JD-Xi → app: notes and keys</source>
             <translation>JD-Xi → app: note e tasti</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="571" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="728" />
             <source>The starting program again</source>
             <translation>Di nuovo il programma iniziale</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="585" />
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="288" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="742" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="309" />
             <source>Self-test with the JD-Xi</source>
             <translation>Autotest con il JD-Xi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="591" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="748" />
             <source>The app does what a user does — loads a program and tones, edits a value and undoes it, changes the octave, plays a note — and checks each result on the JD-Xi. Some steps ask you to listen, look or act on the JD-Xi.
 The sound on the JD-Xi is replaced: save it there first (WRITE) if you want to keep it. The starting program is loaded again at the end.</source>
             <translation>L'app fa quello che fa un utente — carica un programma e dei toni, modifica un valore e lo annulla, cambia ottava, suona una nota — e verifica ogni risultato sul JD-Xi. Alcuni passi ti chiedono di ascoltare, guardare o agire sul JD-Xi.
 Il suono sul JD-Xi viene sostituito: se vuoi tenerlo, salvalo prima sul JD-Xi (WRITE). Alla fine viene ricaricato il programma iniziale.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="620" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="777" />
             <source>Yes</source>
             <translation>Sì</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="621" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="778" />
             <source>No</source>
             <translation>No</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="622" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="779" />
             <source>Skip</source>
             <translation>Salta</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="635" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="792" />
             <source>Open the report</source>
             <translation>Apri il resoconto</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="161" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="169" />
             <source>stopped</source>
             <translation>fermato</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="328" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="349" />
             <source>current program «{name}»</source>
             <translation>programma corrente «{name}»</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="340" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="361" />
             <source>on the JD-Xi: MENU › SYSTEM › MIDI</source>
             <translation>sul JD-Xi: MENU › SYSTEM › MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="342" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="363" />
             <source>a part's channel too: 16 is safer</source>
             <translation>è anche il canale di una parte: 16 è più sicuro</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="378" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="399" />
             <source>display «{shown}», JD-Xi «{loaded}»</source>
             <translation>display «{shown}», JD-Xi «{loaded}»</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="501" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="522" />
             <source>the display still shows «{name}»</source>
             <translation>il display mostra ancora «{name}»</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="516" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="537" />
             <source>the window still shows {octave:+d}</source>
             <translation>la finestra mostra ancora {octave:+d}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="602" />
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="294" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="630" />
+            <source>no parameters to edit</source>
+            <translation>nessun parametro da modificare</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="669" />
+            <source>the edits sent nothing to the JD-Xi</source>
+            <translation>le modifiche non hanno inviato nulla al JD-Xi</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="693" />
+            <source>not a free user tone</source>
+            <translation>non è un tono utente libero</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="759" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="315" />
             <source>Result</source>
             <translation>Risultato</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="602" />
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="294" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="759" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="315" />
             <source>Detail</source>
             <translation>Dettaglio</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="663" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="820" />
             <source>No MIDI output: connect the JD-Xi first.</source>
             <translation>Nessuna uscita MIDI: prima collega il JD-Xi.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="292" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="313" />
             <source>skipped</source>
             <translation>saltati</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="365" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="386" />
             <source>loaded {id} «{expected}», the JD-Xi has «{found}»</source>
             <translation>caricato {id} «{expected}», il JD-Xi ha «{found}»</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="403" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="424" />
             <source>loaded «{expected}», the JD-Xi has «{found}»</source>
             <translation>caricato «{expected}», il JD-Xi ha «{found}»</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="425" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="446" />
             <source>shown «{expected}», the JD-Xi has «{found}»</source>
             <translation>mostrato «{expected}», il JD-Xi ha «{found}»</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="443" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="464" />
             <source>Cutoff set to {value}, the JD-Xi has {found}</source>
             <translation>Cutoff impostato a {value}, il JD-Xi ha {found}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="449" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="470" />
             <source>after Undo the JD-Xi has {found}, expected {value}</source>
             <translation>dopo Annulla il JD-Xi ha {found}, atteso {value}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="468" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="489" />
             <source>Octave + : the JD-Xi has {found}</source>
             <translation>Octave +: il JD-Xi ha {found}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="470" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="491" />
             <source>Octave back: the JD-Xi has {found}</source>
             <translation>Ritorno dell'ottava: il JD-Xi ha {found}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="531" />
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="532" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="552" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="553" />
             <source>{n} notes received</source>
             <translation>{n} note ricevute</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="711" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="700" />
+            <source>{where}: {made} edits ({n} values) on the JD-Xi, all undone</source>
+            <translation>{where}: {made} modifiche ({n} valori) arrivate al JD-Xi, tutte annullate</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="868" />
             <source>report: {path}</source>
             <translation>resoconto: {path}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="713" />
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="677" />
+            <source>{n} of {total} values not on the JD-Xi (sent/read): {list}</source>
+            <translation>{n} valori su {total} non arrivati al JD-Xi (inviato/letto): {list}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="695" />
+            <source>{where}: {n} edits checked; Undo undid {u} of {made}</source>
+            <translation>{where}: {n} modifiche verificate; Annulla ne ha annullate {u} su {made}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="698" />
+            <source>{where}: {n} edits checked; after Undo {k} values differ (before/now): {list}</source>
+            <translation>{where}: {n} modifiche verificate; dopo Annulla {k} valori sono diversi (prima/ora): {list}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="870" />
             <source>report not saved: {error}</source>
             <translation>resoconto non salvato: {error}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/selftest.py" line="644" />
+            <source>On the JD-Xi: select {part} and choose a free user tone («Init Tone») with the TONE knob (40 seconds)</source>
+            <translation>Sul JD-Xi: seleziona {part} e scegli un tono utente libero («Init Tone») con la manopola TONE (40 secondi)</translation>
         </message>
         <message>
             <source>Wave Selector</source>
