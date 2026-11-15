@@ -944,25 +944,119 @@ class JDXiInstrument(JDXiWindow):
         self.main_editor.blockSignals(True)
         # Editor types opened at startup, in tab order. Not self.editors: that
         # holds the editor objects register_editor() adds while these open
-        startup_editors = [
-            "program",
-            "digital1",
-            "digital2",
-            "analog",
-            "drums",
-            "arpeggio",
-            "effects",
-            "vocal_fx",
-            "pattern",
-            "midi_player",
-            "settings",  # always there, as the other tabs (it opened only from the menu)
-        ]
+        # the core tabs, always there, then the optional ones open at the last closing
+        startup_editors = list(self.CORE_TABS) + self._saved_optional_tabs()
         for editor_type in startup_editors:
             self.show_editor(editor_type)
+        self._init_optional_tabs()
         self.main_editor.editor_tab_widget.setCurrentIndex(0)
         self.main_editor.blockSignals(False)
         self.main_editor.setUpdatesEnabled(True)
         self.main_editor.show()
+
+    # --- Tabs: a fixed set always there, the others opened and closed from the editors window
+
+    CORE_TABS = (
+        "program", "digital1", "digital2", "analog", "drums",
+        "arpeggio", "effects", "vocal_fx", "pattern", "midi_player",
+    )
+    OPTIONAL_TABS = ("program_parts", "recipes", "settings")
+    OPEN_TABS_KEY = "editors/optional_tabs"
+
+    def _saved_optional_tabs(self) -> list[str]:
+        """The optional tabs open when the program last closed (Settings the first time)."""
+        from PySide6.QtCore import QSettings
+
+        from jdxi_editor.project import __organization_name__, __program__
+
+        value = QSettings(__organization_name__, __program__).value(self.OPEN_TABS_KEY, "settings")
+        names = value if isinstance(value, list) else [n for n in str(value or "").split(",") if n]
+        return [n for n in self.OPTIONAL_TABS if n in names]
+
+    def _save_optional_tabs(self) -> None:
+        from PySide6.QtCore import QSettings
+
+        from jdxi_editor.project import __organization_name__, __program__
+
+        QSettings(__organization_name__, __program__).setValue(
+            self.OPEN_TABS_KEY, ",".join(self.open_optional_tabs())
+        )
+
+    def _tab_editor(self, editor_type: str):
+        config = self.editor_registry.get(editor_type)
+        if config is None:
+            return None
+        return getattr(self, f"{config.editor_class.__name__.lower()}_instance", None)
+
+    def open_optional_tabs(self) -> list[str]:
+        tabs = self.main_editor.editor_tab_widget
+        return [
+            name for name in self.OPTIONAL_TABS
+            if (editor := self._tab_editor(name)) is not None and tabs.indexOf(editor) >= 0
+        ]
+
+    def _init_optional_tabs(self) -> None:
+        """Close buttons on the optional tabs only, and the "+" menu to open them."""
+        tabs = self.main_editor.editor_tab_widget
+        if getattr(self, "_optional_tabs_ready", False):
+            self._mark_closable_tabs()
+            return
+        self._optional_tabs_ready = True
+        self.main_editor.set_tab_menu(self._fill_tab_menu)
+        self._mark_closable_tabs()
+
+    def _mark_closable_tabs(self) -> None:
+        """A small × on the optional tabs; nothing on the core ones."""
+        from PySide6.QtWidgets import QTabBar, QToolButton
+
+        tabs = self.main_editor.editor_tab_widget
+        side = QTabBar.ButtonPosition.RightSide
+        for name in self.OPTIONAL_TABS:
+            editor = self._tab_editor(name)
+            index = tabs.indexOf(editor) if editor is not None else -1
+            if index < 0 or tabs.tabBar().tabButton(index, side) is not None:
+                continue
+            button = QToolButton()
+            button.setText("×")
+            button.setToolTip(tr("Close the tab (it opens again from +)"))
+            button.setFixedSize(16, 16)
+            button.setStyleSheet(
+                "QToolButton { color: #a3a6ad; border: none; background: transparent; font-size: 14px;"
+                " font-weight: 700; padding: 0; } QToolButton:hover { color: #ffffff; background: #ff2a1a;"
+                " border-radius: 8px; }"
+            )
+            button.clicked.connect(lambda _c=False, e=editor: self.close_tab(tabs.indexOf(e)))
+            tabs.tabBar().setTabButton(index, side, button)
+
+    def close_tab(self, index: int) -> None:
+        """Close an optional tab (the editor stays, with its values, for when it opens again)."""
+        tabs = self.main_editor.editor_tab_widget
+        editor = tabs.widget(index)
+        if editor is None or not any(self._tab_editor(n) is editor for n in self.OPTIONAL_TABS):
+            return
+        tabs.removeTab(index)
+        self._save_optional_tabs()
+
+    def _fill_tab_menu(self, menu) -> None:
+        """The "+" menu: every optional tab, ticked when open; choosing it opens or shows it."""
+        names = {
+            "program_parts": tr("Program parts"),
+            "recipes": tr("Recipes"),
+            "settings": tr("Settings"),
+        }
+        menu.clear()
+        open_now = set(self.open_optional_tabs())
+        for name in self.OPTIONAL_TABS:
+            action = menu.addAction(names[name])
+            action.setCheckable(True)
+            action.setChecked(name in open_now)
+            action.triggered.connect(lambda _checked=False, n=name: self.open_tab(n))
+
+    def open_tab(self, editor_type: str) -> None:
+        self.show_editor(editor_type)
+        if editor_type in self.OPTIONAL_TABS:
+            self._mark_closable_tabs()
+            self._save_optional_tabs()
 
     # --- Window menu: the editor windows minimise and come back with the keyboard
 
@@ -1078,6 +1172,9 @@ class JDXiInstrument(JDXiWindow):
         self._show_editor_tab(
             config.title, config.editor_class, config.icon, **merged_kwargs
         )
+        if editor_type in self.OPTIONAL_TABS and getattr(self, "_optional_tabs_ready", False):
+            self._mark_closable_tabs()  # opened from a menu: closable, remembered
+            self._save_optional_tabs()
         # Bring the editors forward (not while the startup editors open)
         if self.main_editor is not None and self.main_editor.updatesEnabled():
             self._show_main_editor()
@@ -1141,6 +1238,13 @@ class JDXiInstrument(JDXiWindow):
 
             if existing_editor:
                 index = self.main_editor.editor_tab_widget.indexOf(existing_editor)
+                if index == -1:  # an optional tab closed earlier: back with its values
+                    from jdxi_editor.ui.v2.names import short_name
+
+                    index = self.main_editor.editor_tab_widget.addTab(existing_editor, short_name(title))
+                    self.main_editor.editor_tab_widget.setTabToolTip(index, title)
+                    if getattr(self, "_optional_tabs_ready", False):
+                        self._mark_closable_tabs()
                 if index != -1:
                     self.main_editor.editor_tab_widget.setCurrentIndex(index)
                     # Update tab bar property for styling
