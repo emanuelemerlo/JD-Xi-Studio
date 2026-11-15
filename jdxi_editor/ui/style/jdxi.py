@@ -1417,10 +1417,9 @@ class JDXiUIStyle:
     KEYBOARD_DRUM_LABELS = """
                 QLabel {
                     color: #808080;
-                    font-size: 7px;
+                    font-size: 8px;
                     font-family: monospace;
-                    padding: 2px;
-                    min-width: 30px;
+                    padding: 0px;
                 }
             """
 

@@ -30,7 +30,7 @@ This module requires PySide6 and proper integration with the JD-Xi Manager's sig
 """
 
 from decologr import Decologr as log
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QPoint, Qt
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QGraphicsDropShadowEffect, QHBoxLayout, QLabel
 
@@ -72,20 +72,9 @@ class PianoKeyboard(QWidget):
         main_layout.setSpacing(0)
         main_layout.setContentsMargins(0, 0, 0, 0)
 
-        # Add drum pad labels
-        labels_layout = QHBoxLayout()
-        labels_layout.setSpacing(0)
-        labels_layout.setContentsMargins(1, 1, 1, 1)
-
-        # Create and style labels
-        for text in DRUM_LABELS:
-            label = QLabel(text)
-            label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            label.setStyleSheet(JDXi.UI.Style.KEYBOARD_DRUM_LABELS)
-            labels_layout.addWidget(label)
-
-        labels_layout.addStretch()
-        main_layout.addLayout(labels_layout)
+        # Drum names over their keys: each label centred on its key (black keys' names on the
+        # upper line, white keys' on the lower one, so neighbours never overlap)
+        main_layout.addWidget(self._drum_label_strip(total_width + 2))
 
         # Create keyboard container widget
         keyboard_widget = QWidget()
@@ -106,6 +95,59 @@ class PianoKeyboard(QWidget):
 
         main_layout.addWidget(keyboard_widget)
 
+    BLACK_POSITIONS = [0, 1, 3, 4, 5, 7, 8, 10, 11, 12, 14, 15, 17, 18, 19]
+    LABEL_WIDTH = 30
+
+    def key_centres(self) -> dict[int, float]:
+        """The x of each key's centre (MIDI note -> x), as the keys are laid out (1 px margin)."""
+        centres = {}
+        for index, note in enumerate(self.white_notes):
+            centres[note] = 1 + index * self.white_key_width + self.white_key_width / 2
+        for pos, note in zip(self.BLACK_POSITIONS, [n for n in KEYBOARD_BLACK_NOTES if n is not None]):
+            centres[note] = 1 + pos * self.white_key_width + self.white_key_width
+        return centres
+
+    def _drum_label_strip(self, width: int) -> QWidget:
+        strip = QWidget()
+        strip.setFixedSize(width, 30)
+        centres = self.key_centres()
+        black = {n for n in KEYBOARD_BLACK_NOTES if n is not None}
+        first = self.white_notes[0]  # BD1 is the first key (C1, note 36)
+        self.drum_labels = {}
+        for offset, text in enumerate(DRUM_LABELS):
+            note = first + offset
+            if not text.strip() or note not in centres:
+                continue
+            label = QLabel(text, strip)
+            label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            label.setStyleSheet(JDXi.UI.Style.KEYBOARD_DRUM_LABELS)
+            label.setFixedSize(self.LABEL_WIDTH, 14)
+            label.move(round(centres[note] - self.LABEL_WIDTH / 2), 1 if note in black else 15)
+            self.drum_labels[note] = label
+        self._label_strip = strip
+        return strip
+
+    def place_drum_labels(self) -> None:
+        """Each name centred on its key as laid out (the layout can move the keys a little)."""
+        strip = getattr(self, "_label_strip", None)
+        if strip is None:
+            return
+        for note, label in self.drum_labels.items():
+            key = self._keys_by_note.get(note)
+            if key is None or key.width() <= 0:
+                continue
+            centre = key.mapTo(self, key.rect().center()).x() + 0.5
+            x = strip.mapFrom(self, QPoint(round(centre), 0)).x()
+            label.move(round(x - self.LABEL_WIDTH / 2), label.y())
+
+    def showEvent(self, event) -> None:
+        super().showEvent(event)
+        self.place_drum_labels()
+
+    def resizeEvent(self, event) -> None:
+        super().resizeEvent(event)
+        self.place_drum_labels()
+
     def _create_keys(self, keyboard_widget: QWidget) -> None:
         """
         Create piano keys with individual shadows
@@ -120,6 +162,7 @@ class PianoKeyboard(QWidget):
             shadow.setColor(QColor(0, 0, 0, 80))
             widget.setGraphicsEffect(shadow)
 
+        self._keys_by_note = {}
         # First create all white keys
         for _, note in enumerate(self.white_notes):
             key = PianoKey(
@@ -130,6 +173,7 @@ class PianoKeyboard(QWidget):
             )
             apply_shadow(key)
             keyboard_widget.layout().addWidget(key)
+            self._keys_by_note[note] = key
 
             if hasattr(self.parent(), "handle_piano_note_on"):
                 key.noteOn.connect(self.parent().handle_piano_note_on)
@@ -137,7 +181,7 @@ class PianoKeyboard(QWidget):
                 key.noteOff.connect(self.parent().handle_piano_note_off)
 
         # Add black keys
-        black_positions = [0, 1, 3, 4, 5, 7, 8, 10, 11, 12, 14, 15, 17, 18, 19]
+        black_positions = self.BLACK_POSITIONS
 
         for pos, note in zip(
             black_positions, [n for n in KEYBOARD_BLACK_NOTES if n is not None]
@@ -149,6 +193,7 @@ class PianoKeyboard(QWidget):
                 height=self.black_key_height,
             )
             black_key.setParent(keyboard_widget)
+            self._keys_by_note[note] = black_key
             apply_shadow(black_key)
 
             x_pos = (pos * self.white_key_width) + (
