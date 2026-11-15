@@ -7,10 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   jdxi_editor.midi.message.areas
-   jdxi_editor.midi.message.effects
    jdxi_editor.midi.message.program
-   jdxi_editor.midi.message.synths
 
 Submodules
 ----------

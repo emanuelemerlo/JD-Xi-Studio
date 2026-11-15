@@ -20,13 +20,6 @@ jdxi\_editor.midi.utils.conversions module
    :undoc-members:
    :show-inheritance:
 
-jdxi\_editor.midi.utils.json module
------------------------------------
-
-.. automodule:: jdxi_editor.midi.utils.json
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 Module contents
 ---------------

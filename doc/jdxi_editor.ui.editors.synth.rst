@@ -12,13 +12,6 @@ jdxi\_editor.ui.editors.synth.base module
    :undoc-members:
    :show-inheritance:
 
-jdxi\_editor.ui.editors.synth.controller module
------------------------------------------------
-
-.. automodule:: jdxi_editor.ui.editors.synth.controller
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 jdxi\_editor.ui.editors.synth.editor module
 -------------------------------------------

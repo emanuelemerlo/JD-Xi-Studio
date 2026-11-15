@@ -7,7 +7,6 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   jdxi_editor.midi.data.parameter.digital.helpers
 
 Submodules
 ----------

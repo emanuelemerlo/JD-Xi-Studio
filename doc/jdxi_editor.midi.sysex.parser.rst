@@ -4,13 +4,6 @@ jdxi\_editor.midi.sysex.parser package
 Submodules
 ----------
 
-jdxi\_editor.midi.sysex.parser.dynamic module
----------------------------------------------
-
-.. automodule:: jdxi_editor.midi.sysex.parser.dynamic
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 jdxi\_editor.midi.sysex.parser.json module
 ------------------------------------------

@@ -12,13 +12,6 @@ jdxi\_editor.midi.data.address.address module
    :undoc-members:
    :show-inheritance:
 
-jdxi\_editor.midi.data.address.address\_map module
---------------------------------------------------
-
-.. automodule:: jdxi_editor.midi.data.address.address_map
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 jdxi\_editor.midi.data.address.arpeggio module
 ----------------------------------------------
@@ -36,21 +29,7 @@ jdxi\_editor.midi.data.address.helpers module
    :undoc-members:
    :show-inheritance:
 
-jdxi\_editor.midi.data.address.jdxi\_addresses module
------------------------------------------------------
 
-.. automodule:: jdxi_editor.midi.data.address.jdxi_addresses
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-jdxi\_editor.midi.data.address.parser module
---------------------------------------------
-
-.. automodule:: jdxi_editor.midi.data.address.parser
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 jdxi\_editor.midi.data.address.sysex module
 -------------------------------------------
@@ -60,13 +39,6 @@ jdxi\_editor.midi.data.address.sysex module
    :undoc-members:
    :show-inheritance:
 
-jdxi\_editor.midi.data.address.sysex\_byte module
--------------------------------------------------
-
-.. automodule:: jdxi_editor.midi.data.address.sysex_byte
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 Module contents
 ---------------

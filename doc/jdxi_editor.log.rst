@@ -4,21 +4,7 @@ jdxi\_editor.log package
 Submodules
 ----------
 
-jdxi\_editor.log.adsr module
-----------------------------
 
-.. automodule:: jdxi_editor.log.adsr
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-jdxi\_editor.log.debug\_info module
------------------------------------
-
-.. automodule:: jdxi_editor.log.debug_info
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 jdxi\_editor.log.decorator module
 ---------------------------------
@@ -92,13 +78,6 @@ jdxi\_editor.log.midi\_info module
    :undoc-members:
    :show-inheritance:
 
-jdxi\_editor.log.parameter module
----------------------------------
-
-.. automodule:: jdxi_editor.log.parameter
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 jdxi\_editor.log.setup module
 -----------------------------

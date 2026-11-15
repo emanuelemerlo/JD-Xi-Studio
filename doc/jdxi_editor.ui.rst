@@ -10,7 +10,6 @@ Subpackages
    jdxi_editor.ui.dialogs
    jdxi_editor.ui.editors
    jdxi_editor.ui.image
-   jdxi_editor.ui.io
    jdxi_editor.ui.windows
 
 Module contents

@@ -60,7 +60,7 @@ a = Analysis(
     hooksconfig={},
     runtime_hooks=[],
     # Not used by the editor; keeps the folder smaller
-    excludes=["PyQt5", "PyQt6", "tkinter", "jdxi_editor.devel"],
+    excludes=["PyQt5", "PyQt6", "tkinter"],
     noarchive=False,
 )
 pyz = PYZ(a.pure)

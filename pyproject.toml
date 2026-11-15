@@ -84,7 +84,7 @@ path = "jdxi_editor/project.py"
 # still lacks picoui.helpers, specs.widgets, widget.helper, ... that the editor
 # uses. resources/ is added by hatch_build.py, inside the package.
 only-include = ["jdxi_editor", "picoui"]
-exclude = ["jdxi_editor/devel", ".DS_Store"]
+exclude = [".DS_Store"]
 
 [tool.hatch.build.targets.sdist]
 only-include = [
@@ -96,7 +96,7 @@ only-include = [
     "CHANGELOG.md",
     "LICENSE",
 ]
-exclude = ["jdxi_editor/devel", ".DS_Store"]
+exclude = [".DS_Store"]
 
 # Adds resources/ (large PNGs scaled down) to both packages
 [tool.hatch.build.hooks.custom]

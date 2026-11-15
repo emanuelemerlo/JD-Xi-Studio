@@ -20,13 +20,6 @@ jdxi\_editor.midi.data.parameter.drum.common module
    :undoc-members:
    :show-inheritance:
 
-jdxi\_editor.midi.data.parameter.drum.helper module
----------------------------------------------------
-
-.. automodule:: jdxi_editor.midi.data.parameter.drum.helper
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 jdxi\_editor.midi.data.parameter.drum.partial module
 ----------------------------------------------------

@@ -21,7 +21,6 @@ Subpackages
    jdxi_editor.midi.data.pcm
    jdxi_editor.midi.data.piano
    jdxi_editor.midi.data.programs
-   jdxi_editor.midi.data.sysex
    jdxi_editor.midi.data.vocal_effects
 
 Module contents
