@@ -12,8 +12,9 @@ def _debug_at_debug_level() -> None:
         return
     message = Decologr.message
 
-    def debug(text, *args, level: int = logging.DEBUG, stacklevel: int = 4, **kwargs):
-        return message(text, *args, level=level, stacklevel=stacklevel, **kwargs)
+    def debug(*args, level: int = logging.DEBUG, stacklevel: int = 4, **kwargs):
+        # called as debug("text"), debug("text", value) and debug(message="text")
+        return message(*args, level=level, stacklevel=stacklevel, **kwargs)
 
     Decologr.debug = staticmethod(debug)
 
