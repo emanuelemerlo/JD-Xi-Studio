@@ -137,3 +137,19 @@ def test_a_request_without_reply_long_ago_is_not_matched():
     values = [0] * 0x40
     body = [0x41, 0x10, 0, 0, 0, 0x0E, 0x12, 0x19, 0x42, 0, 0] + values
     assert device.fresh(body + [(128 - sum(body[7:]) % 128) % 128]) is None
+
+
+def test_order_not_time_tells_a_write_after_the_request():
+    """On Windows the clock moves in ~16 ms steps: a request and a write sent one after the
+    other have the same time, the order still tells which came first."""
+    from jdxi_editor.midi.io.device import JDXiDevice
+
+    device = JDXiDevice(lambda m: None)
+    device.clock = lambda: 5.0  # one tick for everything
+    device.sent(bytes.fromhex("F0 41 10 00 00 00 0E 11 19 42 00 00 00 00 00 40 65 F7"))
+    device.sent(bytes.fromhex("F0 41 10 00 00 00 0E 12 19 42 00 21 6E 16 F7"))
+    values = [0] * 0x40
+    values[0x21] = 44
+    body = [0x41, 0x10, 0, 0, 0, 0x0E, 0x12, 0x19, 0x42, 0, 0] + values
+    fixed = device.fresh(body + [(128 - sum(body[7:]) % 128) % 128])
+    assert fixed is not None and fixed[11 + 0x21] == 110
