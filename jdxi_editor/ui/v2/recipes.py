@@ -16,7 +16,8 @@ import shutil
 from pathlib import Path
 from typing import Callable, Optional
 
-from PySide6.QtCore import Qt, Signal
+from decologr import Decologr as log
+from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -47,6 +48,7 @@ from jdxi_editor.resources import resource_path
 from jdxi_editor.ui.v2.widgets import Card
 
 ACCENT = "#27ae60"
+CAPTURE_DELAY_MS = 800  # the editors read the JD-Xi before the values are taken
 TEMPLATE_DIR = Path("resources") / "recipes"
 # The template files in the interface's language (Italian, or English for any other)
 TEMPLATES = {
@@ -133,8 +135,23 @@ class RecipesEditor(QWidget):
         self.title = title_badge(tr("Recipes"), ACCENT)  # as at the top of the other editors
         bar = QHBoxLayout()
         bar.addWidget(self.title)
+        # Where you are and the way back, always in the same place (the way
+        # back was a «Recipes» button among the page's own buttons)
+        self.back_button = _button("‹  " + tr("All recipes"))
+        self.back_button.setToolTip(tr("Back to the library of recipes (Esc)"))
+        self.back_button.clicked.connect(self.go_back)
+        self.back_button.hide()
+        self.where = _label("", 13, "#a3a6ad")
+        bar.addSpacing(10)
+        bar.addWidget(self.back_button)
+        bar.addWidget(self.where)
         bar.addStretch()
         root.addLayout(bar)
+        from PySide6.QtGui import QKeySequence, QShortcut
+
+        self.back_shortcut = QShortcut(QKeySequence(Qt.Key.Key_Escape), self)
+        self.back_shortcut.setContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+        self.back_shortcut.activated.connect(self.go_back)
         self.pages = QStackedWidget()
         root.addWidget(self.pages, 1)
         # the side panel of the other editors: what the row under the cursor is and says
@@ -143,6 +160,7 @@ class RecipesEditor(QWidget):
         self.info_panel.head.setText(tr("RECIPE"))
         outer.addWidget(self.info_panel)
         self.pages.currentChanged.connect(lambda _i: self._explain_page())
+        self.pages.currentChanged.connect(lambda _i: self._show_where())
         self.home = self._home_page()
         self.check_page = self._check_page()
         self.guide_page = self._guide_page()
@@ -551,11 +569,8 @@ class RecipesEditor(QWidget):
         top = QHBoxLayout()
         self.guide_title = _label("", 16, "#ffffff", True)
         top.addWidget(self.guide_title, 1)
-        back = _button(tr("Recipes"))
-        back.clicked.connect(self.show_home)
         edit = _button(tr("Edit the recipe"))
         edit.clicked.connect(self.show_editor_page)
-        top.addWidget(back)
         top.addWidget(edit)
         col.addLayout(top)
         self.guide_sub = _label("", 12, "#a3a6ad")
@@ -777,12 +792,10 @@ class RecipesEditor(QWidget):
         try_b.clicked.connect(lambda: (self._editor_to_recipe(), self.show_check()))
         save = _button(tr("Save recipe"), True)
         save.clicked.connect(self.save_from_editor)
-        back = _button(tr("Recipes"))
-        back.clicked.connect(self.show_home)
         for b in (add, remove, capture):
             bottom.addWidget(b)
         bottom.addStretch()
-        for b in (back, export, try_b, save):
+        for b in (export, try_b, save):
             bottom.addWidget(b)
         col.addLayout(bottom)
         return page
@@ -804,7 +817,16 @@ class RecipesEditor(QWidget):
         table.horizontalHeader().setSectionResizeMode(10, QHeaderView.ResizeMode.Stretch)
         table.setColumnWidth(11, 220)
         self._editor_changed()
+        self._editor_snapshot = self._editor_state()
         self.pages.setCurrentWidget(self.editor_page)
+
+    def _editor_state(self) -> tuple:
+        """What the editor holds (to tell unsaved changes)."""
+        fields = tuple(f.text() for f in (self.ed_title, self.ed_base, self.ed_program, self.ed_description))
+        return fields, tuple(repr(row) for row in self._editor_rows())
+
+    def editor_has_changes(self) -> bool:
+        return self._editor_state() != getattr(self, "_editor_snapshot", None)
 
     def _combo(self, items: list[str], current: str, editable: bool = False) -> QComboBox:
         combo = QComboBox()
@@ -898,6 +920,9 @@ class RecipesEditor(QWidget):
             table.setItem(i, len(COLUMNS), item)
             bad += c.status == check.FIX
         table.blockSignals(False)
+        if not rows:
+            self.ed_status.setText(tr("No rows yet: «Add row» to start"))
+            return
         self.ed_status.setText(tr("All {n} rows are valid").format(n=len(rows)) if not bad
                                else tr("{bad} of {n} rows to fix").format(bad=bad, n=len(rows)))
 
@@ -916,8 +941,78 @@ class RecipesEditor(QWidget):
             self._editor_changed()
 
     def capture_current(self) -> None:
-        """Each row's value as the JD-Xi has it now (to write a recipe from a sound)."""
+        """Each row's value as the JD-Xi has it now (to write a recipe from a sound).
+
+        The editors of the rows' parts read the JD-Xi first, so the values are
+        the instrument's and not what an editor showed before.
+        """
         rows = self._editor_rows()
+        targets = []
+        for row in rows:
+            c = check.check_row(Row(**{**row.__dict__, "kind": VALUE, "value": "0"}))
+            if c.target is not None:
+                targets.append(c.target)
+        if not targets:
+            # An empty editor: a whole part as it is on the JD-Xi (it used to
+            # fill only the rows there were, and with none it did nothing)
+            part = self.ask_capture_part()
+            if not part:
+                self.ed_status.setText(tr(
+                    "No row to fill: add rows with Part, Group and Parameter, or choose a part to take whole."))
+                return
+            self.add_part_rows(part)
+            self.capture_current()
+            return
+        requested = set()
+        for target in targets:
+            key = getattr(target, "editor_key", None)
+            if key in requested:
+                continue
+            requested.add(key)
+            editor = self.editors(key) if key else None
+            request = getattr(editor, "data_request", None)
+            if callable(request):
+                try:
+                    request()
+                except Exception as ex:  # reading again is a nicety: the values shown are used
+                    log.warning(f"Recipes: reading {key} failed: {ex}", scope="RecipesEditor")
+        self.ed_status.setText(tr("Reading the JD-Xi…"))
+        QTimer.singleShot(CAPTURE_DELAY_MS, self, self._capture_now)
+
+    CAPTURE_PARTS = ("AN", "D1", "D2", "DR", "PROG", "EFFETTI", "ARP")
+
+    def ask_capture_part(self) -> str:
+        """Which part to take whole from the JD-Xi ("" if none)."""
+        from PySide6.QtWidgets import QInputDialog
+
+        names = {code: name for code, name in catalog.vocabulary.PARTS}
+        items = [f"{code} · {names.get(code, code)}" for code in self.CAPTURE_PARTS]
+        item, ok = QInputDialog.getItem(
+            self, tr("Take the values from the JD-Xi"),
+            tr("The editor is empty: which part do you want to take whole, every parameter with its value?"),
+            items, 0, False,
+        )
+        return item.split(" · ")[0] if ok and item else ""
+
+    def add_part_rows(self, part: str) -> int:
+        """A row for every parameter of *part* (partial 1, drum BD1 where one must be chosen)."""
+        su_default = {"D1": "1", "D2": "1", "DR": "BD1"}.get(part, "")
+        targets = [t for (p, _g, _l), t in catalog.targets().items() if p == part]
+        table = self.ed_table
+        table.blockSignals(True)
+        step = 1
+        for group in dict.fromkeys(t.group for t in targets):
+            for t in (t for t in targets if t.group == group):
+                su = su_default if t.su in ("sì", "si", "yes") else ""
+                self._add_editor_row(Row(step, group, part, group, su, t.label, VALUE, "", "", "", ""))
+            step += 1
+        table.blockSignals(False)
+        self._editor_changed()
+        return len(targets)
+
+    def _capture_now(self) -> None:
+        rows = self._editor_rows()
+        filled = 0
         table = self.ed_table
         table.blockSignals(True)
         for i, row in enumerate(rows):
@@ -926,17 +1021,20 @@ class RecipesEditor(QWidget):
                 continue
             text = recipe_apply.current_text(c, self.editors)
             if text and text != "—":
+                filled += 1
                 table.setItem(i, 7, QTableWidgetItem(text.split(" / ")[0]))
                 kind = table.cellWidget(i, 6)
                 if isinstance(kind, QComboBox):
                     kind.setCurrentText(VALUE)
         table.blockSignals(False)
         self._editor_changed()
+        self.ed_status.setText(tr("Values taken from the JD-Xi: {n}").format(n=filled))
 
     def save_from_editor(self) -> None:
         recipe = self._editor_to_recipe()
         self.recipe_path = library.save(recipe, self.recipe_path)
         self.refresh_library()
+        self._editor_snapshot = self._editor_state()
         self.ed_status.setText(tr("Saved in the library: {path}").format(path=self.recipe_path.name))
 
     def export_recipe(self, path: Optional[str] = None) -> Optional[Path]:
@@ -961,3 +1059,41 @@ class RecipesEditor(QWidget):
     def show_home(self) -> None:
         self.refresh_library()
         self.pages.setCurrentWidget(self.home)
+
+    def _show_where(self) -> None:
+        """The breadcrumb: Recipes › Check / Guide / Editor › the recipe's title."""
+        page = self.pages.currentWidget()
+        names = {
+            self.check_page: tr("Check before importing"),
+            self.guide_page: tr("Guide"),
+            self.editor_page: tr("Editor"),
+        }
+        if page is self.home or page not in names:
+            self.back_button.hide()
+            self.where.setText("")
+            return
+        title = (self.recipe.title if self.recipe is not None else "") or ""
+        self.back_button.show()
+        self.where.setText(f"›  {names[page]}" + (f"  ›  {title}" if title else ""))
+
+    def go_back(self) -> None:
+        """‹ All recipes (or Esc): the library, after asking if the editor has unsaved rows."""
+        if self.pages.currentWidget() is self.home:
+            return
+        if self.pages.currentWidget() is self.editor_page and self.editor_has_changes():
+            from PySide6.QtWidgets import QMessageBox
+
+            answer = QMessageBox.question(
+                self,
+                tr("Recipe not saved"),
+                tr("The changes to this recipe are not saved. Leave the editor anyway?"),
+                QMessageBox.StandardButton.Save
+                | QMessageBox.StandardButton.Discard
+                | QMessageBox.StandardButton.Cancel,
+                QMessageBox.StandardButton.Cancel,
+            )
+            if answer == QMessageBox.StandardButton.Cancel:
+                return
+            if answer == QMessageBox.StandardButton.Save:
+                self.save_from_editor()
+        self.show_home()

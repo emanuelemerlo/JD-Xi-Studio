@@ -20,6 +20,7 @@ Dependencies:
 
 """
 
+import logging
 import json
 import os
 import re
@@ -335,6 +336,7 @@ class SynthEditor(SynthBase):
 
         log.header_message(
             scope=self.__class__.__name__,
+            level=logging.DEBUG,
             message=f"Updating UI components from SysEx data for {temporary_area} {synth_tone}",
         )
 

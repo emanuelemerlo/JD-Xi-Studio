@@ -50,6 +50,7 @@ from PySide6.QtGui import (
     QAction,
     QCloseEvent,
     QDesktopServices,
+    QIcon,
     QKeySequence,
     QMouseEvent,
     QShortcut,
@@ -58,6 +59,7 @@ from PySide6.QtWidgets import QApplication, QLabel, QMenu, QMessageBox, QProgres
 
 from jdxi_editor.core.jdxi import JDXi
 from jdxi_editor.core.synth.type import JDXiSynth
+from jdxi_editor.ui.windows.jdxi.follow import ANALOG_OCTAVE, InstrumentFollower
 from jdxi_editor.globals import silence_midi_note_logging
 from jdxi_editor.midi.channel.channel import MidiChannel
 from jdxi_editor.midi.data.address.address import (
@@ -278,6 +280,12 @@ class JDXiInstrument(JDXiWindow):
         self.current_synth_type = JDXiSynth.DIGITAL_SYNTH_1
         self.channel = MidiChannel.DIGITAL_SYNTH_1
         self._init_update_checker()
+        # What is changed on the JD-Xi itself shows here (tone names, octave,
+        # sliders, keys); the state is read once the ports are open
+        self.follower = InstrumentFollower(self)
+        self.follower.start()
+        self.on_closed = None  # set by main(): quits the application
+        self._link_arpeggio_button()
 
     def _init_update_checker(self) -> None:
         """Check GitHub Releases shortly after startup (at most once a day)."""
@@ -450,8 +458,13 @@ class JDXiInstrument(JDXiWindow):
         return target.undo() if action == "undo" else target.redo()
 
     def _follow_modified(self, editor, title: str) -> None:
-        """A dot before the editor's tab name while its changes are not saved."""
+        """A pencil on the editor's tab while its changes are not saved.
+
+        (It was a dot before the name: not clear enough that the values were
+        changed.) The name stays as it is, so the tab does not change width.
+        """
         from jdxi_editor.ui.v2.names import short_name
+        from jdxi_editor.ui.v2.restyle import modified_icon
 
         history = getattr(editor, "history", None)
         if history is None or not hasattr(history, "modifiedChanged"):
@@ -460,8 +473,10 @@ class JDXiInstrument(JDXiWindow):
 
         def mark(modified: bool) -> None:
             index = tabs.indexOf(editor)
-            if index >= 0:
-                tabs.setTabText(index, ("● " if modified else "") + short_name(title))
+            if index < 0:
+                return
+            tabs.setTabText(index, short_name(title))
+            tabs.setTabIcon(index, modified_icon() if modified else QIcon())
 
         history.modifiedChanged.connect(mark)
 
@@ -477,21 +492,65 @@ class JDXiInstrument(JDXiWindow):
         if not confirm_discard(ALL_PARTS, tr("Closing the program loses them.")):
             event.ignore()
             return
-        try:
-            # Wait for any USB recording threads to avoid "Destroyed while still running"
-            self._wait_for_usb_recording_threads()
-            self._save_window_layout()
-            self.midi_helper.close_ports()
-            self._save_settings()
-            event.accept()
-            link = getattr(self, "window_link", None)
-            if link is not None:  # the editors window is not owned: close it too
-                link.close_all()
-        except Exception as ex:
-            log.error(
-                scope="JDXiInstrument", message=f" Error during close event: {str(ex)}"
-            )
-            event.ignore()
+        # Confirmed (or nothing to lose): the program closes whatever a step
+        # below runs into; a failed step is logged, it no longer keeps the
+        # window open (it used to ignore the close)
+        follower = getattr(self, "follower", None)
+        steps = (
+            ("stop following the JD-Xi", lambda: follower and follower.stop()),
+            ("wait for USB recording", self._wait_for_usb_recording_threads),
+            ("save the window layout", self._save_window_layout),
+            ("close the MIDI ports", self.midi_helper.close_ports),
+            ("save the settings", self._save_settings),
+            ("close the linked windows", self._close_linked_windows),
+        )
+        for name, step in steps:
+            try:
+                step()
+            except Exception as ex:
+                log.error(
+                    scope="JDXiInstrument",
+                    message=f"Error during close event ({name}): {ex}",
+                )
+        event.accept()
+        on_closed = getattr(self, "on_closed", None)
+        if on_closed is not None:
+            # the program ends with this window, even if another window of
+            # its own is still on screen (Qt quits only on the last one)
+            QTimer.singleShot(0, on_closed)
+
+    def _link_arpeggio_button(self) -> None:
+        """The panel's Arpeggio button lit as the arpeggio is (set in its tab or on the JD-Xi)."""
+        arpeggio = self._tab_editor("arpeggio")
+        button = getattr(self, "arpeggiator_button", None)
+        if arpeggio is None or button is None or not hasattr(arpeggio, "pv"):
+            return
+
+        def show(value: int) -> None:
+            button.blockSignals(True)
+            button.setChecked(bool(value))
+            button.blockSignals(False)
+
+        arpeggio.pv("ARPEGGIO_SWITCH").watch(show)
+        arpeggio.part_provider = lambda: getattr(self, "current_synth_type", None)
+
+    def show_self_test(self) -> None:
+        """Help › Self-test with the JD-Xi…"""
+        from jdxi_editor.ui.windows.selftest import SelfTestDialog
+
+        dialog = getattr(self, "self_test_dialog", None)
+        if dialog is None:
+            dialog = self.self_test_dialog = SelfTestDialog(self)
+        dialog.show()
+        dialog.raise_()
+        dialog.activateWindow()
+
+    def _close_linked_windows(self) -> None:
+        link = getattr(self, "window_link", None)
+        if link is not None:  # the editors window is not owned: close it too
+            link.close_all()
+        if self.main_editor is not None:
+            self.main_editor.hide()
 
     def _wait_for_usb_recording_threads(self) -> None:
         """Wait for any active USB recording threads before exit."""
@@ -639,10 +698,16 @@ class JDXiInstrument(JDXiWindow):
         """
         program number
 
-        :param channel: int midi channel (discarded)
+        :param channel: int MIDI channel (1-16)
         :param program_number: int Program number
         :return: None
         """
+        from jdxi_editor.midi.io import program_channel
+
+        if channel != program_channel.channel() + 1:
+            # a tone chosen for one part (its channel): not the program; the
+            # follower reads that part again
+            return
         self.current_program_number = program_number + 1
         self.data_request()
         self._update_display()
@@ -659,6 +724,9 @@ class JDXiInstrument(JDXiWindow):
         )
         self.current_synth_type = synth_type
         self.channel = JDXiSynth.midi_channel_number(synth_type)
+        follower = getattr(self, "follower", None)
+        if follower is not None:
+            follower.poll_now()  # the part's tone, octave and slider values
         self._update_synth_button_styles()  # the lit button stays the editor shown
         previous = getattr(self, "preset_helper", None)
         self.preset_helper = self.get_preset_helper_for_current_synth()
@@ -821,7 +889,8 @@ class JDXiInstrument(JDXiWindow):
             self.channel,
         )
         preset_helper.load_preset_by_program_change(
-            self.current_preset_index, self.current_synth_type
+            self.current_preset_index + 1,  # the preset's number (001...), not its index
+            self.current_synth_type,
         )
 
     def _preset_previous(self) -> None:
@@ -2559,6 +2628,9 @@ class JDXiInstrument(JDXiWindow):
             self.midi_in_indicator.set_active(self.midi_helper.midi_in is not None)
             self.midi_out_indicator.set_active(self.midi_helper.midi_out is not None)
             self._save_settings()
+            follower = getattr(self, "follower", None)
+            if follower is not None:
+                follower.read_all()  # the newly connected JD-Xi's state
         except Exception as ex:
             log.error(
                 message="Error setting MIDI ports", exception=ex, scope="JDXiInstrument"
@@ -2591,11 +2663,19 @@ class JDXiInstrument(JDXiWindow):
                 scope="JDXiInstrument",
                 message=f"Sending octave change SysEx, new octave: {self.current_octave} (value: {hex(octave_value)})",
             )
+            # the part shown (it was always Digital 1); Drums have no octave
+            umb, lsb = {
+                JDXiSynth.DIGITAL_SYNTH_2: (JDXiSysExOffsetTemporaryToneUMB.DIGITAL_SYNTH_2, DigitalCommonParam.OCTAVE_SHIFT.lsb),
+                JDXiSynth.ANALOG_SYNTH: (JDXiSysExOffsetTemporaryToneUMB.ANALOG_SYNTH, ANALOG_OCTAVE),
+            }.get(
+                getattr(self, "current_synth_type", None),
+                (JDXiSysExOffsetTemporaryToneUMB.DIGITAL_SYNTH_1, DigitalCommonParam.OCTAVE_SHIFT.lsb),
+            )
             address = JDXiSysExAddress(
                 msb=JDXiSysExAddressStartMSB.TEMPORARY_TONE,
-                umb=JDXiSysExOffsetTemporaryToneUMB.DIGITAL_SYNTH_1,
+                umb=umb,
                 lmb=JDXiSysExOffsetProgramLMB.COMMON,
-                lsb=DigitalCommonParam.OCTAVE_SHIFT.lsb,
+                lsb=lsb,
             )
             sysex_message = JDXiSysEx(
                 sysex_address=address,
@@ -2667,6 +2747,14 @@ class JDXiInstrument(JDXiWindow):
         :param state: bool ON/OFF
         :return: None
         """
+        # Through the Arpeggio editor: its switch and the tab show it, the edit
+        # can be undone, and with no part set to arpeggiate the part selected
+        # gets it. (It wrote offset 3 of the Program Part areas 18 00 20-22,
+        # not the zones 18 00 30-33.)
+        arpeggio = self._tab_editor("arpeggio")
+        if arpeggio is not None and hasattr(arpeggio, "pv"):
+            arpeggio.pv("ARPEGGIO_SWITCH").setValue(1 if state else 0)
+            return
         try:
             if self.midi_helper:
                 value = Midi.value.ON if state else Midi.value.OFF  # 1 = ON, 0 = OFF
@@ -2677,9 +2765,9 @@ class JDXiInstrument(JDXiWindow):
                 # send arp on to all zones
                 for zone in [
                     JDXiSysExOffsetProgramLMB.CONTROLLER,
-                    JDXiSysExOffsetProgramLMB.PART_DIGITAL_SYNTH_1,
-                    JDXiSysExOffsetProgramLMB.PART_DIGITAL_SYNTH_2,
-                    JDXiSysExOffsetProgramLMB.PART_ANALOG,
+                    JDXiSysExOffsetProgramLMB.ZONE_DIGITAL_SYNTH_1,
+                    JDXiSysExOffsetProgramLMB.ZONE_DIGITAL_SYNTH_2,
+                    JDXiSysExOffsetProgramLMB.ZONE_ANALOG,
                     JDXiSysExOffsetProgramLMB.ZONE_DRUM,
                 ]:
                     address = JDXiSysExAddress(

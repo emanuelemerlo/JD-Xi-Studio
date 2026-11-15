@@ -245,7 +245,6 @@ class ProgramEditor(_program.ProgramEditor):
         actions = QVBoxLayout()
         actions.setSpacing(6)
         first = QHBoxLayout()
-        first.addWidget(self.load_button)
         first.addWidget(self.rename_button)
         first.addStretch()
         actions.addLayout(first)
@@ -265,6 +264,13 @@ class ProgramEditor(_program.ProgramEditor):
         self.library.table.itemSelectionChanged.connect(self._library_selection_changed)
         library_card, library_layout = _card(tr("Library"))
         library_layout.addWidget(self.library, 1)
+        # Load under the list it loads from (it was in the header, far from it)
+        load_row = QHBoxLayout()
+        load_row.addStretch()
+        self.load_button.setMinimumWidth(220)
+        self.load_button.setEnabled(False)
+        load_row.addWidget(self.load_button)
+        library_layout.addLayout(load_row)
         library_card.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
         # --- parts of the program
@@ -376,6 +382,9 @@ class ProgramEditor(_program.ProgramEditor):
     def _library_selection_changed(self) -> None:
         program_id = self.library.selected_id()
         self.load_button.setEnabled(bool(program_id))
+        self.load_button.setText(
+            tr("Load {program}").format(program=program_id) if program_id else tr("Load program")
+        )
         # the MIDI line (bank select, program change) follows the selection
         group = self.program_group_widget
         combo = getattr(getattr(group, "program_number_combo_box", None), "combo_box", None)

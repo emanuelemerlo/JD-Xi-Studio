@@ -35,6 +35,7 @@ def editor(app):
     editor.show()
     QApplication.processEvents()
     yield editor
+    helper.__dict__.pop("send_midi_message", None)  # the helper is shared with the other modules
     editor.close()
     editor.deleteLater()
     QApplication.processEvents()

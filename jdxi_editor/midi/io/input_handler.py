@@ -21,6 +21,7 @@ Dependencies:
 """
 
 import json
+import logging
 import os
 from typing import Any, Callable, Dict, List, Optional
 
@@ -273,6 +274,11 @@ class MidiInHandler(MidiIOController):
             }
 
             if message.type == MidoMessageType.SYSEX.value:
+                # A reply asked for before the editor wrote some of its
+                # parameters: those bytes are the editor's (see JDXiDevice.fresh)
+                fixed = self.device.fresh(message.data)
+                if fixed is not None:
+                    message = mido.Message("sysex", data=fixed)
                 # Lets the request queue send the next RQ1 and keeps the
                 # memory mirror that patches are saved from
                 self.device.received(message.data)
@@ -422,6 +428,7 @@ class MidiInHandler(MidiIOController):
 
             log.message(
                 f"[MIDI SysEx received]: {hex_string} {filtered_data}",
+                level=logging.DEBUG,  # the window reads the JD-Xi every few seconds
                 silent=False,
                 scope=self.__class__.__name__,
             )
@@ -488,6 +495,7 @@ class MidiInHandler(MidiIOController):
                 filtered_data = {}
             log.message(
                 f"[MIDI SysEx received]: {hex_string} {filtered_data}",
+                level=logging.DEBUG,  # the window reads the JD-Xi every few seconds
                 silent=False,
                 scope=self.__class__.__name__,
             )
@@ -500,7 +508,7 @@ class MidiInHandler(MidiIOController):
                     scope=self.__class__.__name__,
                 )
                 self._emit_program_or_tone_name(parsed_data)
-                log.message(f"json sysex: {json.dumps(parsed_data)}")
+                log.message(f"json sysex: {json.dumps(parsed_data)}", level=logging.DEBUG)
                 self._device_sysex_json.emit(json.dumps(parsed_data))
                 log.json(parsed_data, silent=True)
             except Exception as parse_ex:
@@ -665,11 +673,12 @@ class MidiInHandler(MidiIOController):
         085 | 103 | 001 - 064 | Extra Bank Program (Z) | Z01 - Z64      Banks to 1024
         """
         data = self._incoming_preset_data
-        log.parameter("preset data", data, scope=self.__class__.__name__)
+        log.parameter("preset data", data, scope=self.__class__.__name__, silent=True)
 
         if data.program_number is None:
             log.message(
                 "No program number; cannot auto-add program",
+                level=logging.DEBUG,
                 scope=self.__class__.__name__,
             )
             return
@@ -773,6 +782,7 @@ class MidiInHandler(MidiIOController):
         if area == AreaMSB.TEMPORARY_PROGRAM.name:
             log.message(
                 f"Emitting program name: {tone_name} to {area}",
+                level=logging.DEBUG,
                 scope=self.__class__.__name__,
             )
             self.update_program_name.emit(tone_name)
@@ -788,7 +798,9 @@ class MidiInHandler(MidiIOController):
         synth_type = JDXiMapSynthType.MAP.get(area)
         if synth_type:
             log.message(
-                f"Emitting tone name: {tone_name} to {area} (synth type: {synth_type}, scope=self.__class__.__name__)"
+                f"Emitting tone name: {tone_name} to {area} (synth type: {synth_type})",
+                level=logging.DEBUG,
+                scope=self.__class__.__name__,
             )
             self.update_tone_name.emit(tone_name, synth_type)
         else:

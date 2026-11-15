@@ -217,3 +217,16 @@ def add_slider_container(central_widget, midi_helper):
     # Add to main layout
     slider_row_container.setStyleSheet(JDXi.UI.Style.ADSR_DISABLED)
     main_layout.addWidget(slider_row_container)
+    # by name, for the window to show the instrument's values (see follow.py)
+    return {
+        "cutoff": filter_cutoff_slider,
+        "resonance": filter_resonance_slider,
+        "level": amp_level_slider,
+        "envelope": amp_env_slider,
+        "lfo_rate": lfo_rate_slider,
+        "lfo_pitch": lfo_pitch_slider,
+        "lfo_filter": lfo_filter_slider,
+        "lfo_amp": lfo_amp_slider,
+        "delay": delay_slider,
+        "reverb": reverb_slider,
+    }

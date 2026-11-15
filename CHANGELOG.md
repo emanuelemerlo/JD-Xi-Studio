@@ -4,6 +4,58 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+### The window follows the JD-Xi (hardware tests, round 1)
+- At start, once the ports are open, the window reads the program and the tones: the display
+  no longer starts on «Init Tone»
+- The part shown is read again every two seconds (not while a MIDI file or pattern plays, not
+  just after a click, key or value from the app): a tone chosen on the JD-Xi appears on the
+  display, the OCTAVE − / + light as on the instrument and the panel sliders (Cutoff, Resonance,
+  Level, LFO) move to the tone's values without sending them back
+- A program change from the JD-Xi on a part's channel reads that part; only the program channel
+  changes the program number (a tone change used to change it)
+- The notes played on the JD-Xi light the window's keys
+- Playing the JD-Xi's keyboard selects in the window the part selected on the JD-Xi (its notes
+  come on that part's channel): the window's tone buttons, octave and sliders act on the part
+  being played
+- The window's Octave − / + write the part shown (they always wrote Digital 1)
+- The preset panel's ‹ › load the tone, as the JD-Xi's buttons do (they only moved the list)
+- Requests and received SysEx are logged at DEBUG (the reading every two seconds would fill the log)
+- Programs go to the channel the JD-Xi takes them on (SYSTEM › Program Ctrl Ch, read at start);
+  the status bar says what to change on the JD-Xi when it takes no program changes
+- The keyboard window's tone arrows loaded the preset before the one shown
+- Programs: «Load A02» under the library
+- Closing after «Discard the changes» with the keyboard always on top (the dialog was cancelled)
+- A DT1 for one parameter (sent by the JD-Xi) no longer sets every other parameter of the
+  editor to 0
+- **Help › Self-test with the JD-Xi…**: the app loads a program and tones, edits a value and
+  undoes it, changes the octave and plays a note, and checks each result on the JD-Xi; then
+  asks you to choose a tone, press OCTAVE and play on the JD-Xi and checks that the window
+  follows. A report is saved in `~/.jdxi_studio/reports`
+  It also makes a dozen edits to the Analog and the Digital 1 tone — oscillator, filter, amp,
+  envelopes, LFO — checks every value on the JD-Xi, undoes the edits and checks again (in the
+  JD-Xi's temporary memory: nothing is written, and the starting program is loaded again)
+- Effects: a type chosen in the app whose parameters are all 0 (via MIDI the JD-Xi loads no
+  settings for a new type) gets audible starting values — it was silent (Balance D100:0W,
+  Depth 0, Level 0)
+- A reading of the JD-Xi on its way while a value is edited no longer puts the old value back
+  (and no longer loses the edit's Undo step): the reply's bytes written after the request are
+  the editor's
+- A value put back by hand (Arpeggio ON, then OFF) no longer leaves the editor marked modified
+- Arpeggio ON (in its tab or with the panel button) with no part set to arpeggiate: the part
+  selected arpeggiates (ON did nothing to hear). The panel button works through the Arpeggio
+  editor and lights as the arpeggio is; it wrote offset 3 of the Program Part areas instead of
+  the zones
+- Recipes: in an empty editor «Take the values from the JD-Xi» asks for a part and makes a row
+  for every parameter of it, with the JD-Xi's values
+- Self-test: a KO names the parameters, says when the tone was changed during the test and
+  how many Undo steps the edits made
+- An orange pencil on the tab of an editor with changes not saved (it was a dot before the
+  name), and «✎ Modified» in the editor
+- A reply logged with the fields of a request parsed at the same time (the input and output
+  handlers shared one parser)
+- The messages sent were never heard by their listeners (a signal of the MIDI helper's second
+  base class): the MIDI OUT light blinks again, the MIDI monitor shows them
+
 ### Recipes
 - The side panel of the other tabs: what the page is for, and for the row chosen its part,
   parameter, the recipe's value against the JD-Xi's and the recipe's note

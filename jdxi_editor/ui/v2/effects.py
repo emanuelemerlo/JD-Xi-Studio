@@ -55,6 +55,20 @@ _NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 NOTE_NAMES = [f"{_NAMES[n % 12]}{n // 12 - 1}" for n in range(128)]  # C-1 … G9
 BALANCE = [f"D{100 - v}:{v}W" for v in range(101)]  # D100:0W … D0:100W
 
+TYPE_CHECK_MS = 900  # after the type's settings are read back
+# Starting values (display values, list indexes for the lists) for a type whose
+# parameters are all 0: audible, middle-of-the-road settings
+TYPE_STARTING_VALUES = {
+    "Distortion": {"Type": 0, "Drive": 64, "Presence": 64, "Level": 100},
+    "Fuzz": {"Type": 0, "Drive": 64, "Presence": 64, "Level": 100},
+    "Compressor": {"Threshold": 64, "Ratio": 3, "Attack": 9, "Release": 9, "Level": 100},
+    "Bit Crusher": {"Rate": 64, "Bit": 64, "Filter": 64, "Level": 100},
+    "Flanger": {"Rate/Note": 0, "Rate": 30, "Depth": 64, "Feedback": 40, "Manual": 64, "Balance": 50, "Level": 100},
+    "Phaser": {"Rate/Note": 0, "Rate": 30, "Depth": 64, "Resonance": 40, "Manual": 64, "Level": 100},
+    "Ring Mod": {"Frequency": 64, "Sens": 0, "Balance": 50, "Level": 100},
+    "Slicer": {"Timing Ptn": 0, "Rate": 6, "Attack": 40, "Trigger Level": 0, "Level": 100},
+}
+
 EFX1_TYPES = ["Thru", "Distortion", "Fuzz", "Compressor", "Bit Crusher"]
 EFX2_TYPES = ["Thru", "Flanger", "Phaser", "Ring Mod", "Slicer"]
 EFX2_TYPE_VALUES = [0, 5, 6, 7, 8]  # as sent: MIDI Implementation, EFX2 Type (0, 5 - 8)
@@ -581,6 +595,36 @@ class EffectsEditor(V2Editor):
         link(self.pv("DELAY_TYPE"), lambda v: v == 1, [self.pv("DELAY_TAP_TIME")])
 
     def _type_sent(self, key: str) -> None:
-        """A new type loads its own settings on the JD-Xi: read them back."""
+        """A new type chosen here: read its settings back from the JD-Xi; if they are
+        all 0 (a type never set up: via MIDI the JD-Xi does not load any), give it
+        starting values, or it is silent (Balance D100:0W, Depth 0, Level 0)."""
         block = self.block_of[self.spec(key)]
         QTimer.singleShot(250, self, lambda: self.read_block(block))
+        QTimer.singleShot(TYPE_CHECK_MS, self, lambda: self.start_type(key))
+
+    def start_type(self, key: str) -> int:
+        """Starting values for the type shown when all its parameters are 0; how many were set."""
+        types = EFX1_TYPES if key == "EFX1_TYPE" else EFX2_TYPES
+        block_key = "EFFECT_1" if key == "EFX1_TYPE" else "EFFECT_2"
+        index = self.pv(key).value()
+        if not 0 <= index < len(types):
+            return 0
+        typ = types[index]
+        starting = TYPE_STARTING_VALUES.get(typ)
+        specs = self.type_specs(block_key, typ)
+        if not starting or not specs or any(self.values[s].value() != 0 for s in specs):
+            return 0
+        history = getattr(self, "history", None)
+        if history is not None:
+            history.begin_group()  # one Undo step
+        count = 0
+        try:
+            for spec in specs:
+                value = starting.get(spec.label)
+                if value is not None and self.values[spec].value() != value:
+                    self.values[spec].setValue(value)
+                    count += 1
+        finally:
+            if history is not None:
+                history.end_group()
+        return count

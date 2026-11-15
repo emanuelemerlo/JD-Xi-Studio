@@ -34,11 +34,32 @@ Example:
 from __future__ import annotations
 
 from contextlib import AbstractContextManager
-from typing import Any, Callable, Iterable, Sequence, Union
+import time
+from typing import Any, Callable, Iterable, Optional, Sequence, Union
 
 from jdxi_editor.midi.io.echo_guard import DEFAULT_ECHO_GUARD, EchoGuard
-from jdxi_editor.midi.io.request_queue import SYSEX_START, SysExRequestQueue
-from jdxi_editor.midi.io.synth_memory import SynthMemory
+from jdxi_editor.midi.io.request_queue import (
+    DT1_COMMAND,
+    ROLAND_ID,
+    SYSEX_START,
+    SysExRequestQueue,
+)
+from jdxi_editor.midi.io.synth_memory import SYSEX_END, SynthMemory, address_to_linear
+
+RQ1_COMMAND = 0x11
+REPLY_WINDOW_S = 2.0  # a reply comes within milliseconds; older requests are not matched
+
+
+def _roland_body(message: Sequence[int]) -> Optional[list]:
+    """The Roland message without F0/F7: 41, device, model×4, command, address×4, data…, checksum."""
+    data = [int(b) for b in message]
+    if data and data[0] == SYSEX_START:
+        data = data[1:]
+    if data and data[-1] == SYSEX_END:
+        data = data[:-1]
+    if len(data) < 12 or data[0] != ROLAND_ID:
+        return None
+    return data
 
 PROGRAM_CHANGE_STATUS = 0xC0
 
@@ -65,6 +86,16 @@ class JDXiDevice:
         # Shared by default: the scope is per thread, and the input handler
         # and output handler must agree on it
         self.echo_guard = echo_guard or DEFAULT_ECHO_GUARD
+        # A reply can be on its way while the editor writes the same parameter:
+        # when the RQ1 left before the DT1, the reply holds the value from
+        # before the write (and the editor showed it again, losing the Undo
+        # step). The times let received() tell such bytes.
+        # what was sent, in order: a counter (the clock is too coarse on Windows,
+        # ~16 ms, to order a request and a write sent one after the other)
+        self._sequence = 0
+        self._requested: dict[int, tuple[int, float]] = {}  # RQ1 start -> (order, when sent)
+        self._written: dict[int, tuple[int, int, float]] = {}  # address -> (value, order, when)
+        self.clock: Callable[[], float] = time.monotonic
 
     # --- Requests ---------------------------------------------------------
 
@@ -104,8 +135,51 @@ class JDXiDevice:
         data = [int(b) for b in message]
         if _is_program_change(data):
             self.memory.clear()
-        else:
-            self.memory.record_dt1(data)
+            self._written.clear()
+            return
+        self.memory.record_dt1(data)
+        body = _roland_body(data)
+        if body is None:
+            return
+        now = self.clock()
+        self._sequence += 1
+        order = self._sequence
+        start = address_to_linear(body[7:11])
+        if body[6] == RQ1_COMMAND:
+            self._requested[start] = (order, now)
+        elif body[6] == DT1_COMMAND:
+            for offset, value in enumerate(body[11:-1]):
+                self._written[start + offset] = (int(value), order, now)
+            if len(self._written) > 4096:  # only recent writes matter
+                self._written = {k: v for k, v in self._written.items() if now - v[2] < 10.0}
+
+    def fresh(self, message: Sequence[int]) -> Optional[list]:
+        """
+        A reply (DT1) with the bytes the editor wrote after asking for it put back;
+        None when nothing is to change.
+
+        Returned without F0/F7 and with its checksum made again.
+        """
+        body = _roland_body(message)
+        if body is None or body[6] != DT1_COMMAND:
+            return None
+        start = address_to_linear(body[7:11])
+        request = self._requested.pop(start, None)
+        if request is None or self.clock() - request[1] > REPLY_WINDOW_S:
+            # not a reply to a request (sent by the JD-Xi itself), or to one that
+            # got no reply long ago
+            return None
+        values = body[11:-1]
+        changed = False
+        for offset, value in enumerate(values):
+            written = self._written.get(start + offset)
+            if written is not None and written[1] > request[0] and written[0] != value:
+                values[offset] = written[0]
+                changed = True
+        if not changed:
+            return None
+        checksum = (128 - sum(body[7:11] + values) % 128) % 128
+        return body[:11] + values + [checksum]
 
 
 def device_for(owner: Any) -> JDXiDevice:

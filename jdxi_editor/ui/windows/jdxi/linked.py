@@ -150,10 +150,28 @@ class DialogsInFront(QObject):
         return isinstance(widget, QDialog) or widget.windowModality() != Qt.WindowModality.NonModal
 
     def eventFilter(self, watched, event):  # noqa: N802 (Qt name)
-        if event.type() == QEvent.Type.Show and watched is not self.keyboard and self.is_dialog(watched):
-            if not watched.windowFlags() & Qt.WindowType.WindowStaysOnTopHint:
-                QTimer.singleShot(0, watched, lambda w=watched: self._to_front(w))
+        kind = event.type()
+        if kind not in (QEvent.Type.Polish, QEvent.Type.Show) or watched is self.keyboard:
+            return False
+        if not self.is_dialog(watched) or watched.windowFlags() & Qt.WindowType.WindowStaysOnTopHint:
+            return False
+        if kind == QEvent.Type.Polish and not watched.isVisible():
+            # before it is first shown: the flag costs nothing yet
+            watched.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, True)
+        elif watched.isModal() or watched.windowModality() != Qt.WindowModality.NonModal:
+            # shown again, and modal: changing its flags would hide it, and
+            # hiding a dialog ends its exec() as if cancelled (the «Discard
+            # the changes» of the close dialog did nothing); raised instead
+            QTimer.singleShot(0, watched, lambda w=watched: self._raise(w))
+        else:
+            QTimer.singleShot(0, watched, lambda w=watched: self._to_front(w))
         return False
+
+    @staticmethod
+    def _raise(widget: QWidget) -> None:
+        if widget.isVisible():
+            widget.raise_()
+            widget.activateWindow()
 
     @staticmethod
     def _to_front(widget: QWidget) -> None:

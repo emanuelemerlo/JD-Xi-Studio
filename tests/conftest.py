@@ -159,3 +159,36 @@ def pytest_configure(config):
     from jdxi_editor.ui.v2 import history
 
     history.ask = _discard
+
+
+_HELPER_METHODS = (
+    "send_midi_message",
+    "send_raw_message",
+    "send_control_change",
+    "send_program_change",
+    "send_bank_select_and_program_change",
+)
+
+
+@pytest.fixture(autouse=True)
+def _restore_the_shared_midi_helper():
+    """Some tests replace a sending method on the shared MidiIOHelper (a singleton) and leave it:
+    the next tests then sent nothing through the real path. What a test replaced is put back
+    after it (replacements made by module fixtures, before the test, are kept)."""
+    try:
+        from jdxi_editor.midi.io.helper import MidiIOHelper
+    except Exception:  # pragma: no cover
+        yield
+        return
+    helper = MidiIOHelper._instance
+    before = {name: helper.__dict__[name] for name in _HELPER_METHODS
+              if helper is not None and name in helper.__dict__}
+    yield
+    helper = MidiIOHelper._instance
+    if helper is None:
+        return
+    for name in _HELPER_METHODS:
+        if name in before:
+            helper.__dict__[name] = before[name]
+        else:
+            helper.__dict__.pop(name, None)

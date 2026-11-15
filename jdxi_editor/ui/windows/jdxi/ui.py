@@ -253,7 +253,7 @@ class JDXiWindow(QMainWindow):
             self.step_guide.height(),
         )
         self.step_guide.raise_()
-        add_slider_container(container_widget, self.midi_helper)
+        self.panel_sliders = add_slider_container(container_widget, self.midi_helper)
         self.panel_container = container_widget
         layout.addWidget(container_widget)
 
@@ -507,6 +507,13 @@ class JDXiWindow(QMainWindow):
             )
         )
         self.help_menu.addAction(
+            self._menu_action(
+                tr("&Self-test with the JD-Xi…"),
+                self.show_self_test,
+                status_tip=tr("The app runs typical operations on the JD-Xi and checks the results"),
+            )
+        )
+        self.help_menu.addAction(
             self._menu_action(tr("&About"), self._show_about_help, "Ctrl+Shift+A")
         )
         self.help_menu.addAction(
@@ -598,6 +605,7 @@ class JDXiWindow(QMainWindow):
             synth_data = create_synth_data(self.current_synth_type)
             log.message(
                 f"Creating synth data for type: {self.current_synth_type}",
+                level=logging.DEBUG,
                 scope="JDXiWindow",
             )
             if not synth_data:
@@ -608,6 +616,7 @@ class JDXiWindow(QMainWindow):
             )
             log.message(
                 f"Current preset name: {self.preset_manager.current_preset_name}",
+                level=logging.DEBUG,
                 scope="JDXiWindow",
             )
             # Update preset number
@@ -663,6 +672,7 @@ class JDXiWindow(QMainWindow):
                 self.preset_manager.current_preset_number = 1
             log.message(
                 f"Current preset number: {self.preset_manager.current_preset_number}",
+                level=logging.DEBUG,
                 scope="JDXiWindow",
             )
 

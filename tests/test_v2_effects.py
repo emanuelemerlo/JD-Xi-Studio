@@ -123,7 +123,8 @@ def _sent(editor):
     return [bytes(m) for m in editor.helper.sent]
 
 
-def test_addresses_and_encoding_follow_the_midi_implementation(editor):
+def test_addresses_and_encoding_follow_the_midi_implementation(editor, monkeypatch):
+    monkeypatch.setattr(fx, "TYPE_CHECK_MS", 10**7)  # no starting values in the middle of this test
     drive = next(s for s in editor.type_specs("EFFECT_1", "Distortion") if s.label == "Drive")
     editor.values[drive].setValue(100)  # EFX1 Parameter 2 at 00 15, 32768 + 100
     wait(SEND_INTERVAL_MS * 2)
@@ -245,3 +246,21 @@ def test_a_single_parameter_from_the_jdxi(editor):
     editor.receive_dt1(dt1([0x18, 0x00, 0x08, 0x0F], nibbles(32768 + 90)))  # Reverb level
     assert editor.pv("REVERB_EFFECT_LEVEL").value() == 90
     assert editor.helper.sent == []
+
+
+def test_a_type_never_set_up_gets_starting_values(editor):
+    """Via MIDI the JD-Xi loads nothing for a new type: all 0 is silent (Balance D100:0W), so the editor sets audible values."""
+    for spec in editor.type_specs("EFFECT_2", "Flanger"):
+        editor.values[spec].blockSignals(True)
+        editor.values[spec].setValue(0)
+        editor.values[spec].blockSignals(False)
+    editor.pv("EFX2_TYPE").setValue(1)  # Flanger
+    count = editor.start_type("EFX2_TYPE")
+    flanger = {s.label: editor.values[s].value() for s in editor.type_specs("EFFECT_2", "Flanger")}
+    assert count >= 5
+    assert flanger["Balance"] == 50 and flanger["Depth"] == 64 and flanger["Level"] == 100
+    assert editor.start_type("EFX2_TYPE") == 0  # set up already: left as it is
+    every_label = {s.label for typ in fx.EFX1_TYPES[1:] for s in editor.type_specs("EFFECT_1", typ)}
+    every_label |= {s.label for typ in fx.EFX2_TYPES[1:] for s in editor.type_specs("EFFECT_2", typ)}
+    named = {label for values in fx.TYPE_STARTING_VALUES.values() for label in values}
+    assert named <= every_label  # no misspelt parameter name

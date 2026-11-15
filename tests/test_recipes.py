@@ -255,3 +255,84 @@ def test_recipes_tab_has_the_side_panel():
     assert editor.library_list.count() >= 1  # a line saying what goes there, when empty
     assert editor._selected_path() is None or editor._selected_path().exists()
     editor.close()
+
+
+def test_the_way_back_is_always_at_the_top(app, monkeypatch):
+    """‹ All recipes (and Esc) next to the title on every page but the library; the breadcrumb says where."""
+    from PySide6.QtWidgets import QMessageBox
+
+    from jdxi_editor.ui.v2.recipes import RecipesEditor
+
+    w = RecipesEditor(editors=Editors())
+    w.resize(1400, 900)
+    w.show()
+    app.processEvents()
+    assert not w.back_button.isVisible()
+    w.paste.setPlainText(PASTED)
+    w.import_text()
+    assert w.back_button.isVisible() and "Check" in w.where.text()
+    w.go_back()
+    assert w.pages.currentWidget() is w.home and not w.back_button.isVisible()
+    w.show_editor_page()
+    assert "Editor" in w.where.text()
+    w.add_editor_row()  # an unsaved change: asked before leaving
+    asked = []
+    monkeypatch.setattr(QMessageBox, "question", lambda *a, **k: asked.append(a) or QMessageBox.StandardButton.Cancel)
+    w.go_back()
+    assert asked and w.pages.currentWidget() is w.editor_page
+    monkeypatch.setattr(QMessageBox, "question", lambda *a, **k: QMessageBox.StandardButton.Discard)
+    w.back_shortcut.activated.emit()  # Esc
+    assert w.pages.currentWidget() is w.home
+    w.close()
+
+
+def test_take_the_values_from_the_jdxi(app, monkeypatch):
+    """With no rows it says what to do; with rows it reads the parts and fills each value."""
+    import time
+
+    from jdxi_editor.ui.v2 import recipes as module
+    from jdxi_editor.ui.v2.recipes import RecipesEditor
+
+    monkeypatch.setattr(module, "CAPTURE_DELAY_MS", 10)
+    editors = Editors()
+    w = RecipesEditor(editors=editors)
+    w.show_editor_page()
+    monkeypatch.setattr(w, "ask_capture_part", lambda: "")  # no part chosen
+    w.capture_current()
+    assert "add rows" in w.ed_status.text()
+    w.add_editor_row()  # AN · FILTER
+    param = w.ed_table.cellWidget(0, 5)
+    param.setCurrentIndex(param.findText("Cutoff"))
+    cutoff = next(p for p in editors("analog").values if p.name == "FILTER_CUTOFF")
+    editors("analog").values[cutoff].setValue(77)
+    w.capture_current()
+    deadline = time.monotonic() + 2
+    while "taken" not in w.ed_status.text().lower() and time.monotonic() < deadline:
+        app.processEvents()
+    assert w.ed_table.item(0, 7).text() == "77"
+    assert "taken from the JD-Xi: 1" in w.ed_status.text()
+    w.close()
+
+
+def test_an_empty_editor_takes_a_whole_part(app, monkeypatch):
+    """Empty editor: «Take the values from the JD-Xi» makes a row for every parameter of the part chosen."""
+    import time
+
+    from jdxi_editor.recipes import catalog
+    from jdxi_editor.ui.v2 import recipes as module
+    from jdxi_editor.ui.v2.recipes import RecipesEditor
+
+    monkeypatch.setattr(module, "CAPTURE_DELAY_MS", 10)
+    w = RecipesEditor(editors=Editors())
+    w.show_editor_page()
+    monkeypatch.setattr(w, "ask_capture_part", lambda: "AN")
+    w.capture_current()
+    deadline = time.monotonic() + 3
+    while "taken" not in w.ed_status.text().lower() and time.monotonic() < deadline:
+        app.processEvents()
+    count = sum(1 for (p, _g, _l) in catalog.targets() if p == "AN")
+    assert w.ed_table.rowCount() == count > 20
+    assert "to fix" not in w.ed_status.text()
+    filled = sum(1 for r in range(w.ed_table.rowCount()) if w.ed_table.item(r, 7) and w.ed_table.item(r, 7).text())
+    assert filled >= count - 2
+    w.close()
