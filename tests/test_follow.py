@@ -23,7 +23,6 @@ def window():
     for _ in range(10):
         app.processEvents()
     yield w
-    w.midi_helper.midi_out = None
     w.close()
 
 

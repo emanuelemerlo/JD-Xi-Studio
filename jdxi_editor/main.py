@@ -170,6 +170,7 @@ def main() -> None:
         progress_bar.setValue(100)
         app.processEvents()
         splash.finish(window)
+        window.on_closed = app.quit  # closing the keyboard window ends the program
         window.show()
 
         # --- Start event loop

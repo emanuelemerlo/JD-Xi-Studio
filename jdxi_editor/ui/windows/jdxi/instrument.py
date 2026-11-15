@@ -283,6 +283,7 @@ class JDXiInstrument(JDXiWindow):
         # sliders, keys); the state is read once the ports are open
         self.follower = InstrumentFollower(self)
         self.follower.start()
+        self.on_closed = None  # set by main(): quits the application
 
     def _init_update_checker(self) -> None:
         """Check GitHub Releases shortly after startup (at most once a day)."""
@@ -482,21 +483,39 @@ class JDXiInstrument(JDXiWindow):
         if not confirm_discard(ALL_PARTS, tr("Closing the program loses them.")):
             event.ignore()
             return
-        try:
-            # Wait for any USB recording threads to avoid "Destroyed while still running"
-            self._wait_for_usb_recording_threads()
-            self._save_window_layout()
-            self.midi_helper.close_ports()
-            self._save_settings()
-            event.accept()
-            link = getattr(self, "window_link", None)
-            if link is not None:  # the editors window is not owned: close it too
-                link.close_all()
-        except Exception as ex:
-            log.error(
-                scope="JDXiInstrument", message=f" Error during close event: {str(ex)}"
-            )
-            event.ignore()
+        # Confirmed (or nothing to lose): the program closes whatever a step
+        # below runs into; a failed step is logged, it no longer keeps the
+        # window open (it used to ignore the close)
+        follower = getattr(self, "follower", None)
+        steps = (
+            ("stop following the JD-Xi", lambda: follower and follower.stop()),
+            ("wait for USB recording", self._wait_for_usb_recording_threads),
+            ("save the window layout", self._save_window_layout),
+            ("close the MIDI ports", self.midi_helper.close_ports),
+            ("save the settings", self._save_settings),
+            ("close the linked windows", self._close_linked_windows),
+        )
+        for name, step in steps:
+            try:
+                step()
+            except Exception as ex:
+                log.error(
+                    scope="JDXiInstrument",
+                    message=f"Error during close event ({name}): {ex}",
+                )
+        event.accept()
+        on_closed = getattr(self, "on_closed", None)
+        if on_closed is not None:
+            # the program ends with this window, even if another window of
+            # its own is still on screen (Qt quits only on the last one)
+            QTimer.singleShot(0, on_closed)
+
+    def _close_linked_windows(self) -> None:
+        link = getattr(self, "window_link", None)
+        if link is not None:  # the editors window is not owned: close it too
+            link.close_all()
+        if self.main_editor is not None:
+            self.main_editor.hide()
 
     def _wait_for_usb_recording_threads(self) -> None:
         """Wait for any active USB recording threads before exit."""

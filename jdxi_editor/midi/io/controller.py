@@ -251,12 +251,10 @@ class MidiIOController(QObject):
 
         :return: None
         """
-        if self.midi_in.is_port_open():
-            self.midi_in.close_port()
-            time.sleep(0.1)
-        if self.midi_out.is_port_open():
-            self.midi_out.close_port()
-            time.sleep(0.1)
+        for port in (self.midi_in, self.midi_out):  # either may be missing
+            if port is not None and port.is_port_open():
+                port.close_port()
+                time.sleep(0.1)
         self.input_port_number = None
         self.output_port_number = None
 

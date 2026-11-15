@@ -159,13 +159,27 @@ class InstrumentFollower(QObject):
 
     # ------------------------------------------------------------ start
     def start(self) -> None:
+        self._stopped = False
         QTimer.singleShot(STARTUP_DELAY_MS, self, self.read_all)
         self.timer.start()
 
+    def stop(self) -> None:
+        """The program is closing: no more readings."""
+        self._stopped = True
+        self.timer.stop()
+        app = QApplication.instance()
+        if app is not None:
+            app.removeEventFilter(self)
+
     def read_all(self) -> None:
         """Program, tones and partials: what the window shows at start."""
-        if self._connected():
-            self.window.data_request()
+        if not self._connected() or getattr(self, "_stopped", False):
+            return
+        now = time.monotonic()
+        if now - getattr(self, "_read_all_at", -60.0) < 5.0:
+            return  # the ports opened and the start-up reading came together
+        self._read_all_at = now
+        self.window.data_request()
 
     # ------------------------------------------------------------ reading
     def _connected(self) -> bool:
@@ -173,6 +187,8 @@ class InstrumentFollower(QObject):
 
     def _quiet(self) -> bool:
         """Nothing in the way of a reading: no playback, no recent input, app shown."""
+        if getattr(self, "_stopped", False):
+            return False
         if playback_activity().is_playing:
             return False
         if time.monotonic() - self._last_input < QUIET_AFTER_INPUT_S:

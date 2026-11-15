@@ -598,6 +598,7 @@ class JDXiWindow(QMainWindow):
             synth_data = create_synth_data(self.current_synth_type)
             log.message(
                 f"Creating synth data for type: {self.current_synth_type}",
+                level=logging.DEBUG,
                 scope="JDXiWindow",
             )
             if not synth_data:
@@ -608,6 +609,7 @@ class JDXiWindow(QMainWindow):
             )
             log.message(
                 f"Current preset name: {self.preset_manager.current_preset_name}",
+                level=logging.DEBUG,
                 scope="JDXiWindow",
             )
             # Update preset number
@@ -663,6 +665,7 @@ class JDXiWindow(QMainWindow):
                 self.preset_manager.current_preset_number = 1
             log.message(
                 f"Current preset number: {self.preset_manager.current_preset_number}",
+                level=logging.DEBUG,
                 scope="JDXiWindow",
             )
 

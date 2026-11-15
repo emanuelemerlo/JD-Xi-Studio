@@ -668,11 +668,12 @@ class MidiInHandler(MidiIOController):
         085 | 103 | 001 - 064 | Extra Bank Program (Z) | Z01 - Z64      Banks to 1024
         """
         data = self._incoming_preset_data
-        log.parameter("preset data", data, scope=self.__class__.__name__)
+        log.parameter("preset data", data, scope=self.__class__.__name__, silent=True)
 
         if data.program_number is None:
             log.message(
                 "No program number; cannot auto-add program",
+                level=logging.DEBUG,
                 scope=self.__class__.__name__,
             )
             return
