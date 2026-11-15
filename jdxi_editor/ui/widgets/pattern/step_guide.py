@@ -103,22 +103,26 @@ class StepGuide(QWidget):
         painter.end()
 
     def _draw_note(self, painter: QPainter, right: int, y: int, flags: int, triplet: bool) -> None:
-        """A small note whose head sits on the line's height, ending at `right`."""
-        size = max(5, self.row_spacing - 3)  # the note's height, within its row
+        """A small note, its head centred on the line's height, ending at `right`; it stays
+        within half a row above and below, so the notes of the rows never touch."""
+        from PySide6.QtCore import QPointF, QRectF
+
+        stem = max(6.0, self.row_spacing * 0.55)  # from the head's middle up
+        head_w, head_h = 5.0, 3.6
         colour = QColor(LINE_COLOR)
-        stem_x = right - (7 if triplet else 3)
-        head_w, head_h = 6, 4
-        painter.setPen(QPen(colour, 1.2))
+        text_w = 5.0 if triplet else 0.0
+        stem_x = right - text_w - 1.0
+        painter.setPen(QPen(colour, 1.1))
         painter.setBrush(colour)
-        painter.drawEllipse(stem_x - head_w + 1, y - head_h // 2, head_w, head_h)
-        top = y - size + 2
-        painter.drawLine(stem_x, y, stem_x, top)
+        painter.drawEllipse(QRectF(stem_x - head_w + 0.6, y - head_h / 2, head_w, head_h))
+        top = y - stem
+        painter.drawLine(QPointF(stem_x, y), QPointF(stem_x, top))
         for i in range(flags):
-            fy = top + i * 3
-            painter.drawLine(QPoint(stem_x, round(fy)), QPoint(stem_x + 4, round(fy + 3)))
+            fy = top + i * 2.0
+            painter.drawLine(QPointF(stem_x, fy), QPointF(stem_x + 3.0, fy + 2.5))
         if triplet:
             font = painter.font()
-            font.setPixelSize(max(6, size - 2))
+            font.setPixelSize(7)
             painter.setFont(font)
-            painter.drawText(stem_x + 3, y + 4, "3")
+            painter.drawText(QRectF(stem_x + 1.0, y - 3.0, text_w + 1, 8.0), Qt.AlignmentFlag.AlignCenter, "3")
         painter.setBrush(Qt.BrushStyle.NoBrush)
