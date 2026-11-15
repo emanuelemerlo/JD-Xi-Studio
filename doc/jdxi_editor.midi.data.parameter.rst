@@ -7,7 +7,6 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   jdxi_editor.midi.data.parameter.areas
    jdxi_editor.midi.data.parameter.digital
    jdxi_editor.midi.data.parameter.drum
    jdxi_editor.midi.data.parameter.effects

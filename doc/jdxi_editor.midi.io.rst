@@ -4,21 +4,7 @@ jdxi\_editor.midi.io package
 Submodules
 ----------
 
-jdxi\_editor.midi.io.clock module
----------------------------------
 
-.. automodule:: jdxi_editor.midi.io.clock
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-jdxi\_editor.midi.io.connection module
---------------------------------------
-
-.. automodule:: jdxi_editor.midi.io.connection
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 jdxi\_editor.midi.io.controller module
 --------------------------------------

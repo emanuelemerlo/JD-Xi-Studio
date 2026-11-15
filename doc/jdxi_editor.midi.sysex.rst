@@ -21,13 +21,6 @@ jdxi\_editor.midi.sysex.composer module
    :undoc-members:
    :show-inheritance:
 
-jdxi\_editor.midi.sysex.data module
------------------------------------
-
-.. automodule:: jdxi_editor.midi.sysex.data
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 jdxi\_editor.midi.sysex.device module
 -------------------------------------
@@ -45,13 +38,6 @@ jdxi\_editor.midi.sysex.json\_composer module
    :undoc-members:
    :show-inheritance:
 
-jdxi\_editor.midi.sysex.lexer module
-------------------------------------
-
-.. automodule:: jdxi_editor.midi.sysex.lexer
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 jdxi\_editor.midi.sysex.lexer2 module
 -------------------------------------
@@ -61,13 +47,6 @@ jdxi\_editor.midi.sysex.lexer2 module
    :undoc-members:
    :show-inheritance:
 
-jdxi\_editor.midi.sysex.tokenizer module
-----------------------------------------
-
-.. automodule:: jdxi_editor.midi.sysex.tokenizer
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 jdxi\_editor.midi.sysex.utils module
 ------------------------------------

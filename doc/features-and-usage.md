@@ -158,5 +158,5 @@ The default SoundFont path is `~/SoundFonts/FluidR3_GM.sf2` if that file exists.
 ## Related Documentation
 
 - [Patch Saving Gap Analysis](patch-saving-gap-analysis.md) — Detailed comparison with Perl editor, format notes
-- [MSZ Bundle Format](../jdxi_editor/devel/MSZ_BUNDLE_FORMAT.md) — Music bundle structure
+- [MSZ Bundle Format](msz-bundle-format.md) — Music bundle structure
 - [CHANGELOG](../CHANGELOG.md) — Full changelog

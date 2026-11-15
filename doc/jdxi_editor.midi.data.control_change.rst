@@ -12,13 +12,6 @@ jdxi\_editor.midi.data.control\_change.analog module
    :undoc-members:
    :show-inheritance:
 
-jdxi\_editor.midi.data.control\_change.bank\_select module
-----------------------------------------------------------
-
-.. automodule:: jdxi_editor.midi.data.control_change.bank_select
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 jdxi\_editor.midi.data.control\_change.base module
 --------------------------------------------------
@@ -36,13 +29,6 @@ jdxi\_editor.midi.data.control\_change.digital module
    :undoc-members:
    :show-inheritance:
 
-jdxi\_editor.midi.data.control\_change.drum module
---------------------------------------------------
-
-.. automodule:: jdxi_editor.midi.data.control_change.drum
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 jdxi\_editor.midi.data.control\_change.sustain module
 -----------------------------------------------------

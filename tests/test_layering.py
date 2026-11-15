@@ -22,7 +22,6 @@ ALLOWED = {
         "jdxi_editor.ui.widgets.controls.registry",
         "jdxi_editor.ui.widgets.writer",
     },
-    "data/effects/type/router.py": {"jdxi_editor.ui.widgets.writer"},
     "data/parameter/analog/spec.py": {"jdxi_editor.ui.style"},
     "data/parameter/digital/spec.py": {"jdxi_editor.ui.style"},
     "io/controller.py": {"jdxi_editor.ui.windows.jdxi.helpers.port"},
