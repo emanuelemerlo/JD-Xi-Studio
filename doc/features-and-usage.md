@@ -103,7 +103,9 @@ press WRITE on the JD-Xi.
 
 ### Save Source
 
-The editor **saves from the current UI control values** only. There is no "request current patch from synth" step before save. If a control was never updated from the synth, the saved value may not match the hardware.
+The editor **saves from the current UI control values**. The keyboard window reads the JD-Xi at
+start and reads the part shown every two seconds, so the values follow the instrument; an editor
+also reads its own area when it is shown, and «Read from JD-Xi» reads it on request.
 
 For more detail, see [Patch Saving Gap Analysis](patch-saving-gap-analysis.md).
 
@@ -116,6 +118,25 @@ usable height (1080p at 125%: 1536x864; 2496x1664 at 175%: 1426x951) they use a 
 smaller knobs, graphs and spacing with the text the same size; Digital puts each partial's
 sections on two tabs and Programs puts the library among the lower tabs. Narrower than 1800 px,
 the side panel is narrower; narrower than 1500 px, some rows of cards become columns.
+
+### Following the JD-Xi
+
+- At start the window reads the program, the four tones and the SYSTEM settings (the channel the
+  JD-Xi takes program changes on: programs are sent there).
+- Every two seconds it reads the part shown — not while a MIDI file or pattern plays, nor for
+  three seconds after a click, key or value from the app — so a tone, an octave or a value
+  changed on the JD-Xi reaches the display, the OCTAVE buttons, the panel sliders and the editors.
+- The notes played on the JD-Xi light the window's keys; after three notes on a part's channel
+  the window selects that part (the JD-Xi plays the part selected on it).
+
+### Self-test with the JD-Xi
+
+Help › **Self-test with the JD-Xi…** runs fifteen steps through the app's own functions: the
+connection and the SYSTEM settings, loading a program and tones, a dozen edits to the Analog and
+the Digital 1 tone with Undo, the octave, a note (you listen), then what you do on the JD-Xi (a
+tone, OCTAVE, a few notes). Each result is checked by reading the JD-Xi back; the edits stay in
+its temporary memory and the starting program is loaded again at the end. The report (Markdown)
+is saved in `~/.jdxi_studio/reports`.
 
 ## 3. SoundFont Usage
 
