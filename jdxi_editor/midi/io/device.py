@@ -90,8 +90,11 @@ class JDXiDevice:
         # when the RQ1 left before the DT1, the reply holds the value from
         # before the write (and the editor showed it again, losing the Undo
         # step). The times let received() tell such bytes.
-        self._requested: dict[int, float] = {}  # RQ1 start address -> when sent
-        self._written: dict[int, tuple[int, float]] = {}  # address -> (value, when written)
+        # what was sent, in order: a counter (the clock is too coarse on Windows,
+        # ~16 ms, to order a request and a write sent one after the other)
+        self._sequence = 0
+        self._requested: dict[int, tuple[int, float]] = {}  # RQ1 start -> (order, when sent)
+        self._written: dict[int, tuple[int, int, float]] = {}  # address -> (value, order, when)
         self.clock: Callable[[], float] = time.monotonic
 
     # --- Requests ---------------------------------------------------------
@@ -139,14 +142,16 @@ class JDXiDevice:
         if body is None:
             return
         now = self.clock()
+        self._sequence += 1
+        order = self._sequence
         start = address_to_linear(body[7:11])
         if body[6] == RQ1_COMMAND:
-            self._requested[start] = now
+            self._requested[start] = (order, now)
         elif body[6] == DT1_COMMAND:
             for offset, value in enumerate(body[11:-1]):
-                self._written[start + offset] = (int(value), now)
+                self._written[start + offset] = (int(value), order, now)
             if len(self._written) > 4096:  # only recent writes matter
-                self._written = {k: v for k, v in self._written.items() if now - v[1] < 10.0}
+                self._written = {k: v for k, v in self._written.items() if now - v[2] < 10.0}
 
     def fresh(self, message: Sequence[int]) -> Optional[list]:
         """
@@ -159,8 +164,8 @@ class JDXiDevice:
         if body is None or body[6] != DT1_COMMAND:
             return None
         start = address_to_linear(body[7:11])
-        asked = self._requested.pop(start, None)
-        if asked is None or self.clock() - asked > REPLY_WINDOW_S:
+        request = self._requested.pop(start, None)
+        if request is None or self.clock() - request[1] > REPLY_WINDOW_S:
             # not a reply to a request (sent by the JD-Xi itself), or to one that
             # got no reply long ago
             return None
@@ -168,7 +173,7 @@ class JDXiDevice:
         changed = False
         for offset, value in enumerate(values):
             written = self._written.get(start + offset)
-            if written is not None and written[1] > asked and written[0] != value:
+            if written is not None and written[1] > request[0] and written[0] != value:
                 values[offset] = written[0]
                 changed = True
         if not changed:
