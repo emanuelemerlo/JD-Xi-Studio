@@ -19,6 +19,8 @@ Example usage:
 
 from contextlib import contextmanager
 import logging
+
+from jdxi_editor.midi.io import program_channel
 from typing import Iterable, Optional
 
 from decologr import Decologr as log
@@ -307,6 +309,7 @@ class MidiOutHandler(MidiIOController):
 
     def send_program_change(self, program: int, channel: int = 0) -> bool:
         """A program change, once the guard allows it (unsaved edits: see ui.v2.history)."""
+        channel = program_channel.route(channel)  # the JD-Xi's Program Ctrl Ch
         if not self._program_change_allowed(channel):
             return False
         with self._program_change_passed():
@@ -537,6 +540,7 @@ class MidiOutHandler(MidiIOController):
         self, channel: int, bank_msb: int, bank_lsb: int, program: int
     ) -> bool:
         """Bank select and program change, once the guard allows it."""
+        channel = program_channel.route(channel)  # the JD-Xi's Program Ctrl Ch
         if not self._program_change_allowed(channel):
             return False
         with self._program_change_passed():

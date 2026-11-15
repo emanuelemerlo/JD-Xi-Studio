@@ -27,7 +27,11 @@ from typing import Dict, Optional
 from PySide6.QtCore import QEvent, QObject, QTimer, Qt
 from PySide6.QtWidgets import QApplication
 
+from decologr import Decologr as log
+
 from jdxi_editor.core.synth.type import JDXiSynth
+from jdxi_editor.i18n import tr
+from jdxi_editor.midi.io import program_channel
 from jdxi_editor.midi.io.delay import send_with_delay
 from jdxi_editor.midi.playback.activity import playback_activity
 from jdxi_editor.midi.sysex.request.data import (
@@ -42,7 +46,8 @@ STARTUP_DELAY_MS = 1200  # the ports are open and the window is drawn
 POLL_INTERVAL_MS = 2000
 QUIET_AFTER_INPUT_S = 3.0  # no reading just after the user acted in the app
 
-PROGRAM_CHANNEL = 15
+SYSTEM_COMMON = (0x02, 0x00, 0x00)
+PROGRAM_CTRL_CH, RX_PROGRAM_CHANGE, RX_BANK_SELECT = 0x11, 0x29, 0x2A
 ROLAND_DT1 = (0x41, 0x10, 0x00, 0x00, 0x00, 0x0E, 0x12)
 TEMPORARY_TONE = 0x19
 TEMPORARY_PROGRAM = 0x18
@@ -179,6 +184,8 @@ class InstrumentFollower(QObject):
         if now - getattr(self, "_read_all_at", -60.0) < 5.0:
             return  # the ports opened and the start-up reading came together
         self._read_all_at = now
+        # the SYSTEM settings first: which channel the JD-Xi takes programs on
+        send_with_delay(self.midi_helper, [MidiRequests.SYSTEM_COMMON])
         self.window.data_request()
 
     # ------------------------------------------------------------ reading
@@ -238,6 +245,8 @@ class InstrumentFollower(QObject):
             self.light_key(message.note, on)
         elif kind == "program_change":
             channel = getattr(message, "channel", None)
+            if channel == program_channel.channel():
+                return  # a program (the window reads it again)
             for part, (part_channel, _tone, _zone) in PARTS.items():
                 if channel == part_channel and self._connected():
                     self.request_part(part)
@@ -247,6 +256,9 @@ class InstrumentFollower(QObject):
                 self.on_dt1(*parsed)
 
     def on_dt1(self, address: tuple, values: list) -> None:
+        if address[:3] == SYSTEM_COMMON:
+            self._system_read(address, values)
+            return
         for part, (_channel, tone, zone) in PARTS.items():
             tone_octave = None
             if part in (JDXiSynth.DIGITAL_SYNTH_1, JDXiSynth.DIGITAL_SYNTH_2):
@@ -260,6 +272,31 @@ class InstrumentFollower(QObject):
                 self._octave_read(part, self._tone_octave, tone_octave - OCTAVE_CENTRE)
             if zone_octave is not None:
                 self._octave_read(part, self._zone_octave, zone_octave - OCTAVE_CENTRE)
+
+    # ------------------------------------------------------------ system
+    def _system_read(self, address, values) -> None:
+        found = [
+            _value_at(address, values, SYSTEM_COMMON, offset)
+            for offset in (PROGRAM_CTRL_CH, RX_PROGRAM_CHANGE, RX_BANK_SELECT)
+        ]
+        if None in found:
+            return
+        program_channel.set_from_system(*found)
+        problem = program_channel.problem()
+        if problem:
+            text = tr(
+                "The JD-Xi does not take program changes ({problem}): "
+                "on the JD-Xi, MENU › SYSTEM › MIDI"
+            ).format(problem=problem)
+            log.warning(text, scope="InstrumentFollower")
+            status = getattr(self.window, "statusBar", None)
+            if callable(status):
+                status().showMessage(text, 30000)
+        elif program_channel.channel() != program_channel.DEFAULT:
+            log.message(
+                f"The JD-Xi takes program changes on channel {program_channel.channel() + 1}",
+                scope="InstrumentFollower",
+            )
 
     # ------------------------------------------------------------ octave
     def _octave_read(self, part, store: Dict, octave: int) -> None:

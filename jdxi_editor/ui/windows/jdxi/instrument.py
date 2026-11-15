@@ -667,7 +667,9 @@ class JDXiInstrument(JDXiWindow):
         :param program_number: int Program number
         :return: None
         """
-        if channel != MidiChannel.PROGRAM + 1:
+        from jdxi_editor.midi.io import program_channel
+
+        if channel != program_channel.channel() + 1:
             # a tone chosen for one part (its channel): not the program; the
             # follower reads that part again
             return
@@ -852,7 +854,8 @@ class JDXiInstrument(JDXiWindow):
             self.channel,
         )
         preset_helper.load_preset_by_program_change(
-            self.current_preset_index, self.current_synth_type
+            self.current_preset_index + 1,  # the preset's number (001...), not its index
+            self.current_synth_type,
         )
 
     def _preset_previous(self) -> None:

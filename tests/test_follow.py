@@ -202,3 +202,46 @@ def test_preset_arrows_load_the_tone(window):
     editor.close()
     editor.deleteLater()
     assert widget.STEP_LOAD_DELAY_MS > 0
+
+
+@pytest.fixture
+def program_channel_reset():
+    from jdxi_editor.midi.io import program_channel
+
+    program_channel.reset()
+    yield program_channel
+    program_channel.reset()
+
+
+def test_programs_go_to_the_jdxis_program_channel(window, program_channel_reset, monkeypatch):
+    """SYSTEM › Program Ctrl Ch read at start: programs sent where the JD-Xi listens."""
+    raw = []
+    monkeypatch.setattr(window.midi_helper, "send_raw_message", lambda m: raw.append(list(m)) or True)
+    system = [0] * 0x2B
+    system[0x11], system[0x29], system[0x2A] = 2, 1, 1  # Program Ctrl Ch 3
+    receive(window, dt1([0x02, 0x00, 0x00, 0x00], system))
+    assert program_channel_reset.channel() == 2
+    window.midi_helper.send_bank_select_and_program_change(15, 85, 64, 1)
+    assert [m for m in raw if m[0] != 0xF0] == [[0xB2, 0, 85], [0xB2, 32, 64], [0xC2, 1]]
+    raw.clear()
+    window.midi_helper.send_bank_select_and_program_change(0, 95, 64, 1)  # a tone: unchanged
+    assert [m for m in raw if m[0] != 0xF0][-1] == [0xC0, 1]
+
+
+def test_program_changes_off_on_the_jdxi_are_reported(window, program_channel_reset):
+    system = [0] * 0x2B
+    system[0x11], system[0x29], system[0x2A] = 16, 0, 1  # OFF, Rx Program Change OFF
+    receive(window, dt1([0x02, 0x00, 0x00, 0x00], system))
+    assert "Program Ctrl Ch: OFF" in program_channel_reset.problem()
+    assert "Rx Program Change: OFF" in program_channel_reset.problem()
+    assert "MENU" in window.statusBar().currentMessage()
+    assert program_channel_reset.channel() == 15  # still sent on 16
+
+
+def test_tone_arrows_of_the_window_load_the_tone_shown(window, monkeypatch):
+    raw = []
+    monkeypatch.setattr(window.midi_helper, "send_raw_message", lambda m: raw.append(list(m)) or True)
+    window._select_synth(JDXiSynth.DIGITAL_SYNTH_1)
+    window.current_preset_index = 0
+    window._preset_next()  # 002
+    assert [m for m in raw if m[0] != 0xF0][-1] == [0xC0, 1]
