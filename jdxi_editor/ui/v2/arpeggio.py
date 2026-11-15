@@ -136,6 +136,45 @@ class ArpeggioEditor(V2Editor):
     def __init__(self, midi_helper=None, preset_helper=None, parent=None):
         super().__init__(arpeggio_blocks(), midi_helper=midi_helper, parent=parent, title=tr("Arpeggio"))
         self.preset_helper = preset_helper
+        self.pv("ARPEGGIO_SWITCH").valueChanged.connect(self._switched)
+
+    # The Arpeggio switch plays only the parts whose own arpeggio switch is ON
+    # (Program zone): with all of them OFF, ON did nothing to hear.
+    SYNTH_PART = {"DIGITAL_SYNTH_1": 0, "DIGITAL_SYNTH_2": 1, "ANALOG_SYNTH": 2, "DRUM_KIT": 3}
+
+    def _current_part(self) -> int:
+        """The part selected in the keyboard window (Digital 1 when unknown)."""
+        from PySide6.QtCore import QObject
+
+        provider = getattr(self, "part_provider", None)  # set by the keyboard window
+        if callable(provider):
+            synth = provider()
+            if synth is not None:
+                return self.SYNTH_PART.get(str(synth).split(".")[-1].upper(), 0)
+        widget = QObject.parent(self)  # (self.parent is an attribute in the editors)
+        while widget is not None:
+            synth = getattr(widget, "current_synth_type", None)
+            if synth is not None:
+                return self.SYNTH_PART.get(str(getattr(synth, "value", synth)).upper(),
+                                           self.SYNTH_PART.get(str(synth).split(".")[-1].upper(), 0))
+            widget = QObject.parent(widget)
+        return 0
+
+    def _switched(self, value: int) -> None:
+        """ON with no part set to arpeggiate: the part selected arpeggiates."""
+        if not value:
+            return
+        zones = [self.pv("ZONE_ARPEGGIO_SWITCH", f"ZONE_{part}") for part in range(len(PARTS))]
+        if any(zone.value() for zone in zones):
+            return
+        history = getattr(self, "history", None)
+        if history is not None:
+            history.begin_group()
+        try:
+            zones[self._current_part()].setValue(1)
+        finally:
+            if history is not None:
+                history.end_group()
 
     def build_panels(self) -> None:
         s = self.spec

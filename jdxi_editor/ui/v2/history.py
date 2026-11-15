@@ -89,6 +89,9 @@ class EditHistory(QObject):
         self._group_depth = 0
         self._group: Optional[_Edit] = None
         self._origin: dict = {}  # value -> what it was before the first change (Reload)
+        # value -> what it was when last saved (or at the start): a value put back
+        # by hand (ON, then OFF again) is not a change
+        self._baseline: dict = {}
         self._floor_id = 0  # the id of the last step dropped (MAX_STEPS): an empty Undo is not the start
         self._modified = False
         _histories.add(self)
@@ -106,6 +109,7 @@ class EditHistory(QObject):
             return
         old = getattr(pv, "previous", new)
         self._origin.setdefault(pv, old)
+        self._baseline.setdefault(pv, old)
         if self._group_depth:
             if self._group is None:
                 if old != new:
@@ -171,6 +175,8 @@ class EditHistory(QObject):
             changed = True
         if self._origin.pop(pv, None) is not None:  # its value from the JD-Xi is the start now
             changed = True
+        if self._baseline.pop(pv, None) is not None:
+            changed = True
         if changed:
             self._update()
 
@@ -218,6 +224,7 @@ class EditHistory(QObject):
         self._undo.clear()
         self._redo.clear()
         self._origin.clear()
+        self._baseline.clear()
         self._floor_id = 0
         self._saved_id = 0
         self._sealed = True
@@ -246,6 +253,7 @@ class EditHistory(QObject):
 
     def _apply(self, pv, value: int) -> None:
         """Set the value as the user would: the controls follow and it is sent to the JD-Xi."""
+        self._baseline.setdefault(pv, pv.value())
         self._replaying = True
         try:
             pv.setValue(value)
@@ -262,6 +270,7 @@ class EditHistory(QObject):
         while self._group_depth:
             self.end_group()
         self._saved_id = self._undo[-1].id if self._undo else self._floor_id
+        self._baseline.clear()
         self._sealed = True
         self._update()
 
@@ -272,6 +281,7 @@ class EditHistory(QObject):
         self._undo.clear()
         self._redo.clear()
         self._origin.clear()
+        self._baseline.clear()
         self._floor_id = 0
         self._saved_id = 0
         self._sealed = True
@@ -285,7 +295,10 @@ class EditHistory(QObject):
         current_id = self._undo[-1].id if self._undo else self._floor_id
         if self._group is not None and self._group.changes:
             current_id = self._group.id
-        modified = current_id != self._saved_id
+        # changed since saved, and not every value put back by hand (ON, then OFF)
+        modified = current_id != self._saved_id and any(
+            pv.value() != value for pv, value in self._baseline.items()
+        )
         if modified != self._modified:
             self._modified = modified
             self.modifiedChanged.emit(modified)

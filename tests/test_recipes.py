@@ -297,6 +297,7 @@ def test_take_the_values_from_the_jdxi(app, monkeypatch):
     editors = Editors()
     w = RecipesEditor(editors=editors)
     w.show_editor_page()
+    monkeypatch.setattr(w, "ask_capture_part", lambda: "")  # no part chosen
     w.capture_current()
     assert "add rows" in w.ed_status.text()
     w.add_editor_row()  # AN · FILTER
@@ -310,4 +311,28 @@ def test_take_the_values_from_the_jdxi(app, monkeypatch):
         app.processEvents()
     assert w.ed_table.item(0, 7).text() == "77"
     assert "taken from the JD-Xi: 1" in w.ed_status.text()
+    w.close()
+
+
+def test_an_empty_editor_takes_a_whole_part(app, monkeypatch):
+    """Empty editor: «Take the values from the JD-Xi» makes a row for every parameter of the part chosen."""
+    import time
+
+    from jdxi_editor.recipes import catalog
+    from jdxi_editor.ui.v2 import recipes as module
+    from jdxi_editor.ui.v2.recipes import RecipesEditor
+
+    monkeypatch.setattr(module, "CAPTURE_DELAY_MS", 10)
+    w = RecipesEditor(editors=Editors())
+    w.show_editor_page()
+    monkeypatch.setattr(w, "ask_capture_part", lambda: "AN")
+    w.capture_current()
+    deadline = time.monotonic() + 3
+    while "taken" not in w.ed_status.text().lower() and time.monotonic() < deadline:
+        app.processEvents()
+    count = sum(1 for (p, _g, _l) in catalog.targets() if p == "AN")
+    assert w.ed_table.rowCount() == count > 20
+    assert "to fix" not in w.ed_status.text()
+    filled = sum(1 for r in range(w.ed_table.rowCount()) if w.ed_table.item(r, 7) and w.ed_table.item(r, 7).text())
+    assert filled >= count - 2
     w.close()

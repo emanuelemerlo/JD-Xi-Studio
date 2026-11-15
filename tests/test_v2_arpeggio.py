@@ -109,3 +109,20 @@ def test_timing_view_follows_grid_and_duration(editor):
 def test_export_gives_only_the_controller_block(editor):
     messages = editor.export_dt1s()
     assert len(messages) == 1 and messages[0][8:12] == bytes([0x18, 0x00, 0x40, 0x00])
+
+
+def test_on_with_no_part_set_arpeggiates_the_part_selected(editor):
+    """Arpeggio ON plays only the parts whose own switch is ON: with none, the part selected gets it."""
+    zones = [editor.pv("ZONE_ARPEGGIO_SWITCH", f"ZONE_{part}") for part in range(4)]
+    switch = editor.pv("ARPEGGIO_SWITCH")
+    for pv in zones + [switch]:
+        pv.blockSignals(True)
+        pv.setValue(0)
+        pv.blockSignals(False)
+    switch.setValue(1)
+    assert [z.value() for z in zones] == [1, 0, 0, 0]  # Digital 1 when no window says otherwise
+    editor.pv("ARPEGGIO_SWITCH").setValue(0)
+    zones[0].setValue(0)
+    zones[2].setValue(1)
+    editor.pv("ARPEGGIO_SWITCH").setValue(1)
+    assert [z.value() for z in zones] == [0, 0, 1, 0]  # a part already set: left as it is

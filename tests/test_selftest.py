@@ -56,6 +56,7 @@ def window():
         app.processEvents()
     yield w
     w.close()
+    _dispose(w)
 
 
 @pytest.fixture
@@ -206,3 +207,23 @@ def test_edits_the_jdxi_does_not_keep_are_ko(window, jdxi, monkeypatch):
     test = st.SelfTest(window, steps)
     run(test, limit_s=30)
     assert steps[0].status == st.KO and "not on the JD-Xi" in steps[0].detail
+
+
+def _dispose(window) -> None:
+    """Delete the window and the message boxes it opened (offline: «MIDI not available»):
+    left alive, their timers slow the next tests and their boxes are counted there."""
+    from PySide6.QtCore import QEvent
+    from PySide6.QtWidgets import QApplication, QMessageBox
+
+    for widget in QApplication.topLevelWidgets():
+        if isinstance(widget, QMessageBox):
+            widget.close()
+            widget.deleteLater()
+    for name in ("main_editor", "self_test_dialog"):
+        other = getattr(window, name, None)
+        if other is not None:
+            other.close()
+            other.deleteLater()
+    window.deleteLater()
+    QApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
+    QApplication.processEvents()

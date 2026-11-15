@@ -285,6 +285,7 @@ class JDXiInstrument(JDXiWindow):
         self.follower = InstrumentFollower(self)
         self.follower.start()
         self.on_closed = None  # set by main(): quits the application
+        self._link_arpeggio_button()
 
     def _init_update_checker(self) -> None:
         """Check GitHub Releases shortly after startup (at most once a day)."""
@@ -517,6 +518,21 @@ class JDXiInstrument(JDXiWindow):
             # the program ends with this window, even if another window of
             # its own is still on screen (Qt quits only on the last one)
             QTimer.singleShot(0, on_closed)
+
+    def _link_arpeggio_button(self) -> None:
+        """The panel's Arpeggio button lit as the arpeggio is (set in its tab or on the JD-Xi)."""
+        arpeggio = self._tab_editor("arpeggio")
+        button = getattr(self, "arpeggiator_button", None)
+        if arpeggio is None or button is None or not hasattr(arpeggio, "pv"):
+            return
+
+        def show(value: int) -> None:
+            button.blockSignals(True)
+            button.setChecked(bool(value))
+            button.blockSignals(False)
+
+        arpeggio.pv("ARPEGGIO_SWITCH").watch(show)
+        arpeggio.part_provider = lambda: getattr(self, "current_synth_type", None)
 
     def show_self_test(self) -> None:
         """Help › Self-test with the JD-Xi…"""
@@ -2731,6 +2747,14 @@ class JDXiInstrument(JDXiWindow):
         :param state: bool ON/OFF
         :return: None
         """
+        # Through the Arpeggio editor: its switch and the tab show it, the edit
+        # can be undone, and with no part set to arpeggiate the part selected
+        # gets it. (It wrote offset 3 of the Program Part areas 18 00 20-22,
+        # not the zones 18 00 30-33.)
+        arpeggio = self._tab_editor("arpeggio")
+        if arpeggio is not None and hasattr(arpeggio, "pv"):
+            arpeggio.pv("ARPEGGIO_SWITCH").setValue(1 if state else 0)
+            return
         try:
             if self.midi_helper:
                 value = Midi.value.ON if state else Midi.value.OFF  # 1 = ON, 0 = OFF
@@ -2741,9 +2765,9 @@ class JDXiInstrument(JDXiWindow):
                 # send arp on to all zones
                 for zone in [
                     JDXiSysExOffsetProgramLMB.CONTROLLER,
-                    JDXiSysExOffsetProgramLMB.PART_DIGITAL_SYNTH_1,
-                    JDXiSysExOffsetProgramLMB.PART_DIGITAL_SYNTH_2,
-                    JDXiSysExOffsetProgramLMB.PART_ANALOG,
+                    JDXiSysExOffsetProgramLMB.ZONE_DIGITAL_SYNTH_1,
+                    JDXiSysExOffsetProgramLMB.ZONE_DIGITAL_SYNTH_2,
+                    JDXiSysExOffsetProgramLMB.ZONE_ANALOG,
                     JDXiSysExOffsetProgramLMB.ZONE_DRUM,
                 ]:
                     address = JDXiSysExAddress(

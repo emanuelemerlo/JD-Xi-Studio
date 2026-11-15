@@ -953,10 +953,15 @@ class RecipesEditor(QWidget):
             if c.target is not None:
                 targets.append(c.target)
         if not targets:
-            # it fills the rows there are: with none (or none understood) it did nothing, silently
-            self.ed_status.setText(tr(
-                "No row to fill: add rows with Part, Group and Parameter first; "
-                "«Take the values from the JD-Xi» writes in each one the value it has now."))
+            # An empty editor: a whole part as it is on the JD-Xi (it used to
+            # fill only the rows there were, and with none it did nothing)
+            part = self.ask_capture_part()
+            if not part:
+                self.ed_status.setText(tr(
+                    "No row to fill: add rows with Part, Group and Parameter, or choose a part to take whole."))
+                return
+            self.add_part_rows(part)
+            self.capture_current()
             return
         requested = set()
         for target in targets:
@@ -973,6 +978,37 @@ class RecipesEditor(QWidget):
                     log.warning(f"Recipes: reading {key} failed: {ex}", scope="RecipesEditor")
         self.ed_status.setText(tr("Reading the JD-Xi…"))
         QTimer.singleShot(CAPTURE_DELAY_MS, self, self._capture_now)
+
+    CAPTURE_PARTS = ("AN", "D1", "D2", "DR", "PROG", "EFFETTI", "ARP")
+
+    def ask_capture_part(self) -> str:
+        """Which part to take whole from the JD-Xi ("" if none)."""
+        from PySide6.QtWidgets import QInputDialog
+
+        names = {code: name for code, name in catalog.vocabulary.PARTS}
+        items = [f"{code} · {names.get(code, code)}" for code in self.CAPTURE_PARTS]
+        item, ok = QInputDialog.getItem(
+            self, tr("Take the values from the JD-Xi"),
+            tr("The editor is empty: which part do you want to take whole, every parameter with its value?"),
+            items, 0, False,
+        )
+        return item.split(" · ")[0] if ok and item else ""
+
+    def add_part_rows(self, part: str) -> int:
+        """A row for every parameter of *part* (partial 1, drum BD1 where one must be chosen)."""
+        su_default = {"D1": "1", "D2": "1", "DR": "BD1"}.get(part, "")
+        targets = [t for (p, _g, _l), t in catalog.targets().items() if p == part]
+        table = self.ed_table
+        table.blockSignals(True)
+        step = 1
+        for group in dict.fromkeys(t.group for t in targets):
+            for t in (t for t in targets if t.group == group):
+                su = su_default if t.su in ("sì", "si", "yes") else ""
+                self._add_editor_row(Row(step, group, part, group, su, t.label, VALUE, "", "", "", ""))
+            step += 1
+        table.blockSignals(False)
+        self._editor_changed()
+        return len(targets)
 
     def _capture_now(self) -> None:
         rows = self._editor_rows()

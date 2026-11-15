@@ -291,3 +291,32 @@ def test_program_change_resets_only_once_sent(app):
     assert h.confirm_discard([h.DIGITAL_1], "x", defer=True)
     h.program_change_done(0, True)
     assert not history.modified and not history.can_undo()
+
+
+def test_a_value_put_back_by_hand_is_not_a_change():
+    """ON, then OFF again by hand: nothing is modified (Undo stays available)."""
+    from PySide6.QtWidgets import QApplication
+
+    from jdxi_editor.ui.v2.history import EditHistory
+    from jdxi_editor.ui.v2.params import ParamInfo, ParamValue
+
+    QApplication.instance() or QApplication([])
+    history = EditHistory("ARP", "Arpeggio")
+    switch = ParamValue("ARPEGGIO_SWITCH", ParamInfo(group="ARP", label="Switch"), 0, 1)
+    level = ParamValue("LEVEL", ParamInfo(group="ARP", label="Level"), 0, 127)
+    history.watch([switch, level])
+    switch.setValue(1)
+    assert history.modified
+    switch.setValue(0)
+    assert not history.modified
+    level.setValue(100)
+    switch.setValue(1)
+    switch.setValue(0)
+    assert history.modified  # the level is still changed
+    level.setValue(0)
+    assert not history.modified
+    history.mark_saved()
+    level.setValue(5)
+    assert history.modified
+    history.undo()
+    assert not history.modified  # back to the saved value

@@ -36,6 +36,15 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - Effects: a type chosen in the app whose parameters are all 0 (via MIDI the JD-Xi loads no
   settings for a new type) gets audible starting values — it was silent (Balance D100:0W,
   Depth 0, Level 0)
+- A value put back by hand (Arpeggio ON, then OFF) no longer leaves the editor marked modified
+- Arpeggio ON (in its tab or with the panel button) with no part set to arpeggiate: the part
+  selected arpeggiates (ON did nothing to hear). The panel button works through the Arpeggio
+  editor and lights as the arpeggio is; it wrote offset 3 of the Program Part areas instead of
+  the zones
+- Recipes: in an empty editor «Take the values from the JD-Xi» asks for a part and makes a row
+  for every parameter of it, with the JD-Xi's values
+- Self-test: a KO names the parameters, says when the tone was changed during the test and
+  how many Undo steps the edits made
 - An orange pencil on the tab of an editor with changes not saved (it was a dot before the
   name), and «✎ Modified» in the editor
 - The messages sent were never heard by their listeners (a signal of the MIDI helper's second

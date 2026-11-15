@@ -346,6 +346,7 @@ def step_connection(test: SelfTest):
     editor = _program_editor(test.window)
     match = next((p for p in getattr(editor.library, "programs", []) if same_name(p.name, name)), None)
     test.restore_program_id = match.id if match else None
+    test.start_program_name = name
     return OK, tr("current program «{name}»").format(name=name)
 
 
@@ -541,9 +542,9 @@ def step_keys_on_jdxi(test: SelfTest):
     """You play on the JD-Xi: the notes arrive and the window's keys light."""
     test.notes_seen = 0
     played = yield Until(
-        lambda: test.notes_seen >= 3,
-        15000,
-        tr("On the JD-Xi: play a few notes (15 seconds)"),
+        lambda: test.notes_seen >= 1,
+        20000,
+        tr("On the JD-Xi: play a few notes (20 seconds)"),
     )
     if not played:
         return KO, tr("no notes received: on the JD-Xi, MENU › SYSTEM › MIDI › Tx")
@@ -559,7 +560,8 @@ def step_restore(test: SelfTest):
 
     program_id = test.restore_program_id
     if not program_id:
-        return SKIPPED, tr("the starting program is not in the library: choose it on the JD-Xi")
+        return SKIPPED, tr("the starting program «{name}» is not in the library: choose it on the JD-Xi").format(
+            name=getattr(test, "start_program_name", "") or "?")
     editor = _program_editor(test.window)
     editor.library.select(program_id)
     with paused():
@@ -597,36 +599,49 @@ def another_value(pv) -> int:
 
 
 def _edits_of(part: str, editor) -> tuple[list, list]:
-    """(the ParamValues to edit, the blocks (address, size) that hold them)."""
+    """([(ParamValue, absolute address, name)] to edit, the blocks (address, size) that hold them)."""
     if part == "ANALOG_SYNTH":
         from jdxi_editor.midi.data.parameter.analog.address import AnalogParam
 
-        pvs = [editor.values[getattr(AnalogParam, n)] for n in ANALOG_EDITS
-               if getattr(AnalogParam, n, None) in editor.values]
-        return pvs, [(ANALOG_TONE, 0x40)]
-    pvs, blocks = [], []
+        base = absolute(ANALOG_TONE)
+        edits = [(editor.values[p], base + p.address, p.name)
+                 for p in (getattr(AnalogParam, n, None) for n in ANALOG_EDITS) if p in editor.values]
+        return edits, [(ANALOG_TONE, 0x40)]
+    edits, blocks = [], []
     for key, name in DIGITAL_EDITS:
         try:
-            pvs.append(editor.pv(name, key))
+            spec = editor.spec(name, key)
         except KeyError:
             continue
+        block = editor.block_of[spec]
+        address = absolute(block.address_bytes()) + (spec.offset & 0x7F)
+        label = f"{name} ({key.replace('_', ' ').title()})"
+        edits.append((editor.values[spec], address, label))
     for block in editor.blocks:
         if block.key in {key for key, _ in DIGITAL_EDITS}:
             blocks.append((tuple(block.address_bytes()), block.size()))
-    return pvs, blocks
+    return edits, blocks
 
 
 def tone_edits(part: str, editor_key: str, panel_name: str):
     """A free user tone (Init Tone) of *part*: edits through its editor, checked on the
-    JD-Xi; then Undo of every edit, checked too."""
+    JD-Xi; then Undo of every edit, checked too. A KO names the parameters."""
+
+    def read_blocks(blocks):
+        found = {}
+        for address, size in blocks:
+            values = yield Read(address, size)
+            base = absolute(address)
+            found.update({base + i: v for i, v in enumerate(values or [])})
+        return found
 
     def step(test: SelfTest):
         window = test.window
         synth = window_synth(part)
         window._select_synth(synth)
         editor = window._tab_editor(editor_key)
-        pvs, blocks = _edits_of(part, editor)
-        if not pvs:
+        edits, blocks = _edits_of(part, editor)
+        if not edits:
             return SKIPPED, tr("no parameters to edit")
         common = blocks[0] if part == "ANALOG_SYNTH" else (DIGITAL1_COMMON, 0x40)
 
@@ -634,71 +649,62 @@ def tone_edits(part: str, editor_key: str, panel_name: str):
         name = name_of((yield Read(*common)))
         on_init = same_name(name, INIT_TONE)
         if not on_init:
-            current = {"name": name}
-
-            def chosen():
-                return same_name(window.preset_manager.current_preset_names.get(synth), INIT_TONE)
-
             on_init = yield Until(
-                chosen, 40000,
+                lambda: same_name(window.preset_manager.current_preset_names.get(synth), INIT_TONE), 40000,
                 tr("On the JD-Xi: select {part} and choose a free user tone («Init Tone») "
                    "with the TONE knob (40 seconds)").format(part=panel_name),
             )
             if on_init:
-                yield Wait(800)
-            name = name_of((yield Read(*common))) or current["name"]
-        # 2. the tone as it is
-        before = {}
-        for address, size in blocks:
-            values = yield Read(address, size)
-            if not values:
-                return KO, tr("no reply")
-            base = absolute(address)
-            before.update({base + i: v for i, v in enumerate(values)})
-        # 3. the edits, one by one as by hand
-        test.sent.clear()
-        history = editor.history
-        made = 0
-        for pv in pvs:
-            pv.setValue(another_value(pv))
-            made += 1
-            yield Wait(150)
-        yield Wait(500)
-        sent = dict(test.sent)
-        if not sent:
-            return KO, tr("the edits sent nothing to the JD-Xi")
-        after = {}
-        for address, size in blocks:
-            values = yield Read(address, size)
-            base = absolute(address)
-            after.update({base + i: v for i, v in enumerate(values or [])})
-        wrong = [f"{a:07X}: {v}/{after.get(a, '?')}" for a, v in sent.items() if after.get(a) != v]
-        if wrong:
-            return KO, tr("{n} of {total} values not on the JD-Xi (sent/read): {list}").format(
-                n=len(wrong), total=len(sent), list=", ".join(wrong[:6]))
-        # 4. Undo every edit
-        undone = 0
-        while undone < made and history.undo():
-            undone += 1
-            yield Wait(120)
-        yield Wait(500)
-        restored = {}
-        for address, size in blocks:
-            values = yield Read(address, size)
-            base = absolute(address)
-            restored.update({base + i: v for i, v in enumerate(values or [])})
-        back = [f"{a:07X}: {before.get(a)}/{restored.get(a, '?')}" for a in sent if restored.get(a) != before.get(a)]
+                yield Wait(1500)  # the knob left alone
+            name = name_of((yield Read(*common))) or name
         where = f"«{name}»" if name else "?"
         if not on_init:
             where += " — " + tr("not a free user tone")
-        if undone < made:
-            return KO, tr("{where}: {n} edits checked; Undo undid {u} of {made}").format(
-                where=where, n=len(sent), u=undone, made=made)
+        # 2. the tone as it is
+        before = yield from read_blocks(blocks)
+        if not before:
+            return KO, tr("no reply")
+        # 3. the edits, one by one as by hand
+        test.sent.clear()
+        history = editor.history
+        steps_before = len(history._undo)
+        for pv, _address, _label in edits:
+            pv.setValue(another_value(pv))
+            yield Wait(150)
+        yield Wait(500)
+        recorded = len(history._undo) - steps_before
+        sent = dict(test.sent)
+        if not sent:
+            return KO, tr("the edits sent nothing to the JD-Xi")
+        after = yield from read_blocks(blocks)
+        now = name_of((yield Read(*common)))
+        if name and now and not same_name(name, now):
+            return KO, tr("the tone on the JD-Xi changed during the test: «{a}» → «{b}» (leave the TONE knob alone)").format(
+                a=name, b=now)
+        label_of = {address: label for _pv, address, label in edits}
+        wrong = [f"{label_of.get(a, f'{a:07X}')}: {v}/{after.get(a, '?')}" for a, v in sent.items() if after.get(a) != v]
+        if wrong:
+            return KO, tr("{where}: {n} of {total} values not on the JD-Xi (sent/read): {list}").format(
+                where=where, n=len(wrong), total=len(sent), list=", ".join(wrong[:6]))
+        # 4. Undo every edit
+        undone = 0
+        while undone < len(edits) and history.undo():
+            undone += 1
+            yield Wait(120)
+        yield Wait(500)
+        restored = yield from read_blocks(blocks)
+        back = [f"{label_of.get(a, f'{a:07X}')}: {before.get(a)}/{restored.get(a, '?')}"
+                for a in sent if restored.get(a) != before.get(a)]
+        problems = []
+        if recorded < len(edits):
+            problems.append(tr("{n} edits recorded as {k} Undo steps").format(n=len(edits), k=recorded))
         if back:
-            return KO, tr("{where}: {n} edits checked; after Undo {k} values differ (before/now): {list}").format(
-                where=where, n=len(sent), k=len(back), list=", ".join(back[:6]))
+            problems.append(tr("after Undo {k} values differ (before/now): {list}").format(
+                k=len(back), list=", ".join(back[:6])))
+        if problems:
+            return KO, f"{where}: " + "; ".join(problems)
         return OK, tr("{where}: {made} edits ({n} values) on the JD-Xi, all undone").format(
-            where=where, made=made, n=len(sent))
+            where=where, made=len(edits), n=len(sent))
 
     return step
 

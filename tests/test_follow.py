@@ -24,6 +24,7 @@ def window():
         app.processEvents()
     yield w
     w.close()
+    _dispose(w)
 
 
 @pytest.fixture
@@ -285,3 +286,23 @@ def test_the_window_selects_the_part_played_on_the_jdxi(window, monkeypatch):
     for channel in (0, 9, 0, 1, 0, 9):
         receive(window, mido.Message("note_on", note=60, velocity=80, channel=channel))
     assert window.current_synth_type == JDXiSynth.ANALOG_SYNTH
+
+
+def _dispose(window) -> None:
+    """Delete the window and the message boxes it opened (offline: «MIDI not available»):
+    left alive, their timers slow the next tests and their boxes are counted there."""
+    from PySide6.QtCore import QEvent
+    from PySide6.QtWidgets import QApplication, QMessageBox
+
+    for widget in QApplication.topLevelWidgets():
+        if isinstance(widget, QMessageBox):
+            widget.close()
+            widget.deleteLater()
+    for name in ("main_editor", "self_test_dialog"):
+        other = getattr(window, name, None)
+        if other is not None:
+            other.close()
+            other.deleteLater()
+    window.deleteLater()
+    QApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
+    QApplication.processEvents()
