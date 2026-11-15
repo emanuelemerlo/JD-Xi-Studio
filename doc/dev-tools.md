@@ -37,3 +37,13 @@ On a rendered G3–B♭3–C4 loop (64 repeats, 20% deletion, seed 1) the curren
 
 The earlier BassSynth drop trial, from the current filler, was recall 0.45 and 0.37 at precision 1.00 (seeds 1 and 2). That recording is not in this repo, so those two numbers were not remeasured here.
 
+
+
+## Removed tools and modules
+
+In 1.0.0a5 the modules that nothing imported were removed: `jdxi_editor/devel` (tests and monitors for the
+original author's SINCO VMX8 controller, one-off SysEx investigations, experiments), stand-alone scripts whose
+work the program now does (FluidSynth playback, MIDI to PDF, drum-track detection) and old widgets and tables
+replaced by the current editors. None was documented. They stay in the history: list them with
+`git show --stat <commit of "Remove 131 modules nothing imports">` and get one back with
+`git show 523e81d8ef0042121f61bb2414a8003130894a8f:<path> > <path>`.
