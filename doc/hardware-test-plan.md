@@ -36,7 +36,7 @@ python scripts/hardware_check.py
 
 Lo script, da solo:
 
-1. trova le porte del JD-Xi e chiede l'identità (Identity Request): risponde il JD-Xi e con quale firmware;
+1. trova le porte del JD-Xi e chiede l'identità (Identity Request): deve rispondere un JD-Xi. La *revisione* nella risposta non è la versione del firmware: quella si legge sul display del JD-Xi all'accensione e va annotata a mano nel resoconto;
 2. legge le aree temporanee di Programma, Digital 1, Digital 2, Analog, Drums (RQ1 → DT1) e ne mostra i nomi;
 3. per ogni area scrive un parametro (livello −5), lo rilegge, lo **rimette com'era** e lo rilegge ancora;
 

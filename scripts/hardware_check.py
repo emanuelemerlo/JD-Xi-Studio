@@ -184,8 +184,15 @@ def identity(session: Session) -> None:
             data = list(getattr(msg, "data", []))
             if msg.type == "sysex" and data[:4] in ([0x7E, DEVICE, 0x06, 0x02], [0x7E, 0x7F, 0x06, 0x02]):
                 ok = len(data) > 6 and data[4] == ROLAND and data[5:7] == [0x0E, 0x03]
-                version = ".".join(str(b) for b in data[9:13]) if len(data) >= 13 else "?"
-                session.record("Identity Request", "OK" if ok else "KO", f"risposta {data[4:9]}, firmware {version}")
+                # the 4 "software revision" bytes of the Identity Reply are not the firmware version
+                # shown by the JD-Xi (e.g. 00 03 00 01 on a 1.52): reported as they are, in hex
+                revision = " ".join(f"{b:02X}" for b in data[9:13]) if len(data) >= 13 else "?"
+                session.record(
+                    "Identity Request",
+                    "OK" if ok else "KO",
+                    f"Roland JD-Xi (41 0E 03), revisione nella risposta {revision} — la versione del firmware "
+                    "si legge sul JD-Xi, all'accensione",
+                )
                 return
         time.sleep(0.01)
     session.record("Identity Request", "KO", "nessuna risposta (cavo USB? driver Roland?)")
