@@ -178,7 +178,7 @@ def test_octave_buttons_write_the_part_shown(window, monkeypatch):
     assert raw[at : at + 5] == [0x19, 0x42, 0x00, 0x34, 0x41]
 
 
-def test_preset_arrows_load_the_tone(window):
+def test_preset_arrows_load_the_tone(window, monkeypatch):
     """‹ › in a tone editor's preset panel load the tone, as the JD-Xi's buttons do."""
     from jdxi_editor.midi.io.helper import MidiIOHelper
     from jdxi_editor.ui.preset import widget
@@ -186,7 +186,7 @@ def test_preset_arrows_load_the_tone(window):
 
     helper = MidiIOHelper()
     raw = []
-    helper.send_raw_message = lambda m: raw.append(list(m)) or True
+    monkeypatch.setattr(helper, "send_raw_message", lambda m: raw.append(list(m)) or True)  # a shared helper
     editor = AnalogToneEditor(helper, Mock())
     panel = editor.instrument_preset
     panel.instrument_selection_combo.combo_box.setCurrentIndex(0)
@@ -245,3 +245,14 @@ def test_tone_arrows_of_the_window_load_the_tone_shown(window, monkeypatch):
     window.current_preset_index = 0
     window._preset_next()  # 002
     assert [m for m in raw if m[0] != 0xF0][-1] == [0xC0, 1]
+
+
+def test_a_one_parameter_dt1_sets_that_parameter_only():
+    """A DT1 for one parameter (the JD-Xi sends them) used to be read as a whole block: all 0."""
+    from jdxi_editor.midi.sysex.parser.utils import parse_sysex
+
+    address, values = [0x19, 0x42, 0x00, 0x21], [110]
+    checksum = (128 - sum(address + values) % 128) % 128
+    parsed = parse_sysex(bytes([0xF0, 0x41, 0x10, 0, 0, 0, 0x0E, 0x12, *address, *values, checksum, 0xF7]))
+    assert parsed["FILTER_CUTOFF"] == 110
+    assert "FILTER_RESONANCE" not in parsed and "LFO_RATE" not in parsed

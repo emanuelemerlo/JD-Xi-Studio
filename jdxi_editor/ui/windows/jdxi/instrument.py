@@ -510,6 +510,17 @@ class JDXiInstrument(JDXiWindow):
             # its own is still on screen (Qt quits only on the last one)
             QTimer.singleShot(0, on_closed)
 
+    def show_self_test(self) -> None:
+        """Help › Self-test with the JD-Xi…"""
+        from jdxi_editor.ui.windows.selftest import SelfTestDialog
+
+        dialog = getattr(self, "self_test_dialog", None)
+        if dialog is None:
+            dialog = self.self_test_dialog = SelfTestDialog(self)
+        dialog.show()
+        dialog.raise_()
+        dialog.activateWindow()
+
     def _close_linked_windows(self) -> None:
         link = getattr(self, "window_link", None)
         if link is not None:  # the editors window is not owned: close it too

@@ -507,6 +507,13 @@ class JDXiWindow(QMainWindow):
             )
         )
         self.help_menu.addAction(
+            self._menu_action(
+                tr("&Self-test with the JD-Xi…"),
+                self.show_self_test,
+                status_tip=tr("The app runs typical operations on the JD-Xi and checks the results"),
+            )
+        )
+        self.help_menu.addAction(
             self._menu_action(tr("&About"), self._show_about_help, "Ctrl+Shift+A")
         )
         self.help_menu.addAction(

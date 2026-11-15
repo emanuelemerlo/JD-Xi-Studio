@@ -17,6 +17,17 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - The window's Octave − / + write the part shown (they always wrote Digital 1)
 - The preset panel's ‹ › load the tone, as the JD-Xi's buttons do (they only moved the list)
 - Requests and received SysEx are logged at DEBUG (the reading every two seconds would fill the log)
+- Programs go to the channel the JD-Xi takes them on (SYSTEM › Program Ctrl Ch, read at start);
+  the status bar says what to change on the JD-Xi when it takes no program changes
+- The keyboard window's tone arrows loaded the preset before the one shown
+- Programs: «Load A02» under the library
+- Closing after «Discard the changes» with the keyboard always on top (the dialog was cancelled)
+- A DT1 for one parameter (sent by the JD-Xi) no longer sets every other parameter of the
+  editor to 0
+- **Help › Self-test with the JD-Xi…**: the app loads a program and tones, edits a value and
+  undoes it, changes the octave and plays a note, and checks each result on the JD-Xi; then
+  asks you to choose a tone, press OCTAVE and play on the JD-Xi and checks that the window
+  follows. A report is saved in `~/.jdxi_studio/reports`
 
 ### Recipes
 - The side panel of the other tabs: what the page is for, and for the row chosen its part,

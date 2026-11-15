@@ -54,6 +54,16 @@ Senza domande (solo i punti 1–3): `--auto`. Solo le porte: `--list`.
 
 ---
 
+## 1b. Autotest dentro l'app (5 minuti) ★
+
+Aiuto › **Autotest con il JD-Xi…** › Avvia. L'app carica un programma e dei toni, modifica e
+annulla un valore, cambia ottava e suona una nota, verificando ogni risultato sul JD-Xi; poi ti
+chiede di agire sul JD-Xi (TONE, OCTAVE, qualche nota) e controlla che la finestra segua. Alla
+fine ricarica il programma iniziale e salva un resoconto in `~/.jdxi_studio/reports`: allegalo
+al tuo resoconto.
+
+---
+
 ## 2. Avvio e collegamento (5 minuti) ★
 
 | | Fai | Deve succedere |
