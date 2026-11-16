@@ -68,7 +68,7 @@ al tuo resoconto.
 
 | | Fai | Deve succedere |
 |---|---|---|
-| 2.1 | Avvia JD-Xi Studio | Splash con il logo, «Versione 1.0.0-alpha.N» uguale a quella installata; nessun messaggio d'errore |
+| 2.1 | Avvia JD-Xi Studio | Splash con il logo, «Versione 1.0.0-beta.N» uguale a quella installata; nessun messaggio d'errore |
 | 2.2 | Finestra MIDI all'avvio (o Modifica › Configurazione MIDI) | Ingresso e uscita **JD-Xi** già scelti; la finestra è davanti alle altre, anche con la tastiera fissata in primo piano |
 | 2.3 | Guarda la barra in alto a destra dell'editor | «JD-Xi collegato» in verde; il nome del programma corrente del JD-Xi nel display |
 | 2.4 | Aiuto › Visualizzatore log | Il log di questa sessione (con data e ora nel nome); scheda *Avvisi ed errori* vuota o quasi; **nessuna** riga «MIDI output port is not open» o «No reply to RQ1» |
@@ -88,7 +88,7 @@ al tuo resoconto.
 | 3.6 | All'avvio, senza toccare nulla | Entro 2–3 secondi il display mostra il programma e il tono della parte del JD-Xi (non «Init Tone»); gli slider del pannello sono sui valori del tono |
 | 3.7 | Scegli la parte nell'app, poi cambia tono **dal JD-Xi** | Entro ~2 secondi il display mostra il nuovo tono e gli slider si spostano sui suoi valori |
 | 3.8 | OCTAVE −/+ **sul JD-Xi** | Entro ~2 secondi si accende Octave − o + nell'app |
-| 3.9 | Suona sulla tastiera del JD-Xi | I tasti corrispondenti si illuminano nella finestra (con l'ottava spostata, quelli dell'ottava suonata) |
+| 3.9 | Suona sulla tastiera del JD-Xi, poi ripeti con OCTAVE +1 e −1 | Nella finestra si illuminano i tasti nella stessa posizione di quelli premuti, a ogni ottava (anche il Do più alto e il più basso); rilasciati, si spengono |
 | 3.10 | Nella scheda di un tono, frecce ‹ › del pannello preset | Il JD-Xi carica subito il tono (come i suoi tasti); cliccando più volte di fila viene caricato solo quello su cui ti fermi |
 
 ---
@@ -104,7 +104,7 @@ Per ognuno: apri la scheda, aspetta la lettura (i controlli si allineano allo st
 | 4.2 ★ | Digital 1 | Cutoff e Resonance del FILTER di un partial; trascina un punto dell'inviluppo nel grafico | Lo senti cambiare subito; il grafico e le manopole restano allineati |
 | 4.3 | Digital 1 | Partial 2 e 3 on/off; selezione del partial | Si sentono/spariscono gli strati; le schede *OSC · FILTER · AMP* / *LFO · MOD LFO · MISC* (schermo basso) restano sulla stessa per tutti i partial |
 | 4.4 | Digital 2 | Come 4.1 su Digital 2 | Cambia solo Digital 2 (canale 2) |
-| 4.5 ★ | **Analog** | Preset, poi Cutoff, Resonance, LFO Rate; trascina il grafico del filtro | Lo senti cambiare; badge «ANALOG» in alto a sinistra |
+| 4.5 ★ | **Analog** | Preset, poi Cutoff, Resonance, LFO Rate; trascina il grafico del filtro; Annulla (Ctrl+Z); scrivi un nome in *Tone Name* | Lo senti cambiare e tornare indietro con Annulla; badge «ANALOG» in alto a sinistra; il nuovo nome sul display del JD-Xi |
 | 4.6 ★ | **Drums** | Scegli un kit; clicca un pad, cambia Pitch e Level del pad | Suona il pad scelto e cambia solo lui |
 | 4.7 | Effetti | Effect 1 su Distortion, poi Thru; Delay Time; Reverb tipo HALL1 | Lo senti; il riquadro di Effect 1 è alto quanto il tipo scelto (Thru: piccolo) |
 | 4.8 | Effetto voce | Vocoder on, Auto Pitch con un tipo e una tonalità (serve un microfono sul JD-Xi) | Senza microfono: annota **—** |
@@ -211,7 +211,7 @@ Ripeti 4.1, 4.5, 4.7, 6.1 e 8.1 su ogni schermo che usi (es. 1080p al 125%, 2496
 Copia e compila (una riga per passo eseguito):
 
 ```
-Versione: 1.0.0-alpha.N   Data:            Schermo: 1920x1080 125%   Firmware JD-Xi:
+Versione: 1.0.0-beta.N    Data:            Schermo: 1920x1080 125%   Firmware JD-Xi:
 Script: OK __ / KO __ / saltati __        (allega il file .md)
 
 | Passo | Esito | Note |
