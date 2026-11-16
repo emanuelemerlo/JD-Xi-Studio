@@ -419,3 +419,34 @@ def test_the_mod_wheel_stays_where_it_is_left(window, monkeypatch):
     settle()
     assert wheel.get_value() == 0.5
     wheel.set_value(0.0)
+
+
+def _cc(window, channel, control, value):
+    receive(window, mido.Message("control_change", channel=channel, control=control, value=value))
+
+
+def test_the_jdxis_knobs_move_the_panel_sliders(window, monkeypatch):
+    out = _wheel_output(window, monkeypatch)
+    sliders = window.panel_sliders
+    window._select_synth(JDXiSynth.DIGITAL_SYNTH_1)
+    settle()
+    _cc(window, 0, 102, 90)  # Cutoff, partial 1
+    _cc(window, 0, 103, 10)  # partial 2: the sliders show partial 1
+    _cc(window, 0, 105, 40)  # Resonance
+    _cc(window, 0, 117, 100)  # Level
+    _cc(window, 0, 16, 77)  # LFO Rate
+    assert [sliders[n].value() for n in ("cutoff", "resonance", "level", "lfo_rate")] == [90, 40, 100, 77]
+    for lsb, name, value in ((124, "envelope", 33), (21, "lfo_amp", 80)):
+        for control, v in ((99, 0), (98, lsb), (6, value), (99, 127), (98, 127)):
+            _cc(window, 0, control, v)
+        assert sliders[name].value() == value
+    _cc(window, 2, 102, 5)  # the Analog's knob: not the part shown
+    assert sliders["cutoff"].value() == 90
+    _cc(window, 15, 12, 64)  # Reverb (effects: any channel)
+    _cc(window, 15, 13, 20)  # Delay
+    assert (sliders["reverb"].value(), sliders["delay"].value()) == (64, 20)
+    window._select_synth(JDXiSynth.ANALOG_SYNTH)
+    settle()
+    _cc(window, 2, 102, 5)
+    assert sliders["cutoff"].value() == 5
+    assert out == []  # nothing sent back

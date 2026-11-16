@@ -93,6 +93,16 @@ ANALOG_SLIDERS = {
     "lfo_amp": 0x14,
 }
 
+# The JD-Xi's knobs (MIDI Implementation, "Control Change Message List", knob
+# operation) -> panel slider. A Digital tone's knob sends one controller per
+# partial: the window's sliders show partial 1 (102, 105...), as they do from
+# the SysEx values. The effects' knobs are not a part's (any channel).
+KNOB_CC = {102: "cutoff", 105: "resonance", 117: "level", 16: "lfo_rate"}
+KNOB_CC_EFFECTS = {12: "reverb", 13: "delay"}
+KNOB_NRPN = {(0, 124): "envelope", (0, 15): "lfo_pitch", (0, 18): "lfo_filter", (0, 21): "lfo_amp"}
+CC_NRPN_LSB, CC_NRPN_MSB, CC_DATA_ENTRY = 98, 99, 6
+NRPN_NULL = 127
+
 
 def _zone_request(area: str) -> str:
     return create_request(TEMPORARY_PROGRAM_RQ11_HEADER, area, "00 00 00 23")
@@ -158,6 +168,7 @@ class InstrumentFollower(QObject):
         self._part = None
         self._recent_channels: list = []
         self._part_followed_at = -FOLLOW_PAUSE_S
+        self._nrpn: Dict[int, list] = {}  # channel -> [msb, lsb] chosen by CC 99/98
 
         self.timer = QTimer(self)
         self.timer.setInterval(POLL_INTERVAL_MS)
@@ -259,6 +270,8 @@ class InstrumentFollower(QObject):
             self.show_wheel("pitch_wheel", value_from_pitch(message.pitch))
         elif kind == "control_change" and message.control == MODULATION_CC:
             self.show_wheel("mod_wheel", message.value / 127)
+        elif kind == "control_change":
+            self.knob_moved(message.channel, message.control, message.value)
         elif kind == "program_change":
             channel = getattr(message, "channel", None)
             if channel == program_channel.channel():
@@ -383,6 +396,40 @@ class InstrumentFollower(QObject):
             slider.setValueSilently(value)
             if hasattr(slider, "update_style"):
                 slider.update_style(value)
+
+    def knob_moved(self, channel: int, control: int, value: int) -> None:
+        """A knob turned on the JD-Xi (CC or NRPN): the window's slider follows it
+        at once; the editors get the value with the next reading."""
+        if control == CC_NRPN_MSB:
+            self._nrpn[channel] = [value, None]
+            return
+        if control == CC_NRPN_LSB:
+            self._nrpn.setdefault(channel, [None, None])[1] = value
+            return
+        if control in KNOB_CC_EFFECTS:
+            self._show_knob(KNOB_CC_EFFECTS[control], value)
+            return
+        part = self.current_part()
+        if part is None or channel != PARTS[part][0]:
+            return  # another part's knobs, or a part not shown
+        if control == CC_DATA_ENTRY:
+            msb, lsb = self._nrpn.get(channel, [None, None])
+            if msb is not None and lsb is not None and NRPN_NULL not in (msb, lsb):
+                name = KNOB_NRPN.get((msb, lsb))
+                if name:
+                    self._show_knob(name, value)
+        elif control in KNOB_CC:
+            self._show_knob(KNOB_CC[control], value)
+
+    def _show_knob(self, name: str, value: int) -> None:
+        slider = (getattr(self.window, "panel_sliders", None) or {}).get(name)
+        if slider is None or getattr(slider.slider, "isSliderDown", lambda: False)():
+            return
+        inner = slider.slider
+        value = max(inner.minimum(), min(inner.maximum(), value))
+        slider.setValueSilently(value)
+        if hasattr(slider, "update_style"):
+            slider.update_style(value)
 
     # ------------------------------------------------------------ keys
     def light_key(self, note: int, on: bool, channel: Optional[int] = None) -> None:
