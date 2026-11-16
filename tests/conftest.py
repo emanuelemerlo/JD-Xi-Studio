@@ -18,6 +18,7 @@ or set JDXI_TEST_REAL_MIDI=1.
 
 from __future__ import annotations
 
+import gc
 import os
 from typing import Callable, Optional
 
@@ -151,6 +152,15 @@ def pytest_configure(config) -> None:
         rtmidi.MidiIn = FakeMidiIn
         rtmidi.MidiOut = FakeMidiOut
     _discard_unsaved_changes()
+    # As in the app, no garbage collection in other threads (the request queue's):
+    # a cycle with Qt objects collected there crashed the macOS runner
+    gc.disable()
+
+
+def pytest_runtest_teardown(item, nextitem) -> None:
+    from jdxi_editor.ui.main_thread_gc import collect_if_due
+
+    collect_if_due()
 
 
 

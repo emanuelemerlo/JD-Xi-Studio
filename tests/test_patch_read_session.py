@@ -131,8 +131,9 @@ class _JsonOnlyHelper(QObject):
 
 
 def _pump(seconds=0.05, until=None):
-    """Process events for `seconds`, or up to 2 s until `until()` is true (slow CI runners)."""
-    end = time.monotonic() + (2.0 if until is not None else seconds)
+    """Process events for `seconds`, or up to 10 s until `until()` is true (slow CI runners:
+    the shared request queue may still be sending what earlier tests asked for)."""
+    end = time.monotonic() + (10.0 if until is not None else seconds)
     while time.monotonic() < end:
         _APP.processEvents()
         if until is not None and until():
