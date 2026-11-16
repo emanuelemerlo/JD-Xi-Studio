@@ -47,3 +47,8 @@ work the program now does (FluidSynth playback, MIDI to PDF, drum-track detectio
 replaced by the current editors. None was documented. They stay in the history: list them with
 `git show --stat <commit of "Remove 131 modules nothing imports">` and get one back with
 `git show 523e81d8ef0042121f61bb2414a8003130894a8f:<path> > <path>`.
+
+In 1.0.0b1 the old editors, which the app no longer opened (Digital, Drums, Effects, Vocal FX, Arpeggio
+and Analog, before Analog moved to the v2 framework), were removed with the 78 widget and data modules
+only they imported (found with an import graph from `jdxi_editor.main`). Commit `aeba993` ("Consolidate
+the editors") lists them; get one back with `git show aeba993~1:<path> > <path>`.

@@ -11,7 +11,7 @@ pattern sequencer, the effects and the vocoder, on the computer screen instead o
 > [JDXI-Editor](https://github.com/markxbrooks/JDXI-Editor) by **Mark Brooks**, on which it is based
 > (MIT licence). It goes its own way: a new interface for desktop screens with every parameter of
 > Roland's manuals, presets and SysEx addresses checked against those manuals, offline mode (no JD-Xi
-> needed), English and Italian, and Windows builds from CI. Releases, issues and the app's update
+> needed), English and Italian, Windows builds from CI and a one-command install on Linux and macOS. Releases, issues and the app's update
 > check use [this repository](https://github.com/emanuelemerlo/JD-Xi-Studio).
 
 <p align="center">
@@ -160,10 +160,10 @@ macOS and Linux use `install.sh` (above).
 
 ### Releasing
 
-1. Set the version in `jdxi_editor/project.py` (`__version__ = "1.0.0a5"`, PEP 440) and add its
+1. Set the version in `jdxi_editor/project.py` (`__version__ = "1.0.0b1"`, PEP 440) and add its
    section to `CHANGELOG.md`; merge into `main`.
 2. **Actions › Release › Run workflow** on `main`. The workflow runs the tests, builds the Windows
-   installer, the portable app and the Python wheel, creates the tag (`v1.0.0-alpha.5`) and the
+   installer, the portable app and the Python wheel, creates the tag (`v1.0.0-beta.1`) and the
    release (a pre-release for alpha, beta and rc), attaches every file and publishes it.
 3. Verify it on the instrument: [`doc/hardware-test-plan.md`](doc/hardware-test-plan.md) (the
    automatic part is `python scripts/hardware_check.py`, with the app closed).

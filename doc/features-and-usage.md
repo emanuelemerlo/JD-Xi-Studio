@@ -1,46 +1,13 @@
 # JD-Xi Studio Features and Usage
 
-This document covers recent changes, patch loading/saving, and SoundFont usage.
+This document covers patch loading/saving, undo and unsaved changes, and SoundFont usage.
 
 ---
 
-## 1. Recent Changes (from Changelog)
+## 1. Recent Changes
 
-### Arpeggiator SysEx Sync
-
-- **Bidirectional SysEx**: Arpeggio Editor receives and displays incoming Program Controller SysEx; requests data on show
-- **Parameter mapping**: `(TEMPORARY_PROGRAM, CONTROLLER)` → `ArpeggioParam` for correct parsing
-- **Value handling**: Fixed ComboBox vs Slider in `_dispatch_sysex_to_area` (ComboBox uses raw MIDI value; Slider uses display value)
-- **Patch apply**: `send_json_patch_to_instrument` handles CONTROLLER for Arpeggio patches
-- **RQ1 request**: `MidiRequests.PROGRAM_CONTROLLER` for address 18 00 40 00, size 0x0C (12 bytes)
-
-### Effects Editor (Phases 1–6)
-
-- **Delay & Reverb**: Full parameter set with Time/Note mode, Note dropdown, HF Damp
-- **Compressor**: Side Chain, Side Sync switches; Side Note as coarse_tune combo
-- **Polymorphic UI**: Effect 1 and Effect 2 use QStackedWidget—one page per effect type
-- **Layout**: 2-column grid (EFX1|EFX2, Delay|Reverb)
-- **Phaser**: Renamed "Center Freq" to "Resonance" (0x21)
-- **Polish**: Tooltips for key controls; "Balance [dry->wet]" labeling
-
-### Vocal Effects (Phases 1–3)
-
-- **Addresses** (Program Common, MIDI Implementation p. 9): Program Tempo 0x11 (4 nibbled bytes), Vocal Effect 0x16, Vocal Effect Number 0x1C, Vocal Effect Part 0x1D, Auto Note Switch 0x1E
-- **SysEx routing**: apply_lmb_offset routes ProgramCommonParam to LMB=COMMON
-- **VocalFXParam**: Fixed convert_to_midi/convert_from_midi for Pan, Gender, Octave
-- **Data on show**: Requests PROGRAM_COMMON and PROGRAM_VOCAL_EFFECT; receives COMMON and VOCAL_EFFECT SysEx
-- **Polymorphic UI**: QStackedWidget for OFF/VOCODER/AUTO-PITCH; 3 tabs — Common, Vocoder & Auto Pitch, Mixer
-
-### Pattern Editor — MIDI Load/Save (Phases 1–4)
-
-- **4×16 step grid**: Four parts (Digital 1, Digital 2, Analog, Drums), 16 steps per measure, multiple measures
-- **Load from file**: File → Load MIDI… or Load button; loads notes into steps with correct note/velocity/duration
-- **Load from MidiFileEditor**: "Load into Pattern Editor" loads the current MIDI file into the Pattern Editor
-- **Save**: File → Save Pattern… or Save button; pre-fills with loaded file path when available; preserves PPQ from loaded file
-- **Tooltips**: Active notes show note names (e.g. C4, CLAP) in tooltips after load and on edit
-- **Part muting**: Mute/unmute each of the four parts
-- **USB File Recording**: Widget for recording patterns to USB (when JD-Xi is connected)
-- **Data consistency**: Steps stay in sync with measure data for copy/paste; PPQ synced from loaded file
+What changed in each version is in [CHANGELOG.md](../CHANGELOG.md). (This section used to describe
+the internals of the first editors, replaced in 1.0 by the current ones.)
 
 ---
 
@@ -59,13 +26,14 @@ This document covers recent changes, patch loading/saving, and SoundFont usage.
 
 1. **File → Save Patch...** — Open the file dialog
 2. Choose format by extension: `.jsz`, `.msz`, `.syx`, or `.json`
-3. **.jsz / .msz**: Saves all editor parameters as JSON in a ZIP; `.msz` also includes the loaded MIDI file (if any)
+3. **.jsz / .msz**: Saves each block of the JD-Xi's memory as JSON in a ZIP, in raw MIDI values with its
+   DT1 (see [MSZ Bundle Format](msz-bundle-format.md)); `.msz` also includes the loaded MIDI file (if any)
 4. **.syx**: Converts current UI values to SysEx DT1 messages and writes binary; compatible with SysEx librarians and other Roland editors
 
 ### Load Flow
 
 1. **File → Load Patch...** — Select a file
-2. **.jsz / .msz**: Extracts JSON files, sends each to the instrument via SysEx
+2. **.jsz / .msz**: Extracts the JSON files and sends each block's DT1 to the instrument as saved
 3. **.json**: Sends single patch to the instrument
 4. **.syx**: Reads binary, splits on F0…F7 boundaries, sends each SysEx message to the instrument
 
