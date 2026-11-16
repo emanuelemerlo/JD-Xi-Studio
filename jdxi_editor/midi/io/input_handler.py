@@ -296,14 +296,11 @@ class MidiInHandler(MidiIOController):
                 self.device.received(message.bytes())
 
             handler = handler_map.get(message.type)
+            if handler is not None:
+                handler(message, self.preset_data)  # unified handler signature
 
-            if handler is None:
-                log.message(f"Unhandled MIDI message type: {message.type}")
-                return
-
-            # Unified handler signature
-            handler(message, self.preset_data)
-
+            # Every message reaches the window (pitch bend for its wheel, the
+            # activity indicator...), also those no handler decodes
             self.midi_message_incoming.emit(message)
 
         except Exception as ex:

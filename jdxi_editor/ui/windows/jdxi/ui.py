@@ -575,7 +575,7 @@ class JDXiWindow(QMainWindow):
         layout.addStretch()
         layout.addLayout(build_wheel_label_row())
         layout.addStretch()
-        layout.addLayout(build_wheel_row(midi_helper=self.midi_helper))
+        layout.addLayout(build_wheel_row(midi_helper=self.midi_helper, owner=self))
         layout.addStretch()
         layout.addLayout(self._build_midi_indicator_row())
         return layout
