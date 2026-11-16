@@ -18,10 +18,6 @@ MIDI_ROOT = Path(__file__).resolve().parent.parent / "jdxi_editor" / "midi"
 
 ALLOWED = {
     # midi module (relative to jdxi_editor/midi) -> ui modules it imports
-    "data/effects/sysex/dispatcher.py": {
-        "jdxi_editor.ui.widgets.controls.registry",
-        "jdxi_editor.ui.widgets.writer",
-    },
     "data/parameter/analog/spec.py": {"jdxi_editor.ui.style"},
     "data/parameter/digital/spec.py": {"jdxi_editor.ui.style"},
     "io/controller.py": {"jdxi_editor.ui.windows.jdxi.helpers.port"},

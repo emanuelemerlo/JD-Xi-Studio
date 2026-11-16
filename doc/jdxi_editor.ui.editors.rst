@@ -7,11 +7,6 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   jdxi_editor.ui.editors.analog
-   jdxi_editor.ui.editors.arpeggio
-   jdxi_editor.ui.editors.digital
-   jdxi_editor.ui.editors.drum
-   jdxi_editor.ui.editors.effects
    jdxi_editor.ui.editors.helpers
    jdxi_editor.ui.editors.io
    jdxi_editor.ui.editors.pattern

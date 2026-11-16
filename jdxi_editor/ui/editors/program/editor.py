@@ -64,7 +64,7 @@ from jdxi_editor.midi.sysex.request.data import SYNTH_PARTIAL_MAP
 from jdxi_editor.midi.sysex.request.midi_requests import MidiRequests
 from jdxi_editor.midi.sysex.sections import SysExSection
 from jdxi_editor.ui.common import JDXi, QVBoxLayout, QWidget
-from jdxi_editor.ui.editors.digital.utils import filter_sysex_keys, get_partial_number
+from jdxi_editor.ui.editors.helpers.sysex_keys import filter_sysex_keys, get_partial_number
 from jdxi_editor.ui.editors.playlist.editor import PlaylistEditor
 from jdxi_editor.ui.editors.playlist.table import PlaylistTable
 from jdxi_editor.ui.editors.preset.type import PresetTitle

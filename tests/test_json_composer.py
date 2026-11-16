@@ -1,88 +1,53 @@
+"""
+Saving the Analog editor (no MIDI hardware).
+
+The composer writes the Analog block in raw MIDI values with its name: the
+values of an old bundle (display values, tests/fixtures) shown in the editor
+come out of the composer as the same MIDI values.
+"""
+
 import json
 import tempfile
 import unittest
 from pathlib import Path
 
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QApplication, QWidget
+from PySide6.QtWidgets import QApplication
 
-from jdxi_editor.midi.io.helper import MidiIOHelper
+from jdxi_editor.midi.io.helper import MidiIOHelper, patch_json_tone_name
 from jdxi_editor.midi.sysex.json_composer import JDXiJSONComposer
-from jdxi_editor.ui.editors import AnalogSynthEditor
+from jdxi_editor.midi.sysex.patch_values import VALUE_FORMAT, VALUE_FORMAT_MIDI, upgrade_legacy_section
+from jdxi_editor.ui.v2.analog import AnalogToneEditor
 
-_app = None
-
-
-def get_qapp():
-    global _app
-    if _app is None:
-        _app = QApplication.instance()
-        if _app is None:
-            _app = QApplication([])
-    return _app
+_APP = QApplication.instance() or QApplication([])
+FIXTURE = Path(__file__).parent / "fixtures" / "jdxi_tone_data_19420000.json"
+NAME = "Toxic Bass 1"
 
 
 class TestJDXiJSONComposer(unittest.TestCase):
     def setUp(self):
-        get_qapp()
-        self.composer = JDXiJSONComposer()
-        self.output_json_file = None
-        self.temp_folder = None
-        self._container = QWidget()
-        self._container.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose, False)
-        self._editor = None
-
-    def test_compose_analog_synth_json_file(self):
-        midi_helper = MidiIOHelper()
-        editor = AnalogSynthEditor(midi_helper, parent=self._container)
-        editor.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose, False)
-        editor.show()
-        QApplication.processEvents()
-        self._editor = editor
-
-        with tempfile.TemporaryDirectory() as temp_dir:
-            temp_folder = Path(temp_dir)
-            self.temp_folder = temp_folder
-            output_json_file = self.composer.process_editor(editor, temp_folder)
-            self.output_json_file = output_json_file
-
-            self.assertTrue(
-                output_json_file.exists(),
-                f"Output JSON file not found: {output_json_file}",
-            )
-
-            with open(output_json_file, "r", encoding="utf-8") as f:
-                generated_data = json.load(f)
-
-            expected_json_path = (
-                Path(__file__).parent / "fixtures" / "jdxi_tone_data_19420000.json"
-            )
-            self.assertTrue(
-                expected_json_path.exists(),
-                f"Expected JSON file not found: {expected_json_path}",
-            )
-
-            with open(expected_json_path, "r", encoding="utf-8") as f:
-                expected_data = json.load(f)
-
-            self.assertEqual(set(generated_data.keys()), set(expected_data.keys()))
-            for key, expected_value in expected_data.items():
-                self.assertEqual(
-                    generated_data[key],
-                    expected_value,
-                    f"Mismatch for key {key!r}",
-                )
+        self.editor = AnalogToneEditor(MidiIOHelper())
 
     def tearDown(self):
-        if self._editor is not None:
-            self._editor.close()
-            self._editor.setParent(None)
-            self._editor.deleteLater()
-            self._editor = None
-        if self._container is not None:
-            self._container.deleteLater()
-            self._container = None
+        self.editor.close()
+        self.editor.deleteLater()
         QApplication.processEvents()
+
+    def test_compose_analog_synth_json_file(self):
+        values = upgrade_legacy_section(json.loads(FIXTURE.read_text(encoding="utf-8")))
+        values.update({f"TONE_NAME_{i}": ord(c) for i, c in enumerate(NAME, 1)})
+        block = self.editor.blocks[0]
+        self.assertGreater(self.editor.apply_values(block, values), 40)
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output = JDXiJSONComposer().process_editor(self.editor, Path(temp_dir))
+            self.assertEqual(output.name, FIXTURE.name)
+            saved = json.loads(output.read_text(encoding="utf-8"))
+
+        self.assertEqual(saved["ADDRESS"], "19420000")
+        self.assertEqual(saved[VALUE_FORMAT], VALUE_FORMAT_MIDI)
+        self.assertEqual(patch_json_tone_name(saved), NAME)
+        for spec in block.params:  # the old bundle has no LFO_SHAPE: shown as 0
+            self.assertEqual(saved[spec.name], values.get(spec.name, 0), spec.name)
 
 
 if __name__ == "__main__":

@@ -4,7 +4,6 @@ SysEx request pacing and echo suppression (no MIDI hardware).
 - the shared queue sends one RQ1 at a time, waits for its reply, and drops
   duplicates
 - data received from the JD-Xi is not written back to it
-- received pitch envelope times reach the sliders as MIDI values
 """
 
 import json
@@ -30,13 +29,6 @@ _DT1_DIGITAL1 = bytes.fromhex("F0 41 10 00 00 00 0E 12 19 01 00 00 01 66 F7")
 _CC = bytes([0xB0, 7, 100])
 
 # Digital 1 partial 3 as sent by the JD-Xi: Pitch Env Attack/Decay (07/08) = 10
-_DT1_D1_PARTIAL3 = (
-    "F0 41 10 00 00 00 0E 12 19 01 22 00 00 00 00 40 40 00 00 0A 0A 40 01 01 7F 40 "
-    "40 00 00 24 00 00 40 64 53 00 00 7F 00 40 00 51 00 11 00 00 40 40 40 40 00 58 "
-    "00 11 7F 00 50 40 40 40 49 4A 40 40 01 00 00 00 0E 00 00 52 40 07 F7"
-)
-
-
 def _hex(data) -> str:
     return " ".join(f"{b:02X}" for b in data)
 
@@ -162,46 +154,6 @@ class TestDeviceDataNotWrittenBack(unittest.TestCase):
     def test_user_edits_are_still_sent(self):
         self.assertTrue(self.helper.send_raw_message(_DT1_ANALOG))
         self.out.send_message.assert_called_once()
-
-
-class TestDigitalPitchEnvFromDevice(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QApplication.instance() or QApplication([])
-
-    def test_pitch_env_times_keep_the_received_midi_value(self):
-        from jdxi_editor.midi.data.digital.oscillator import DigitalOscillatorWidgetTypes
-        from jdxi_editor.midi.data.parameter.digital import DigitalPartialParam
-        from jdxi_editor.midi.sysex.parser.sysex import JDXiSysExParser
-        from jdxi_editor.ui.editors.digital.editor import DigitalSynthEditor
-
-        sent = []
-        helper = Mock()
-        helper.send_midi_message = Mock(
-            side_effect=lambda m: sent.append(m.to_message_list()) or True
-        )
-        editor = DigitalSynthEditor(
-            midi_helper=helper, preset_helper=Mock(), synth_number=1, parent=None
-        )
-        try:
-            sent.clear()
-            parsed = JDXiSysExParser().parse_bytes(bytes.fromhex(_DT1_D1_PARTIAL3))
-            editor.dispatch_sysex_to_area(json.dumps(parsed))
-            pitch_env = editor.partial_editors[3].oscillator_tab.widget_for(
-                DigitalOscillatorWidgetTypes.PITCH_ENV
-            )
-            for param in (
-                DigitalPartialParam.OSC_PITCH_ENV_ATTACK_TIME,
-                DigitalPartialParam.OSC_PITCH_ENV_DECAY_TIME,
-            ):
-                self.assertEqual(pitch_env.controls[param].slider.value(), 10)
-            # Anything the widgets emit carries the received value, not 127
-            for message in sent:
-                if list(message[8:11]) == [0x19, 0x01, 0x22] and message[11] in (7, 8):
-                    self.assertEqual(message[12], 10)
-        finally:
-            editor.close()
-            editor.deleteLater()
 
 
 if __name__ == "__main__":
