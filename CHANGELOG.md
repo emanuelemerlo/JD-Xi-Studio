@@ -4,6 +4,14 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+### Fixes (code review)
+- A .msz bundle can no longer write its MIDI file outside the temporary folder: it is always
+  extracted as `bundle.mid` there, whatever name the archive gives it
+- After an incomplete read, saving takes from the copy of the JD-Xi's memory only the sections
+  that read confirmed; a program chosen on the JD-Xi empties that copy
+- A connection whose output did not open is no longer reported as made (the input is closed)
+- A malformed MIDI message is logged without a second error in the handler
+
 # [1.0.0a5] — tag `v1.0.0-alpha.5` (the window follows the JD-Xi; self-test with the instrument)
 
 ### The window follows the JD-Xi (hardware tests, round 1)
