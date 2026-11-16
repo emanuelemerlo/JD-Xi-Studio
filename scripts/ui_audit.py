@@ -37,7 +37,8 @@ from PySide6.QtCore import QRect, Qt, QTimer  # noqa: E402
 from PySide6.QtWidgets import QAbstractButton, QApplication, QLabel, QSlider, QStyle, QStyleOptionSlider, QWidget  # noqa: E402
 
 PANEL_KEYS = {"digital1": "digital1", "digital2": "digital2", "analog": "analog", "drums": "drums", "arp": "arpeggio"}
-SLOW_MS = 400  # showing an editor that is already open
+SLOW_MS = 400  # showing an editor that is already open (its fastest showing: one slow
+# showing is a runner's hiccup, a slow editor is slow every time)
 SLOW_FIRST_MS = 4000  # building an editor the first time (Program parts, Settings, Recipes...); 2.6 s seen on a Windows runner
 
 
@@ -52,7 +53,7 @@ def text_of(widget) -> str:
     return ""
 
 
-def audit_navigation(app, window, problems: list[str], timings: dict[str, float]) -> None:
+def audit_navigation(app, window, problems: list[str], timings: dict[str, list[float]]) -> None:
     tabs = window.main_editor.editor_tab_widget
 
     def check(source: str, key: str) -> None:
@@ -82,7 +83,7 @@ def audit_navigation(app, window, problems: list[str], timings: dict[str, float]
         spin(app)
         ms = (time.perf_counter() - start) * 1000
         if exists:
-            timings[key] = max(timings.get(key, 0.0), ms)
+            timings.setdefault(key, []).append(ms)
         else:
             built[key] = ms
             if ms > SLOW_FIRST_MS:
@@ -107,9 +108,10 @@ def audit_navigation(app, window, problems: list[str], timings: dict[str, float]
                 timed(f"menu {top.text().replace('&', '')} > {action.text().replace('&', '')}", key, action.trigger)
     for key, ms in built.items():
         print(f"  building {key}: {ms:.0f} ms (first time)")
-    for key, ms in timings.items():
-        if ms > SLOW_MS:
-            problems.append(f"slow: showing the {key} editor took {ms:.0f} ms")
+    for key, times in timings.items():
+        if min(times) > SLOW_MS:
+            shown = ", ".join(f"{ms:.0f}" for ms in times)
+            problems.append(f"slow: showing the {key} editor took {shown} ms")
 
 
 def audit_panel(window, problems: list[str]) -> None:
@@ -188,7 +190,7 @@ def main() -> int:
     window = JDXiInstrument()
     window.show()
     problems: list[str] = []
-    timings: dict[str, float] = {}
+    timings: dict[str, list[float]] = {}
 
     def run():
         try:
@@ -203,8 +205,8 @@ def main() -> int:
     app.exec()
     scale = os.environ.get("QT_SCALE_FACTOR", "1")
     print(f"UI audit (scale {scale}, font DPI {os.environ.get('QT_FONT_DPI', 'system')}):")
-    for key, ms in sorted(timings.items(), key=lambda kv: -kv[1]):
-        print(f"  showing {key}: {ms:.0f} ms (slowest)")
+    for key, times in sorted(timings.items(), key=lambda kv: -max(kv[1])):
+        print(f"  showing {key}: {max(times):.0f} ms (slowest), {min(times):.0f} ms (fastest)")
     for problem in dict.fromkeys(problems):
         print(f"  PROBLEM {problem}")
     print(f"  {len(set(problems))} problem(s)")
