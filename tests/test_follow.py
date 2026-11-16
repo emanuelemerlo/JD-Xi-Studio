@@ -59,6 +59,13 @@ def analog_tone(name=b"Toxic Bass 3", octave=64, cutoff=0, resonance=0):
     return values
 
 
+def no_octave_shift(window):
+    """Analog with Octave 0 in its tone and in its program zone."""
+    receive(window, dt1([0x18, 0x00, 0x32, 0x00], [64] * 0x23))
+    receive(window, dt1([0x19, 0x42, 0x00, 0x00], analog_tone(octave=64)))
+    assert window.current_octave == 0
+
+
 def test_parse_dt1():
     message = dt1([0x19, 0x42, 0x00, 0x10], [1, 2, 3])
     assert parse_dt1(message.data) == ((0x19, 0x42, 0x00, 0x10), [1, 2, 3])
@@ -110,6 +117,8 @@ def test_slider_values_from_the_jdxi_are_not_sent_back(window, monkeypatch):
 
 
 def test_notes_played_on_the_jdxi_light_the_keys(window):
+    window._select_synth(JDXiSynth.ANALOG_SYNTH)
+    no_octave_shift(window)
     key = window.piano_keyboard._keys_by_note[60]
     receive(window, mido.Message("note_on", note=60, velocity=90, channel=2))
     assert key.is_pressed
@@ -118,6 +127,30 @@ def test_notes_played_on_the_jdxi_light_the_keys(window):
     receive(window, mido.Message("note_on", note=60, velocity=90, channel=0))
     receive(window, mido.Message("note_off", note=60, channel=0))
     assert not key.is_pressed
+
+
+def test_with_an_octave_shift_the_key_pressed_lights(window):
+    """The JD-Xi at Octave +1 sends its top C as 84: the window's top C lights."""
+    window._select_synth(JDXiSynth.ANALOG_SYNTH)
+    no_octave_shift(window)
+    receive(window, dt1([0x19, 0x42, 0x00, 0x00], analog_tone(octave=65)))
+    assert window.current_octave == 1
+    keys = window.piano_keyboard._keys_by_note
+    receive(window, mido.Message("note_on", note=84, velocity=90, channel=2))
+    assert keys[72].is_pressed
+    receive(window, mido.Message("note_on", note=60, velocity=90, channel=2))
+    assert keys[48].is_pressed and not keys[60].is_pressed
+    # the octave changes while the keys are held: the same keys go off
+    receive(window, dt1([0x19, 0x42, 0x00, 0x00], analog_tone(octave=63)))
+    assert window.current_octave == -1
+    receive(window, mido.Message("note_off", note=84, channel=2))
+    receive(window, mido.Message("note_off", note=60, channel=2))
+    assert not any(key.is_pressed for key in keys.values())
+    receive(window, mido.Message("note_on", note=24, velocity=90, channel=2))  # bottom C at -1
+    assert keys[36].is_pressed
+    receive(window, mido.Message("note_on", note=24, velocity=0, channel=2))
+    assert not keys[36].is_pressed
+    no_octave_shift(window)
 
 
 def test_poll_reads_the_part_shown(window, sent):
