@@ -43,6 +43,8 @@ from jdxi_editor.midi.sysex.request.data import (
 from jdxi_editor.midi.sysex.request.factory import create_request
 from jdxi_editor.midi.sysex.request.hex import JDXISysExHex
 from jdxi_editor.midi.sysex.request.midi_requests import MidiRequests
+from jdxi_editor.ui.widgets.wheel.mod import MODULATION_CC
+from jdxi_editor.ui.widgets.wheel.pitch import value_from_pitch
 
 STARTUP_DELAY_MS = 1200  # the ports are open and the window is drawn
 POLL_INTERVAL_MS = 2000
@@ -253,6 +255,10 @@ class InstrumentFollower(QObject):
             self.light_key(message.note, on, getattr(message, "channel", None))
             if on:
                 self.follow_part(getattr(message, "channel", None))
+        elif kind == "pitchwheel":
+            self.show_wheel("pitch_wheel", value_from_pitch(message.pitch))
+        elif kind == "control_change" and message.control == MODULATION_CC:
+            self.show_wheel("mod_wheel", message.value / 127)
         elif kind == "program_change":
             channel = getattr(message, "channel", None)
             if channel == program_channel.channel():
@@ -401,6 +407,12 @@ class InstrumentFollower(QObject):
                 return
         key.is_pressed = on
         key.update()
+
+    def show_wheel(self, name: str, value: float) -> None:
+        """The window's pitch or mod wheel shows where the JD-Xi's is."""
+        wheel = getattr(self.window, name, None)
+        if wheel is not None and hasattr(wheel, "show_value"):
+            wheel.show_value(value)
 
     def part_octave(self, channel: Optional[int]) -> int:
         """Octave shift of the part playing on *channel* (that of the part shown
