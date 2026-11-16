@@ -192,10 +192,19 @@ class MidiInHandler(MidiIOController):
             for message in p:
                 self._handle_midi_message(message)
         except Exception as ex:
-                log.error(
-                    f"Error in MIDI handler [{message.type}]: {type(ex).__name__}: {ex}",
-                    scope=self.__class__.__name__,
-                )
+            # *message* may still be the raw list from rtmidi (no .type): the log
+            # line must not raise in turn and hide the first error
+            kind = getattr(message, "type", None)
+            if kind is None:
+                try:
+                    raw = message[0] if isinstance(message, (list, tuple)) else message
+                    kind = " ".join(f"{int(b):02X}" for b in list(raw)[:16])
+                except Exception:
+                    kind = "?"
+            log.error(
+                f"Error in MIDI handler [{kind}]: {type(ex).__name__}: {ex}",
+                scope=self.__class__.__name__,
+            )
 
     def _emit_device_sysex_json(self, payload: str) -> None:
         """
@@ -580,6 +589,10 @@ class MidiInHandler(MidiIOController):
         """
         channel = message.channel + 1
         program_number = message.program
+        # A program or tone chosen on the JD-Xi: what the memory mirror holds is
+        # from before (it was cleared only when the app sent the change), and a
+        # patch saved now would take sections of the previous sound from it
+        self.device.received(message.bytes())
         log.message(
             f"Program Change - Channel: {channel}, Program: {program_number}",
             scope=self.__class__.__name__,
