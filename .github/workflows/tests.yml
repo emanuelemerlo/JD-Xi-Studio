@@ -8,10 +8,12 @@ on:
   # Also run by the Release and publish workflows before anything is uploaded
   workflow_call:
     inputs:
+      # macOS runs on its own (macos.yml, weekly): its runners can wait in the queue
+      # for hours, and a missing runner must not fail a PR or a release
       macos:
-        description: "'no' leaves macOS out (its runners can be slow to come or unavailable)"
+        description: "'no' (default): Linux and Windows; 'only': macOS alone; 'yes': all three"
         type: string
-        default: "yes"
+        default: "no"
 
 permissions:
   contents: read
@@ -33,16 +35,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # macOS left out only when a caller passes macos: "no" (a string: on a push
-        # inputs.macos is null, and null == false would be true in an expression)
-        os: ${{ fromJSON(inputs.macos == 'no' && '["ubuntu-latest","windows-latest"]' || '["ubuntu-latest","macos-latest","windows-latest"]') }}
-        python: ["3.11"]
-        include:
-          # The oldest and newest supported Pythons, on Linux
-          - os: ubuntu-latest
-            python: "3.10"
-          - os: ubuntu-latest
-            python: "3.12"
+        # On a push or a PR inputs.macos is null: Linux and Windows. Linux also runs the
+        # oldest and newest supported Pythons.
+        include: ${{ fromJSON(inputs.macos == 'only' && '[{"os":"macos-latest","python":"3.11"}]' || (inputs.macos == 'yes' && '[{"os":"ubuntu-latest","python":"3.11"},{"os":"windows-latest","python":"3.11"},{"os":"macos-latest","python":"3.11"},{"os":"ubuntu-latest","python":"3.10"},{"os":"ubuntu-latest","python":"3.12"}]' || '[{"os":"ubuntu-latest","python":"3.11"},{"os":"windows-latest","python":"3.11"},{"os":"ubuntu-latest","python":"3.10"},{"os":"ubuntu-latest","python":"3.12"}]')) }}
     steps:
       - uses: actions/checkout@v4
 
@@ -76,6 +71,7 @@ jobs:
 
   package:
     name: Build and check the packages
+    if: inputs.macos != 'only'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -1,0 +1,68 @@
+name: macOS tests
+
+# The tests on macOS, on their own: every Monday night and on demand (Actions ›
+# macOS tests › Run workflow). macOS runners can wait in the queue for hours, so
+# they are not part of the tests of PRs and pushes (a missing runner must not
+# fail them), and this run is never cancelled by another one.
+#
+# How it ends:
+# - success   the tests passed on macOS
+# - failure   real errors: the tests failed (or did not install) on macOS
+# - cancelled no macOS runner came (GitHub cancels a job after 24 hours in the
+#             queue): it is tried again automatically, up to 3 attempts in all
+on:
+  schedule:
+    - cron: "17 2 * * 1"  # Monday 02:17 UTC (03:17 or 04:17 in Italy)
+  workflow_dispatch:
+    inputs:
+      attempt:
+        description: "Attempt number (set by the automatic retries)"
+        type: string
+        default: "1"
+
+permissions:
+  contents: read
+  actions: write  # to start the next attempt when no runner came
+
+concurrency:
+  group: macos-tests
+  cancel-in-progress: false
+
+jobs:
+  tests:
+    uses: ./.github/workflows/tests.yml
+    with:
+      macos: "only"
+
+  verdict:
+    name: Verdict
+    needs: tests
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Real errors or no runner
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RESULT: ${{ needs.tests.result }}
+          ATTEMPT: ${{ inputs.attempt || '1' }}
+          MAX_ATTEMPTS: "3"
+        run: |
+          set -euo pipefail
+          case "$RESULT" in
+            success)
+              echo "### ✅ macOS: the tests passed (attempt $ATTEMPT)" >> "$GITHUB_STEP_SUMMARY" ;;
+            failure)
+              echo "### ❌ macOS: the tests failed — real errors, see the macos-latest job" >> "$GITHUB_STEP_SUMMARY"
+              echo "::error title=macOS tests::The tests failed on macOS (not a missing runner)"
+              exit 1 ;;
+            *)
+              echo "### ⏳ macOS: no runner came (job $RESULT) — not an error of the code" >> "$GITHUB_STEP_SUMMARY"
+              if [ "$ATTEMPT" -lt "$MAX_ATTEMPTS" ]; then
+                next=$((ATTEMPT + 1))
+                gh workflow run macos.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" -f attempt="$next"
+                echo "Attempt $next of $MAX_ATTEMPTS started." >> "$GITHUB_STEP_SUMMARY"
+              else
+                echo "No runner after $MAX_ATTEMPTS attempts: next try at the weekly run." >> "$GITHUB_STEP_SUMMARY"
+              fi
+              echo "::warning title=macOS tests::No macOS runner (attempt $ATTEMPT of $MAX_ATTEMPTS)" ;;
+          esac

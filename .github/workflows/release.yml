@@ -54,9 +54,8 @@ jobs:
     needs: prepare
     uses: ./.github/workflows/tests.yml
     with:
-      # the macOS runners were cancelled before starting (15 minutes in the queue);
-      # the app shipped here is the Windows one and the Python package, tested on
-      # Linux and Windows. macOS is still tested on every push to main.
+      # Linux and Windows (the default): the app shipped here is the Windows one and
+      # the Python package. macOS is tested every week on its own (macos.yml).
       macos: "no"
 
   windows:
