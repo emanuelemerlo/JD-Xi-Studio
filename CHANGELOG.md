@@ -11,6 +11,12 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - Fixed: letting go of the window's pitch wheel did not send it back to the centre (the JD-Xi
   stayed bent); the mod wheel sprang back to zero like a pitch wheel
 
+### Look
+- The window's keyboard marks middle C (a red dot and «C4») on the key that sounds it at the
+  current octave: the lower C with Octave +1, the top one with -1; none beyond the 37 keys
+- Logo, program icon and installer picture: the JD-Xi's big dial drawn as on the instrument, an
+  endless knob without a pointer, its category shown by the lit LED on the circle around it
+
 # [1.0.0b1] — tag `v1.0.0-beta.1` (first beta: one framework for the editors, install on Linux and macOS)
 
 ### Installing on Linux and macOS

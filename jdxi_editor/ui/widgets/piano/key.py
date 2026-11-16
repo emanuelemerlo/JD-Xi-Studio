@@ -18,7 +18,7 @@ Usage Example:
 Requires: PySide6.QtWidgets, PySide6.QtCore, PySide6.QtGui
 """
 
-from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QRect, Qt, Signal
+from PySide6.QtCore import QEasingCurve, QPointF, QPropertyAnimation, QRect, QRectF, Qt, Signal
 from PySide6.QtGui import (
     QColor,
     QLinearGradient,
@@ -49,6 +49,7 @@ class PianoKey(QPushButton):
         self.note_num = note_num
         self.is_black = is_black
         self.is_pressed = False
+        self.middle_c = False  # this key sounds middle C (C4) at the current octave
         self.setFixedSize(width, height)
         self.setFlat(True)
 
@@ -162,3 +163,32 @@ class PianoKey(QPushButton):
 
         painter.setPen(QPen(QColor(60, 60, 60), 1))
         painter.drawRect(0, 0, self.width() - 1, self.height() - 1)
+
+        if self.middle_c:
+            self._paint_middle_c(painter)
+
+    def _paint_middle_c(self, painter: QPainter) -> None:
+        """Middle C: a red dot near the front of the key and «C4» over it, in the
+        JD-Xi's red; it moves with the octave shift (see PianoKeyboard)."""
+        red = QColor("#ff2a1a")
+        w, h = self.width(), self.height()
+        radius = max(2.5, w * 0.16)
+        centre_y = h - 6 - radius - (4 if self.is_pressed else 0)
+        glow = QColor(red)
+        glow.setAlpha(70)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(glow)
+        painter.drawEllipse(QPointF(w / 2, centre_y), radius * 1.8, radius * 1.8)
+        painter.setBrush(red)
+        painter.drawEllipse(QPointF(w / 2, centre_y), radius, radius)
+        font = painter.font()
+        font.setPixelSize(max(7, int(w * 0.36)))
+        font.setBold(True)
+        painter.setFont(font)
+        painter.setPen(red.darker(115))
+        text_h = font.pixelSize() + 2
+        painter.drawText(
+            QRectF(0, centre_y - radius * 1.8 - text_h, w, text_h),
+            int(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignBottom),
+            "C4",
+        )

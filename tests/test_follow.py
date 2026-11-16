@@ -451,3 +451,18 @@ def test_the_jdxis_knobs_move_the_panel_sliders(window, monkeypatch):
     assert sliders["cutoff"].value() == 5
     # nothing sent back (the readings of the part selected are requests, RQ1)
     assert [m for m in out if not (m[0] == 0xF0 and m[7] == 0x11)] == []
+
+def test_middle_c_is_marked_where_it_sounds(window):
+    """The C4 mark sits on the key that sounds middle C at the octave shown."""
+    keys = window.piano_keyboard._keys_by_note
+
+    def marked():
+        return [note for note, key in keys.items() if key.middle_c]
+
+    for octave, where in ((0, [60]), (1, [48]), (-1, [72]), (2, [36]), (3, []), (-2, [])):
+        window.current_octave = octave
+        window._ui_update_octave()
+        assert marked() == where, octave
+    window.current_octave = 0
+    window._ui_update_octave()
+    assert marked() == [60]

@@ -2575,6 +2575,9 @@ class JDXiInstrument(JDXiWindow):
         """Update octave-related UI elements"""
         self.octave_down.setChecked(self.current_octave < 0)
         self.octave_up.setChecked(self.current_octave > 0)
+        keyboard = getattr(self, "piano_keyboard", None)
+        if keyboard is not None and hasattr(keyboard, "show_middle_c"):
+            keyboard.show_middle_c(self.current_octave)  # the C4 mark moves with the octave
         self._update_display()
         log.message(
             scope="JDXiInstrument",
