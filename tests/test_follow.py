@@ -449,4 +449,5 @@ def test_the_jdxis_knobs_move_the_panel_sliders(window, monkeypatch):
     settle()
     _cc(window, 2, 102, 5)
     assert sliders["cutoff"].value() == 5
-    assert out == []  # nothing sent back
+    # nothing sent back (the readings of the part selected are requests, RQ1)
+    assert [m for m in out if not (m[0] == 0xF0 and m[7] == 0x11)] == []

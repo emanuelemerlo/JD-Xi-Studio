@@ -4,6 +4,13 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+### The window follows the JD-Xi's controllers
+- The pitch and mod wheels in the window move with the JD-Xi's (nothing is sent back)
+- The panel sliders follow the JD-Xi's knobs as they turn (Cutoff, Resonance, Level, LFO Rate,
+  Envelope, LFO depths, Reverb, Delay), no longer a couple of seconds later
+- Fixed: letting go of the window's pitch wheel did not send it back to the centre (the JD-Xi
+  stayed bent); the mod wheel sprang back to zero like a pitch wheel
+
 # [1.0.0b1] — tag `v1.0.0-beta.1` (first beta: one framework for the editors, install on Linux and macOS)
 
 ### Installing on Linux and macOS

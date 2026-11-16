@@ -89,6 +89,8 @@ al tuo resoconto.
 | 3.7 | Scegli la parte nell'app, poi cambia tono **dal JD-Xi** | Entro ~2 secondi il display mostra il nuovo tono e gli slider si spostano sui suoi valori |
 | 3.8 | OCTAVE −/+ **sul JD-Xi** | Entro ~2 secondi si accende Octave − o + nell'app |
 | 3.9 | Suona sulla tastiera del JD-Xi, poi ripeti con OCTAVE +1 e −1 | Nella finestra si illuminano i tasti nella stessa posizione di quelli premuti, a ogni ottava (anche il Do più alto e il più basso); rilasciati, si spengono |
+| 3.9a | Muovi la leva pitch e la rotella mod del JD-Xi; poi muovi quelle della finestra e lasciale | Le rotelle della finestra seguono quelle del JD-Xi; la leva pitch della finestra, lasciata, torna al centro e il suono torna intonato; la mod resta dove la lasci |
+| 3.9b | Con Digital 1 mostrato, gira sul JD-Xi Cutoff, Resonance, Level, LFO Rate e le manopole degli effetti (Reverb, Delay) | Gli slider della finestra si muovono subito con le manopole (non dopo un paio di secondi) |
 | 3.10 | Nella scheda di un tono, frecce ‹ › del pannello preset | Il JD-Xi carica subito il tono (come i suoi tasti); cliccando più volte di fila viene caricato solo quello su cui ti fermi |
 
 ---
