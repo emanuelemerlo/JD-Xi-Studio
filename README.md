@@ -79,8 +79,19 @@ Windows 10 or 11, 64-bit. The files are not signed yet: if SmartScreen warns, ch
 "More info" → "Run anyway".
 
 ### macOS and Linux
-No packages yet: install it with Python (below), or build a package with `python -m building.buildsys`
-(see [Building](#-building)).
+One command installs the newest release in its own Python environment and adds JD-Xi Studio to
+the applications (the menu on Linux, `~/Applications` on macOS); nothing goes system-wide and no
+`sudo` is needed:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/emanuelemerlo/JD-Xi-Studio/main/install.sh | bash
+```
+
+Run it again to update; `... | bash -s -- --uninstall` removes the app (settings and patches stay),
+`--version v1.0.0-beta.1` installs a given release. It needs Python 3.10–3.13 and a few libraries
+(PortAudio, ALSA on Linux; Homebrew's `portaudio` on macOS): when one is missing it stops and shows
+the command to install it. FluidSynth is optional (the SoundFont player). The macOS part has not been
+tried on a Mac yet: reports welcome.
 
 ### Python 🐍
 Python 3.10 to 3.13, in a virtual environment. Each release also carries the wheel; or install
@@ -144,6 +155,8 @@ iscc /DMyAppVersion=<version> jdxi_editor.iss        # -> dist\installer\
 ```
 
 macOS (`--dmg`, `--app`, `--pkg`) and Linux (.deb and AppImage): `python -m building.buildsys`.
+These come from the original project and are not maintained yet (names, paths): to install on
+macOS and Linux use `install.sh` (above).
 
 ### Releasing
 

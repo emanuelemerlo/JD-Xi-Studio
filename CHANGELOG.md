@@ -4,6 +4,17 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+### Installing on Linux and macOS
+- `install.sh`: one command installs the newest release (or a given one) in its own Python
+  environment, with a launcher in the applications menu (Linux) or `~/Applications` (macOS) and a
+  `jdxi-studio` command; it checks the libraries needed and shows how to install the missing ones;
+  run again to update, `--uninstall` to remove (settings and patches stay). Tried on Linux; the macOS
+  part is untested
+
+### Fixes
+- A crash that could happen at any moment (seen on macOS): Python's garbage collector could run in
+  the MIDI request thread and destroy Qt objects there; it now runs on the main thread only
+
 ### Consolidation of the editors
 - The Analog editor is built on the same framework as the Digital, Drums and Effects editors:
   one way to send, receive, save and undo for every tone editor; its tone name is saved in the
