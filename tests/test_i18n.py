@@ -44,8 +44,8 @@ def test_italian_texts(italian):
     assert i18n.current_language() == "it"
     assert i18n.tr("&Edit") == "&Modifica"
     assert i18n.tr("MIDI connection") == "Collegamento MIDI"
-    text = i18n.tr("Loading {partial_name} ({count} of {total})")
-    assert text.format(partial_name="SD1", count=6, total=37) == "Caricamento di SD1 (6 di 37)"
+    text = i18n.tr("Song {n} of {count} · {state}")
+    assert text.format(n=6, count=37, state="▶") == "Brano 6 di 37 · ▶"
     # anything without a translation stays in English
     assert i18n.tr("Cutoff") == "Cutoff"
 
