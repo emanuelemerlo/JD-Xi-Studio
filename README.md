@@ -137,7 +137,10 @@ python -m pip install -e ".[dev]"
 python -m jdxi_editor.main
 ```
 
-Tests: `pytest tests` (Qt runs off screen with `QT_QPA_PLATFORM=offscreen`).
+Tests: `pytest tests` (Qt runs off screen with `QT_QPA_PLATFORM=offscreen`). On GitHub they run on
+Linux and Windows for every PR and push; macOS runs on its own every Monday night and on demand
+(**Actions › macOS tests**): red is a real error, grey means no macOS runner came (retried
+automatically, up to three times).
 `python scripts/ui_audit.py` checks the interface without clicking every control (navigation,
 buttons lit, text that does not fit, labels not centred). After changing interface strings run
 `python -m building.i18n update`, translate the `.ts` files, then `python -m building.i18n compile`.
