@@ -149,7 +149,7 @@ class InstrumentFollower(QObject):
         self.window = window
         self.midi_helper = window.midi_helper
         self._last_input = 0.0
-        self._lit: Dict[int, object] = {}
+        self._lit: Dict[tuple, object] = {}  # (channel, note received) -> key lit
         # per part: octave as stored in the tone and in the program zone
         self._tone_octave: Dict[str, int] = {}
         self._zone_octave: Dict[str, int] = {}
@@ -250,7 +250,7 @@ class InstrumentFollower(QObject):
         kind = getattr(message, "type", None)
         if kind in ("note_on", "note_off"):
             on = kind == "note_on" and getattr(message, "velocity", 0) > 0
-            self.light_key(message.note, on)
+            self.light_key(message.note, on, getattr(message, "channel", None))
             if on:
                 self.follow_part(getattr(message, "channel", None))
         elif kind == "program_change":
@@ -379,14 +379,38 @@ class InstrumentFollower(QObject):
                 slider.update_style(value)
 
     # ------------------------------------------------------------ keys
-    def light_key(self, note: int, on: bool) -> None:
-        keyboard = getattr(self.window, "piano_keyboard", None)
-        keys = getattr(keyboard, "_keys_by_note", None) or {}
-        key = keys.get(note)
-        if key is None:
-            return
+    def light_key(self, note: int, on: bool, channel: Optional[int] = None) -> None:
+        """Light the window's key under the finger: with an octave shift the JD-Xi
+        sends its keys an octave or more away, and the window's keyboard (always
+        the 37 keys of the JD-Xi) shows the key that was pressed. A key lit stays
+        the one turned off, also if the octave changes while it is held."""
+        if on:
+            keyboard = getattr(self.window, "piano_keyboard", None)
+            keys = getattr(keyboard, "_keys_by_note", None) or {}
+            key = keys.get(note - 12 * self.part_octave(channel))
+            previous = self._lit.pop((channel, note), None)
+            if previous is not None and previous is not key:
+                previous.is_pressed = False
+                previous.update()
+            if key is None:
+                return
+            self._lit[(channel, note)] = key
+        else:
+            key = self._lit.pop((channel, note), None)
+            if key is None:
+                return
         key.is_pressed = on
         key.update()
+
+    def part_octave(self, channel: Optional[int]) -> int:
+        """Octave shift of the part playing on *channel* (that of the part shown
+        when the channel is not a part's)."""
+        part = next((p for p, (ch, _t, _z) in PARTS.items() if ch == channel), None)
+        if part is None or part == self.current_part():
+            octave = getattr(self.window, "current_octave", 0)
+            return octave if isinstance(octave, int) else 0
+        zone = self._zone_octave.get(part)
+        return zone if zone else (self._tone_octave.get(part) or 0)
 
     # ------------------------------------------------------------ app input
     def eventFilter(self, watched, event) -> bool:

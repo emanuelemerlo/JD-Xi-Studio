@@ -20,6 +20,11 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - A connection whose output did not open is no longer reported as made (the input is closed)
 - A malformed MIDI message is logged without a second error in the handler
 
+### Fixes
+- With an octave shift on the JD-Xi the keys played light in the window where they are pressed
+  (the JD-Xi sends them an octave or more away: the shifted octave did not light, or lit the
+  wrong key); a key held while the octave changes still goes off
+
 # [1.0.0a5] — tag `v1.0.0-alpha.5` (the window follows the JD-Xi; self-test with the instrument)
 
 ### The window follows the JD-Xi (hardware tests, round 1)
