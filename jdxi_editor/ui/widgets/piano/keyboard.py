@@ -207,6 +207,21 @@ class PianoKeyboard(QWidget):
             if hasattr(self.parent(), "handle_piano_note_off"):
                 black_key.noteOff.connect(self.parent().handle_piano_note_off)
 
+        self.show_middle_c(0)
+
+    MIDDLE_C = 60
+
+    def show_middle_c(self, octave: int = 0) -> None:
+        """Mark the key that sounds middle C (C4) on the JD-Xi at *octave*: with
+        Octave +1 it is the lower C, with -1 the top one; beyond the 37 keys
+        (+2, -2...) no key is marked."""
+        target = self.MIDDLE_C - 12 * int(octave or 0)
+        for note, key in self._keys_by_note.items():
+            marked = note == target
+            if key.middle_c != marked:
+                key.middle_c = marked
+                key.update()
+
     def set_midi_channel(self, channel: int) -> None:
         """Set MIDI channel for note messages
 

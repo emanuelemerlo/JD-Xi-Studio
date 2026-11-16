@@ -98,13 +98,17 @@ def lcd(p: QPainter, rect: QRectF, text: str, glyph=None) -> None:
         p.drawText(inner.translated(dx, 0), Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft, text)
 
 
-def knob(p: QPainter, c: QPointF, r: float, angle: float = -40, ring: str | None = None) -> None:
+def knob(
+    p: QPainter, c: QPointF, r: float, angle: float = -40, ring: str | None = None, pointer: bool = True
+) -> None:
     g = QRadialGradient(c.x() - r * 0.3, c.y() - r * 0.4, r * 1.4)
     g.setColorAt(0, QColor("#4a4d55"))
     g.setColorAt(1, QColor("#16171a"))
     p.setPen(QPen(QColor(ring) if ring else QColor("#05060a"), 2 if ring else 1.2))
     p.setBrush(g)
     p.drawEllipse(c, r, r)
+    if not pointer:
+        return
     a = math.radians(angle - 90)
     p.setPen(QPen(QColor("#f2f2f2"), max(1.5, r * 0.14), Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap))
     p.drawLine(c, QPointF(c.x() + math.cos(a) * r * 0.75, c.y() + math.sin(a) * r * 0.75))
@@ -155,6 +159,34 @@ def red_knob(p: QPainter, c: QPointF, r: float, angle: float) -> None:
     knob(p, c, r, angle)
 
 
+# The categories around the JD-Xi's big dial, clockwise from the top
+CATEGORIES = ("Vocoder/Auto Pitch", "Brass", "Seq", "FX/Other", "Keyboard", "Bass", "Lead", "Strings/Pad")
+
+
+def category_dial(p: QPainter, c: QPointF, r: float, lit: int = CATEGORIES.index("Bass")) -> None:
+    """The JD-Xi's big dial: an endless knob with click stops, no pointer; its
+    position is the category LED lit on the white circle around it."""
+    ring = r * 1.34
+    p.setPen(QPen(QColor("#d9d9d9"), max(1.2, r * 0.045)))
+    p.setBrush(Qt.BrushStyle.NoBrush)
+    p.drawEllipse(c, ring, ring)
+    knob(p, c, r, pointer=False)
+    led = max(1.6, r * 0.12)
+    for i in range(len(CATEGORIES)):
+        a = math.radians(i * 45 - 90)
+        centre = QPointF(c.x() + math.cos(a) * ring, c.y() + math.sin(a) * ring)
+        if i == lit:
+            glow = QRadialGradient(centre, led * 3.6)
+            glow.setColorAt(0, QColor(255, 42, 26, 210))
+            glow.setColorAt(1, QColor(255, 42, 26, 0))
+            p.setPen(Qt.PenStyle.NoPen)
+            p.setBrush(glow)
+            p.drawEllipse(centre, led * 3.6, led * 3.6)
+        p.setPen(QPen(QColor("#0b0b0c"), max(1.0, led * 0.45)))
+        p.setBrush(RED if i == lit else QColor("#4a0f0a"))
+        p.drawEllipse(centre, led, led)
+
+
 def red_button(p: QPainter, r: QRectF, lit: bool) -> None:
     p.fillPath(rounded(r, 3), QColor("#0b0b0c"))
     p.setPen(QPen(RED if lit else QColor("#7a1a12"), 2.4))
@@ -193,13 +225,13 @@ def panel_top(w: int = 1000, h: int = 560) -> QImage:
     red_knob(p, QPointF(70, 262), 26, 20)  # master volume
     for i in range(4):  # tempo, octave
         red_button(p, QRectF(150 + i * 48, 250, 36, 28), i == 3)
-    # centre: part select column and the big vocoder knob
+    # centre: part select column and the big category dial
     for i in range(4):
         c = QPointF(390, 60 + i * 50)
         p.setPen(QPen(RED if i == 0 else QColor("#7a1a12"), 3))
         p.setBrush(QColor("#0b0b0c"))
         p.drawEllipse(c, 15, 15)
-    red_knob(p, QPointF(500, 110), 44, 60)
+    category_dial(p, QPointF(500, 110), 44)
     for i in range(4):
         red_button(p, QRectF(372 + i * 50, 250, 36, 28), i == 0)
     # right: filter, amp, LFO, effects

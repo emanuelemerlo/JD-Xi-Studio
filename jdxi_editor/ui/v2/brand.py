@@ -7,6 +7,8 @@ as the instrument's panel. The original JDXI-Editor logo stays with the original
 
 from __future__ import annotations
 
+import math
+
 from PySide6.QtCore import QPointF, QRectF, Qt
 from PySide6.QtGui import QColor, QFont, QIcon, QLinearGradient, QPainter, QPainterPath, QPen, QPixmap
 
@@ -52,11 +54,35 @@ def draw_mark(size: int = 256) -> QPixmap:
     for i in range(bars):  # the display's text, as red segments
         w = (display.width() - 20 * s) / bars
         p.drawRoundedRect(QRectF(display.left() + 10 * s + i * w, display.top() + 10 * s, w - 6 * s, 10 * s), 2 * s, 2 * s)
-    # knobs with their red ring
-    knobs = [QPointF(184 * s, 56 * s)] if not small else []
-    knobs += [QPointF(x * s, 110 * s) for x in ((60, 128, 196) if not small else (78, 178))]
-    for i, c in enumerate(knobs):
-        r = (30 if i == 0 and not small else 22) * s
+    # the big category dial: an endless knob, no pointer; the category LED lit
+    # on the white circle around it shows where it is (Bass, as in the manual)
+    if not small:
+        c, r = QPointF(184 * s, 52 * s), 23 * s
+        ring = r * 1.36
+        p.setPen(QPen(QColor("#d9d9d9"), max(1.0, 1.6 * s)))
+        p.setBrush(Qt.BrushStyle.NoBrush)
+        p.drawEllipse(c, ring, ring)
+        p.setPen(QPen(QColor("#3a3c41"), max(1.0, 1.5 * s)))
+        p.setBrush(QColor("#111214"))
+        p.drawEllipse(c, r, r)
+        led = max(1.2, 3.4 * s)
+        for i in range(8):
+            a = math.radians(i * 45 - 90)
+            dot = QPointF(c.x() + math.cos(a) * ring, c.y() + math.sin(a) * ring)
+            lit = i == 5  # Bass
+            if lit:
+                halo = QColor(red)
+                halo.setAlpha(90)
+                p.setPen(Qt.PenStyle.NoPen)
+                p.setBrush(halo)
+                p.drawEllipse(dot, led * 2.2, led * 2.2)
+            p.setPen(Qt.PenStyle.NoPen)
+            p.setBrush(red if lit else QColor("#4a0f0a"))
+            p.drawEllipse(dot, led, led)
+    # the other knobs, with their red ring and pointer
+    knobs = [QPointF(x * s, 110 * s) for x in ((60, 128, 196) if not small else (78, 178))]
+    for c in knobs:
+        r = 22 * s
         p.setPen(QPen(red, max(1.2, 5 * s)))
         p.setBrush(QColor("#111214"))
         p.drawEllipse(c, r, r)
