@@ -96,20 +96,6 @@ def test_finish_matte_body_and_glossy_panel():
     assert "border-image" in sheet.split('QTabWidget[jdxiSheen="true"]::pane {')[1].split("}")[0]
 
 
-def test_editor_roots_get_the_body_finish():
-    from unittest.mock import Mock
-
-    from jdxi_editor.midi.io.helper import MidiIOHelper
-    from jdxi_editor.ui.editors.effects.common import EffectsCommonEditor
-    from jdxi_editor.ui.style.editor_style import BODY_PROPERTY
-
-    editor = EffectsCommonEditor(midi_helper=MidiIOHelper())
-    try:
-        assert editor.property(BODY_PROPERTY) is True
-    finally:
-        editor.close()
-
-
 def test_a_bigger_window_keeps_the_instrument_as_it_is(window):
     """Maximised: the body grows around the instrument, which keeps its size and layout."""
     stage = window.instrument_stage

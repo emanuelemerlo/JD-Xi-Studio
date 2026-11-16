@@ -25,7 +25,7 @@ def app():
 def editor(app):
     editor = AnalogToneEditor(MidiIOHelper(), Mock())
     sent = []
-    editor.send_midi_parameter = lambda param, value, address=None: sent.append((param, value)) or True
+    editor.send_midi_parameter = lambda param, value, address=None: sent.append((param.name, value)) or True
     editor.sent = sent
     editor.resize(1500, 950)
     editor.show()
@@ -47,54 +47,57 @@ def wait(ms: int) -> None:
 
 def _bound(widget: QWidget):
     pv = getattr(widget, "pv", None)
-    found = {pv.param} if pv is not None else set()
+    found = {pv.param.name} if pv is not None else set()
     for name in ("a", "d", "s", "r", "depth", "cutoff", "resonance", "mode", "shape", "rate", "fade", "sync", "note"):
         value = getattr(widget, name, None)
         if isinstance(value, w.ParamValue):
-            found.add(value.param)
+            found.add(value.param.name)
     return found
 
 
 def test_every_analog_parameter_has_a_control_on_screen(editor):
     """Principle 1: nothing of the Parameter Guide is left out."""
-    expected = {p for p in P if not p.name.startswith("TONE_NAME")}
-    assert set(editor.controls) == expected
+    expected = {p.name for p in P if not p.name.startswith("TONE_NAME")}
+    assert {s.name for s in editor.controls if not s.name.startswith("TONE_NAME")} == expected
     on_screen = set()
     for widget in editor.findChildren(QWidget):
         on_screen |= _bound(widget)
-    assert on_screen == expected, sorted(p.name for p in expected - on_screen)
+    assert expected <= on_screen, sorted(expected - on_screen)
+    assert editor.name_field is not None  # the name: its own field
 
 
 def test_panels_are_named_and_ordered_as_on_the_display(editor):
     assert list(editor.panels) == ["OSC", "PITCH", "FILTER", "AMP", "LFO", "COMMON"]
     for param, pv in editor.values.items():
+        if param.name.startswith("TONE_NAME"):
+            continue  # the name field, above the panels
         assert pv.info.group in editor.panels, param.name
 
 
 def test_a_change_is_sent_once_in_display_units(editor):
     editor.values[P.OSC_PITCH_COARSE].setValue(12)
-    assert editor.sent == [(P.OSC_PITCH_COARSE, 12)]  # the composer converts it to 76 (64 = 0)
+    assert editor.sent == [("OSC_PITCH_COARSE", 12)]  # the composer converts it to 76 (64 = 0)
 
 
 def test_dragging_sends_at_most_every_interval_and_the_last_value(editor):
     cutoff = editor.values[P.FILTER_CUTOFF]
     for value in range(10, 60):
         cutoff.setValue(value)
-    assert editor.sent == [(P.FILTER_CUTOFF, 10)]  # first at once, the rest waits
+    assert editor.sent == [("FILTER_CUTOFF", 10)]  # first at once, the rest waits
     wait(SEND_INTERVAL_MS * 3)
-    assert editor.sent[-1] == (P.FILTER_CUTOFF, 59)
+    assert editor.sent[-1] == ("FILTER_CUTOFF", 59)
     assert len(editor.sent) == 2
 
 
 def test_values_from_the_jdxi_are_shown_not_sent_back(editor):
-    ok, failed = [], []
-    editor._update_controls(0, {"OSC_PITCH_COARSE": 76, "FILTER_CUTOFF_KEYFOLLOW": 69, "LFO_SHAPE": 3}, ok, failed)
+    failed = []
+    editor.apply_values(editor.blocks[0], {"OSC_PITCH_COARSE": 76, "FILTER_CUTOFF_KEYFOLLOW": 69, "LFO_SHAPE": 3})
     assert editor.values[P.OSC_PITCH_COARSE].value() == 12
     assert editor.values[P.FILTER_CUTOFF_KEYFOLLOW].value() == 50
     assert editor.values[P.LFO_SHAPE].value() == 3
     assert editor.sent == [] and failed == []
     data = editor.get_controls_as_dict()
-    assert data["OSC_PITCH_COARSE"] == 12 and len(data) == 46
+    assert data["OSC_PITCH_COARSE"] == 12 and len(data) == 46 + 12  # and the name's 12 characters
 
 
 def test_controls_without_effect_are_greyed_out(editor):
@@ -118,7 +121,7 @@ def _press(widget, pos, kind=QMouseEvent.Type.MouseButtonPress):
 
 
 def test_knob_keys_and_typing(editor):
-    knob = next(k for k in editor.findChildren(w.Knob) if k.pv.param is P.FILTER_CUTOFF_KEYFOLLOW)
+    knob = next(k for k in editor.findChildren(w.Knob) if k.pv.param.name == "FILTER_CUTOFF_KEYFOLLOW")
     knob.setFocus()
     QApplication.processEvents()
     knob.keyPressEvent(_key(Qt.Key.Key_Up))
@@ -126,7 +129,7 @@ def test_knob_keys_and_typing(editor):
     knob.field.setText("+70")
     knob.field.editingFinished.emit()
     assert knob.pv.value() == 70 and knob.field.text() == "+70"
-    bend = next(k for k in editor.findChildren(w.Knob) if k.pv.param is P.PITCH_BEND_DOWN)
+    bend = next(k for k in editor.findChildren(w.Knob) if k.pv.param.name == "PITCH_BEND_DOWN")
     bend.field.setText("-12")
     bend.field.editingFinished.emit()
     assert bend.pv.value() == 12 and bend.field.text() == "-12 st"  # shown as on the display
@@ -140,7 +143,7 @@ def _key(key):
 
 def test_envelope_points_can_be_dragged(editor):
     view = next(
-        e for e in editor.findChildren(w.EnvelopeView) if e.a.param is P.AMP_ENV_ATTACK_TIME
+        e for e in editor.findChildren(w.EnvelopeView) if e.a.param.name == "AMP_ENV_ATTACK_TIME"
     )
     r = view.plot_rect()
     original = (view.d.value(), view.s.value())

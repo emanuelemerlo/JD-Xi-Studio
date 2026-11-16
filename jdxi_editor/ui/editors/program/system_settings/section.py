@@ -22,7 +22,7 @@ from jdxi_editor.midi.io.helper import MidiIOHelper
 from jdxi_editor.midi.sysex.request.midi_requests import MidiRequests
 from jdxi_editor.midi.sysex.sections import SysExSection
 from jdxi_editor.ui.common import JDXi, QVBoxLayout
-from jdxi_editor.ui.editors.digital.utils import filter_sysex_keys
+from jdxi_editor.ui.editors.helpers.sysex_keys import filter_sysex_keys
 from jdxi_editor.ui.editors.synth.base import SynthBase
 from jdxi_editor.ui.widgets.editor.helper import create_group_with_layout
 from picomidi.sysex.parameter.address import AddressParameter
