@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from unittest.mock import Mock
 
+import time
 import mido
 import pytest
 from PySide6.QtWidgets import QApplication
@@ -366,6 +367,90 @@ def test_a_reading_on_its_way_does_not_undo_an_edit(window):
     assert len(editor.history._undo) == steps + 1
     assert editor.history.undo() and pv.value() == 44
 
+
+def _wheel_output(window, monkeypatch):
+    out = []
+    monkeypatch.setattr(window.midi_helper, "midi_out", object(), raising=False)
+    monkeypatch.setattr(window.midi_helper, "send_raw_message", lambda m: out.append(list(m)) or True)
+    monkeypatch.setattr(
+        window.midi_helper, "send_control_change", lambda cc, v, channel=0: out.append(["cc", cc, v, channel]) or True
+    )
+    return out
+
+
+def test_the_jdxis_wheels_move_the_windows_without_echo(window, monkeypatch):
+    out = _wheel_output(window, monkeypatch)
+    receive(window, mido.Message("pitchwheel", channel=0, pitch=8191))
+    assert window.pitch_wheel.get_value() == pytest.approx(1.0, abs=0.001)
+    receive(window, mido.Message("pitchwheel", channel=2, pitch=-4096))
+    assert window.pitch_wheel.get_value() == pytest.approx(-0.5)
+    receive(window, mido.Message("control_change", channel=0, control=1, value=127))
+    assert window.mod_wheel.get_value() == pytest.approx(1.0)
+    receive(window, mido.Message("control_change", channel=0, control=1, value=0))
+    assert window.mod_wheel.get_value() == 0.0
+    receive(window, mido.Message("pitchwheel", channel=0, pitch=0))
+    assert window.pitch_wheel.get_value() == 0.0
+    assert out == []  # nothing sent back to the JD-Xi
+
+
+def test_the_pitch_wheel_sends_its_return_to_the_centre(window, monkeypatch):
+    from jdxi_editor.ui.widgets.wheel.pitch import bend_from_value
+
+    out = _wheel_output(window, monkeypatch)
+    wheel = window.pitch_wheel
+    wheel.set_value(0.5)  # dragged
+    assert out[-3:] == [[0xE0 + ch, bend_from_value(0.5) & 0x7F, bend_from_value(0.5) >> 7] for ch in (0, 1, 2)]
+    wheel._drag_active = True
+    wheel.mouseReleaseEvent(None)  # let go: it springs back
+    deadline = time.monotonic() + 2
+    while wheel.get_value() != 0.0 and time.monotonic() < deadline:
+        QApplication.processEvents()
+    assert wheel.get_value() == 0.0
+    assert out[-3:] == [[0xE0 + ch, 0x00, 0x40] for ch in (0, 1, 2)]  # centre: 8192
+
+
+def test_the_mod_wheel_stays_where_it_is_left(window, monkeypatch):
+    out = _wheel_output(window, monkeypatch)
+    wheel = window.mod_wheel
+    wheel.set_value(0.5)
+    assert out == [["cc", 1, 64, ch] for ch in (0, 1, 2)]
+    wheel._drag_active = True
+    wheel.mouseReleaseEvent(None)
+    settle()
+    assert wheel.get_value() == 0.5
+    wheel.set_value(0.0)
+
+
+def _cc(window, channel, control, value):
+    receive(window, mido.Message("control_change", channel=channel, control=control, value=value))
+
+
+def test_the_jdxis_knobs_move_the_panel_sliders(window, monkeypatch):
+    out = _wheel_output(window, monkeypatch)
+    sliders = window.panel_sliders
+    window._select_synth(JDXiSynth.DIGITAL_SYNTH_1)
+    settle()
+    _cc(window, 0, 102, 90)  # Cutoff, partial 1
+    _cc(window, 0, 103, 10)  # partial 2: the sliders show partial 1
+    _cc(window, 0, 105, 40)  # Resonance
+    _cc(window, 0, 117, 100)  # Level
+    _cc(window, 0, 16, 77)  # LFO Rate
+    assert [sliders[n].value() for n in ("cutoff", "resonance", "level", "lfo_rate")] == [90, 40, 100, 77]
+    for lsb, name, value in ((124, "envelope", 33), (21, "lfo_amp", 80)):
+        for control, v in ((99, 0), (98, lsb), (6, value), (99, 127), (98, 127)):
+            _cc(window, 0, control, v)
+        assert sliders[name].value() == value
+    _cc(window, 2, 102, 5)  # the Analog's knob: not the part shown
+    assert sliders["cutoff"].value() == 90
+    _cc(window, 15, 12, 64)  # Reverb (effects: any channel)
+    _cc(window, 15, 13, 20)  # Delay
+    assert (sliders["reverb"].value(), sliders["delay"].value()) == (64, 20)
+    window._select_synth(JDXiSynth.ANALOG_SYNTH)
+    settle()
+    _cc(window, 2, 102, 5)
+    assert sliders["cutoff"].value() == 5
+    # nothing sent back (the readings of the part selected are requests, RQ1)
+    assert [m for m in out if not (m[0] == 0xF0 and m[7] == 0x11)] == []
 
 def test_middle_c_is_marked_where_it_sounds(window):
     """The C4 mark sits on the key that sounds middle C at the octave shown."""
