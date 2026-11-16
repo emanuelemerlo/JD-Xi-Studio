@@ -28,9 +28,9 @@ def app():
 
 
 def _fake_record(self):
-    """Record until stopped (or ~2 s), then report the file once."""
+    """Record until stopped (or ~10 s), then report the file once."""
     self.running = True
-    for _ in range(200):
+    for _ in range(1000):
         if not self.running:
             break
         threading.Event().wait(0.01)
@@ -64,8 +64,9 @@ def test_replaced_recording_is_stopped_and_kept_alive(app):
         assert len(helpers._running_threads) == 2  # first is still referenced
         second = recorder.usb_recording_thread
         try:
-            # first was told to stop: it saves well before its ~2 s would end
-            assert _wait_until(lambda: finished == ["first.wav"], 1500)
+            # first was told to stop: it saves well before its ~10 s would end
+            # (slow CI runners take a while to deliver the signal)
+            assert _wait_until(lambda: finished == ["first.wav"], 5000)
         finally:
             second.stop_recording()
             second.wait(3000)

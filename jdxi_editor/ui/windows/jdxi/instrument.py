@@ -91,19 +91,7 @@ from jdxi_editor.midi.sysex.sections import SysExSection
 from jdxi_editor.project import __package_name__
 from jdxi_editor.ui.dialogs.about import UiAboutDialog
 from jdxi_editor.ui.dialogs.settings import UiPreferencesDialog
-from jdxi_editor.ui.editors import (
-    AnalogSynthEditor,
-    ArpeggioEditor,
-    DigitalSynthEditor,
-    DrumCommonEditor,
-    EffectsCommonEditor,
-    ProgramEditor,
-    VocalFXEditor,
-)
 from jdxi_editor.ui.editors.config import EditorConfig
-from jdxi_editor.ui.editors.digital.editor import (
-    DigitalSynth2Editor,
-)
 from jdxi_editor.ui.editors.helpers.program import (
     calculate_midi_values,
     get_program_id_by_name,
@@ -412,7 +400,7 @@ class JDXiInstrument(JDXiWindow):
                 return
             if data.get(SysExSection.SYNTH_TONE) not in ("COMMON", "VOCAL_EFFECT"):
                 return
-            vocal_editor = self.get_existing_editor(VocalFXEditor)
+            vocal_editor = self.get_existing_editor(VocalEffectEditor)
             if vocal_editor and hasattr(vocal_editor, "_dispatch_sysex_to_area"):
                 vocal_editor.dispatch_sysex_to_area(json_sysex_data)
         except (json.JSONDecodeError, TypeError):
@@ -1324,18 +1312,11 @@ class JDXiInstrument(JDXiWindow):
                 self.get_preset_helper_for_current_synth()
                 if editor_class
                 in {
-                    ArpeggioEditor,
-                    DigitalSynthEditor,
-                    DigitalSynth2Editor,
-                    AnalogSynthEditor,
                     AnalogToneEditor,
-                    DrumCommonEditor,
                     PatternSequenceEditor,
                     ProgramEditor,
                     PresetEditor,
                     MidiFilePlayer,
-                    VocalFXEditor,
-                    EffectsCommonEditor,
                     EffectsEditor,
                     ProgramPartsEditor,
                     DigitalToneEditor,
@@ -1504,18 +1485,11 @@ class JDXiInstrument(JDXiWindow):
                 self.get_preset_helper_for_current_synth()
                 if editor_class
                 in [
-                    ArpeggioEditor,
-                    DigitalSynthEditor,
-                    DigitalSynth2Editor,
-                    AnalogSynthEditor,
                     AnalogToneEditor,
-                    DrumCommonEditor,
                     PatternSequenceEditor,
                     ProgramEditor,
                     PresetEditor,
                     MidiFilePlayer,
-                    VocalFXEditor,
-                    EffectsCommonEditor,
                     EffectsEditor,
                     ProgramPartsEditor,
                     DigitalToneEditor,

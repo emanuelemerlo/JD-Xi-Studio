@@ -7,10 +7,13 @@ screen (46, plus Pitch Env Velocity Sens from the MIDI Implementation), drawn
 where a picture helps, and an information panel for the parameter under the
 pointer.
 
-It inherits the whole MIDI side of AnalogSynthEditor (presets, requests,
-incoming SysEx, .syx import/export, patch files): only the widgets change.
-Each parameter is a ParamValue in ``self.controls``; changes are sent at most
-every SEND_INTERVAL_MS while dragging, and the last value always goes out.
+Built on the v2 framework like Digital and Drums (tone_editor_base): one block,
+the Analog tone at 19 42 00 00, a PSpec per parameter. Values from the JD-Xi
+are read straight from its DT1 messages (a whole block or one parameter);
+changes are sent at most every SEND_INTERVAL_MS while dragging, and the last
+value always goes out. (It used to inherit the old AnalogSynthEditor: its own
+receiving path and value model.) ``editor.values`` takes an AnalogParam as key
+as well as a PSpec.
 """
 
 from __future__ import annotations
@@ -19,28 +22,26 @@ import random
 from typing import Optional
 
 from decologr import Decologr as log
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
-    QScrollArea,
     QVBoxLayout,
     QWidget,
 )
 
+from dataclasses import dataclass
 from jdxi_editor.i18n import tr
+from jdxi_editor.core.synth.type import JDXiSynth
+from jdxi_editor.midi.data.address.address import JDXiSysExAddress
 from jdxi_editor.midi.data.parameter.analog.address import AnalogParam
-from jdxi_editor.ui.editors.analog.editor import AnalogSynthEditor
-from jdxi_editor.ui.editors.synth.base import SynthBase
-from jdxi_editor.ui.preset.widget import InstrumentPresetWidget
-from jdxi_editor.ui.v2.params import ParamValue, analog_info
+from jdxi_editor.ui.v2.framework import Block, NameField, PSpec, rq1, tone_editor_base
+from jdxi_editor.ui.v2.params import ParamInfo, ParamValue, analog_info
 from jdxi_editor.ui.v2.widgets import (
     Card,
     ChoiceButtons,
     EnvelopeView,
     FilterCurveView,
-    InfoHub,
-    InfoPanel,
     Knob,
     LfoView,
     NoteCombo,
@@ -54,143 +55,117 @@ SEND_INTERVAL_MS = 25
 
 
 
-class AnalogToneEditor(AnalogSynthEditor):
+ANALOG_ADDRESS = (0x19, 0x42, 0x00, 0x00)
+ANALOG_SIZE = 0x40
+NAME_LENGTH = 12
+
+
+@dataclass(eq=False)
+class AnalogSpec(PSpec):
+    """An Analog parameter: its information is the Analog editor's own (analog_info)."""
+
+    param_info: Optional[ParamInfo] = None
+
+    def info(self, group: str, area: str = "TONE") -> ParamInfo:
+        return self.param_info if self.param_info is not None else super().info(group, area)
+
+
+def analog_block() -> Block:
+    """The Analog tone (Temporary Tone 19 42 00 00): its name, then every parameter."""
+    params: list[PSpec] = [
+        PSpec(f"TONE_NAME_{i + 1}", i, f"Name {i + 1}", lo=32, hi=127,
+              description=tr("Name of the tone (12 characters)."), page=12)
+        for i in range(NAME_LENGTH)
+    ]
+    infos = analog_info()
+    for param in AnalogParam:
+        info = infos.get(param.name)
+        if info is None:  # the name's characters: above
+            continue
+        lo, hi = param.get_display_value()
+        factor = 10 if param.name.endswith("_KEYFOLLOW") else 1  # -100..+100 in steps of 10
+        raw_offset = param.convert_to_midi(lo) - lo // factor
+        params.append(AnalogSpec(param.name, param.address, info.label, lo=lo, hi=hi,
+                                 raw_offset=raw_offset, factor=factor, choices=tuple(info.choices),
+                                 param_info=info))
+    return Block("COMMON", "TONE", JDXiSysExAddress(*ANALOG_ADDRESS), params,
+                 request=rq1(list(ANALOG_ADDRESS), ANALOG_SIZE))
+
+
+class AnalogValues(dict):
+    """The editor's values by PSpec, and by AnalogParam for the code that names them so."""
+
+    def __init__(self, values: dict, by_name: dict):
+        super().__init__(values)
+        self._by_name = by_name
+
+    def _key(self, key):
+        return self._by_name.get(key.name, key) if isinstance(key, AnalogParam) else key
+
+    def __getitem__(self, key):
+        return super().__getitem__(self._key(key))
+
+    def __contains__(self, key) -> bool:
+        return super().__contains__(self._key(key))
+
+    def get(self, key, default=None):
+        return super().get(self._key(key), default)
+
+
+class AnalogToneEditor(tone_editor_base()):
     """The Analog Synth tone, every parameter on one screen."""
 
-    def update_instrument_image(self) -> None:
-        """The preset's category as a card, as in the Digital and Drums panels."""
-        from jdxi_editor.ui.v2.framework import show_category_card
-
-        show_category_card(self, ACCENT)
+    ACCENT = ACCENT
+    SYNTH_TYPE = JDXiSynth.ANALOG_SYNTH
+    PRESET_KIND = "Analog"
 
     def __init__(self, midi_helper=None, preset_helper=None, parent=None):
-        self.values: dict[AnalogParam, ParamValue] = {}
-        self.info_hub: Optional[InfoHub] = None
-        self._pending: dict = {}
-        super().__init__(midi_helper=midi_helper, preset_helper=preset_helper, parent=parent)
+        self.preset_helper = preset_helper
+        super().__init__([analog_block()], midi_helper=midi_helper, parent=parent, title=tr("Analog"))
+        self.preset_helper = preset_helper
 
-    def reload_sound(self) -> None:
-        from jdxi_editor.ui.v2.framework import restore_sound
-
-        restore_sound(self)
+    def _pv(self, param: AnalogParam) -> ParamValue:
+        return self.values[param]
 
     # ------------------------------------------------------------------ layout
-    def setup_ui(self) -> None:
-        self.setMinimumSize(1000, 640)
-        self.resize(1320, 820)
-        self.setStyleSheet("AnalogToneEditor { background: #121214; }")
-        self._send_timer = QTimer(self)
-        self._send_timer.setInterval(SEND_INTERVAL_MS)
-        self._send_timer.timeout.connect(self._flush_pending)
-        self.info_hub = InfoHub(self)
-
-        root = QHBoxLayout(self)
-        root.setContentsMargins(12, 12, 12, 12)
-        root.setSpacing(density.px(12))
-        self.main_layout = root
-
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        scroll.setFrameShape(QScrollArea.Shape.NoFrame)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
-        scroll.setStyleSheet("QScrollArea { background: transparent; }")
-        self.scroll = scroll
+    def build_panels(self) -> None:
+        """The six panels in columns (three when there is room) and the tone's name."""
+        block = self.blocks[0]
+        self.values = AnalogValues(self.values, {s.name: s for s in block.params})
+        self.controls = dict(self.values)
+        names = [self.values[s] for s in block.params[:NAME_LENGTH]]
+        name_row = QHBoxLayout()
+        label = QLabel(tr("Tone Name"))
+        label.setStyleSheet("color: #c9cbd1; font-size: 11px; background: transparent;")
+        name_row.addWidget(label)
+        self.name_field = NameField(self, names, block.address, tr("Name of the tone (12 characters)."))
+        name_row.addWidget(self.name_field)
+        name_row.addStretch()
+        self.panels_layout.addLayout(name_row)
         self.cards_host = QWidget()
         self.cards_host.setStyleSheet("background: transparent;")
         self.cards = QHBoxLayout(self.cards_host)
         self.cards.setContentsMargins(0, 0, 0, 0)
         self.cards.setSpacing(density.px(12))
         self._columns = 0
-        scroll.setWidget(self.cards_host)
-        # the editor's name as a badge in its colour, as at the top of the other editors
-        from jdxi_editor.ui.v2.restyle import title_badge
+        self.panels_layout.addWidget(self.cards_host)
+        self.panels_layout.addStretch()
+        self._create_panels()
 
-        left = QVBoxLayout()
-        left.setSpacing(density.px(10))
-        bar = QHBoxLayout()
-        self.title_label = title_badge(tr("Analog"), ACCENT)
-        bar.addWidget(self.title_label)
-        # the user's changes: undo / redo, reload, and a warning before they are lost
-        from jdxi_editor.ui.v2.history import ANALOG, EditHistory
-        from jdxi_editor.ui.v2.restyle import edit_controls
-
-        self.history = EditHistory(ANALOG, tr("Analog"), self)
-        self.modified_label, self.edit_buttons = edit_controls(self, reload=self.reload_sound)
-        bar.addWidget(self.modified_label)
-        bar.addStretch()
-        for button in self.edit_buttons:
-            bar.addWidget(button)
-        left.addLayout(bar)
-        left.addWidget(scroll, 1)
-        root.addLayout(left, 1)
-
-        # Tone panel and information panel, scrolling on short screens
-        side_host = QWidget()
-        side_host.setStyleSheet("background: transparent;")
-        side = QVBoxLayout(side_host)
-        side.setContentsMargins(0, 0, 0, 0)
-        side.setSpacing(density.px(12))
-        # Tone choice, reading from the JD-Xi, .syx: the existing preset panel
-        self.instrument_preset = InstrumentPresetWidget(parent=self)
-        self.instrument_preset.setup_header_layout()
-        self.instrument_preset.setup()
-        self.instrument_preset_group = self.instrument_preset.create_instrument_preset_group()
-        self.instrument_preset.add_preset_group(self.instrument_preset_group)
-        (
-            self.instrument_image_group,
-            self.instrument_image_label,
-            self.instrument_group_layout,
-        ) = self.instrument_preset.create_instrument_image_group()
-        self.instrument_preset.add_image_group(self.instrument_image_group)
-        self.instrument_preset.setFixedWidth(density.side_width(340))
-        # the app's theme for the preset panel only (its buttons need it)
-        from jdxi_editor.core.jdxi import JDXi
-
-        JDXi.UI.Theme.apply_editor_style(self.instrument_preset)
-        # the same look as the Digital and Drums panels: no blue frame of its own,
-        # both tabs readable (they scrolled behind arrows)
+    def side_widgets(self) -> list:
+        widgets = super().side_widgets()
+        # both preset tabs readable (they scrolled behind arrows)
         from PySide6.QtWidgets import QTabWidget
-
-        from jdxi_editor.ui.v2.framework import finish_preset_panel
 
         self.instrument_preset_group.setStyleSheet("")
         for tabs in self.instrument_preset.findChildren(QTabWidget):
             tabs.setUsesScrollButtons(False)
             tabs.tabBar().setExpanding(True)
             tabs.setStyleSheet("QTabBar::tab { padding: 6px 8px; }")
+        return widgets
 
-        finish_preset_panel(self, ACCENT)
-        side.addWidget(self.instrument_preset)
-        self.info_panel = InfoPanel(ACCENT)
-        self.info_panel.setFixedWidth(density.side_width(340))
-        self.info_hub.shown.connect(self.info_panel.show_param)
-        self.info_panel.setMinimumHeight(120 if density.compact() else 260)
-        side.addWidget(self.info_panel, 1)
-        side_scroll = QScrollArea()
-        side_scroll.setWidgetResizable(True)
-        side_scroll.setFrameShape(QScrollArea.Shape.NoFrame)
-        side_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        side_scroll.setFixedWidth(density.side_width(340) + side_scroll.verticalScrollBar().sizeHint().width() + 6)
-        side_scroll.setWidget(side_host)
-        root.addWidget(side_scroll)
-
-    def _pv(self, param: AnalogParam) -> ParamValue:
-        return self.values[param]
-
-    def _create_sections(self) -> None:
-        """Build a ParamValue for every parameter and the six panels."""
-        infos = analog_info()
-        for param in AnalogParam:
-            info = infos.get(param.name)
-            if info is None:  # TONE_NAME_1..12: edited with the tone name
-                continue
-            lo, hi = param.get_display_value()
-            pv = ParamValue(param, info, lo, hi, self)
-            pv.valueChanged.connect(lambda v, param=param: self._queue_send(param, v))
-            self.values[param] = pv
-        self.controls.update(self.values)
-        self.history.watch(self.values.values())
-
+    def _create_panels(self) -> None:
+        """The six panels, as on the JD-Xi display."""
         P = AnalogParam
         hub = self.info_hub
         knob = lambda p: Knob(self._pv(p), ACCENT, hub)  # noqa: E731
@@ -389,57 +364,12 @@ class AnalogToneEditor(AnalogSynthEditor):
         )
         v[P.PORTAMENTO_SWITCH].watch(lambda s: v[P.PORTAMENTO_TIME].set_enabled(bool(s)))
 
-    # --- the old editor's section plumbing has nothing to do here
-    def _build_parameter_mappings(self) -> None:
-        pass
-
-    def add_tabs(self) -> None:
-        pass
-
-    def update_filter_controls_state(self, mode: int) -> None:
-        pass
-
-    # ---------------------------------------------------------------- sending
-    def _queue_send(self, param: AnalogParam, value: int) -> None:
-        """Send now if idle; while dragging, at most every SEND_INTERVAL_MS."""
-        self._pending[param] = value
-        if not self._send_timer.isActive():
-            self._flush_pending()
-            self._send_timer.start()
-
-    def _flush_pending(self) -> None:
-        if not self._pending:
-            self._send_timer.stop()
-            return
-        pending, self._pending = self._pending, {}
-        for param, value in pending.items():
-            self.send_midi_parameter(param, value, self.address)
-
-    # --------------------------------------------------------------- receiving
-    def _update_controls(self, partial_no: int, sysex_data: dict, successes: list, failures: list) -> None:
-        """Values read from the JD-Xi: shown, not sent back."""
-        for name, raw in sysex_data.items():
-            param = AnalogParam.get_by_name(name) if isinstance(name, str) else None
-            pv = self.values.get(param) if param is not None else None
-            if pv is None:
-                continue
-            try:
-                display = param.convert_from_midi(int(raw)) if hasattr(param, "convert_from_midi") else int(raw)
-            except (TypeError, ValueError):
-                failures.append(name)
-                continue
-            pv.blockSignals(True)
-            pv.setValue(display)
-            pv.blockSignals(False)
-            successes.append(name)
-
-    def get_controls_as_dict(self) -> dict:
-        return SynthBase.get_controls_as_dict(self)
-
     def randomize_analog_patch(self) -> int:
         """Random values in each parameter's range (as on the display), sent at once."""
         changed = 0
-        for pv in self.values.values():
+        for spec, pv in self.values.items():
+            if spec.name.startswith("TONE_NAME_"):
+                continue  # the name stays
             step = max(1, pv.info.step)
             choices = range(pv.minimum, pv.maximum + 1, step)
             pv.setValue(random.choice(list(choices)))

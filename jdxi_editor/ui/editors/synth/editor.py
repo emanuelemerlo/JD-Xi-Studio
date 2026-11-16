@@ -47,7 +47,7 @@ from jdxi_editor.midi.sysex.parser.json_parser import JDXiJsonSysexParser
 from jdxi_editor.midi.sysex.request.data import SYNTH_PARTIAL_MAP
 from jdxi_editor.midi.sysex.sections import SysExSection
 from jdxi_editor.resources import resource_path
-from jdxi_editor.ui.editors.digital.utils import (
+from jdxi_editor.ui.editors.helpers.sysex_keys import (
     filter_sysex_keys,
     get_area,
     get_partial_number,

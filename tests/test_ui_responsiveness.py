@@ -111,22 +111,3 @@ def test_centered_layout_holds_its_widgets_without_adding_itself():
     assert layout.itemAt(1).layout() is not layout
 
 
-def test_mode_button_group_sends_once_per_click():
-    from jdxi_editor.ui.widgets.editor.mode_button_group import ModeButtonGroup, ModeButtonSpec
-
-    sent = []
-
-    class Mode:
-        def __init__(self, value):
-            self.value = value
-
-    modes = [Mode(0), Mode(1), Mode(2)]
-    group = ModeButtonGroup(
-        [ModeButtonSpec(mode=m, label=str(m.value)) for m in modes],
-        send_midi_parameter=lambda param, value: sent.append(value),
-        midi_param="OSC_WAVEFORM",
-    )
-    group.buttons[modes[2]].click()
-    assert sent == [2]
-    assert group.buttons[modes[2]].isChecked()
-    group.deleteLater()

@@ -4,6 +4,22 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+### Consolidation of the editors
+- The Analog editor is built on the same framework as the Digital, Drums and Effects editors:
+  one way to send, receive, save and undo for every tone editor; its tone name is saved in the
+  patch with its values
+- The old editors no longer used (Digital, Drums, Effects, Vocal FX, Arpeggio, Analog) are
+  removed, with the widgets and data modules only they used (78 modules); Programs, Pattern and
+  MIDI File keep their current editors
+
+### Fixes (code review)
+- A .msz bundle can no longer write its MIDI file outside the temporary folder: it is always
+  extracted as `bundle.mid` there, whatever name the archive gives it
+- After an incomplete read, saving takes from the copy of the JD-Xi's memory only the sections
+  that read confirmed; a program chosen on the JD-Xi empties that copy
+- A connection whose output did not open is no longer reported as made (the input is closed)
+- A malformed MIDI message is logged without a second error in the handler
+
 ### Fixes
 - With an octave shift on the JD-Xi the keys played light in the window where they are pressed
   (the JD-Xi sends them an octave or more away: the shifted octave did not light, or lit the
