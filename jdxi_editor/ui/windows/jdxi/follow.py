@@ -22,6 +22,7 @@ is open follows too.
 
 from __future__ import annotations
 
+import os
 import time
 from typing import Dict, Optional
 
@@ -170,6 +171,8 @@ class InstrumentFollower(QObject):
     # ------------------------------------------------------------ start
     def start(self) -> None:
         self._stopped = False
+        if os.environ.get("JDXI_FOLLOW", "1") == "0":
+            return  # not following the JD-Xi (the tests set this)
         QTimer.singleShot(STARTUP_DELAY_MS, self, self.read_all)
         self.timer.start()
 

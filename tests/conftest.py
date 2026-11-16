@@ -30,6 +30,10 @@ os.environ.setdefault("JDXI_LANGUAGE", "en")
 # full layout here (tests/test_density.py builds the compact one)
 os.environ.setdefault("JDXI_COMPACT", "0")
 os.environ.setdefault("JDXI_NARROW", "0")
+# the keyboard window does not read the instrument by itself (at start, every 2 s): with the fake
+# ports nobody answers, and the requests queued in the shared device delayed the other tests'
+# requests (tests/test_follow.py drives the follower by hand)
+os.environ.setdefault("JDXI_FOLLOW", "0")
 
 import rtmidi
 
@@ -146,6 +150,7 @@ def pytest_configure(config) -> None:
     if not _wants_real_midi(config):
         rtmidi.MidiIn = FakeMidiIn
         rtmidi.MidiOut = FakeMidiOut
+    _discard_unsaved_changes()
 
 
 
@@ -153,9 +158,12 @@ def _discard(labels, action, parent=None):
     return "discard"
 
 
-def pytest_configure(config):
+def _discard_unsaved_changes() -> None:
     """Tests change values: the "unsaved changes" question (a modal dialog, which would wait
-    forever) answers Discard, also when a module-wide window closes after the tests."""
+    forever) answers Discard, also when a module-wide window closes after the tests.
+
+    (It was a second pytest_configure, which replaced the one above: the fake MIDI ports
+    were never installed.)"""
     from jdxi_editor.ui.v2 import history
 
     history.ask = _discard

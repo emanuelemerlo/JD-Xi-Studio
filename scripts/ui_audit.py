@@ -38,7 +38,7 @@ from PySide6.QtWidgets import QAbstractButton, QApplication, QLabel, QSlider, QS
 
 PANEL_KEYS = {"digital1": "digital1", "digital2": "digital2", "analog": "analog", "drums": "drums", "arp": "arpeggio"}
 SLOW_MS = 400  # showing an editor that is already open
-SLOW_FIRST_MS = 2500  # building an editor the first time (Program parts, Settings, Recipes...)
+SLOW_FIRST_MS = 4000  # building an editor the first time (Program parts, Settings, Recipes...); 2.6 s seen on a Windows runner
 
 
 def spin(app, n=10):
