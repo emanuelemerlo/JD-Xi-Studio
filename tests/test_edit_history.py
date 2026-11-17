@@ -284,11 +284,13 @@ def test_program_change_resets_only_once_sent(app):
     a = _pv(app, 0)
     history = _history(app, h.DIGITAL_1, a)
     a.setValue(7)
-    assert h.confirm_discard([h.DIGITAL_1], "x", defer=True)
+    assert h.confirm_discard([h.DIGITAL_1], "x", defer=0)
     assert history.modified  # not yet
     h.program_change_done(0, False)  # not sent (port closed): the changes are still there
     assert history.modified and history.can_undo()
-    assert h.confirm_discard([h.DIGITAL_1], "x", defer=True)
+    assert h.confirm_discard([h.DIGITAL_1], "x", defer=0)
+    h.program_change_done(9, True)  # another channel's change: these histories stay
+    assert history.modified
     h.program_change_done(0, True)
     assert not history.modified and not history.can_undo()
 

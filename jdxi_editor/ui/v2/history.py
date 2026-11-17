@@ -369,7 +369,7 @@ def ask(labels: list[str], action: str, parent=None) -> str:
 
 
 def confirm_discard(
-    parts: Iterable[str], action: str, parent=None, *, restore=False, defer=False
+    parts: Iterable[str], action: str, parent=None, *, restore=False, defer=None
 ) -> bool:
     """Confirm replacing or restoring these parts; restore replays edits in reverse."""
     affected = histories(parts)
@@ -382,9 +382,8 @@ def confirm_discard(
             return False
         if answer != "discard":
             return False
-    if defer:  # reset once the change is done (program_change_done)
-        global _pending
-        _pending = affected
+    if defer is not None:  # channel: reset once its change is done (program_change_done)
+        _pending[int(defer)] = affected
         return True
     for history in affected:
         if restore:
@@ -419,17 +418,19 @@ def program_change_allowed(channel: int) -> bool:
         if parts == ALL_PARTS
         else tr("Changing the sound replaces them.")
     )
-    return confirm_discard(parts, action, defer=True)
+    return confirm_discard(parts, action, defer=int(channel))
 
 
-_pending: list = []
+_pending: dict = {}  # channel -> histories to reset once that channel's change is sent
 
 
 def program_change_done(channel: int, sent: bool) -> None:
     """After the program change: a new sound, so its parts' histories start again; not sent,
     the sound and its changes are still there."""
-    global _pending
-    pending, _pending = _pending, []
+    app = QApplication.instance()
+    if app is None or QThread.currentThread() is not app.thread():
+        return  # not from the interface: nothing was deferred
+    pending = _pending.pop(int(channel), [])
     if sent:
         for history in pending:
             if _alive(history):
