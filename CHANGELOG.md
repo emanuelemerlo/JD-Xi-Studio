@@ -4,6 +4,16 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+### A/B compare of a Tone (Digital 1, Digital 2, Analog)
+- **A | B ▾** in the tone editors' bar: capture two photos of the whole Tone, recall them while
+  playing, save each as a named part `.syx`; the photos are kept per part across restarts
+- Capture reads the Tone from the JD-Xi first (a "local" photo without it); a recall sends only
+  that part's Tone and counts as done only once the JD-Xi is read back holding exactly the photo
+- Edits after a recall show "modified"; a program change makes the next recall ask first;
+  Undo / Redo / Reload unchanged
+- Fixed: a read started right after another one could lose a request (the queue took it for a
+  duplicate of the one just answered) and wait for its timeout
+
 ### The window follows the JD-Xi's controllers
 - The pitch and mod wheels in the window move with the JD-Xi's (nothing is sent back)
 - The panel sliders follow the JD-Xi's knobs as they turn (Cutoff, Resonance, Level, LFO Rate,

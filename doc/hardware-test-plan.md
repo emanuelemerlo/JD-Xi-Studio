@@ -135,6 +135,28 @@ In **Digital 1**, con un preset appena caricato:
 
 ---
 
+## 5b. Confronto A/B (10 minuti) ★
+
+In Digital 1 (poi ripeti in breve per Digital 2 e Analog). Tra parentesi il caso della matrice
+TC-xx della proposta; gli stessi casi girano in automatico con un JD-Xi simulato
+(`tests/test_ab_compare.py`).
+
+| | Fai | Deve succedere |
+|---|---|---|
+| 5b.1 ★ | Premi **A** (vuota) | «A acquisita»; il JD-Xi viene riletto prima (TC-01) |
+| 5b.2 ★ | Cambia Cutoff e un'onda; premi ▾ › Acquisisci B | «B acquisita»; A e B si sentono diverse (TC-02) |
+| 5b.3 ★ | Suona una frase; premi A, risuonala; premi B, risuonala; ripeti 4-5 volte | Ogni volta il suono e l'editor passano a quello giusto in meno di un secondo; il pulsante acceso è quello richiamato (TC-03, 04, 05) |
+| 5b.4 | Con A attiva, gira una manopola (nella finestra o sul JD-Xi) | Compare «● modificato (attivo: A)»; ripremendo A torna il suono di A (TC-06, 07) |
+| 5b.5 | ▾ › Salva A e B…, due nomi diversi | Due file .syx; l'Import dell'editor li legge e il display del JD-Xi mostra il nome (TC-08, 09, 10) |
+| 5b.6 | In Digital 1 richiama A mentre Digital 2, Analog e Drums suonano un pattern | Cambia solo Digital 1 (TC-11, 12, 13) |
+| 5b.7 | Richiama B e stacca il cavo USB durante il richiamo | Messaggio «Tone incerto», nessun pulsante acceso; ricollegato, B si richiama (TC-14) |
+| 5b.8 | Cambia programma sul JD-Xi, poi premi A | Prima di inviare chiede conferma (TC-15) |
+| 5b.9 | ▾ › Acquisisci A con A già piena | Chiede se sostituirla (TC-16) |
+| 5b.10 | Chiudi e riapri JD-Xi Studio | A e B ci sono ancora per ogni parte; non viene inviato nulla finché non premi A o B (TC-17) |
+| 5b.11 | Dopo un richiamo: cambia un valore, Annulla, Ripeti, Reload | Funzionano come sempre (TC-18) |
+
+---
+
 ## 6. Programmi (5 minuti)
 
 | | Fai | Deve succedere |
