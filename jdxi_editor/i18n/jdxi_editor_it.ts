@@ -374,24 +374,24 @@
             <translation>Genere</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="257" />
+            <location filename="../../jdxi_editor/main.py" line="260" />
             <location filename="../../jdxi_editor/ui/dialogs/about.py" line="146" />
             <source>An independent, unofficial tool: not affiliated with, endorsed or sponsored by Roland Corporation. Roland and JD-Xi are trademarks of Roland Corporation in the United States and/or other countries; all other names belong to their owners.</source>
             <translation>Uno strumento indipendente e non ufficiale: non è affiliato, approvato né sponsorizzato da Roland Corporation. Roland e JD-Xi sono marchi di Roland Corporation negli Stati Uniti e/o in altri paesi; tutti gli altri nomi appartengono ai rispettivi proprietari.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="165" />
+            <location filename="../../jdxi_editor/main.py" line="168" />
             <source>Initializing MIDI subsystem…</source>
             <translation>Avvio del sistema MIDI…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="266" />
+            <location filename="../../jdxi_editor/main.py" line="269" />
             <location filename="../../jdxi_editor/ui/dialogs/about.py" line="102" />
             <source>Version {version}</source>
             <translation>Versione {version}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="306" />
+            <location filename="../../jdxi_editor/main.py" line="309" />
             <source>{home}  •  MIT licence</source>
             <translation>{home}  •  licenza MIT</translation>
         </message>
@@ -778,7 +778,7 @@
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1445" />
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="165" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="167" />
             <source>Clear</source>
             <translation>Cancella</translation>
         </message>
@@ -1918,7 +1918,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Arpeggio per {part}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/brand.py" line="129" />
+            <location filename="../../jdxi_editor/ui/v2/brand.py" line="145" />
             <source>based on {project} by {author}</source>
             <translation>basato su {project} di {author}</translation>
         </message>
@@ -7152,123 +7152,128 @@ Finché non si risolve, gli elenchi dei preset restano quelli del JD-Xi.</transl
             <translation>Errore nel fermare: {ex}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="121" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="123" />
             <source>MIDI Debugger</source>
             <translation>Debugger MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="147" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="149" />
             <source>Enter MIDI commands (one per line) in hex format:
 Example: F0 41 10 00 00 00 0E 12 19 01 20 00 01 F7</source>
             <translation>Scrivi i comandi MIDI (uno per riga) in esadecimale:
 Esempio: F0 41 10 00 00 00 0E 12 19 01 20 00 01 F7</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="155" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="157" />
             <source>Enter MIDI commands here...</source>
             <translation>Scrivi qui i comandi MIDI...</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="161" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="163" />
             <source>Send Commands</source>
             <translation>Invia comandi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="169" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="171" />
             <source>Decode</source>
             <translation>Decodifica</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="199" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="201" />
             <source>SysEx</source>
             <translation>SysEx</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="214" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="221" />
             <source>Channel</source>
             <translation>Canale</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="219" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="226" />
             <source>Channel:</source>
             <translation>Canale:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="224" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="231" />
             <source>Control Change</source>
             <translation>Control Change</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="233" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="240" />
             <source>Controller:</source>
             <translation>Controller:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="234" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="241" />
             <source>Value:</source>
             <translation>Valore:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="235" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="242" />
             <source>Send CC</source>
             <translation>Invia CC</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="260" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="268" />
             <source>Program Change</source>
             <translation>Program Change</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="265" />
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="287" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="273" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="295" />
             <source>Program:</source>
             <translation>Programma:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="266" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="274" />
             <source>Send PC</source>
             <translation>Invia PC</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="273" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="281" />
             <source>Bank Select + Program Change</source>
             <translation>Bank Select + Program Change</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="285" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="293" />
             <source>Bank MSB:</source>
             <translation>Bank MSB:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="286" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="294" />
             <source>Bank LSB:</source>
             <translation>Bank LSB:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="288" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="296" />
             <source>Send Bank+PC</source>
             <translation>Invia Bank+PC</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="180" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="182" />
             <source>Decoded Message:</source>
             <translation>Messaggio decodificato:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="186" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="188" />
             <source>Response Log:</source>
             <translation>Risposte:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="254" />
-            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="321" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="262" />
+            <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="330" />
             <source>Reference:</source>
             <translation>Riferimento:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/midi/monitor.py" line="35" />
+            <location filename="../../jdxi_editor/ui/windows/midi/monitor.py" line="36" />
             <source>MIDI Message Monitor</source>
             <translation>Monitor dei messaggi MIDI</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/midi/monitor.py" line="46" />
+            <source>The JD-Xi is not connected: no MIDI message is sent or received, so the monitor stays empty.</source>
+            <translation>Il JD-Xi non è collegato: nessun messaggio MIDI viene inviato o ricevuto, quindi il monitor resta vuoto.</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/windows/patch/manager.py" line="119" />

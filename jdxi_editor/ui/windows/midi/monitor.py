@@ -18,7 +18,8 @@ Methods:
 from datetime import datetime
 from typing import Optional
 
-from PySide6.QtWidgets import QMainWindow, QTextEdit, QVBoxLayout, QWidget
+from PySide6.QtCore import QTimer
+from PySide6.QtWidgets import QLabel, QMainWindow, QTextEdit, QVBoxLayout, QWidget
 
 from jdxi_editor.midi.io.helper import MidiIOHelper
 from jdxi_editor.ui.theme import ThemeManager
@@ -40,6 +41,17 @@ class MIDIMessageMonitor(QMainWindow):
         self.setCentralWidget(central)
         layout = QVBoxLayout(central)
 
+        # Without the JD-Xi nothing goes out: say so, instead of an empty log
+        self.port_notice = QLabel(
+            tr("The JD-Xi is not connected: no MIDI message is sent or received, so the monitor stays empty.")
+        )
+        self.port_notice.setWordWrap(True)
+        self.port_notice.setStyleSheet(
+            "QLabel { background: #2a2224; color: #f0c7c3; border: 1px solid #6b3a35;"
+            " border-radius: 4px; padding: 6px 8px; }"
+        )
+        layout.addWidget(self.port_notice)
+
         # Create log view
         self.log_view = QTextEdit()
         self.log_view.setReadOnly(True)
@@ -49,6 +61,19 @@ class MIDIMessageMonitor(QMainWindow):
         self.midi_helper = midi_helper
         self.midi_helper.midi_message_incoming.connect(self.process_incoming_message)
         self.midi_helper.midi_message_outgoing.connect(self.process_outgoing_message)
+        self._port_timer = QTimer(self)
+        self._port_timer.timeout.connect(self._show_port_state)
+        self._port_timer.start(1000)
+        self._show_port_state()
+
+    def _show_port_state(self) -> None:
+        """The notice shows while the output port to the JD-Xi is not open."""
+        port = getattr(self.midi_helper, "midi_out", None)
+        try:
+            is_open = bool(port is not None and port.is_port_open())
+        except Exception:
+            is_open = False
+        self.port_notice.setVisible(not is_open)
 
     def process_incoming_message(self, message: str) -> None:
         """

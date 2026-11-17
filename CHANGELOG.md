@@ -5,6 +5,10 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Fixes
+- MIDI Debugger, CC / PC tab: the fields were squeezed flat; the tab now scrolls
+- MIDI Monitor: says why it stays empty while the JD-Xi is not connected (nothing is sent)
+- Program icon: fewer, better spaced elements at small sizes (title bar, taskbar); the middle C
+  mark on the keyboard is smaller and quieter
 - Tooltips were black (unreadable) on the settings page and in the new editors on Windows: a
   tooltip is a window of its own, so the colours are now set for the whole app
 
