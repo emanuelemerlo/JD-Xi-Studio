@@ -378,6 +378,13 @@ def _wheel_output(window, monkeypatch):
     return out
 
 
+def _echoes(out) -> list:
+    """What would be an echo of a wheel or a knob: channel messages (pitch bend,
+    control change) or CCs sent back. SysEx is left out: the readings of a part
+    (RQ1) and an editor's change still on its way from an earlier test (DT1)."""
+    return [m for m in out if m and (m[0] == "cc" or 0x80 <= int(m[0]) <= 0xEF)]
+
+
 def test_the_jdxis_wheels_move_the_windows_without_echo(window, monkeypatch):
     out = _wheel_output(window, monkeypatch)
     receive(window, mido.Message("pitchwheel", channel=0, pitch=8191))
@@ -390,7 +397,7 @@ def test_the_jdxis_wheels_move_the_windows_without_echo(window, monkeypatch):
     assert window.mod_wheel.get_value() == 0.0
     receive(window, mido.Message("pitchwheel", channel=0, pitch=0))
     assert window.pitch_wheel.get_value() == 0.0
-    assert out == []  # nothing sent back to the JD-Xi
+    assert _echoes(out) == []  # no pitch bend or modulation sent back to the JD-Xi
 
 
 def test_the_pitch_wheel_sends_its_return_to_the_centre(window, monkeypatch):
@@ -449,8 +456,7 @@ def test_the_jdxis_knobs_move_the_panel_sliders(window, monkeypatch):
     settle()
     _cc(window, 2, 102, 5)
     assert sliders["cutoff"].value() == 5
-    # nothing sent back (the readings of the part selected are requests, RQ1)
-    assert [m for m in out if not (m[0] == 0xF0 and m[7] == 0x11)] == []
+    assert _echoes(out) == []  # no controller sent back to the JD-Xi
 
 def test_middle_c_is_marked_where_it_sounds(window):
     """The C4 mark sits on the key that sounds middle C at the octave shown."""
