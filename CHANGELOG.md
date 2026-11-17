@@ -4,6 +4,10 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+### Fixes
+- Tooltips were black (unreadable) on the settings page and in the new editors on Windows: a
+  tooltip is a window of its own, so the colours are now set for the whole app
+
 ### A/B compare of a Tone (Digital 1, Digital 2, Analog)
 - In the tone editors' bar: **A B** to choose (and recall) a photo of the whole Tone, **camera** to
   capture the Tone in the chosen slot, **⇄** (Ctrl+Shift+A) to switch while playing, **disk** to

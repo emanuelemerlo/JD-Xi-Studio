@@ -234,3 +234,27 @@ def edit_controls(editor, reload=None):
     history.stateChanged.connect(update)
     update()
     return mark, buttons
+
+
+TOOLTIP_STYLE = (
+    "QToolTip { background-color: #1f2025; color: #e8e8ea; border: 1px solid #3a3d44;"
+    " padding: 4px 6px; }"
+)
+
+
+def apply_tooltip_style(app) -> None:
+    """Dark tooltips with light text everywhere. A tooltip is a window of its
+    own: an editor's style sheet does not reach it, so the colours are set on
+    the application (style sheet and palette); without them Windows showed
+    the settings page's tooltips black."""
+    from PySide6.QtGui import QColor, QPalette
+    from PySide6.QtWidgets import QToolTip
+
+    palette = QToolTip.palette()
+    palette.setColor(QPalette.ColorRole.ToolTipBase, QColor("#1f2025"))
+    palette.setColor(QPalette.ColorRole.ToolTipText, QColor("#e8e8ea"))
+    palette.setColor(QPalette.ColorRole.Window, QColor("#1f2025"))
+    palette.setColor(QPalette.ColorRole.WindowText, QColor("#e8e8ea"))
+    QToolTip.setPalette(palette)
+    if TOOLTIP_STYLE not in app.styleSheet():
+        app.setStyleSheet(app.styleSheet() + "\n" + TOOLTIP_STYLE)

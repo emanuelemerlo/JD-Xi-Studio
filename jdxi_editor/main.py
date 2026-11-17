@@ -121,6 +121,9 @@ def main() -> None:
             }
         """
         )
+        from jdxi_editor.ui.v2.restyle import apply_tooltip_style
+
+        apply_tooltip_style(app)  # tooltips readable on the dark windows
 
         logger.debug("Application initialized")
 

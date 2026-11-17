@@ -18,24 +18,32 @@ Stato: **proposte**, da decidere e poi realizzare dopo il reset dei crediti.
 Da qui la confusione nelle prove: in app non si vede *dove* si sta lavorando né *cosa* succede
 al suono originale, e manca il passo finale («ora premi WRITE e scegli E-12»).
 
-## 1. Modalità demo (senza JD-Xi)
+## 1. Modalità «Off-line» (senza JD-Xi) — decisa
 
-Principio: senza strumento non si fa sound design «alla cieca»; si può però **provare tutto**
-l'interfaccia, sapendo che niente resta.
+Principio: senza strumento non si fa sound design «alla cieca»; si può però **provare tutta
+l'interfaccia**, sapendo che niente resta. Serve anche per provare l'app senza il synth.
 
-- Si entra quando all'avvio il JD-Xi non c'è (o da un pulsante «Prova senza JD-Xi»).
-- Una **fascia fissa** in alto: «Modalità demo: puoi provare tutto, ma niente viene salvato né
-  inviato. Collega il JD-Xi per lavorare davvero.»
+Decisioni (17/11):
+- **Parte da sola** quando il JD-Xi non c'è.
+- Si chiama **Off-line**: all'ingresso una **finestra di avviso** («Il JD-Xi non è collegato:
+  puoi provare tutto, ma niente viene salvato né inviato»), poi un **badge/indicatore «Off-line»**
+  sia nella finestra principale sia nelle finestre secondarie (editor staccati, impostazioni…).
 - Tutti i controlli si muovono; **spenti** (con tooltip che spiega): Salva patch, export `.syx`,
   salva ricetta, salva A/B, Send all, Read, Autotest, scelta dei programmi.
-- Aprire una patch per guardarla: consentito (in sola lettura del risultato).
-- Quando il JD-Xi viene collegato si esce dalla demo: gli editor vengono riletti dallo strumento
-  e le modifiche demo si scartano, con un avviso (sono per definizione prove).
+- **JD-Xi collegato dopo**: si esce da Off-line, l'app **legge le impostazioni dallo strumento e
+  ignora le modifiche fatte alla cieca** (avviso breve, nessuna domanda).
+- **JD-Xi scollegato o spento durante il lavoro**: si torna in Off-line (badge, comandi spenti);
+  quando torna, si rilegge come sopra. Le modifiche fatte mentre era collegato sono già sullo
+  strumento (temporanee lì finché non c'è WRITE); quelle fatte durante lo stacco sono alla cieca
+  e vengono ignorate. Da verificare sullo strumento: spento e riacceso, il JD-Xi riparte dal
+  programma salvato e le modifiche temporanee sono perse — l'app lo deve dire («Il JD-Xi è stato
+  riavviato: le modifiche non salvate con WRITE sono perse»), riconoscendolo dal fatto che il
+  collegamento è caduto e tornato.
 - Risolve anche il problema trovato: oggi le modifiche fatte offline vengono sovrascritte senza
   avviso al collegamento.
 
-Costo: **medio** (una sessione). Tocca: avvio, stato «collegato» centralizzato, abilitazione dei
-comandi, fascia, test.
+Costo: **medio** (una sessione). Tocca: avvio, stato «collegato» centralizzato (oggi ogni parte lo
+controlla a modo suo: follower, A/B, Send all), abilitazione dei comandi, avviso, badge, test.
 
 ## 2. Partire da un suono: tre porte d'ingresso chiare
 
@@ -97,5 +105,6 @@ Costo: **medio** (lettura dei banchi utente e verifica dopo il WRITE vanno prova
 4. Pannello «Nuovo suono» con Init.
 5. Aiuti per sezione.
 
-Da decidere con l'utente prima di partire: i testi della fascia demo, se la demo parte da sola
-senza JD-Xi o solo su richiesta, e come deve suonare l'*Init* (onda, filtro, inviluppi).
+Deciso: Off-line parte da sola (vedi punto 1). *Init*: nessuna preferenza dell'utente; proposta:
+onda a dente di sega, filtro aperto, inviluppo d'ampiezza semplice (attacco 0, sustain pieno,
+rilascio breve), niente LFO né effetti — il suono più neutro da cui costruire.
