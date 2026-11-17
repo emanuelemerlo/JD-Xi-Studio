@@ -282,6 +282,10 @@ class V2Editor(SynthBase):
         """Widgets shown above the information panel (e.g. the tone presets)."""
         return []
 
+    def bar_widgets(self) -> list:
+        """Widgets after Undo / Redo / Reload in the top bar (the A/B compare)."""
+        return []
+
     # ------------------------------------------------------------- lookups
     def spec(self, name: str, block_key: Optional[str] = None) -> PSpec:
         for block in self.blocks:
@@ -343,6 +347,8 @@ class V2Editor(SynthBase):
         bar.addStretch()
         for button in self.edit_buttons:
             bar.addWidget(button)
+        for widget in self.bar_widgets():
+            bar.addWidget(widget)
         self.read_status = QLabel("")
         self.read_status.setStyleSheet("color: #a3a6ad; font-size: 11px;")
         bar.addWidget(self.read_status)
@@ -470,31 +476,10 @@ class V2Editor(SynthBase):
 
     def receive_dt1(self, data: Sequence[int]) -> int:
         """*data*: the bytes between F0 and F7."""
-        data = list(data)
-        if data[:1] == [0xF0]:
-            data = data[1:]
-        if data[-1:] == [0xF7]:
-            data = data[:-1]
-        if tuple(data[:7]) != ROLAND_DT1 or len(data) < 13:
-            return 0
-        start = address_number(data[7:11])
-        payload = data[11:-1]  # without the checksum
-        shown = 0
-        for block in self.blocks:
-            first = start - address_number(block.address_bytes())
-            if first < 0 or first > 0x3FF:
-                continue
-            for spec in block.params:
-                pos = seven_bit(spec.offset) - first
-                size = spec.get_nibbled_size()
-                if pos < 0 or pos + size > len(payload):
-                    continue
-                raw = 0
-                for byte in payload[pos : pos + size]:
-                    raw = (raw << 4 | (byte & 0x0F)) if size > 1 else byte
-                self._show_raw(spec, raw)
-                shown += 1
-        return shown
+        found = decode_dt1(self.blocks, data)
+        for spec, raw in found:
+            self._show_raw(spec, raw)
+        return len(found)
 
     def _show_raw(self, spec: PSpec, raw: int) -> None:
         pv = self.values[spec]
@@ -595,6 +580,35 @@ class V2Editor(SynthBase):
         return messages
 
 
+def decode_dt1(blocks: Sequence[Block], data: Sequence[int]) -> list:
+    """The (spec, raw MIDI value) pairs a DT1 carries for these blocks (a whole
+    block or one parameter); *data* with or without F0/F7."""
+    data = list(data)
+    if data[:1] == [0xF0]:
+        data = data[1:]
+    if data[-1:] == [0xF7]:
+        data = data[:-1]
+    if tuple(data[:7]) != ROLAND_DT1 or len(data) < 13:
+        return []
+    start = address_number(data[7:11])
+    payload = data[11:-1]  # without the checksum
+    found = []
+    for block in blocks:
+        first = start - address_number(block.address_bytes())
+        if first < 0 or first > 0x3FF:
+            continue
+        for spec in block.params:
+            pos = seven_bit(spec.offset) - first
+            size = spec.get_nibbled_size()
+            if pos < 0 or pos + size > len(payload):
+                continue
+            raw = 0
+            for byte in payload[pos : pos + size]:
+                raw = (raw << 4 | (byte & 0x0F)) if size > 1 else byte
+            found.append((spec, raw))
+    return found
+
+
 @functools.lru_cache(maxsize=None)
 def tone_editor_base():
     """V2Editor with the tone machinery of the existing editors (presets, tone name, .syx)."""
@@ -618,6 +632,14 @@ def tone_editor_base():
 
         def reload_sound(self) -> None:
             restore_sound(self)
+
+        def bar_widgets(self) -> list:
+            from jdxi_editor.ui.v2.ab_compare import ABControl, supports
+
+            if not supports(self):
+                return []  # A/B for Digital 1, Digital 2 and Analog
+            self.ab_control = ABControl(self)
+            return [self.ab_control]
 
         def _selected_category(self) -> str:
             return selected_category(self)

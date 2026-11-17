@@ -69,6 +69,24 @@ the internals of the first editors, replaced in 1.0 by the current ones.)
 The edits go to the JD-Xi's temporary area as they are made: to keep them, save to a file or
 press WRITE on the JD-Xi.
 
+### A/B compare (Digital 1, Digital 2, Analog)
+
+The tone editors' top bar has **A | B ▾** next to Undo / Redo / Reload: two photos of the part's
+whole Tone, to switch between while playing.
+
+- **Capture** (an empty A or B, or ▾ › Capture A / B): with the JD-Xi connected the Tone is read
+  again first and the photo is taken only from a complete answer; without it the editor's values
+  are taken, marked "local". A full slot asks before being replaced.
+- **Recall** (A or B): the photo's blocks are sent, the Tone is read back and shown only when the
+  JD-Xi holds exactly the photo; otherwise nothing is active and the Tone is reported uncertain.
+  Only this part's Tone is sent: the other parts, the effects and the program stay as they are.
+- Editing after a recall shows **● modified** against the photo; the photos never change by
+  themselves. **Save A / B / A and B** writes a part `.syx` (read by the editors' Import) with the
+  name given, written as Tone Name.
+- The photos are kept per part in `~/.jdxi_studio/ab_compare` and come back at start; nothing is
+  sent until A or B is pressed. After a program change (or a restart) a recall asks first.
+- Undo / Redo / Reload are unchanged: a recall arrives as values from the JD-Xi.
+
 ### Save Source
 
 The editor **saves from the current UI control values**. The keyboard window reads the JD-Xi at
