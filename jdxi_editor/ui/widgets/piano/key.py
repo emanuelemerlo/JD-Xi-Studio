@@ -167,28 +167,27 @@ class PianoKey(QPushButton):
         if self.middle_c:
             self._paint_middle_c(painter)
 
+    MIDDLE_C_COLOR = "#d0473b"  # a quieter JD-Xi red (MIDDLE_C_GREY: the neutral option)
+    MIDDLE_C_GREY = "#8a8d94"
+
     def _paint_middle_c(self, painter: QPainter) -> None:
-        """Middle C: a red dot near the front of the key and «C4» over it, in the
-        JD-Xi's red; it moves with the octave shift (see PianoKeyboard)."""
-        red = QColor("#ff2a1a")
+        """Middle C: a small dot near the front of the key and «C4» over it, kept
+        discreet; it moves with the octave shift (see PianoKeyboard)."""
+        colour = QColor(self.MIDDLE_C_COLOR)
         w, h = self.width(), self.height()
-        radius = max(2.5, w * 0.16)
-        centre_y = h - 6 - radius - (4 if self.is_pressed else 0)
-        glow = QColor(red)
-        glow.setAlpha(70)
+        radius = max(1.8, w * 0.09)
+        centre_y = h - 7 - radius - (4 if self.is_pressed else 0)
         painter.setPen(Qt.PenStyle.NoPen)
-        painter.setBrush(glow)
-        painter.drawEllipse(QPointF(w / 2, centre_y), radius * 1.8, radius * 1.8)
-        painter.setBrush(red)
+        painter.setBrush(colour)
         painter.drawEllipse(QPointF(w / 2, centre_y), radius, radius)
         font = painter.font()
-        font.setPixelSize(max(7, int(w * 0.36)))
-        font.setBold(True)
+        font.setPixelSize(max(6, int(w * 0.26)))
+        font.setBold(False)
         painter.setFont(font)
-        painter.setPen(red.darker(115))
+        painter.setPen(colour)
         text_h = font.pixelSize() + 2
         painter.drawText(
-            QRectF(0, centre_y - radius * 1.8 - text_h, w, text_h),
+            QRectF(0, centre_y - radius - 2 - text_h, w, text_h),
             int(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignBottom),
             "C4",
         )
