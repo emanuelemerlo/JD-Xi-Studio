@@ -30,8 +30,12 @@ def draw_mark(size: int = 256) -> QPixmap:
     p = QPainter(pm)
     p.setRenderHint(QPainter.RenderHint.Antialiasing)
     s = size / 256.0
+    if size <= 32:  # title bars, taskbar: the name, stacked, is what stays readable
+        _draw_name_mark(p, size)
+        p.end()
+        return pm
     small = size < 48  # fewer, bigger elements
-    tiny = size <= 24  # title bars: the display and three keys only
+    tiny = False
     red = QColor("#ff2a1a")
     tile = QPainterPath()
     tile.addRoundedRect(QRectF(8 * s, 8 * s, 240 * s, 240 * s), 48 * s, 48 * s)
@@ -130,6 +134,49 @@ def draw_mark(size: int = 256) -> QPixmap:
             p.fillPath(path, QColor("#0e0f11"))
     p.end()
     return pm
+
+
+def _draw_name_mark(p: QPainter, size: int) -> None:
+    """The small icon: the dark tile with «JD» over «Xi» (white and the panel's
+    red, the lettering of the logo), drawn as outlines filling the tile so it
+    stays sharp down to 16 px."""
+    from PySide6.QtGui import QFont
+
+    s = size / 256.0
+    tile = QPainterPath()
+    tile.addRoundedRect(QRectF(4 * s, 4 * s, 248 * s, 248 * s), 52 * s, 52 * s)
+    grad = QLinearGradient(0, 0, 0, size)
+    grad.setColorAt(0, QColor("#26272b"))
+    grad.setColorAt(1, QColor("#0a0a0c"))
+    p.fillPath(tile, grad)
+    font = QFont()
+    font.setFamilies(["Segoe UI", "Helvetica Neue", "DejaVu Sans", "Arial"])
+    font.setPixelSize(100)
+    font.setWeight(QFont.Weight.Black)
+    rows = []
+    for text in ("JD", "Xi"):
+        path = QPainterPath()
+        path.addText(0, 0, font, text)
+        rows.append(path)
+    box_w, box_h, gap = 200 * s, 94 * s, 14 * s  # each row's room in the tile
+    # one scale for both rows: the letters of «JD» and «Xi» equally tall
+    cap = max(r.boundingRect().height() for r in rows)
+    scale = min(min(box_w / r.boundingRect().width() for r in rows), box_h / cap)
+    top = (size - 2 * box_h - gap) / 2
+    for i, (path, colour) in enumerate(zip(rows, (QColor("#f4f4f4"), QColor("#ff2a1a")))):
+        r = path.boundingRect()
+        w = r.width() * scale
+        x = (size - w) / 2
+        y = top + i * (box_h + gap) + (box_h - cap * scale) / 2
+        p.save()
+        p.translate(x - r.left() * scale, y - r.top() * scale)
+        p.scale(scale, scale)
+        p.fillPath(path, colour)
+        if size <= 24:  # a touch bolder where a pixel is a lot
+            p.setPen(QPen(colour, 0.45 / scale))
+            p.setBrush(Qt.BrushStyle.NoBrush)
+            p.drawPath(path)
+        p.restore()
 
 
 def icon() -> QIcon:
