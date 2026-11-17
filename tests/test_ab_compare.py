@@ -202,7 +202,7 @@ def test_tc03_tc04_tc05_recall_restores_every_parameter(rig):
     edit(editor, "TONE_NAME_1", ord("Z"))
     b = capture(session, "B")
     messages = []
-    session.message.connect(messages.append)
+    session.message.connect(lambda text, problem: messages.append(text))
     for slot, photo in [("A", a), ("B", b)] * 3:  # TC-05: back and forth
         assert recall(session, slot)
         assert session.active == slot, messages[-1]
@@ -220,7 +220,7 @@ def test_after_a_recall_an_edit_shows_modified_and_leaves_the_photos(rig):
     assert recall(session, "A")
     edit(editor, "AMP_LEVEL", 3)
     assert pump(lambda: session.modified)
-    assert editor.ab_control.state_label.text().endswith("A")
+    assert editor.ab_control.buttons["A"].modified  # the dot on A
     assert session.slots["A"].blocks == a.blocks
     edit(editor, "AMP_LEVEL", ab.Snapshot.raw_values(a, editor)[editor.spec("AMP_LEVEL")])
     assert pump(lambda: not session.modified)  # back to A's value: not modified
@@ -264,19 +264,59 @@ def test_tc08_tc09_tc10_save_writes_each_photo_with_its_name(rig, tmp_path):
     assert a.name != "Warm Pad"  # the photo itself is not renamed
 
 
-def test_save_dialogs_write_one_or_both(rig, tmp_path, monkeypatch):
+def test_the_disk_saves_the_active_photo(rig, tmp_path, monkeypatch):
     helper, jdxi, eds = rig
     editor = eds["digital_1"]
     control = editor.ab_control
-    capture(control.session, "A")
+    session = control.session
+    capture(session, "A")
     edit(editor, "TONE_LEVEL", 5)
-    capture(control.session, "B")
-    names = iter(["Alpha", "Beta", "Gamma"])
-    monkeypatch.setattr(ab.QInputDialog, "getText", lambda *a, **k: (next(names), True))
-    monkeypatch.setattr(ab.QFileDialog, "getSaveFileName", lambda *a, **k: (str(tmp_path / "one.syx"), ""))
-    monkeypatch.setattr(ab.QFileDialog, "getExistingDirectory", lambda *a, **k: str(tmp_path))
-    assert [p.name for p in control.save(["A"])] == ["one.syx"]
-    assert sorted(p.name for p in control.save(["A", "B"])) == ["Beta.syx", "Gamma.syx"]
+    capture(session, "B")
+    assert recall(session, "B")
+    monkeypatch.setattr(ab.QInputDialog, "getText", lambda *a, **k: ("Beta", True))
+    monkeypatch.setattr(ab.QFileDialog, "getSaveFileName", lambda *a, **k: (str(tmp_path / "beta.syx"), ""))
+    assert control.target() == "B"
+    written = control.save()
+    assert written.name == "beta.syx" and session.slots["B"].saved_to == str(written)
+    assert session.slots["A"].saved_to == ""
+    assert ab.load_slots("digital_1")["B"].saved_to == str(written)  # kept
+
+
+def test_replacing_a_photo_never_saved_offers_to_save_it_first(rig, tmp_path, monkeypatch):
+    helper, jdxi, eds = rig
+    editor = eds["analog"]
+    control = editor.ab_control
+    session = control.session
+    first = capture(session, "A")
+    choices = []
+
+    class Box:  # the three-way question: Save first… / Replace / Cancel
+        Icon = ab.QMessageBox.Icon
+        ButtonRole = ab.QMessageBox.ButtonRole
+        StandardButton = ab.QMessageBox.StandardButton
+
+        def __init__(self, *a, **k):
+            self.buttons = []
+
+        def addButton(self, button, role=None):  # noqa: N802
+            self.buttons.append(button)
+            return button
+
+        def exec(self):
+            choices.append(self.buttons[:2])
+
+        def clickedButton(self):  # noqa: N802
+            return self.buttons[0]  # "Save first…"
+
+    monkeypatch.setattr(ab, "QMessageBox", Box)
+    monkeypatch.setattr(ab.QInputDialog, "getText", lambda *a, **k: ("First", True))
+    monkeypatch.setattr(ab.QFileDialog, "getSaveFileName", lambda *a, **k: (str(tmp_path / "first.syx"), ""))
+    edit(editor, "AMP_LEVEL", 11)
+    session.selected = "A"
+    control.capture()
+    assert pump(lambda: not session.busy)
+    assert choices and (tmp_path / "first.syx").exists()  # saved first, then replaced
+    assert session.slots["A"].blocks != first.blocks and session.slots["A"].saved_to == ""
 
 
 # ------------------------------------------------------------------ TC-11..13
@@ -305,7 +345,7 @@ def test_tc14_no_answer_after_a_recall_leaves_the_state_uncertain(rig, monkeypat
     session = session_of(editor)
     capture(session, "A")
     messages = []
-    session.message.connect(messages.append)
+    session.message.connect(lambda text, problem: messages.append(text))
     jdxi.silent = True  # unplugged after the send
     assert recall(session, "A")
     assert session.active is None and "uncertain" in messages[-1]
@@ -317,7 +357,7 @@ def test_tc14_a_send_that_fails_is_not_a_recall(rig):
     session = session_of(editor)
     capture(session, "A")
     messages = []
-    session.message.connect(messages.append)
+    session.message.connect(lambda text, problem: messages.append(text))
     jdxi.refuse_sends = True
     assert recall(session, "A")
     assert session.active is None and "failed" in messages[-1]
@@ -329,7 +369,7 @@ def test_tc14_disconnected_capture_is_local_and_recall_is_refused(rig):
     session = session_of(editor)
     helper.midi_out.is_port_open.return_value = False
     messages = []
-    session.message.connect(messages.append)
+    session.message.connect(lambda text, problem: messages.append(text))
     a = capture(session, "A")
     assert a.source == "local" and a.complete()
     jdxi.writes.clear()
@@ -431,7 +471,7 @@ def test_an_incompatible_photo_is_not_recalled(rig):
     session = session_of(editor)
     capture(session, "A")
     messages = []
-    session.message.connect(messages.append)
+    session.message.connect(lambda text, problem: messages.append(text))
     session.slots["A"].schema = ab.SCHEMA_VERSION + 1
     assert not session.recall("A") and "version" in messages[-1]
     session.slots["A"].schema = ab.SCHEMA_VERSION
@@ -456,13 +496,66 @@ def test_the_ab_bar_is_on_the_synth_editors_only(rig):
         drums.deleteLater()
 
 
-def test_pressing_an_empty_slot_captures_a_full_one_recalls(rig):
+def test_choose_a_slot_and_capture_then_recall_and_switch(rig):
     helper, jdxi, eds = rig
     editor = eds["digital_2"]
     control = editor.ab_control
-    control.buttons["A"].click()
-    assert pump(lambda: control.session.slots["A"] is not None and not control.session.busy)
-    assert not control.buttons["A"].isChecked()
-    control.buttons["A"].click()
-    assert pump(lambda: control.buttons["A"].isChecked())
-    assert control.actions["save_A"].isEnabled() and not control.actions["save_AB"].isEnabled()
+    session = control.session
+    control.buttons["A"].click()  # empty: only chosen
+    assert session.selected == "A" and session.slots["A"] is None
+    control.camera.click()
+    assert pump(lambda: session.slots["A"] is not None and not session.busy)
+    assert not control.swap.isEnabled()  # B still empty
+    control.buttons["B"].click()
+    edit(editor, "TONE_LEVEL", 7)
+    control.camera.click()
+    assert pump(lambda: session.slots["B"] is not None and not session.busy)
+    assert control.swap.isEnabled() and session.active is None
+    control.buttons["A"].click()  # full: recalled
+    assert pump(lambda: session.active == "A")
+    assert control.buttons["A"].active and not control.buttons["B"].active
+    control.swap.click()
+    assert pump(lambda: session.active == "B")
+    control.shortcut.activated.emit()  # Ctrl+Shift+A
+    assert pump(lambda: session.active == "A")
+    assert control.disk.isEnabled() and control.target() == "A"
+
+
+def test_without_the_jdxi_what_needs_it_is_disabled(rig):
+    helper, jdxi, eds = rig
+    editor = eds["analog"]
+    control = editor.ab_control
+    session = control.session
+    capture(session, "A")
+    capture(session, "B")
+    assert recall(session, "A") and session.active == "A"
+    helper.midi_out.is_port_open.return_value = False
+    control._connection_check()
+    assert session.active is None  # what the JD-Xi plays when back is not known
+    assert not control.swap.isEnabled()
+    assert control.camera.isEnabled() and control.disk.isEnabled()
+    assert "Connect the JD-Xi" in control.buttons["A"].toolTip()
+    jdxi.writes.clear()
+    control.buttons["A"].click()  # chosen, not recalled
+    assert session.selected == "A" and session.active is None and jdxi.writes == []
+    assert control.buttons["A"].selected and not control.buttons["A"].active
+    helper.midi_out.is_port_open.return_value = True
+    control._connection_check()
+    assert control.swap.isEnabled()
+
+
+def test_a_notice_does_not_move_the_bar(rig):
+    helper, jdxi, eds = rig
+    editor = eds["digital_1"]
+    editor.resize(1400, 800)
+    editor.show()
+    QApplication.processEvents()
+    control = editor.ab_control
+    where = {name: b.mapTo(editor, b.rect().topLeft()) for name, b in control.buttons.items()}
+    control.show_message("A long notice " * 6, True)
+    QApplication.processEvents()
+    assert control.toast.isVisible()
+    assert {name: b.mapTo(editor, b.rect().topLeft()) for name, b in control.buttons.items()} == where
+    control.toast.mousePressEvent(None)  # a problem goes when clicked
+    assert not control.toast.isVisible()
+    editor.hide()

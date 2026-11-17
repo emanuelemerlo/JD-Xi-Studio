@@ -5,12 +5,16 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### A/B compare of a Tone (Digital 1, Digital 2, Analog)
-- **A | B ▾** in the tone editors' bar: capture two photos of the whole Tone, recall them while
-  playing, save each as a named part `.syx`; the photos are kept per part across restarts
+- In the tone editors' bar: **A B** to choose (and recall) a photo of the whole Tone, **camera** to
+  capture the Tone in the chosen slot, **⇄** (Ctrl+Shift+A) to switch while playing, **disk** to
+  save the active photo as a named part `.syx`; the photos are kept per part across restarts
+- The active photo (the one the JD-Xi plays) is filled with the part's colour, with a dot once
+  modified; what needs the JD-Xi is disabled while it is not connected; notices float under the
+  buttons without moving the bar
 - Capture reads the Tone from the JD-Xi first (a "local" photo without it); a recall sends only
-  that part's Tone and counts as done only once the JD-Xi is read back holding exactly the photo
-- Edits after a recall show "modified"; a program change makes the next recall ask first;
-  Undo / Redo / Reload unchanged
+  that part's Tone and counts as done only once the JD-Xi is read back holding exactly the photo;
+  replacing a photo never saved to a file offers to save it first
+- A program change makes the next recall ask first; Undo / Redo / Reload unchanged
 - Fixed: a read started right after another one could lose a request (the queue took it for a
   duplicate of the one just answered) and wait for its timeout
 

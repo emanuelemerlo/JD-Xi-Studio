@@ -1,26 +1,32 @@
 """
 A/B compare: two snapshots of one part's Tone, to switch between while playing.
 
-For Digital 1, Digital 2 and Analog (the tone editors' top bar: A | B ▾):
+For Digital 1, Digital 2 and Analog, in the tone editors' top bar after
+Undo / Redo / Reload:  A  B   📷  ⇄  💾
 
-- Capture A / B takes a photo of the whole Tone (every block of the editor, as
-  DT1 messages). With the JD-Xi connected the Tone is read again first (RQ1)
-  and the photo is taken only from a complete answer, after the editor's own
-  changes have gone out; without it the editor's values are taken and the
-  photo is marked "local".
-- Recall A / B sends the photo's DT1s, reads the Tone back and shows it only
-  when the JD-Xi holds exactly the photo: a failed send, a missing answer or
-  other values leave nothing "active" and say the JD-Xi's state is uncertain.
-  Only this part's Tone blocks are sent: the other parts, the effects and the
-  program stay as they are, and so does the channel the keys play on.
+- A / B choose the slot; a full one is also recalled (the JD-Xi connected).
+  Empty: dashed outline; chosen: outline in the part's colour; active (the
+  JD-Xi plays it): filled with that colour; modified since: a dot.
+- 📷 captures the Tone in the chosen slot. With the JD-Xi connected the Tone is
+  read again first (RQ1) and the photo is taken only from a complete answer,
+  after the editor's own changes have gone out; without it the editor's
+  values are taken and the photo is marked "local". Replacing a photo asks;
+  one never saved to a file can be saved first.
+- ⇄ (Ctrl+Shift+A) recalls the other photo. A recall sends the photo's DT1s,
+  reads the Tone back and makes the photo active only when the JD-Xi holds
+  exactly it: a failed send, a missing answer or other values leave nothing
+  active and say the JD-Xi's state is uncertain. Only this part's Tone
+  blocks are sent: the other parts, the effects and the program stay, and
+  so does the channel the keys play on.
+- 💾 saves the active photo (or the chosen one) as a .syx of the part, with
+  the name given written in the Tone Name; the editors' Import reads it.
+- What needs the JD-Xi (recall, ⇄) is disabled while it is not connected;
+  the buttons follow it being plugged in or out. Notices float under the
+  buttons and never move the bar.
 - The photos are copies: editing (here or on the JD-Xi) changes the current
-  state only, shown as "modified" against the photo recalled last.
-- Save A / B / both writes a .syx of the part (the Import of the editors reads
-  it) with the name given, written in the Tone Name.
-- The photos are kept per part in ~/.jdxi_studio/ab_compare and come back at
-  start, but nothing is sent until A or B is pressed. After a program change
-  (or a restart) recalling asks first: the photo was taken with another
-  program around this part.
+  state only. They are kept per part in ~/.jdxi_studio/ab_compare and come
+  back at start, but nothing is sent until a slot is pressed. After a
+  program change (or a restart) recalling asks first.
 
 Undo / Redo / Reload are untouched: a recall arrives as values from the
 JD-Xi, which the edit history already handles (the steps on them are dropped).
@@ -33,16 +39,16 @@ import weakref
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Callable, Optional, Sequence
+from typing import Callable, Optional
 
 from decologr import Decologr as log
-from PySide6.QtCore import QObject, QTimer, Signal
+from PySide6.QtCore import QObject, QPoint, QPointF, QRectF, QSize, Qt, QTimer, Signal
+from PySide6.QtGui import QColor, QKeySequence, QPainter, QPen, QShortcut
 from PySide6.QtWidgets import (
     QFileDialog,
     QHBoxLayout,
     QInputDialog,
     QLabel,
-    QMenu,
     QMessageBox,
     QToolButton,
     QWidget,
@@ -154,6 +160,7 @@ class Snapshot:
     source: str = "jdxi"  # "jdxi" (read from it) or "local" (the editor's values)
     schema: int = SCHEMA_VERSION
     epoch: Optional[int] = field(default=None)  # program context; None once reloaded from disk
+    saved_to: str = ""  # the .syx it was last saved as ("" never saved)
 
     def dt1s(self) -> list[bytes]:
         return [bytes.fromhex(b) for b in self.blocks]
@@ -304,14 +311,15 @@ class ABSession(QObject):
     the current state differs from it."""
 
     changed = Signal()  # photos, active slot, modified or busy changed
-    message = Signal(str)  # what happened, for the user
+    message = Signal(str, bool)  # what happened, for the user; True: a problem
 
     def __init__(self, editor, parent=None):
         super().__init__(parent if parent is not None else editor)
         self.editor = editor
         self.part = part_of(editor)
         self.slots: dict = load_slots(self.part)
-        self.active: Optional[str] = None
+        self.active: Optional[str] = None  # the photo the JD-Xi holds (recalled last)
+        self.selected: str = SLOTS[0]  # the slot the camera and the disk act on
         self.modified = False
         self.busy = False
         self._accepted_epoch: Optional[int] = None
@@ -326,6 +334,32 @@ class ABSession(QObject):
         signal = getattr(helper, "midi_message_incoming", None)
         if signal is not None:  # values from the JD-Xi arrive with the signals blocked
             signal.connect(self._schedule_check)
+
+    def connected(self) -> bool:
+        return _connected(self.helper)
+
+    def disconnected(self) -> None:
+        """The JD-Xi went away: what it plays when it comes back is not known."""
+        if self.active is not None:
+            self.selected = self.active
+            self.active = None
+            self.modified = False
+            self.changed.emit()
+
+    def other(self, slot: Optional[str] = None) -> str:
+        slot = slot or self.active or self.selected
+        return SLOTS[1] if slot == SLOTS[0] else SLOTS[0]
+
+    def can_switch(self) -> bool:
+        return not self.busy and self.connected() and all(self.slots.get(s) is not None for s in SLOTS)
+
+    def switch(self, confirm_context: Callable[[Snapshot], bool] = lambda s: True) -> bool:
+        """Recall the other photo (A after B, B after A)."""
+        if not self.can_switch():
+            return False
+        slot = self.other()
+        self.selected = slot
+        return self.recall(slot, confirm_context=confirm_context)
 
     @property
     def helper(self):
@@ -368,10 +402,10 @@ class ABSession(QObject):
             flush()  # the editor's last changes go out before the reading
         if not _connected(self.helper):
             self._store(slot, take_snapshot(self.editor, slot, source="local"))
-            self.message.emit(tr("{slot} captured from the editor: the JD-Xi is not connected (local photo)").format(slot=slot))
+            self.message.emit(tr("{slot} captured from the editor: the JD-Xi is not connected (local photo)").format(slot=slot), False)
             return True
         self._set_busy(True)
-        self.message.emit(tr("Capturing {slot}: reading the Tone from the JD-Xi…").format(slot=slot))
+        self.message.emit(tr("Capturing {slot}: reading the Tone from the JD-Xi…").format(slot=slot), False)
         self._read(lambda result: self._capture_read(slot, result))
         return True
 
@@ -380,13 +414,14 @@ class ABSession(QObject):
         if not result.complete:
             self.message.emit(
                 tr("{slot} not captured: the JD-Xi did not send the whole Tone ({detail}). Try again.").format(
-                    slot=slot, detail=result.summary()))
+                    slot=slot, detail=result.summary()), True)
             return
         self._store(slot, take_snapshot(self.editor, slot, source="jdxi"))
-        self.message.emit(tr("{slot} captured").format(slot=slot))
+        self.message.emit(tr("{slot} captured").format(slot=slot), False)
 
     def _store(self, slot: str, snapshot: Snapshot) -> None:
         self.slots[slot] = snapshot
+        self.selected = slot
         save_slots(self.part, self.slots)
         if self.active == slot:  # the photo recalled last is this new one now
             self.check_modified()
@@ -406,10 +441,10 @@ class ABSession(QObject):
             return False
         problem = snapshot.problem_for(self.editor)
         if problem:
-            self.message.emit(tr("{slot} cannot be recalled: {problem}").format(slot=slot, problem=problem))
+            self.message.emit(tr("{slot} cannot be recalled: {problem}").format(slot=slot, problem=problem), True)
             return False
         if not _connected(self.helper):
-            self.message.emit(tr("{slot} not recalled: connect the JD-Xi to hear it").format(slot=slot))
+            self.message.emit(tr("{slot} not recalled: connect the JD-Xi to hear it").format(slot=slot), True)
             return False
         epoch = program_epoch()
         if snapshot.epoch != epoch and self._accepted_epoch != epoch:
@@ -431,9 +466,9 @@ class ABSession(QObject):
                 self._set_busy(False)
                 self.message.emit(
                     tr("{slot} not recalled: sending to the JD-Xi failed. Its Tone may be partly changed: "
-                       "read it again or recall {slot} once more.").format(slot=slot))
+                       "read it again or recall {slot} once more.").format(slot=slot), True)
                 return True
-        self.message.emit(tr("Recalling {slot}…").format(slot=slot))
+        self.message.emit(tr("Recalling {slot}…").format(slot=slot), False)
         self._read(lambda result: self._recall_read(slot, snapshot, result, previous))
         return True
 
@@ -442,18 +477,18 @@ class ABSession(QObject):
         if not result.complete:
             self.message.emit(
                 tr("{slot} sent, but the JD-Xi did not confirm it ({detail}): its Tone is uncertain. "
-                   "Read it again or recall {slot} once more.").format(slot=slot, detail=result.summary()))
+                   "Read it again or recall {slot} once more.").format(slot=slot, detail=result.summary()), True)
             return
         differences = self._differences(snapshot)
         if differences:
             self.message.emit(
                 tr("{slot} sent, but the JD-Xi holds {n} different values: its Tone is uncertain. "
-                   "Recall {slot} once more.").format(slot=slot, n=differences))
+                   "Recall {slot} once more.").format(slot=slot, n=differences), True)
             return
         self.active = slot
         self.modified = False
         self.changed.emit()
-        self.message.emit(tr("{slot} recalled").format(slot=slot))
+        self.message.emit(tr("{slot} recalled").format(slot=slot), False)
 
     # ------------------------------------------------------------ the rest
     def clear(self) -> None:
@@ -470,10 +505,18 @@ class ABSession(QObject):
         if path.suffix.lower() != ".syx":
             path = path.with_suffix(".syx")
         path.write_bytes(b"".join(snapshot.with_name(self.editor, name)))
+        snapshot.saved_to = str(path)
+        save_slots(self.part, self.slots)
+        self.changed.emit()
         return path
 
 
 # ---------------------------------------------------------------- the bar
+CONNECTION_CHECK_MS = 1000  # the buttons follow the JD-Xi being plugged in or out
+TOAST_MS = 3500  # how long a notice stays (a problem stays until clicked)
+SWITCH_SHORTCUT = "Ctrl+Shift+A"
+
+
 def _time(snapshot: Snapshot) -> str:
     try:
         return datetime.fromisoformat(snapshot.taken_at).strftime("%d/%m %H:%M")
@@ -481,86 +524,197 @@ def _time(snapshot: Snapshot) -> str:
         return snapshot.taken_at
 
 
+class SlotButton(QToolButton):
+    """A or B. Empty: dashed outline; full: grey; selected: outline in the
+    part's colour; active (the JD-Xi holds it): filled with the part's colour;
+    modified since: a dot in the corner."""
+
+    EMPTY, FULL = "empty", "full"
+
+    def __init__(self, slot: str, accent: str, parent=None):
+        super().__init__(parent)
+        self.slot = slot
+        self.accent = QColor(accent)
+        self.state = self.EMPTY
+        self.selected = False
+        self.active = False
+        self.modified = False
+        self.setText(slot)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setMinimumWidth(38)
+
+    def show_state(self, full: bool, selected: bool, active: bool, modified: bool) -> None:
+        self.state = self.FULL if full else self.EMPTY
+        self.selected, self.active, self.modified = selected, active, modified
+        self.update()
+
+    def paintEvent(self, event) -> None:  # noqa: N802 (Qt name)
+        p = QPainter(self)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
+        rect = QRectF(self.rect()).adjusted(1, 1, -1, -1)
+        radius = 6
+        enabled = self.isEnabled()
+        if self.active:
+            fill, text, border = self.accent, QColor("#0e0f11"), self.accent
+        elif self.state == self.FULL:
+            fill, text, border = QColor("#2a2c31"), QColor("#e8e8ea"), QColor("#4a4d55")
+        else:
+            fill, text, border = QColor("#17181b"), QColor("#5d6068"), QColor("#4a4d55")
+        if self.selected and not self.active:
+            border = self.accent
+        if not enabled:
+            text = QColor(text.red(), text.green(), text.blue(), 110)
+        pen = QPen(border, 2 if (self.selected or self.active) else 1)
+        if self.state == self.EMPTY and not self.selected and not self.active:
+            pen.setStyle(Qt.PenStyle.DashLine)
+        p.setPen(pen)
+        p.setBrush(fill)
+        p.drawRoundedRect(rect, radius, radius)
+        font = p.font()
+        font.setBold(True)
+        font.setPixelSize(15)
+        p.setFont(font)
+        p.setPen(text)
+        p.drawText(rect, int(Qt.AlignmentFlag.AlignCenter), self.slot)
+        if self.modified and self.active:
+            p.setPen(Qt.PenStyle.NoPen)
+            p.setBrush(QColor("#0e0f11"))
+            p.drawEllipse(QPointF(rect.right() - 7, rect.top() + 7), 3.5, 3.5)
+        p.end()
+
+
+class Toast(QLabel):
+    """A notice floating under the A/B buttons: it never moves the bar. It goes
+    after a few seconds; a problem stays until clicked."""
+
+    def __init__(self, host: QWidget):
+        super().__init__(host)
+        self.setWordWrap(True)
+        self.setMaximumWidth(420)
+        self.setContentsMargins(10, 6, 10, 6)
+        self.hide()
+        self._timer = QTimer(self)
+        self._timer.setSingleShot(True)
+        self._timer.timeout.connect(self.hide)
+
+    def show_text(self, text: str, problem: bool, anchor: QWidget) -> None:
+        colour = "#ff6b5e" if problem else "#3a3d44"
+        self.setStyleSheet(
+            f"QLabel {{ background: #1f2025; color: #e8e8ea; border: 1px solid {colour};"
+            " border-radius: 6px; font-size: 12px; }")
+        self.setText(text + ("   ✕" if problem else ""))
+        self.setToolTip(tr("Click to close") if problem else "")
+        self.adjustSize()
+        host = self.parentWidget()
+        below = anchor.mapTo(host, QPoint(0, anchor.height() + 6))
+        x = min(max(4, below.x()), max(4, host.width() - self.width() - 8))
+        self.move(x, below.y())
+        self.raise_()
+        self.show()
+        if problem:
+            self._timer.stop()
+        else:
+            self._timer.start(TOAST_MS)
+
+    def mousePressEvent(self, event) -> None:  # noqa: N802 (Qt name)
+        self.hide()
+
+
 class ABControl(QWidget):
-    """A | B ▾ in a tone editor's top bar."""
+    """A B  📷 ⇄ 💾 in a tone editor's top bar."""
 
     def __init__(self, editor, parent=None):
         super().__init__(parent)
+        import qtawesome as qta
+
         self.editor = editor
         self.session = ABSession(editor, self)
         accent = getattr(editor, "ACCENT", "#eb5757")
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(8, 0, 0, 0)
-        layout.setSpacing(0)
+        layout.setContentsMargins(10, 0, 0, 0)
+        layout.setSpacing(4)
+        model = (getattr(editor, "edit_buttons", None) or [None])[0]
+        height = model.sizeHint().height() if model is not None else 32
         self.buttons = {}
-        for i, slot in enumerate(SLOTS):
-            button = QToolButton()
-            button.setText(slot)
-            button.setObjectName("abSlot")
-            button.setCheckable(True)
-            button.setMinimumWidth(30)
+        for slot in SLOTS:
+            button = SlotButton(slot, accent)
+            button.setFixedHeight(height)
             button.clicked.connect(lambda _=False, slot=slot: self.pressed(slot))
             layout.addWidget(button)
             self.buttons[slot] = button
-        self.menu_button = QToolButton()
-        self.menu_button.setText("▾")
-        self.menu_button.setObjectName("abMenu")
-        self.menu_button.setToolTip(tr("A/B compare: capture, save, clear"))
-        self.menu_button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
-        menu = QMenu(self.menu_button)
-        self.actions = {
-            "capture_A": menu.addAction(tr("Capture A"), lambda: self.capture("A")),
-            "capture_B": menu.addAction(tr("Capture B"), lambda: self.capture("B")),
-        }
-        menu.addSeparator()
-        self.actions["save_A"] = menu.addAction(tr("Save A…"), lambda: self.save(["A"]))
-        self.actions["save_B"] = menu.addAction(tr("Save B…"), lambda: self.save(["B"]))
-        self.actions["save_AB"] = menu.addAction(tr("Save A and B…"), lambda: self.save(["A", "B"]))
-        menu.addSeparator()
-        self.actions["clear"] = menu.addAction(tr("Clear A/B"), self.clear)
-        self.menu_button.setMenu(menu)
-        layout.addWidget(self.menu_button)
-        buttons = getattr(editor, "edit_buttons", None) or []
-        if buttons:  # as tall as Undo / Redo / Reload next to them
-            height = buttons[0].sizeHint().height()
-            for button in (*self.buttons.values(), self.menu_button):
-                button.setFixedHeight(height)
-        self.state_label = QLabel("")
-        self.state_label.setObjectName("abState")
         layout.addSpacing(6)
-        layout.addWidget(self.state_label)
-        self.setStyleSheet(
-            "QToolButton#abSlot, QToolButton#abMenu { background: #1b1c20; color: #6f727a;"
-            " border: 1px solid #34363c; padding: 3px 9px; font-weight: 800; }"
-            "QToolButton#abSlot[filled=\"true\"] { color: #e8e8ea; border-color: #55585f; }"
-            f"QToolButton#abSlot:checked {{ background: {accent}; color: #0e0f11; border-color: {accent}; }}"
-            "QToolButton#abSlot:disabled, QToolButton#abMenu:disabled { color: #45474d; }"
-            "QToolButton#abMenu::menu-indicator { image: none; }"
-            "QLabel#abState { color: #a3a6ad; font-size: 11px; }"
-        )
+
+        def tool(icon: str, slot) -> QToolButton:
+            b = QToolButton()
+            if model is not None:  # as Undo / Redo / Reload next to them
+                b.setObjectName(model.objectName())
+                b.setAutoRaise(model.autoRaise())
+                b.setStyleSheet(model.styleSheet())
+            b.setIcon(qta.icon(icon, color="#e6e6e6", color_disabled="#55585f"))
+            b.setIconSize(QSize(20, 20))
+            b.setFixedSize(model.sizeHint() if model is not None else QSize(height, height))
+            b.setCursor(Qt.CursorShape.PointingHandCursor)
+            b.clicked.connect(slot)
+            layout.addWidget(b)
+            return b
+
+        self.camera = tool("mdi.camera", self.capture)
+        self.swap = tool("mdi.swap-horizontal", self.switch)
+        self.disk = tool("mdi.content-save", self.save)
+        self.toast = Toast(editor)
+        self.shortcut = QShortcut(QKeySequence(SWITCH_SHORTCUT), editor)
+        self.shortcut.setContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+        self.shortcut.activated.connect(self.switch)
+        self._connected = None
+        self._poll = QTimer(self)
+        self._poll.setInterval(CONNECTION_CHECK_MS)
+        self._poll.timeout.connect(self._connection_check)
+        self._poll.start()
         self.session.changed.connect(self.refresh)
         self.session.message.connect(self.show_message)
         self.refresh()
 
     # ------------------------------------------------------------ actions
     def pressed(self, slot: str) -> None:
-        """An empty slot captures, a full one recalls."""
-        if self.session.slots.get(slot) is None:
-            self.capture(slot)
-        else:
-            self.session.recall(slot, confirm_context=self._confirm_context)
+        """Choose a slot; a full one is recalled too (with the JD-Xi connected)."""
+        session = self.session
+        if session.busy:
+            return
+        session.selected = slot
+        if session.slots.get(slot) is not None and session.connected() and session.active != slot:
+            session.recall(slot, confirm_context=self._confirm_context)
         self.refresh()
 
-    def capture(self, slot: str) -> None:
-        self.session.capture(slot, confirm_overwrite=self._confirm_overwrite)
+    def capture(self) -> None:
+        self.session.capture(self.session.selected, confirm_overwrite=self._confirm_overwrite)
         self.refresh()
+
+    def switch(self) -> None:
+        if self.session.can_switch():
+            self.session.switch(confirm_context=self._confirm_context)
+        self.refresh()
+
+    def target(self) -> str:
+        """The slot the disk saves: the active one, else the one chosen."""
+        return self.session.active or self.session.selected
 
     def _confirm_overwrite(self, snapshot: Snapshot) -> bool:
-        return QMessageBox.question(
-            self, tr("A/B compare"),
-            tr("{slot} already holds «{name}» ({time}). Replace it with the current Tone?").format(
-                slot=snapshot.slot, name=snapshot.name or tr("no name"), time=_time(snapshot)),
-        ) == QMessageBox.StandardButton.Yes
+        """Replacing a photo: one never saved to a file can be saved first."""
+        text = tr("{slot} already holds «{name}» ({time}). Replace it with the current Tone?").format(
+            slot=snapshot.slot, name=snapshot.name or tr("no name"), time=_time(snapshot))
+        if snapshot.saved_to:
+            return QMessageBox.question(self, tr("A/B compare"), text) == QMessageBox.StandardButton.Yes
+        box = QMessageBox(QMessageBox.Icon.Question, tr("A/B compare"),
+                          text + "\n" + tr("It has not been saved to a file."), parent=self)
+        save = box.addButton(tr("Save first…"), QMessageBox.ButtonRole.AcceptRole)
+        replace = box.addButton(tr("Replace"), QMessageBox.ButtonRole.DestructiveRole)
+        box.addButton(QMessageBox.StandardButton.Cancel)
+        box.exec()
+        if box.clickedButton() is replace:
+            return True
+        if box.clickedButton() is save:
+            return bool(self.save(snapshot.slot))
+        return False
 
     def _confirm_context(self, snapshot: Snapshot) -> bool:
         part = tr(PART_NAMES.get(snapshot.part, snapshot.part))
@@ -571,90 +725,85 @@ class ABControl(QWidget):
                 slot=snapshot.slot, name=snapshot.name or tr("no name"), time=_time(snapshot), part=part),
         ) == QMessageBox.StandardButton.Yes
 
-    def save(self, slots: Sequence[str]) -> list[Path]:
-        """Ask a name for each photo and where to write it; the .syx files written."""
-        names = {}
-        for slot in slots:
-            snapshot = self.session.slots.get(slot)
-            if snapshot is None:
-                continue
-            name, ok = QInputDialog.getText(
-                self, tr("Save {slot}").format(slot=slot),
-                tr("Name of {slot} (12 characters, written as Tone Name):").format(slot=slot),
-                text=snapshot.name)
-            if not ok:
-                return []
-            names[slot] = clean_name(name) or snapshot.name or slot
-        if not names:
-            return []
-        start = getattr(self.editor, "_part_syx_path", "") or str(Path.home())
+    def save(self, slot: Optional[str] = None) -> Optional[Path]:
+        """Save a photo (the active one) as a .syx: its name, then where."""
+        slot = slot or self.target()
+        snapshot = self.session.slots.get(slot)
+        if snapshot is None:
+            return None
+        name, ok = QInputDialog.getText(
+            self, tr("Save {slot}").format(slot=slot),
+            tr("Name of {slot} (12 characters, written as Tone Name):").format(slot=slot),
+            text=snapshot.name)
+        if not ok:
+            return None
+        name = clean_name(name) or snapshot.name or slot
+        start = snapshot.saved_to or getattr(self.editor, "_part_syx_path", "") or str(Path.home())
         start_dir = Path(start).parent if Path(start).suffix else Path(start)
-        written = []
-        if len(names) == 1:
-            slot, name = next(iter(names.items()))
-            path, _ = QFileDialog.getSaveFileName(
-                self, tr("Save {slot}").format(slot=slot), str(start_dir / f"{_file_stem(name)}.syx"),
-                tr("SysEx Files (*.syx);;All Files (*)"))
-            if not path:
-                return []
-            written.append(self.session.write_syx(slot, name, Path(path)))
-        else:
-            folder = QFileDialog.getExistingDirectory(self, tr("Save A and B in"), str(start_dir))
-            if not folder:
-                return []
-            targets = {slot: Path(folder) / f"{_file_stem(name)}.syx" for slot, name in names.items()}
-            if len({str(p) for p in targets.values()}) < len(targets):  # same name: tell them apart
-                targets = {slot: Path(folder) / f"{_file_stem(name)}_{slot}.syx" for slot, name in names.items()}
-            existing = [p.name for p in targets.values() if p.exists()]
-            if existing and QMessageBox.question(
-                    self, tr("Save A and B"), tr("Replace {files}?").format(files=", ".join(existing)),
-            ) != QMessageBox.StandardButton.Yes:
-                return []
-            for slot, path in targets.items():
-                written.append(self.session.write_syx(slot, names[slot], path))
-        if written:
-            self.editor._part_syx_path = str(written[-1])
-            self.show_message(tr("Saved: {files}").format(files=", ".join(p.name for p in written)))
+        path, _ = QFileDialog.getSaveFileName(
+            self, tr("Save {slot}").format(slot=slot), str(start_dir / f"{_file_stem(name)}.syx"),
+            tr("SysEx Files (*.syx);;All Files (*)"))
+        if not path:
+            return None
+        written = self.session.write_syx(slot, name, Path(path))
+        self.editor._part_syx_path = str(written)
+        self.show_message(tr("{slot} saved: {file}").format(slot=slot, file=written.name), False)
         return written
 
-    def clear(self) -> None:
-        if any(self.session.slots.values()) and QMessageBox.question(
-                self, tr("A/B compare"), tr("Clear the photos A and B of this part?"),
-        ) != QMessageBox.StandardButton.Yes:
-            return
-        self.session.clear()
-
     # ------------------------------------------------------------ display
-    def show_message(self, text: str) -> None:
-        status = getattr(self.editor, "read_status", None)
-        if status is not None:
-            status.setText(text)
+    def show_message(self, text: str, problem: bool = False) -> None:
         log.message(text, scope="ABCompare")
+        if self.isVisible():
+            self.toast.show_text(text, problem, self)
+
+    def _connection_check(self) -> None:
+        connected = self.session.connected()
+        if connected != self._connected:
+            if not connected:
+                self.session.disconnected()
+            self.refresh()
 
     def refresh(self) -> None:
         session = self.session
+        connected = session.connected()
+        self._connected = connected
         for slot, button in self.buttons.items():
             snapshot = session.slots.get(slot)
-            button.setProperty("filled", snapshot is not None)
-            button.setChecked(session.active == slot)
+            button.show_state(full=snapshot is not None, selected=session.selected == slot,
+                              active=session.active == slot,
+                              modified=session.active == slot and session.modified)
             button.setEnabled(not session.busy)
-            button.style().unpolish(button)
-            button.style().polish(button)
             if snapshot is None:
-                button.setToolTip(tr("{slot} is empty: press to capture the current Tone").format(slot=slot))
+                button.setToolTip(tr("{slot} is empty: choose it and press the camera to capture the current Tone").format(slot=slot))
+                continue
+            where = tr("read from the JD-Xi") if snapshot.source == "jdxi" else tr("local: taken from the editor")
+            saved = (tr("saved as {file}").format(file=Path(snapshot.saved_to).name) if snapshot.saved_to
+                     else tr("not saved to a file"))
+            tip = tr("{slot}: «{name}», {time}, {where}, {saved}.").format(
+                slot=slot, name=snapshot.name or tr("no name"), time=_time(snapshot), where=where, saved=saved)
+            if session.active == slot:
+                tip += " " + (tr("The JD-Xi plays it, with changes since.") if session.modified
+                              else tr("The JD-Xi plays it."))
+            elif connected:
+                tip += " " + tr("Press to recall it.")
             else:
-                where = tr("read from the JD-Xi") if snapshot.source == "jdxi" else tr("local: taken from the editor")
-                button.setToolTip(tr("{slot}: «{name}», {time}, {where}. Press to recall it.").format(
-                    slot=slot, name=snapshot.name or tr("no name"), time=_time(snapshot), where=where))
-        self.menu_button.setEnabled(not session.busy)
-        for slot in SLOTS:
-            self.actions[f"save_{slot}"].setEnabled(session.slots.get(slot) is not None)
-        self.actions["save_AB"].setEnabled(all(session.slots.get(s) is not None for s in SLOTS))
-        self.actions["clear"].setEnabled(any(session.slots.values()))
-        if session.active and session.modified:
-            self.state_label.setText(tr("● modified from {slot}").format(slot=session.active))
+                tip += " " + tr("Connect the JD-Xi to recall it.")
+            button.setToolTip(tip)
+        selected = session.selected
+        self.camera.setEnabled(not session.busy)
+        self.camera.setToolTip(
+            (tr("Capture the current Tone in {slot} (read from the JD-Xi)") if connected
+             else tr("Capture the editor's values in {slot} (JD-Xi not connected: a local photo)")).format(slot=selected))
+        self.swap.setEnabled(session.can_switch())
+        if not connected:
+            self.swap.setToolTip(tr("Switch between A and B: connect the JD-Xi"))
+        elif not all(session.slots.get(s) is not None for s in SLOTS):
+            self.swap.setToolTip(tr("Switch between A and B: capture both first"))
         else:
-            self.state_label.setText("")
+            self.swap.setToolTip(tr("Switch between A and B ({keys})").format(keys=SWITCH_SHORTCUT))
+        target = self.target()
+        self.disk.setEnabled(not session.busy and session.slots.get(target) is not None)
+        self.disk.setToolTip(tr("Save {slot} as a .syx file, with a name").format(slot=target))
 
 
 def _file_stem(name: str) -> str:
