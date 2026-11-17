@@ -1350,7 +1350,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         <message>
             <location filename="../../jdxi_editor/ui/editors/synth/base.py" line="357" />
             <location filename="../../jdxi_editor/ui/editors/synth/base.py" line="383" />
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="597" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="745" />
             <source>SysEx Files (*.syx);;All Files (*)</source>
             <translation>File SysEx (*.syx);;Tutti i file (*)</translation>
         </message>
@@ -1401,199 +1401,219 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Nota: {note_name}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="187" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="194" />
             <source>its parameters do not match this editor's</source>
             <translation>i suoi parametri non corrispondono a quelli di questo editor</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="189" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="196" />
             <source>it is incomplete or damaged</source>
             <translation>è incompleta o danneggiata</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="508" />
-            <source>A/B compare: capture, save, clear</source>
-            <translation>Confronto A/B: acquisisci, salva, svuota</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="516" />
-            <source>Save A…</source>
-            <translation>Salva A…</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="517" />
-            <source>Save B…</source>
-            <translation>Salva B…</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="518" />
-            <source>Save A and B…</source>
-            <translation>Salva A e B…</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="520" />
-            <source>Clear A/B</source>
-            <translation>Svuota A/B</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="512" />
-            <source>Capture A</source>
-            <translation>Acquisisci A</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="513" />
-            <source>Capture B</source>
-            <translation>Acquisisci B</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="560" />
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="568" />
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="622" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="707" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="722" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="706" />
             <source>A/B compare</source>
             <translation>Confronto A/B</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="602" />
-            <source>Save A and B in</source>
-            <translation>Salva A e B in</translation>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="709" />
+            <source>Save first…</source>
+            <translation>Salva prima…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="182" />
-            <source>it was taken with another version of JD-Xi Studio (format {theirs}, this one reads {ours})</source>
-            <translation>è stata presa con un'altra versione di JD-Xi Studio (formato {theirs}, questa legge il {ours})</translation>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="710" />
+            <source>Replace</source>
+            <translation>Sostituisci</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="185" />
-            <source>it belongs to {part}</source>
-            <translation>appartiene a {part}</translation>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="606" />
+            <source>Click to close</source>
+            <translation>Clic per chiudere</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="374" />
-            <source>Capturing {slot}: reading the Tone from the JD-Xi…</source>
-            <translation>Acquisizione di {slot}: lettura del Tone dal JD-Xi…</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="386" />
-            <source>{slot} captured</source>
-            <translation>{slot} acquisita</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="436" />
-            <source>Recalling {slot}…</source>
-            <translation>Richiamo di {slot}…</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="456" />
-            <source>{slot} recalled</source>
-            <translation>{slot} richiamata</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="622" />
-            <source>Clear the photos A and B of this part?</source>
-            <translation>Svuotare le fotografie A e B di questa parte?</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="646" />
-            <source>read from the JD-Xi</source>
-            <translation>letta dal JD-Xi</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="646" />
-            <source>local: taken from the editor</source>
-            <translation>locale: presa dall'editor</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="371" />
-            <source>{slot} captured from the editor: the JD-Xi is not connected (local photo)</source>
-            <translation>{slot} acquisita dall'editor: il JD-Xi non è collegato (fotografia locale)</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="382" />
-            <source>{slot} not captured: the JD-Xi did not send the whole Tone ({detail}). Try again.</source>
-            <translation>{slot} non acquisita: il JD-Xi non ha mandato tutto il Tone ({detail}). Riprova.</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="409" />
-            <source>{slot} cannot be recalled: {problem}</source>
-            <translation>{slot} non si può richiamare: {problem}</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="412" />
-            <source>{slot} not recalled: connect the JD-Xi to hear it</source>
-            <translation>{slot} non richiamata: collega il JD-Xi per sentirla</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="444" />
-            <source>{slot} sent, but the JD-Xi did not confirm it ({detail}): its Tone is uncertain. Read it again or recall {slot} once more.</source>
-            <translation>{slot} inviata, ma il JD-Xi non l'ha confermata ({detail}): il suo Tone è incerto. Rileggilo o richiama {slot} un'altra volta.</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="450" />
-            <source>{slot} sent, but the JD-Xi holds {n} different values: its Tone is uncertain. Recall {slot} once more.</source>
-            <translation>{slot} inviata, ma il JD-Xi ha {n} valori diversi: il suo Tone è incerto. Richiama {slot} un'altra volta.</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="561" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="703" />
             <source>{slot} already holds «{name}» ({time}). Replace it with the current Tone?</source>
             <translation>{slot} contiene già «{name}» ({time}). Sostituirla con il Tone attuale?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="569" />
-            <source>{slot} («{name}», {time}) was taken with another program, or before JD-Xi Studio was restarted. Send it to the {part} part of the current program?</source>
-            <translation>{slot} («{name}», {time}) è stata presa con un altro programma, o prima di riavviare JD-Xi Studio. Inviarla alla parte {part} del programma attuale?</translation>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="708" />
+            <source>It has not been saved to a file.</source>
+            <translation>Non è stata salvata su file.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="582" />
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="596" />
-            <source>Save {slot}</source>
-            <translation>Salva {slot}</translation>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="779" />
+            <source>read from the JD-Xi</source>
+            <translation>letta dal JD-Xi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="583" />
-            <source>Name of {slot} (12 characters, written as Tone Name):</source>
-            <translation>Nome di {slot} (12 caratteri, scritto come Tone Name):</translation>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="779" />
+            <source>local: taken from the editor</source>
+            <translation>locale: presa dall'editor</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="610" />
-            <source>Save A and B</source>
-            <translation>Salva A e B</translation>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="781" />
+            <source>not saved to a file</source>
+            <translation>non salvata su file</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="617" />
-            <source>Saved: {files}</source>
-            <translation>Salvato: {files}</translation>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="799" />
+            <source>Switch between A and B: connect the JD-Xi</source>
+            <translation>Scambia A e B: collega il JD-Xi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="655" />
-            <source>● modified from {slot}</source>
-            <translation>● modificato (attivo: {slot})</translation>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="189" />
+            <source>it was taken with another version of JD-Xi Studio (format {theirs}, this one reads {ours})</source>
+            <translation>è stata presa con un'altra versione di JD-Xi Studio (formato {theirs}, questa legge il {ours})</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="433" />
-            <source>{slot} not recalled: sending to the JD-Xi failed. Its Tone may be partly changed: read it again or recall {slot} once more.</source>
-            <translation>{slot} non richiamata: l'invio al JD-Xi non è riuscito. Il suo Tone potrebbe essere cambiato in parte: rileggilo o richiama {slot} un'altra volta.</translation>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="192" />
+            <source>it belongs to {part}</source>
+            <translation>appartiene a {part}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="562" />
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="571" />
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="648" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="408" />
+            <source>Capturing {slot}: reading the Tone from the JD-Xi…</source>
+            <translation>Acquisizione di {slot}: lettura del Tone dal JD-Xi…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="420" />
+            <source>{slot} captured</source>
+            <translation>{slot} acquisita</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="471" />
+            <source>Recalling {slot}…</source>
+            <translation>Richiamo di {slot}…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="491" />
+            <source>{slot} recalled</source>
+            <translation>{slot} richiamata</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="704" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="783" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="725" />
             <source>no name</source>
             <translation>senza nome</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="644" />
-            <source>{slot} is empty: press to capture the current Tone</source>
-            <translation>{slot} è vuota: premi per acquisire il Tone attuale</translation>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="735" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="744" />
+            <source>Save {slot}</source>
+            <translation>Salva {slot}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="647" />
-            <source>{slot}: «{name}», {time}, {where}. Press to recall it.</source>
-            <translation>{slot}: «{name}», {time}, {where}. Premi per richiamarla.</translation>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="736" />
+            <source>Name of {slot} (12 characters, written as Tone Name):</source>
+            <translation>Nome di {slot} (12 caratteri, scritto come Tone Name):</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="610" />
-            <source>Replace {files}?</source>
-            <translation>Sostituire {files}?</translation>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="750" />
+            <source>{slot} saved: {file}</source>
+            <translation>{slot} salvata: {file}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="782" />
+            <source>{slot}: «{name}», {time}, {where}, {saved}.</source>
+            <translation>{slot}: «{name}», {time}, {where}, {saved}.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="801" />
+            <source>Switch between A and B: capture both first</source>
+            <translation>Scambia A e B: prima acquisiscile entrambe</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="806" />
+            <source>Save {slot} as a .syx file, with a name</source>
+            <translation>Salva {slot} come file .syx, con un nome</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="405" />
+            <source>{slot} captured from the editor: the JD-Xi is not connected (local photo)</source>
+            <translation>{slot} acquisita dall'editor: il JD-Xi non è collegato (fotografia locale)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="416" />
+            <source>{slot} not captured: the JD-Xi did not send the whole Tone ({detail}). Try again.</source>
+            <translation>{slot} non acquisita: il JD-Xi non ha mandato tutto il Tone ({detail}). Riprova.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="444" />
+            <source>{slot} cannot be recalled: {problem}</source>
+            <translation>{slot} non si può richiamare: {problem}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="447" />
+            <source>{slot} not recalled: connect the JD-Xi to hear it</source>
+            <translation>{slot} non richiamata: collega il JD-Xi per sentirla</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="479" />
+            <source>{slot} sent, but the JD-Xi did not confirm it ({detail}): its Tone is uncertain. Read it again or recall {slot} once more.</source>
+            <translation>{slot} inviata, ma il JD-Xi non l'ha confermata ({detail}): il suo Tone è incerto. Rileggilo o richiama {slot} un'altra volta.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="485" />
+            <source>{slot} sent, but the JD-Xi holds {n} different values: its Tone is uncertain. Recall {slot} once more.</source>
+            <translation>{slot} inviata, ma il JD-Xi ha {n} valori diversi: il suo Tone è incerto. Richiama {slot} un'altra volta.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="723" />
+            <source>{slot} («{name}», {time}) was taken with another program, or before JD-Xi Studio was restarted. Send it to the {part} part of the current program?</source>
+            <translation>{slot} («{name}», {time}) è stata presa con un altro programma, o prima di riavviare JD-Xi Studio. Inviarla alla parte {part} del programma attuale?</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="780" />
+            <source>saved as {file}</source>
+            <translation>salvata come {file}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="785" />
+            <source>The JD-Xi plays it, with changes since.</source>
+            <translation>Il JD-Xi la sta suonando, con modifiche fatte dopo.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="786" />
+            <source>The JD-Xi plays it.</source>
+            <translation>Il JD-Xi la sta suonando.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="788" />
+            <source>Press to recall it.</source>
+            <translation>Premi per richiamarla.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="790" />
+            <source>Connect the JD-Xi to recall it.</source>
+            <translation>Collega il JD-Xi per richiamarla.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="795" />
+            <source>Capture the current Tone in {slot} (read from the JD-Xi)</source>
+            <translation>Acquisisci il Tone attuale in {slot} (letto dal JD-Xi)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="796" />
+            <source>Capture the editor's values in {slot} (JD-Xi not connected: a local photo)</source>
+            <translation>Acquisisci i valori dell'editor in {slot} (JD-Xi non collegato: fotografia locale)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="468" />
+            <source>{slot} not recalled: sending to the JD-Xi failed. Its Tone may be partly changed: read it again or recall {slot} once more.</source>
+            <translation>{slot} non richiamata: l'invio al JD-Xi non è riuscito. Il suo Tone potrebbe essere cambiato in parte: rileggilo o richiama {slot} un'altra volta.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="777" />
+            <source>{slot} is empty: choose it and press the camera to capture the current Tone</source>
+            <translation>{slot} è vuota: sceglila e premi la fotocamera per acquisire il Tone attuale</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="803" />
+            <source>Switch between A and B ({keys})</source>
+            <translation>Scambia A e B ({keys})</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/analog.py" line="138" />
@@ -7659,6 +7679,66 @@ Il suono sul JD-Xi viene sostituito: se vuoi tenerlo, salvalo prima sul JD-Xi (W
             <location filename="../../jdxi_editor/ui/windows/selftest.py" line="865" />
             <source>report not saved: {error}</source>
             <translation>resoconto non salvato: {error}</translation>
+        </message>
+        <message>
+            <source>A/B compare: capture, save, clear</source>
+            <translation type="vanished">Confronto A/B: acquisisci, salva, svuota</translation>
+        </message>
+        <message>
+            <source>Save A…</source>
+            <translation type="vanished">Salva A…</translation>
+        </message>
+        <message>
+            <source>Save B…</source>
+            <translation type="vanished">Salva B…</translation>
+        </message>
+        <message>
+            <source>Save A and B…</source>
+            <translation type="vanished">Salva A e B…</translation>
+        </message>
+        <message>
+            <source>Clear A/B</source>
+            <translation type="vanished">Svuota A/B</translation>
+        </message>
+        <message>
+            <source>Capture A</source>
+            <translation type="vanished">Acquisisci A</translation>
+        </message>
+        <message>
+            <source>Capture B</source>
+            <translation type="vanished">Acquisisci B</translation>
+        </message>
+        <message>
+            <source>Save A and B in</source>
+            <translation type="vanished">Salva A e B in</translation>
+        </message>
+        <message>
+            <source>Clear the photos A and B of this part?</source>
+            <translation type="vanished">Svuotare le fotografie A e B di questa parte?</translation>
+        </message>
+        <message>
+            <source>Save A and B</source>
+            <translation type="vanished">Salva A e B</translation>
+        </message>
+        <message>
+            <source>Saved: {files}</source>
+            <translation type="vanished">Salvato: {files}</translation>
+        </message>
+        <message>
+            <source>● modified from {slot}</source>
+            <translation type="vanished">● modificato (attivo: {slot})</translation>
+        </message>
+        <message>
+            <source>{slot} is empty: press to capture the current Tone</source>
+            <translation type="vanished">{slot} è vuota: premi per acquisire il Tone attuale</translation>
+        </message>
+        <message>
+            <source>{slot}: «{name}», {time}, {where}. Press to recall it.</source>
+            <translation type="vanished">{slot}: «{name}», {time}, {where}. Premi per richiamarla.</translation>
+        </message>
+        <message>
+            <source>Replace {files}?</source>
+            <translation type="vanished">Sostituire {files}?</translation>
         </message>
         <message>
             <source>Arpeggio Editor</source>
