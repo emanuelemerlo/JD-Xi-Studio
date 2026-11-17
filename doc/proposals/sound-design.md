@@ -45,6 +45,27 @@ Decisioni (17/11):
 Costo: **medio** (una sessione). Tocca: avvio, stato «collegato» centralizzato (oggi ogni parte lo
 controlla a modo suo: follower, A/B, Send all), abilitazione dei comandi, avviso, badge, test.
 
+### 1b. JD-Xi spento e riacceso: rete di sicurezza (proposta, da fare con l'Off-line)
+
+L'app tiene già una copia della memoria temporanea del JD-Xi (`SynthMemory`: quello che ha letto e
+quello che ha inviato). Usarla come rete di sicurezza invece di limitarsi ad avvisare:
+
+1. Il collegamento cade → Off-line; la copia dell'**ultimo stato confermato** resta (le modifiche
+   alla cieca fatte dopo non entrano nella copia).
+2. Il JD-Xi torna → l'app lo rilegge e **confronta** con la copia:
+   - uguale → era solo il cavo: nessun messaggio;
+   - diverso → (quasi sempre spento e riacceso, o modificato sullo strumento intanto) l'app dice
+     **cosa** è diverso («Analog e Digital 1 sono diversi da prima») e propone
+     **Ripristina sul JD-Xi** (rimanda solo le parti cambiate, rilegge e conferma, come il
+     richiamo A/B) oppure **Tieni quello che c'è sul JD-Xi**.
+3. Dopo il ripristino ricorda che è di nuovo solo temporaneo: per tenerlo serve WRITE (punto 4).
+
+Estensione possibile: la copia salvata anche su disco ogni tanto, per ritrovare lo stato di lavoro
+dopo una chiusura improvvisa dell'app.
+
+Costo: **medio**, da fare insieme all'Off-line (stessi punti del codice). Riusa la copia della
+memoria e il meccanismo «invia e rileggi» del confronto A/B.
+
 ## 2. Partire da un suono: tre porte d'ingresso chiare
 
 Un pannello **«Nuovo suono»** (dalla scheda Programmi o da un pulsante in ogni editor di tono)
