@@ -3,7 +3,7 @@
 Branch: `dev/sound-design` (nessuna build su GitHub ai push; una PR finale, preceduta da test
 locali completi, in particolare su protocollo SysEx e memoria).
 Rev. 1: proposte (17/11). Rev. 2: integra la revisione esterna (17/11) e i vincoli dello strumento
-verificati nel codice e nel manuale. Stato: **da approvare, poi sviluppo per fasi**.
+verificati nel codice e nel manuale. Stato: **approvata con le decisioni del §11; sviluppo per fasi**.
 
 Obiettivo: JD-Xi Studio come ambiente di sound design guidato, non solo editor di parametri.
 L'utente deve sempre sapere **dove** sta lavorando, **cosa** è salvato e **dove**, e non deve mai
@@ -92,7 +92,8 @@ Al ritorno da `OFFLINE` (cavo staccato, JD-Xi spento e riacceso, porta persa):
 | Esito della lettura completa confrontata con LCS precedente | Comportamento |
 |---|---|
 | Identica | «Riconnessione riuscita, stato invariato». Nessun intervento. (Non si afferma *perché* si era scollegato: un riavvio può anche ridare lo stesso stato.) |
-| Differente | Mostra **quali parti** differiscono (Programma comune, Digital 1, Digital 2, Analog, Drums, Effetti, Arpeggio) e propone **Ripristina sul JD-Xi** / **Tieni quello che c'è sul JD-Xi** |
+| Differente, **con modifiche non salvate** (LCS precedente diverso dal riferimento: né su file né con WRITE) | Mostra **quali parti** differiscono (Programma comune, Digital 1, Digital 2, Analog, Drums, Effetti, Arpeggio) e **chiede**: **Ripristina sul JD-Xi** / **Tieni quello che c'è sul JD-Xi** |
+| Differente, **senza modifiche a rischio** (lo stato di prima era già salvato) | Nessuna domanda: si tiene lo stato del JD-Xi, con un avviso breve («Il JD-Xi ha un altro stato: mostro quello») |
 | Lettura incompleta | Non confronta, non propone il ripristino; nuova lettura |
 | Comunicazione instabile | Tiene LCS precedente; chiede una nuova lettura prima di decidere |
 
@@ -128,14 +129,17 @@ Il salvataggio vero lo fa il WRITE dello strumento (V2, V4): l'app lo prepara, g
 1. **Nome** (12 caratteri): inviato via SysEx come nome del programma temporaneo, con la frase
    «Nome preparato sul JD-Xi: **non è ancora salvato**» (V5).
 2. **Posto**: elenco E–H dalla libreria dei nomi già nell'app (Update user programs); i nomi
-   possono essere vecchi → indicati con la data dell'ultimo aggiornamento. Proposta del primo
-   posto marcato libero («INIT PROGRAM» o vuoto).
+   possono essere vecchi → indicati con la data dell'ultimo aggiornamento. **Liberi** sono i posti
+   col nome di fabbrica di un programma vuoto («Init Program» / «Init Tone», senza distinzione di
+   maiuscole): l'app propone il primo. L'utente può comunque **sceglierne uno qualsiasi** da
+   sovrascrivere (sacrificare), con la conferma esplicita del punto 3.
 3. **Sovrascrittura esplicita**: se il posto contiene un programma, l'utente deve confermare
    con nome e posizione («Sostituire **E-13 “Dark Pad”**?»); pulsante distinto, non predefinito.
 4. **Istruzioni** precise: «Sul JD-Xi: Shift + Menu/Write · scegli **E-13** con Program [-][+] ·
    Enter · Enter». L'app attende la conferma dell'utente («Fatto»).
 5. **Verifica** (V4): l'app seleziona E-13 (Program Change; dopo il WRITE coincide con lo stato
-   temporaneo, quindi non si perde nulla), rilegge e confronta col contenuto atteso:
+   temporaneo, quindi non si perde nulla) e **resta su E-13**, il programma appena salvato su cui
+   si sta lavorando; rilegge e confronta col contenuto atteso:
    identificativo, nome, 4 parti, comune, effetti, arpeggio.
    - tutto uguale → «Salvato in E-13 ✓», riferimento = E-13 (Fase 3);
    - diverso o lettura incompleta → **nessuna conferma**: «Non risulta salvato in E-13 (…)»,
@@ -214,11 +218,10 @@ ricette; nuove funzioni A/B; cambi sostanziali al layout degli editor.
 
 Ogni fase: test automatici col JD-Xi simulato, suite completa in locale, poi passi hardware.
 
-## 11. Domande aperte
+## 11. Decisioni (17/11)
 
-1. **Ripristino automatico**: alla riconnessione con stato diverso, chiedere sempre (proposto) o
-   ripristinare da sé se l'ultimo stato non era salvato?
-2. **Verifica WRITE**: dopo la verifica il programma selezionato resta E-13 (coincide col
-   salvato): va bene, o tornare al programma di prima?
-3. **Posti «liberi»**: come riconoscerli — nome «INIT PROGRAM», o un elenco di nomi che l'utente
-   marca come sacrificabili?
+1. **Ripristino alla riconnessione**: si chiede solo se ci sono modifiche non salvate che
+   andrebbero perse; altrimenti si tiene lo stato del JD-Xi con un avviso (§3).
+2. **Dopo la verifica del WRITE** si resta sul programma appena salvato (§5, punto 5).
+3. **Posti liberi**: nome «Init Program» / «Init Tone»; l'utente può sceglierne qualsiasi altro da
+   sovrascrivere, con conferma esplicita (§5, punti 2–3).
