@@ -1,9 +1,12 @@
-# Specifica: lavoro col JD-Xi in sicurezza e sound design guidato — rev. 2
+# Specifica: lavoro col JD-Xi in sicurezza e sound design guidato — rev. 3
 
 Branch: `dev/sound-design` (nessuna build su GitHub ai push; una PR finale, preceduta da test
 locali completi, in particolare su protocollo SysEx e memoria).
 Rev. 1: proposte (17/11). Rev. 2: integra la revisione esterna (17/11) e i vincoli dello strumento
-verificati nel codice e nel manuale. Stato: **approvata con le decisioni del §11; sviluppo per fasi**.
+verificati nel codice e nel manuale. Rev. 3 (18/11): integra la seconda revisione esterna (problemi
+SD-001…006, verificati nel codice) e aggiunge la **Fase 0 – Stabilizzazione** (§1bis), il registro
+degli interventi (§12) e il piano di collaudo sullo strumento (§13).
+Stato: **approvata con le decisioni del §11; sviluppo per fasi, a partire dalla Fase 0**.
 
 Obiettivo: JD-Xi Studio come ambiente di sound design guidato, non solo editor di parametri.
 L'utente deve sempre sapere **dove** sta lavorando, **cosa** è salvato e **dove**, e non deve mai
@@ -64,6 +67,24 @@ come oggi usa la memoria (nessun cambiamento visibile).
 3. Salvato **su file** (.msz programma intero; .syx di una parte; ricetta).
 4. Salvato **sul JD-Xi** con WRITE (E–H), verificato.
 
+## 1bis. Fase 0 — Stabilizzazione (bloccante, prima di ogni nuova funzione)
+
+Correzioni di problemi esistenti che toccano l'integrità del lavoro dell'utente. Interventi piccoli,
+ognuno con il proprio test; nessuna nuova interfaccia. Dettaglio, file e test nel registro (§12).
+
+| ID | Problema (verificato nel codice il 18/11) | Correzione |
+|---|---|---|
+| F0-01 (SD-001) | `send_raw_message` registra il DT1 nella memoria del synth (`device.sent`) **prima** di controllare la porta e di inviarlo, anche a porta chiusa: la memoria mescola dati confermati e dati solo inviati | Registrare solo dopo un invio accettato dal driver; le modifiche fatte senza JD-Xi restano negli editor, non nella memoria del synth. Il filtro dell'eco (`before_send`) continua a funzionare sui dati ricevuti |
+| F0-02 (SD-002) | `export_dt1s()` riempie di zeri i blocchi non conosciuti (`framework.py` ~568); la foto A/B «locale» (`ab_compare.py` ~403) li usa e il richiamo li invia al JD-Xi; `Snapshot.complete()` controlla solo forma e checksum | Lo snapshot registra la **provenienza** di ogni blocco: *letto dal JD-Xi* / *locale, tutti i byte noti* / *locale, incompleto*. Un'istantanea incompleta non si può richiamare sullo strumento (pulsante spento, motivo nel tooltip) né esportare in .syx finché non viene completata da una lettura |
+| F0-03 (SD-003) | `save_slots()` intercetta l'errore di scrittura e lo mette solo nel log: l'interfaccia dice «acquisita» anche se la foto non sopravvive al riavvio | `save_slots` restituisce l'esito; il messaggio di conferma arriva solo a scrittura completata, altrimenti errore visibile |
+| F0-04 (SD-004) | Le ricette applicano le righe una per una senza `begin_group/end_group`: una fase richiede più Undo | Ogni azione composta è **un solo Undo**: fase di ricetta, ricetta intera, Init (Fase 5), richiamo A/B; anche se tocca più editor |
+| F0-05 (SD-005) | `send_identity_request()` restituisce `True` anche se l'invio fallisce | Restituire l'esito reale (base per la verifica dell'identità nella Fase 1) |
+| F0-06 | `MidiFileController`: `save_pattern` (tick assoluti al posto dei delta), `load_pattern` (non restituisce le note), `_parse_midi_file` (eventi di più tracce non ordinati) sono **codice morto**: il Pattern Editor usa `midi/pattern/importer.py`, corretto | Eliminare i metodi inutilizzati (~400 righe); restano creazione del file e tempo |
+| F0-07 | `tests/test_device_refresh.py::test_burst_of_changes_makes_one_request` fallisce anche sul codice precedente alle ultime modifiche | Capire la causa (test o codice) e sistemarla |
+
+**Criterio di uscita**: test dedicati (MEM-01, MEM-04, AB-01, AB-02, HIST-01 del §8) verdi e suite
+completa verde in locale.
+
 ## 2. Fase 1 — Off-line e stato centralizzato
 
 **Comportamento**
@@ -74,8 +95,14 @@ come oggi usa la memoria (nessun cambiamento visibile).
   .syx, salva ricetta, salva A/B, Send all, Read, Autotest, scelta programmi/preset,
   Update user programs, richiamo A/B.
 - Collegamento del JD-Xi: `DETECTED → VERIFYING → ONLINE`. Se WS ha modifiche fatte in Off-line,
-  **avviso esplicito** (senza domanda): «Le modifiche fatte senza JD-Xi vengono abbandonate:
-  mostro le impostazioni lette dallo strumento.» Poi lettura completa; WS = LCS.
+  **avviso esplicito**: «Le modifiche fatte senza JD-Xi vengono abbandonate: mostro le
+  impostazioni lette dallo strumento.» con il pulsante **«Salva come file»** (decisione 4, §11):
+  salva le modifiche fatte senza synth in un file locale prima di sostituirle; poi lettura
+  completa; WS = LCS. Il file si può caricare e inviare al JD-Xi in seguito.
+- **Identità**: `VERIFYING` richiede risposta Roland/JD-Xi all'Identity Request e porte in/out
+  aperte; non basta una porta chiamata «JD-Xi». Tutti i componenti (A/B, follower, editor, Send
+  all) leggono lo stesso stato invece di controllare ciascuno le porte (SD-006).
+- L'avviso di avvio Off-line non si ripropone a ogni finestra: una volta per sessione.
 - `UNSTABLE`: badge «Comunicazione instabile», i comandi che scrivono restano attivi ma ogni
   operazione verifica la lettura; nessuna conferma «verde» finché non torna `ONLINE`.
 
@@ -185,7 +212,7 @@ prova hardware, nuova sezione).
 |---|---|---|
 | SD-01 | Avvio senza JD-Xi | `OFFLINE`, avviso, badge in tutte le finestre, comandi che scrivono/leggono spenti |
 | SD-02 | Collegamento del JD-Xi | `DETECTED → VERIFYING → ONLINE` solo dopo Identity e lettura completa |
-| SD-03 | Modifiche in Off-line, poi collegamento | Avviso esplicito; WS = stato letto |
+| SD-03 | Modifiche in Off-line, poi collegamento | Avviso esplicito con «Salva come file»; il file salvato contiene le modifiche; WS = stato letto |
 | SD-04 | Scollegamento durante una modifica | `OFFLINE`; LCS conservato; le modifiche successive non entrano in LCS |
 | SD-05 | JD-Xi spento e riacceso | Lettura completa e confronto con LCS |
 | SD-06 | Stato diverso alla riconnessione | Parti diverse elencate; Ripristina / Tieni |
@@ -199,6 +226,17 @@ prova hardware, nuova sezione).
 | SD-14 | Riconnessioni ripetute (5 volte di fila) | Nessuno stato incoerente, nessun doppio avviso |
 | SD-15 | Comunicazione instabile (risposte perse) | `UNSTABLE`; nessuna conferma verde; ritorno a `ONLINE` dopo lettura completa |
 | SD-16 | Invio interrotto (Send all, patch, A/B) | Transazione «parziale/fallita»; LCS non aggiornato con dati non riletti |
+| SD-17 | Dispositivo MIDI diverso dal JD-Xi, o nessuna risposta all'Identity | Resta `VERIFYING`/`OFFLINE`, mai `ONLINE` |
+| MEM-01 | DT1 non trasmesso (porta chiusa) | La memoria del synth non cambia |
+| MEM-02 | DT1 trasmesso, non ancora riletto | Stato interno «inviato», mai mostrato come verificato |
+| MEM-03 | Rilettura con valore diverso da quello inviato | Trattato come differenza dello strumento, non come modifica locale |
+| MEM-04 | Byte non conosciuti | Mai sostituiti da zeri in un invio |
+| AB-01 | Foto locale incompleta | Non richiamabile né esportabile; motivo nel tooltip |
+| AB-02 | Errore di scrittura della foto | Errore visibile, nessun «acquisita» |
+| AB-03 | Foto e riconnessione | Il richiamo verifica con una rilettura (già così) |
+| HIST-01 | Fase di ricetta / ricetta intera | Un solo Undo |
+| HIST-02 | Init | Un solo Undo |
+| UI-01 | Finestre staccate | Stesso stato, riga di contesto presente |
 
 ## 9. Fuori da questa release
 
@@ -209,6 +247,7 @@ ricette; nuove funzioni A/B; cambi sostanziali al layout degli editor.
 
 | Fase | Contenuto | Note |
 |---|---|---|
+| 0 | Stabilizzazione (§1bis) | Bloccante; piccola; prima di tutto |
 | 1 | Stato centralizzato e Off-line (§1.1, §2) | Fondamento |
 | 2 | LCS / WS / PC separati e rete di sicurezza (§1.2, §3) | Protezione del lavoro |
 | 3 | Riga di contesto e avviso uniforme (§4) | Le fasi 1–3 sono un unico intervento funzionale, anche in più commit |
@@ -217,6 +256,10 @@ ricette; nuove funzioni A/B; cambi sostanziali al layout degli editor.
 | 6 | Aiuti per sezione (§7) | |
 
 Ogni fase: test automatici col JD-Xi simulato, suite completa in locale, poi passi hardware.
+**Criterio di uscita** di ogni fase: test dedicati e suite completa verdi, nessun errore bloccante
+noto, interfaccia controllata in tutte le finestre interessate, documentazione aggiornata, passi
+hardware del §13 eseguiti quando previsti. La Fase 2 non si chiude finché non è dimostrato che un
+DT1 non riletto non può apparire come stato verificato.
 
 ## 11. Decisioni (17/11)
 
@@ -225,3 +268,70 @@ Ogni fase: test automatici col JD-Xi simulato, suite completa in locale, poi pas
 2. **Dopo la verifica del WRITE** si resta sul programma appena salvato (§5, punto 5).
 3. **Posti liberi**: nome «Init Program» / «Init Tone»; l'utente può sceglierne qualsiasi altro da
    sovrascrivere, con conferma esplicita (§5, punti 2–3).
+4. **Modifiche fatte in Off-line al collegamento** (18/11): restano abbandonate, ma l'avviso offre
+   **«Salva come file»** prima della sostituzione (§2).
+5. **Architettura** (18/11, revisione esterna ridimensionata): due servizi nuovi, **Connection**
+   (identità, porte, stati, riconnessione, notifiche) e **SynthState** (LCS, WS, modifiche in
+   sospeso, provenienza dei dati). Le transazioni MIDI estendono `RequestQueue` e
+   `PatchReadSession` esistenti; nessun servizio di persistenza separato.
+6. **Stati di una modifica** (18/11): internamente *locale / inviata / confermata / diversa*
+   (più *sconosciuta* se un'operazione si interrompe); all'utente solo «modificato» o «non
+   verificato». Il JD-Xi non conferma i DT1: **nessuna rilettura per ogni parametro** (raddoppierebbe
+   il traffico e rallenterebbe le manopole); la verifica si fa alla riconnessione, prima del WRITE,
+   dopo un richiamo A/B e a fine transazione.
+7. **Posti «Init Program»** (18/11): proposti come *candidati*, non come posti sicuramente vuoti
+   (l'elenco dei nomi può essere vecchio, o il nome scelto dall'utente).
+8. **Gerarchia delle informazioni** (18/11): collegamento (globale, persistente) → contesto del
+   suono (riga di contesto, anche nelle finestre staccate) → stato delle modifiche → stato
+   dell'operazione (temporaneo). Niente badge duplicati né messaggi ripetuti durante una sequenza
+   di modifiche.
+
+## 12. Registro degli interventi
+
+Elenco completo, in ordine di esecuzione. Stato: ☐ da fare · ◐ in corso · ☑ fatto (con commit).
+
+| # | Fase | Intervento | File principali | Test | Stato |
+|---|---|---|---|---|---|
+| 1 | 0 | F0-01 memoria aggiornata solo dopo invio riuscito | `midi/io/output_handler.py`, `midi/io/device.py` | MEM-01 | ☐ |
+| 2 | 0 | F0-02 provenienza dei blocchi nello snapshot; foto incompleta non richiamabile/esportabile; nessuno zero inventato | `ui/v2/ab_compare.py`, `ui/v2/framework.py` | AB-01, MEM-04 | ☐ |
+| 3 | 0 | F0-03 esito di `save_slots`, conferma solo a scrittura riuscita | `ui/v2/ab_compare.py` | AB-02 | ☐ |
+| 4 | 0 | F0-04 ricette in un gruppo di Undo | `recipes/apply.py`, `ui/v2/recipes.py`, `ui/v2/history.py` | HIST-01 | ☐ |
+| 5 | 0 | F0-05 esito reale di `send_identity_request` | `midi/io/output_handler.py` | unitario | ☐ |
+| 6 | 0 | F0-06 eliminare i metodi morti di `MidiFileController` | `midi/file/controller.py` | suite pattern | ☐ |
+| 7 | 0 | F0-07 `test_burst_of_changes_makes_one_request` | `tests/test_device_refresh.py` | il test stesso | ☐ |
+| 8 | 1 | Servizio Connection: stati, Identity Roland/JD-Xi, notifiche; A/B, follower, editor, Send all lo usano | nuovo `midi/io/connection.py` | SD-01, SD-02, SD-17, SD-14 | ☐ |
+| 9 | 1 | Off-line: avviso una volta per sessione, badge in tutte le finestre, comandi spenti con tooltip | finestre principale e secondarie | SD-01, SD-13, UI-01 | ☐ |
+| 10 | 1 | Collegamento dopo Off-line: avviso con «Salva come file», poi lettura completa | | SD-03 | ☐ |
+| 11 | 1 | Transazioni con esito (completa/parziale/fallita) su Read, Send all, patch, A/B | `RequestQueue`, `PatchReadSession` | SD-16 | ☐ |
+| 12 | 2 | Servizio SynthState: LCS / WS / in sospeso, provenienza, stati interni | nuovo `midi/io/synth_state.py` | MEM-02, MEM-03 | ☐ |
+| 13 | 2 | Rete di sicurezza alla riconnessione e ripristino per parti | | SD-04…07, SD-15 | ☐ |
+| 14 | 3 | Riga di contesto (anche finestre staccate) e avviso uniforme | `ui/v2/framework.py` | SD-08, SD-10, UI-01 | ☐ |
+| 15 | 4 | Salva sul JD-Xi guidato, posti candidati, verifica sul contenuto riletto | | SD-11, SD-12, WR-01…04 | ☐ |
+| 16 | 5 | Nuovo suono: Init Digital e Analog separati, un solo Undo | | SD-09, HIST-02 | ☐ |
+| 17 | 6 | Aiuti per sezione, senza duplicare il pannello informativo esistente | | — | ☐ |
+
+Già fatto su `dev/sound-design` prima della rev. 3: icona piccola «JD/Xi» (7658af7); rinvio del
+reset della cronologia legato al canale del cambio di programma e al thread dell'interfaccia
+(945119c).
+
+## 13. Collaudo sullo strumento
+
+Una sessione col JD-Xi vero alla fine della Fase 2 e una alla fine della Fase 4 (il simulatore non
+prova tutto). Per ogni passo: esito ✓/✗ e nota.
+
+| ID | Passo | Atteso |
+|---|---|---|
+| CON-01 | Collegare un dispositivo MIDI che non è il JD-Xi (o porta senza risposta) | Mai `ONLINE` |
+| CON-02 | Avvio senza JD-Xi, poi collegamento USB | Off-line → collegato, lettura completa |
+| CON-03 | Staccare il cavo durante una lettura | Lettura «parziale», nessun dato non riletto preso per buono |
+| CON-04 | Staccare il cavo durante Send all | Transazione «parziale/fallita» |
+| CON-05 | Spegnere e riaccendere senza cambiare niente | «Stato invariato» |
+| CON-06 | Spegnere, cambiare programma sullo strumento, riaccendere, con modifiche non salvate | Parti diverse elencate; Ripristina / Tieni |
+| CON-07 | Cinque scollegamenti di fila | Nessuno stato incoerente, nessun doppio avviso |
+| MEM-05 | Letture SysEx complete di tutte le parti, in sequenza rapida | Nessuna risposta persa |
+| WR-01 | WRITE nel posto proposto | Verifica ✓, si resta sul programma salvato |
+| WR-02 | Avviare la procedura ma non premere WRITE | Nessuna conferma |
+| WR-03 | WRITE in un posto diverso da quello indicato | Nessuna conferma falsa |
+| WR-04 | Rilettura del programma salvato | Contenuto uguale a quello atteso, tutte le parti |
+| PC-01 | Program change sui banchi utente E–H | Programma giusto selezionato e riletto |
+
