@@ -457,6 +457,7 @@ class ProgramEditor(_program.ProgramEditor):
 
         # --- the header: display, actions
         self.lcd = group.file_label
+        self.lcd.setText(tr("No program loaded"))  # it shows the program, not a file
         self.lcd.setFixedWidth(360)
         self.load_button = QPushButton(tr("Load program"))
         self.load_button.setToolTip(tr("Load the program selected in the library (or double-click it)"))
@@ -648,6 +649,7 @@ class ProgramEditor(_program.ProgramEditor):
         if details is not None:
             self.update_current_synths(details)
             self.set_current_program_name(details.name)
+            self.lcd.setText(f"{program_id}  {details.name or ''}".strip())
         self.library.set_loaded(program_id)
         group = self.program_group_widget
         send_program_with_expectation(

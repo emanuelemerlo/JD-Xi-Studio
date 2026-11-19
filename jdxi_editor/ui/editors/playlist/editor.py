@@ -182,6 +182,8 @@ class PlaylistEditor(QWidget):
         self.playlist_progress_panel = create_panel(self.playlist_progress)
         mark_sheen(self.playlist_progress_panel)
         layout.addWidget(self.playlist_progress_panel)
+        # only while a playlist plays: stopped, it would be a second display saying nothing
+        self.playlist_progress_panel.hide()
 
         # Create playlist programs table
         self.playlist_programs_table = QTableWidget()
@@ -397,6 +399,7 @@ class PlaylistEditor(QWidget):
     def _on_playlist_song_started(self, row: int) -> None:
         """The song in *row* has started: follow its position and state."""
         rows = self._playlist_song_rows()
+        self.playlist_progress_panel.show()
         self.playlist_progress.set_songs([self._song_title(r) for r in rows])
         controller = self._playlist_midi_editor.transport_controller
         if row in rows:
@@ -412,6 +415,7 @@ class PlaylistEditor(QWidget):
 
     def _on_playlist_state_changed(self, state: TransportState) -> None:
         self.playlist_progress.set_paused(state == TransportState.PAUSED)
+        self.playlist_progress_panel.setVisible(state != TransportState.STOPPED)
 
     def playlist_transport_pause_toggle(self) -> None:
         """Pause or resume current playlist playback."""
