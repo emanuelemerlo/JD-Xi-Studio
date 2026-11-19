@@ -54,7 +54,6 @@ from jdxi_editor.ui.editors.pattern.preset_list_provider import (
     get_analog_options,
     get_digital_options,
     get_drum_options,
-    get_preset_signals,
 )
 from jdxi_editor.ui.editors.pattern.spec import SequencerRowSpec
 from jdxi_editor.ui.editors.synth.editor import SynthEditor
@@ -201,13 +200,11 @@ class PatternUI(SynthEditor):
         self.layout = QVBoxLayout(content_widget)
         self.mute_buttons = []  # List to store mute buttons
 
-        # Define synth options (from built-in or SoundFont via MIDI config)
+        # Define synth options (the JD-Xi's own lists)
         self.digital_options = get_digital_options()
         self.analog_options = get_analog_options()
         self.drum_options = get_drum_options()
-        
-        # Connect to preset list change signal for dynamic refresh
-        get_preset_signals().soundfont_list_changed.connect(self._refresh_preset_options)
+
 
         # Assemble all specs for buttons and combos (used below)
         self.specs = self._build_specs()

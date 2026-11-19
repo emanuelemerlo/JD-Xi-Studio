@@ -1,7 +1,7 @@
 Editor Windows
 ==============
 
-The **Editor Windows** are the sophisticated command centers of JDXI-Editor—comprehensive, specialized interfaces that provide deep, granular control over every aspect of your Roland JD-Xi synthesizer. These powerful windows transform your JD-Xi from a hardware instrument into a fully integrated, computer-controlled sound design workstation.
+The **Editor Windows** are the sophisticated command centers of JD-Xi Studio—comprehensive, specialized interfaces that provide deep, granular control over every aspect of your Roland JD-Xi synthesizer. These powerful windows transform your JD-Xi from a hardware instrument into a fully integrated, computer-controlled sound design workstation.
 
 Built with modern Qt6 technology and featuring professional, intuitive interfaces, the Editor Windows serve as your primary workspaces for creating, editing, and managing all aspects of your JD-Xi's sound engine, performance controls, and sequencing capabilities.
 
@@ -65,7 +65,7 @@ Getting Started with Editor Windows
 ===================================
 
 **Initial Setup**
-   1. **Launch an Editor**: Open any Editor Window from the main JDXI-Editor interface
+   1. **Launch an Editor**: Open any Editor Window from the main JD-Xi Studio interface
    2. **Select Your Target**: Choose the synthesizer section you want to edit
    3. **Load a Preset**: Start with a preset to understand the interface
    4. **Explore Controls**: Familiarize yourself with the available parameters and controls

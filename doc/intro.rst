@@ -6,7 +6,7 @@
 Introduction
 ============
 
-Welcome to **JD-Xi Studio** (by Emanuele Merlo, based on JDXI-Editor by Mark Brooks), a comprehensive and powerful MIDI editor designed specifically for the **Roland JD-Xi synthesizer**. Built with modern Python technologies including **PySide6 (Qt6)**, **RtMidi**, and **mido**, this application revolutionizes how musicians and sound designers interact with their JD-Xi hardware.
+Welcome to **JD-Xi Studio** (by Emanuele Merlo, based on JD-Xi Studio by Mark Brooks), a comprehensive and powerful MIDI editor designed specifically for the **Roland JD-Xi synthesizer**. Built with modern Python technologies including **PySide6 (Qt6)**, **RtMidi**, and **mido**, this application revolutionizes how musicians and sound designers interact with their JD-Xi hardware.
 
 .. figure:: images/keyboard_window.png
    :alt: JD-Xi Editor Main Interface
@@ -14,10 +14,10 @@ Welcome to **JD-Xi Studio** (by Emanuele Merlo, based on JDXI-Editor by Mark Bro
 
    The keyboard window
 
-What is JDXI-Editor?
+What is JD-Xi Studio?
 ====================
 
-JDXI-Editor is a sophisticated graphical application that provides complete control over your Roland JD-Xi synthesizer through an intuitive, computer-based interface. Instead of navigating through the JD-Xi's small LCD screen and complex menu systems, you can access and modify every parameter with precision using sliders, knobs, and visual displays on your computer screen.
+JD-Xi Studio is a sophisticated graphical application that provides complete control over your Roland JD-Xi synthesizer through an intuitive, computer-based interface. Instead of navigating through the JD-Xi's small LCD screen and complex menu systems, you can access and modify every parameter with precision using sliders, knobs, and visual displays on your computer screen.
 
 The application communicates with your JD-Xi via **MIDI** (Musical Instrument Digital Interface) messages, sending and receiving real-time data to keep your hardware and software perfectly synchronized.
 
@@ -46,7 +46,7 @@ Key Features & Capabilities
 
 ** Pattern & MIDI Tools**
    - **Pattern Sequencer**: 4×16 step grid with MIDI load/save, part muting, USB recording
-   - **MIDI File Player**: Track classification, channel assignment, FluidSynth/SoundFont playback
+   - **MIDI File Player**: Track classification, channel assignment, playback on the JD-Xi
 
 ** Performance Features**
    - **On-Screen Keyboard**: Play and test sounds directly from your computer
@@ -63,7 +63,7 @@ Key Features & Capabilities
 Architecture & Technology
 =========================
 
-JDXI-Editor is built on a robust, modular architecture that ensures reliability and extensibility:
+JD-Xi Studio is built on a robust, modular architecture that ensures reliability and extensibility:
 
 **Core Technologies**
    - **Python 3.8+**: Modern Python with full type hints and async support
@@ -83,7 +83,7 @@ JDXI-Editor is built on a robust, modular architecture that ensures reliability 
    - **Parameter Controls**: Intuitive sliders, knobs, and switches for all parameters
    - **Status Monitoring**: Real-time feedback on MIDI communication and parameter changes
 
-Why Use JDXI-Editor?
+Why Use JD-Xi Studio?
 ====================
 
 ** Efficiency**: Edit complex parameters in seconds instead of minutes
@@ -93,10 +93,10 @@ Why Use JDXI-Editor?
 **📊 Analysis**: Monitor MIDI data and parameter changes in real-time
 **🎨 Creativity**: Focus on sound design without hardware limitations
 
-The JD-Xi's small screen and menu-driven interface, while functional, can be limiting for complex sound design work. JDXI-Editor transforms your JD-Xi into a powerful, computer-controlled synthesizer that's as easy to use as any modern software instrument.
+The JD-Xi's small screen and menu-driven interface, while functional, can be limiting for complex sound design work. JD-Xi Studio transforms your JD-Xi into a powerful, computer-controlled synthesizer that's as easy to use as any modern software instrument.
 
 .. note::
-   JDXI-Editor is an active development project. While core functionality is stable and reliable, new features are regularly added based on user feedback and community needs.
+   JD-Xi Studio is an active development project. While core functionality is stable and reliable, new features are regularly added based on user feedback and community needs.
 
 Getting Started
 ===============

@@ -1,7 +1,7 @@
 # JD-Xi Studio Features and Usage
 
 This document covers patch loading/saving, undo and unsaved changes, the connection to the JD-Xi,
-saving on it, new sounds, and SoundFont usage.
+saving on it and new sounds.
 
 ---
 
@@ -169,44 +169,6 @@ reads it back. «Saved in E-12 ✓» only when it holds the sound; otherwise it 
 sawtooth with the filter open; one Undo brings the sound back — *From a preset*, *From a recipe*.
 A **«?»** on OSC, FILTER, AMP, LFO, PITCH, effects, delay and reverb explains the section in the
 information panel: what it changes, how the sound changes, an example.
-
----
-
-## 3. SoundFont Usage
-
-### Overview
-
-JDXI-Editor can use SoundFont (.sf2/.sf3) files for:
-
-1. **FluidSynth playback** — Local software synth for MIDI playback without hardware
-2. **Preset list source** — Use SoundFont preset names instead of built-in JD-Xi names (especially for Drums)
-
-### Configuration
-
-Open **MIDI Configuration** (gear icon or via menu) to access:
-
-| Option | Description |
-|--------|-------------|
-| **Enable FluidSynth for local playback** | Uses FluidSynth for MIDI playback when no hardware is connected |
-| **Use SoundFont List** | When enabled, preset names (especially Drums row) come from the configured SoundFont instead of built-in JD-Xi options |
-| **Hardware Interface** | Audio output device for FluidSynth (requires `sounddevice`) |
-| **SoundFont (SF2/SF3)** | Path to your .sf2 or .sf3 file (e.g. FluidR3_GM.sf2) |
-
-### Use SoundFont List
-
-- **Drums row**: When enabled, the Pattern editor Drums row shows GM percussion names (e.g. "Bass Drum 1", "Acoustic Snare") from the SoundFont instead of JD-Xi built-in names
-- **Digital / Analog**: When enabled and a valid SF2 path is set, preset lists can be populated from the SoundFont (bank 0 melodic, bank 128 for drum kits)
-- **Fallback**: If the path is invalid or the file cannot be read, built-in JD-Xi presets are used
-
-### Default Path
-
-The default SoundFont path is `~/SoundFonts/FluidR3_GM.sf2` if that file exists. You can browse to select a different .sf2 or .sf3 file.
-
-### Requirements
-
-- **FluidSynth**: `pip install pyfluidsynth` (or `fluidsynth`)
-- **SoundFont parsing** (for preset list): `pip install sf2utils`
-- **Hardware interface selection**: `pip install sounddevice`
 
 ---
 

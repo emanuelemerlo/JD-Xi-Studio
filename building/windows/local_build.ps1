@@ -12,7 +12,7 @@ $version = (Select-String -Path jdxi_editor/project.py -Pattern '__version__ = "
 if (-not (Test-Path .venv-build)) { py -3 -m venv .venv-build }
 $py = "$repo\.venv-build\Scripts\python.exe"
 & $py -m pip install --upgrade pip
-& $py -m pip install ".[soundfont]" pyinstaller
+& $py -m pip install . pyinstaller
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 # From outside the checkout, so the spec imports the installed package

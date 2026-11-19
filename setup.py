@@ -25,8 +25,7 @@ DATA_FILES = [
     ("resources/recipes", glob.glob("resources/recipes/*")),
 ]  # Include any additional files your app needs
 OPTIONS = {
-    'packages': ['jdxi_editor', 'rtmidi', 'decologr', 'picomidi', 'qtawesome',
-                 '_sounddevice_data'],
+    'packages': ['jdxi_editor', 'rtmidi', 'decologr', 'picomidi', 'qtawesome'],
     'argv_emulation': False,
     'iconfile': 'jdxi_icon_512.icns',  # Path to the .icns file
     'includes': ['PySide6',
@@ -44,10 +43,7 @@ OPTIONS = {
                  'picomidi',      # MIDI library
                  'qtawesome',     # Icon library
                  'qtawesome.iconic_font',  # Ensure PySide6 is bundled
-                 'PySide6.QtNetwork',  # update check (GitHub Releases)
-                 'fluidsynth',  # pyfluidsynth: FluidSynth MIDI synth (use includes; fluidsynth pkg shadows .py)
-                 'sounddevice',  # FluidSynth audio output device selection
-                 '_sounddevice'],  # sounddevice CFFI extension
+                 'PySide6.QtNetwork'],  # update check (GitHub Releases)
     "excludes": [
                  'Image',
                  "Carbon",
@@ -83,7 +79,5 @@ setup(
         "Pillow",
         "decologr",
         "picomidi",
-        "pyfluidsynth",  # provides fluidsynth module; fluidsynth 0.2 pkg conflicts
-        "sounddevice"
     ],
 )

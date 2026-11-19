@@ -1,7 +1,7 @@
 MIDI File Player
 ================
 
-The **MIDI File Player** provides playback of MIDI files through the Roland JD-Xi or through FluidSynth (SoundFont) when no hardware is connected. It includes track classification, channel assignment, and integration with the Pattern Editor.
+The **MIDI File Player** plays MIDI files on the Roland JD-Xi. It includes track classification, channel assignment, and integration with the Pattern Editor.
 
 What is the MIDI File Player?
 ==============================
@@ -15,7 +15,6 @@ Core Features
    - **Load files**: Open .mid or .midi files via File menu or drag-and-drop
    - **Playback control**: Play, pause, stop, and seek
    - **JD-Xi playback**: Routes MIDI to the connected synthesizer
-   - **FluidSynth playback**: When no JD-Xi is connected, uses FluidSynth with a SoundFont (.sf2/.sf3) for software playback
 
 **Track Classification**
    - **Detect Drums**: Identifies drum tracks and assigns them to MIDI Channel 10
@@ -35,20 +34,13 @@ Core Features
    - Standard MIDI Files: .mid, .midi
    - MIDI Type 0 and Type 1
 
-SoundFont Playback
-==================
-
-When **Enable FluidSynth for local playback** is enabled in MIDI Configuration (and no JD-Xi is connected), the MIDI File Player uses FluidSynth with a configured SoundFont for playback. This allows you to play MIDI files without hardware.
-
-See :doc:`features-and-usage` for SoundFont configuration (path, preset list, etc.).
-
 Workflow
 ========
 
 1. **Load a MIDI file**: File → Open… or drag-and-drop
 2. **Assign channels** (optional): use **Detect Drums** and **Classify Tracks**, or set a track's
    channel in its header; changes apply immediately. **Apply Presets** inserts JD-Xi presets per channel
-3. **Play**: Start playback; audio goes to JD-Xi or FluidSynth
+3. **Play**: Start playback on the JD-Xi
 4. **Edit in Pattern Editor** (optional): Use **Load into Pattern Editor** to edit the file in the Pattern Sequencer
 
 .. figure:: images/jdxi-midi-editor.png
