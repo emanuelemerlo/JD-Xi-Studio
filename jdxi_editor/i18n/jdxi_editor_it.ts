@@ -833,10 +833,10 @@
             <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1488" />
             <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1072" />
             <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1101" />
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="888" />
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="959" />
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1029" />
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1173" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="891" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="963" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1033" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1177" />
             <location filename="../../jdxi_editor/ui/editors/playlist/table.py" line="275" />
             <location filename="../../jdxi_editor/ui/editors/playlist/table.py" line="331" />
             <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="3032" />
@@ -1061,7 +1061,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Aggiungi programmi alla playlist</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="987" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="991" />
             <source>Delete Programs</source>
             <translation>Elimina programmi</translation>
         </message>
@@ -1072,35 +1072,30 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="844" />
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="972" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="976" />
             <source>No Playlist Selected</source>
             <translation>Nessuna playlist scelta</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="844" />
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="972" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="976" />
             <source>Please select a playlist first.</source>
             <translation>Scegli prima una playlist.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="894" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="897" />
             <source>No Programs Available</source>
             <translation>Nessun programma disponibile</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="895" />
-            <source>All programs are already in this playlist.</source>
-            <translation>Tutti i programmi sono già in questa playlist.</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="980" />
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="928" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="984" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="932" />
             <location filename="../../jdxi_editor/ui/editors/playlist/table.py" line="291" />
             <source>No Selection</source>
             <translation>Nessuna selezione</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="980" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="984" />
             <source>Please select at least one program to delete.</source>
             <translation>Scegli almeno un programma da eliminare.</translation>
         </message>
@@ -1111,27 +1106,37 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>In riproduzione</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="928" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="898" />
+            <source>All programs are already in this playlist.</source>
+            <translation>Tutti i programmi sono già in questa playlist.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="899" />
+            <source>No programs known yet: the program list is empty.</source>
+            <translation>Nessun programma ancora noto: l'elenco dei programmi è vuoto.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="932" />
             <source>Please select a program to add.</source>
             <translation>Scegli un programma da aggiungere.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="959" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="963" />
             <source>Failed to add programs to playlist.</source>
             <translation>Impossibile aggiungere i programmi alla playlist.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="988" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="992" />
             <source>Are you sure you want to delete {value1} program(s) from the playlist?</source>
             <translation>Vuoi davvero togliere {value1} programmi dalla playlist?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1029" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1033" />
             <source>Failed to delete programs from playlist.</source>
             <translation>Impossibile togliere i programmi dalla playlist.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1095" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1099" />
             <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1884" />
             <source>File Not Found</source>
             <translation>File non trovato</translation>
@@ -1142,19 +1147,19 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Scegli un programma da aggiungere a '{playlist_name}':</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="888" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="891" />
             <source>Failed to load programs: {e}</source>
             <translation>Impossibile caricare i programmi: {e}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1095" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1099" />
             <source>MIDI file not found:
 {midi_file_path}</source>
             <translation>File MIDI non trovato:
 {midi_file_path}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1173" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1177" />
             <source>Failed to load MIDI file:
 {value1}</source>
             <translation>Impossibile caricare il file MIDI:
@@ -8066,6 +8071,11 @@ Esempio: F0 41 10 00 00 00 0E 12 19 01 20 00 01 F7</translation>
             <location filename="../../jdxi_editor/ui/windows/patch/manager.py" line="475" />
             <source>Loading the patch replaces every part's sound.</source>
             <translation>Caricando la patch, il suono di tutte le parti viene sostituito.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/windows/patch/manager.py" line="481" />
+            <source>Loading the patch</source>
+            <translation>Caricamento della patch</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="47" />

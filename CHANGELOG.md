@@ -42,6 +42,9 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   chosen from each part, user programs are the library's E–H banks
 
 ### Fixes
+- Playlists: «Add to playlist» offers every program, factory ones (A–D) included; it said «All
+  programs are already in this playlist» when no user program had been read yet
+- Loading a patch says whether it reached the JD-Xi whole, in part or not at all
 - Start-up: the dialogs (MIDI configuration, Off-line notice) wait for the start screen to go;
   its progress steps reach the end and the last one is seen
 - Message boxes in the app's look (dark, light text): their text was red on light grey; the

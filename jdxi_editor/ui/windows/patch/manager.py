@@ -474,8 +474,11 @@ class PatchManager(QMainWindow):
                 # Load patch (JSON files): it replaces the sounds, unsaved changes first
                 if not confirm_discard(ALL_PARTS, tr("Loading the patch replaces every part's sound.")):
                     return
-                self.midi_helper.load_patch(file_path)
+                done, failed = _counting_sends(self.midi_helper, lambda: self.midi_helper.load_patch(file_path))
                 _context_saved(file_path, loaded=True)
+                report = getattr(self.parent, "_report_outcome", None)
+                if callable(report) and (done or failed):
+                    report(tr("Loading the patch"), done, failed)
 
                 # Load MIDI file from bundle if it's an .msz file
                 if file_path.endswith(".msz"):
@@ -554,4 +557,27 @@ def _context_saved(file_path: str, loaded: bool = False) -> None:
         sound_context().file_saved(file_path, loaded=loaded)
     except Exception:
         pass
+
+
+def _counting_sends(helper, action) -> tuple[int, int]:
+    """Run *action*, counting the messages *helper* sent and those that did not go out."""
+    counts = [0, 0]
+    original = helper.send_raw_message
+
+    def counting(message):
+        ok = original(message)
+        counts[0 if ok else 1] += 1
+        return ok
+
+    helper.send_raw_message = counting
+    try:
+        action()
+    finally:
+        try:
+            del helper.send_raw_message  # back to the class's own
+        except AttributeError:
+            helper.send_raw_message = original
+        if getattr(helper, "send_raw_message", None) is not original and "send_raw_message" not in vars(type(helper)):
+            helper.send_raw_message = original
+    return counts[0], counts[1]
 

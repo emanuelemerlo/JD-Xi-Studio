@@ -867,12 +867,15 @@ class PlaylistEditor(QWidget):
         try:
             from jdxi_editor.ui.programs.database import get_database
 
+            from jdxi_editor.ui.programs.programs import JDXiUIProgramList
+
             db = get_database()
-            all_programs = db.get_all_programs()
+            # every program, as in the library: the factory ones (A–D) and the user ones
+            all_programs = JDXiUIProgramList.list_rom_and_user_programs()
 
             # --- Get programs already in playlist
             existing_programs = db.get_playlist_programs(playlist_id)
-            existing_program_ids = {item["program"].id for item in existing_programs}
+            existing_program_ids = {item["program"].id for item in existing_programs if item.get("program")}
 
             # --- Add programs that aren't already in the playlist
             for idx, program in enumerate(all_programs):
@@ -892,7 +895,8 @@ class PlaylistEditor(QWidget):
             QMessageBox.information(
                 self,
                 tr("No Programs Available"),
-                tr("All programs are already in this playlist."),
+                tr("All programs are already in this playlist.") if all_programs
+                else tr("No programs known yet: the program list is empty."),
             )
             return
 
