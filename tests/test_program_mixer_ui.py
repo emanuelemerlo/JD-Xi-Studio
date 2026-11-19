@@ -66,3 +66,29 @@ def test_mixer_parts_have_their_tab_colour_and_the_master_is_neutral():
     finally:
         editor.close()
         editor.deleteLater()
+
+
+def test_mixer_level_box_and_fader_follow_each_other():
+    """A level typed above the fader moves it (and so is sent); the fader, also
+    when the JD-Xi sets it silently, shows its level in the box."""
+    from PySide6.QtCore import Qt
+    from PySide6.QtWidgets import QSlider
+
+    from jdxi_editor.ui.editors.program.editor import ProgramEditor
+
+    editor = ProgramEditor(midi_helper=MagicMock(), preset_helper=MagicMock())
+    try:
+        fader = editor.mixer_widget.tracks[1].slider  # Digital 1
+        box = fader.level_box
+        assert fader.slider.tickPosition() == QSlider.TickPosition.NoTicks
+        sent = []
+        fader.valueChanged.connect(sent.append)
+        box.setValue(77)
+        assert fader.value() == 77 and sent and sent[-1] == 77
+        fader.setValueSilently(12)
+        assert box.value() == 12
+        fader.setValue(100)
+        assert box.value() == 100
+    finally:
+        editor.close()
+        editor.deleteLater()

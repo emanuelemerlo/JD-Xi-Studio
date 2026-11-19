@@ -15,7 +15,7 @@ from typing import Dict, Optional
 from decologr import Decologr as log
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QIcon
-from PySide6.QtWidgets import QGridLayout, QGroupBox, QLabel, QSlider, QWidget
+from PySide6.QtWidgets import QGridLayout, QGroupBox, QLabel, QSlider, QSpinBox, QWidget
 
 from jdxi_editor.core.jdxi import JDXi
 from jdxi_editor.core.synth.factory import create_synth_data
@@ -123,6 +123,7 @@ class ProgramMixer(SynthBase):
         else:
             analog = False
         colour = strip_colour(synth_type)
+        level_box = shape_fader(slider, colour)
         # Track name (static)
         name_label = QLabel(label_text)
         name_label.setStyleSheet(label_style(colour))
@@ -138,6 +139,8 @@ class ProgramMixer(SynthBase):
         icon_label.setAlignment(Qt.AlignHCenter)
         icon_label.setPixmap(icon.pixmap(32, 32))
         slider.setProperty("strip_colour", colour)
+        slider.level_box = level_box
+        value_label.setVisible(False)  # the level box above the fader shows it
 
         return MixerTrack(
             entity=entity,
@@ -369,13 +372,61 @@ def fader_style(colour: str) -> str:
             background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 {colour}, stop:1 {dim});
             border-radius: 3px; }}
         QSlider::sub-page:vertical {{ background: #222; border-radius: 3px; }}
+        QSlider {{ min-width: 30px; }}
         QSlider::handle:vertical {{
             background: #0b0b0d; border: 2px solid {colour};
-            height: 10px; margin: 2px -10px; border-radius: 5px; }}
+            height: 8px; margin: 0px -9px; border-radius: 5px; }}
         QSlider::handle:vertical:hover {{ border-color: {QColor(colour).lighter(125).name()}; }}
         QSlider::add-page:vertical:disabled, QSlider::handle:vertical:disabled {{
             background: #333; border-color: #333; }}
     """
+
+
+def level_box_style(colour: str) -> str:
+    return (f"QSpinBox {{ color: {colour}; background: #111214; border: 1px solid #2c2e33;"
+            f" border-radius: 4px; padding: 1px 2px; }}"
+            f" QSpinBox:focus {{ border-color: {colour}; }}"
+            f" QSpinBox:disabled {{ color: #555; }}")
+
+
+def shape_fader(slider, colour: str) -> QSpinBox:
+    """The mixer's fader: centred over its icon and mute, no tick marks, and a
+    level box above it that shows the level and takes a typed one."""
+    inner = slider.slider
+    slider.draw_tick_marks = False
+    inner.setTickPosition(QSlider.TickPosition.NoTicks)
+    layout = slider.layout()
+    for widget in (slider.label, inner):
+        layout.setAlignment(widget, Qt.AlignmentFlag.AlignHCenter)
+    slider.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+    if getattr(slider, "value_label", None) is not None:
+        slider.value_label.setVisible(False)
+    box = QSpinBox()
+    box.setRange(inner.minimum(), inner.maximum())
+    box.setValue(inner.value())
+    box.setButtonSymbols(QSpinBox.ButtonSymbols.NoButtons)
+    box.setAlignment(Qt.AlignmentFlag.AlignCenter)
+    box.setFixedWidth(44)
+    box.setKeyboardTracking(False)  # the level goes out once the number is typed
+    box.setToolTip(slider.toolTip())
+    box.setStyleSheet(level_box_style(colour))
+    layout.insertWidget(layout.indexOf(slider.label) + 1, box, 0, Qt.AlignmentFlag.AlignHCenter)
+
+    def from_fader(value: int) -> None:
+        box.blockSignals(True)
+        box.setValue(value)
+        box.blockSignals(False)
+
+    inner.valueChanged.connect(from_fader)
+    shown = getattr(slider, "_update_value_label", None)
+    if callable(shown):  # values from the JD-Xi come in silently (setValueSilently)
+        def update_both(*args, **kwargs):
+            shown(*args, **kwargs)
+            from_fader(inner.value())
+
+        slider._update_value_label = update_both
+    box.valueChanged.connect(slider.setValue)  # moves the fader, which sends the level
+    return box
 
 
 def master_icon() -> QIcon:
