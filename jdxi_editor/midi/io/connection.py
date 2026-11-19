@@ -126,8 +126,8 @@ class Connection(QObject):
         self._last_ask = now
         helper = self.helper
         send = getattr(helper, "send_identity_request", None)
-        if callable(send) and send():
-            self._set(VERIFYING)
+        if callable(send) and send() and self.state == DETECTED:
+            self._set(VERIFYING)  # (an answer may already have come: then it is ONLINE)
 
     def identity_seen(self, data: Sequence[int]) -> None:
         """From any thread (the MIDI input): handled in this object's thread."""

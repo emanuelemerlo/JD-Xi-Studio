@@ -118,3 +118,12 @@ def test_without_changes_the_jdxi_is_simply_read(connection, monkeypatch):
                                      warn_at_start=False)
     connection.set_state_for_tests(conn.ONLINE)
     assert read == [1] and session.last_box is None
+
+
+def test_an_operation_says_complete_partial_or_failed():
+    """SD-16: never «done» when part of it did not go out."""
+    assert offline.outcome_text("Send all", 12, 0) == ("Send all: complete (12 sent)", False)
+    text, problem = offline.outcome_text("Send all", 9, 3)
+    assert problem and "partial" in text and "9 of 12" in text
+    text, problem = offline.outcome_text("Send all", 0, 4)
+    assert problem and "failed" in text

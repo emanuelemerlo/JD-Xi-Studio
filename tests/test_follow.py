@@ -33,6 +33,7 @@ def sent(window, monkeypatch):
     requests = []
     monkeypatch.setattr(follow, "send_with_delay", lambda helper, reqs: requests.append(reqs))
     monkeypatch.setattr(window.midi_helper, "midi_out", object(), raising=False)
+    monkeypatch.setattr(window.follower, "_connected", lambda: True)  # a JD-Xi there (shared connection)
     window.follower._last_input = 0.0
     return requests
 

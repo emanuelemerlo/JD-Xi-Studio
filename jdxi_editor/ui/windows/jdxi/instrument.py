@@ -2030,8 +2030,10 @@ class JDXiInstrument(JDXiWindow):
                 # The new editors send their blocks as they are
                 if hasattr(editor, "export_dt1s"):
                     for dt1 in editor.export_dt1s():
-                        self.midi_helper.send_raw_message(list(dt1))
-                        total_sent += 1
+                        if self.midi_helper.send_raw_message(list(dt1)):
+                            total_sent += 1
+                        else:  # the port closed, or the message was refused
+                            total_skipped += 1
                     continue
                 # Skip editors that don't have the required attributes
                 if not hasattr(editor, "address") or not hasattr(
@@ -2079,14 +2081,29 @@ class JDXiInstrument(JDXiWindow):
 
             log.message(
                 scope="JDXiInstrument",
-                message=f"Settings dump complete: {total_sent} parameters sent to synthesizer",
+                message=f"Settings dump: {total_sent} sent, {total_skipped} not sent",
             )
+            self._report_outcome(tr("Send all"), total_sent, total_skipped)
 
         except Exception as ex:
             log.error(
                 scope="JDXiInstrument",
                 message=f" Error dumping settings to synth: {ex}",
             )
+            self._report_outcome(tr("Send all"), 0, 1)
+
+    def _report_outcome(self, what: str, done: int, failed: int) -> str:
+        """Say how an operation that sends to the JD-Xi ended: complete, partial or failed
+        (never «done» when part of it did not go out)."""
+        from jdxi_editor.ui.v2.offline import outcome_text
+
+        text, problem = outcome_text(what, done, failed)
+        self.statusBar().showMessage(text, 0 if problem else 8000)
+        if problem:
+            box = QMessageBox(QMessageBox.Icon.Warning, what, text, QMessageBox.StandardButton.Ok, self)
+            box.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+            box.open()
+        return text
 
     def _update_user_program_database(self) -> None:
         """

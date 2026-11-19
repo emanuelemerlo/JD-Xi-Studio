@@ -52,6 +52,8 @@ def test_one_page_with_the_cards(editor):
     assert tabs == ["Organize: playlists"]  # presets: from each part; user programs: banks E–H
     organize = editor.more_tabs.widget(0)
     assert organize.isAncestorOf(editor.playlist_widget) and organize.isAncestorOf(editor.playlist_editor_widget)
+    # moved from the old editor's hidden tabs: not left hidden (the area looked empty)
+    assert not editor.playlist_widget.isHidden() and not editor.playlist_editor_widget.isHidden()
     assert editor.mixer_panel.isAncestorOf(editor.mixer_widget.mixer_group)
     assert set(editor.part_tones) == {JDXiSynth.DIGITAL_SYNTH_1, JDXiSynth.DIGITAL_SYNTH_2,
                                       JDXiSynth.DRUM_KIT, JDXiSynth.ANALOG_SYNTH}

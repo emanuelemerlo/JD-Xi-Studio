@@ -486,6 +486,7 @@ class PlaylistEditor(QWidget):
                 if combo_index >= 0:
                     # Remove old combo box
                     self.playlist_select_layout.removeWidget(self.playlist_editor_combo)
+                    self.playlist_editor_combo.hide()  # out of sight until deleted
                     self.playlist_editor_combo.deleteLater()
 
                     # Create new combo box with updated data

@@ -523,19 +523,20 @@ class ProgramEditor(_program.ProgramEditor):
         top.addWidget(library_card, 3)
         top.addLayout(right, 2)
 
-        # --- below: organize (the playlists and, beside them, the selected one's programs).
+        # --- below: organize (the playlists and, under them, the selected one's programs).
         # The tone presets are chosen from each part's strip; the user programs
         # are the E–H banks of the library (their genre from its menu).
         self.more_tabs = QTabWidget()
         self.more_tabs.setDocumentMode(True)
         organize = QWidget()
-        row = QHBoxLayout(organize)
+        row = QVBoxLayout(organize)  # the playlists above, the chosen one's programs below
         row.setContentsMargins(0, 0, 0, 0)
         row.setSpacing(12)
-        for widget, stretch in ((self.playlist_widget, 2), (self.playlist_editor_widget, 3)):
+        for widget, stretch in ((self.playlist_widget, 2), (self.playlist_editor_widget, 5)):
             if widget is not None:
                 _strip_titles(widget)
                 row.addWidget(widget, stretch)
+                widget.show()  # it comes from a hidden tab of the old editor: hidden with it
         self.more_tabs.addTab(organize, tr("Organize: playlists"))
         self._link_playlists()
         self.library.playlists_changed.connect(self._playlists_changed)

@@ -175,6 +175,18 @@ def require_jdxi(target, connection: conn.Connection, why: str = "") -> None:
     follow()
 
 
+# ------------------------------------------------------------------ outcomes
+def outcome_text(what: str, done: int, failed: int) -> tuple[str, bool]:
+    """What an operation that sends to the JD-Xi achieved: complete, partial or failed.
+    Returns (text, problem)."""
+    if failed == 0 and done > 0:
+        return tr("{what}: complete ({n} sent)").format(what=what, n=done), False
+    if done == 0:
+        return tr("{what}: failed, nothing reached the JD-Xi").format(what=what), True
+    return tr("{what}: partial, {n} of {total} sent: the JD-Xi does not hold everything shown").format(
+        what=what, n=done, total=done + failed), True
+
+
 # ------------------------------------------------------------------ messages
 class OfflineSession(QObject):
     """The start-up warning and the arrival of the JD-Xi, for the main window."""
