@@ -4,6 +4,16 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+### Changes
+- Programs tab, simpler: the library searches number, name, genre and the four tones, sorts by
+  number, name or genre, shows "N of M programs", marks the program loaded on the JD-Xi (▶, bold)
+  apart from the one selected, and shows the tones in their parts' colours. Its menu (right
+  click): Load, Rename and Export (the loaded program), Genre (user programs), Add to playlist
+- Parts and mixer in one card: under each part's fader its tone (click: choose another, the
+  part's presets), MIDI channel and Edit; the separate list of parts is gone
+- Below, Organize: the playlists and, beside them, the selected playlist's programs. Presets are
+  chosen from each part, user programs are the library's E–H banks
+
 ### Fixes
 - A message that cannot go out (JD-Xi not connected) is no longer taken as what the JD-Xi holds
 - A/B: a photo taken without the JD-Xi whose data is not all known can no longer be recalled or

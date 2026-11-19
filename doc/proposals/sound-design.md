@@ -310,10 +310,10 @@ Elenco completo, in ordine di esecuzione. Stato: ☐ da fare · ◐ in corso · 
 | 16 | 5 | Nuovo suono: Init Digital e Analog separati, un solo Undo | | SD-09, HIST-02 | ☐ |
 | 17 | 6 | Aiuti per sezione, senza duplicare il pannello informativo esistente | | — | ☐ |
 | 18 | P | Mixer: colore della tab per ogni parte, Master neutro, icona Master leggibile | `ui/editors/program/mixer/section.py`, tema | PR-26 | ☑ (fader acceso dal basso: prima a zero sembrava pieno) |
-| 19 | P | Library: ricerca su Tone e genere, ordinamento, programma caricato marcato, colonne Tone | `ui/v2/programs.py` | PR-07…10, PR-27 | ☐ |
-| 20 | P | Card delle parti = strisce del mixer (Tone cliccabile, canale, fader, mute, Modifica); sotto-tab Presets sostituita | `ui/v2/programs.py`, `mixer_panel`, `PresetWidget` | PR-12…14, PR-25 | ☐ |
-| 21 | P | User Programs → filtro E–H della Library; Playlist + editor in un'unica sezione «Organizza» | `user_programs_widget`, `playlist_*` | PR-11, PR-15 | ☐ |
-| 22 | P | Menu contestuale della Library (Carica, Rinomina, Aggiungi a playlist, Esporta) | `ui/v2/programs.py` | PR-28 | ☐ |
+| 19 | P | Library: ricerca su Tone e genere, ordinamento, programma caricato marcato, colonne Tone | `ui/v2/programs.py` | PR-07…10, PR-27 | ☑ |
+| 20 | P | Card delle parti = strisce del mixer (Tone cliccabile, canale, fader, mute, Modifica); sotto-tab Presets sostituita | `ui/v2/programs.py`, `mixer_panel`, `PresetWidget` | PR-12…14, PR-25 | ☑ |
+| 21 | P | User Programs → filtro E–H della Library; Playlist + editor in un'unica sezione «Organizza» | `user_programs_widget`, `playlist_*` | PR-11, PR-15 | ☑ (User Programs = banchi E–H; il genere dal menu) |
+| 22 | P | Menu contestuale della Library (Carica, Rinomina, Aggiungi a playlist, Esporta) | `ui/v2/programs.py` | PR-28 | ☑ (niente Elimina: il JD-Xi non cancella) |
 | 23 | P | Contesto del programma = riga di contesto (dopo #14); stati e WRITE (dopo #8, #15) | | PR-17…21 | ☐ |
 | 24 | — | Presentazione «Visual Sound Design, Editing & Librarian» (il librarian resta): README, descrizione del pacchetto, finestra Informazioni, schermata d'avvio, note di rilascio | `README.md`, `pyproject.toml`, `ui/dialogs/about.py` | — | ☐ |
 
