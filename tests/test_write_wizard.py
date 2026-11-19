@@ -47,6 +47,7 @@ class Rig:
         self.helper = MidiIOHelper()
         self.device = device_for(self.helper)
         self.device.state.program_changed()
+        self.device.requests.clear()  # nothing left queued by the tests before (other windows' readings)
         self.jdxi = FakeJDXi(self.helper)
         self.jdxi.load([build_dt1(ANALOG, [i % 100 for i in range(64)])])
         self.slots: dict = {}  # slot -> the temporary area's memory saved there

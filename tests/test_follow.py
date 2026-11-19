@@ -24,6 +24,7 @@ def window():
     for _ in range(10):
         app.processEvents()
     yield w
+    w.follower.stop()  # it would keep reading the shared (simulated) JD-Xi in the tests after
     w.close()
     _dispose(w)
 

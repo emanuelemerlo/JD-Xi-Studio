@@ -94,6 +94,7 @@ class JDXi:
             if not found_in or not found_out or not self.helper.connect_port_names(found_in, found_out):
                 pytest.skip("no JD-Xi on the MIDI ports (close JD-Xi Studio, connect the JD-Xi)")
         self.device = device_for(self.helper)
+        self.device.requests.clear()  # nothing left queued by the tests before (other windows' readings)
         if self.fake is not None:  # as the app's own path: what goes out is noted as sent
             to_jdxi = self.helper.send_raw_message
 
