@@ -42,6 +42,7 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   chosen from each part, user programs are the library's E–H banks
 
 ### Fixes
+- Dialog titles no longer cut in the title bar (every dialog is at least as wide as its title)
 - Playlists: «Add to playlist» offers every program, factory ones (A–D) included; it said «All
   programs are already in this playlist» when no user program had been read yet
 - Loading a patch says whether it reached the JD-Xi whole, in part or not at all

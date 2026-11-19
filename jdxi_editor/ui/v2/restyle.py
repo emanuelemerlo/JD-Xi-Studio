@@ -264,7 +264,25 @@ class _MessageBoxLook(QObject):
         if event.type() == QEvent.Type.Show and isinstance(watched, QMessageBox):
             if watched.styleSheet() != MESSAGE_BOX_STYLE:
                 watched.setStyleSheet(MESSAGE_BOX_STYLE)
+        if event.type() == QEvent.Type.Show:
+            fit_title(watched)
         return False
+
+
+TITLE_BAR_EXTRA = 150  # icon, close button and margins of a title bar
+
+
+def fit_title(window) -> None:
+    """A dialog at least as wide as its title in the title bar (titles were cut,
+    the Italian ones above all)."""
+    from PySide6.QtWidgets import QDialog
+
+    if not isinstance(window, QDialog) or not window.isWindow():
+        return
+    needed = window.fontMetrics().horizontalAdvance(window.windowTitle()) + TITLE_BAR_EXTRA
+    if window.width() < needed:
+        window.setMinimumWidth(min(needed, 900))
+        window.resize(needed, window.height())
 
 
 _message_box_look = None
