@@ -306,7 +306,7 @@ Elenco completo, in ordine di esecuzione. Stato: ☐ da fare · ◐ in corso · 
 | 12 | 2 | Servizio SynthState: LCS / WS / in sospeso, provenienza, stati interni | nuovo `midi/io/synth_state.py` | MEM-02, MEM-03 | ☑ (`midi/io/synth_state.py`: confermato / in sospeso / diverso; la memoria degli editor resta quella di lavoro) |
 | 13 | 2 | Rete di sicurezza alla riconnessione e ripristino per parti | | SD-04…07, SD-15 | ☑ (`ui/v2/safety_net.py`; prova automatica sul JD-Xi simulato) |
 | 14 | 3 | Riga di contesto (anche finestre staccate) e avviso uniforme | `ui/v2/framework.py` | SD-08, SD-10, UI-01 | ☑ (`ui/v2/context.py`; l'avviso uniforme c'era già: `confirm_discard`) |
-| 15 | 4 | Salva sul JD-Xi guidato, posti candidati, verifica sul contenuto riletto | | SD-11, SD-12, WR-01…04 | ☐ |
+| 15 | 4 | Salva sul JD-Xi guidato, posti candidati, verifica sul contenuto riletto | | SD-11, SD-12, WR-01…04 | ☑ (`ui/v2/write_wizard.py`, pulsante «Salva sul JD-Xi…» nella pagina Programmi; prova automatica sul JD-Xi simulato; collaudo sullo strumento ancora da fare) |
 | 16 | 5 | Nuovo suono: Init Digital e Analog separati, un solo Undo | | SD-09, HIST-02 | ☐ |
 | 17 | 6 | Aiuti per sezione, senza duplicare il pannello informativo esistente | | — | ☐ |
 | 18 | P | Mixer: colore della tab per ogni parte, Master neutro, icona Master leggibile | `ui/editors/program/mixer/section.py`, tema | PR-26 | ☑ (fader acceso dal basso: prima a zero sembrava pieno) |

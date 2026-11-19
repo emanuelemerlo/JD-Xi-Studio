@@ -5,6 +5,9 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- «Save on the JD-Xi…» (Programs): name the program, choose the slot (E–H, «Init Program» slots
+  proposed as probably free, a used slot asks first), press WRITE on the JD-Xi as shown, and the app
+  selects the slot and checks that it holds the sound: «Saved in E02 ✓» only then
 - A context line under each editor's header and on the Programs page: program › part › tone ·
   origin (program, preset, recipe, file, A/B) · state (original, modified and temporary, modified
   and not sent, saved to file, saved in a program slot)

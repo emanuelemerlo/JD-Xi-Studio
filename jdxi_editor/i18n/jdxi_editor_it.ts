@@ -353,7 +353,7 @@
             <location filename="../../jdxi_editor/i18n/ui_strings.py" line="26" />
             <location filename="../../jdxi_editor/ui/editors/program/group.py" line="96" />
             <location filename="../../jdxi_editor/ui/v2/names.py" line="18" />
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="565" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="569" />
             <source>Programs</source>
             <translation>Programmi</translation>
         </message>
@@ -494,6 +494,7 @@
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/dialogs/about.py" line="156" />
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="359" />
             <location filename="../../jdxi_editor/ui/windows/jdxi/window_buttons.py" line="94" />
             <location filename="../../jdxi_editor/ui/windows/selftest.py" line="788" />
             <source>Close</source>
@@ -721,6 +722,7 @@
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="60" />
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="271" />
             <source>Next</source>
             <translation>Successivo</translation>
         </message>
@@ -3801,6 +3803,9 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         <message>
             <location filename="../../jdxi_editor/ui/v2/history.py" line="356" />
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="432" />
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="269" />
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="289" />
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="330" />
             <location filename="../../jdxi_editor/ui/windows/patch/manager.py" line="150" />
             <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="70" />
             <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="129" />
@@ -4864,13 +4869,13 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/programs.py" line="462" />
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="626" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="631" />
             <source>Load program</source>
             <translation>Carica programma</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/programs.py" line="463" />
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="623" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="628" />
             <source>Load the program selected in the library (or double-click it)</source>
             <translation>Carica il programma selezionato nella libreria (o fai doppio clic)</translation>
         </message>
@@ -4890,20 +4895,35 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
             <translation>Livello, pan, offset, scala, ricezione e zone di ogni parte (Programma: comune e parti)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="495" />
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="552" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="475" />
+            <source>Save on the JD-Xi…</source>
+            <translation>Salva sul JD-Xi…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="476" />
+            <source>Keep the program in the JD-Xi (WRITE in E–H), guided and checked</source>
+            <translation>Conserva il programma nel JD-Xi (WRITE in E–H), con guida e verifica</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="499" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="556" />
             <source>Library</source>
             <translation>Libreria</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="508" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="512" />
             <source>Parts and mixer</source>
             <translation>Parti e mixer</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="541" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="545" />
             <source>Organize: playlists</source>
             <translation>Organizza: playlist</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="616" />
+            <source>Connect the JD-Xi to save on it</source>
+            <translation>Collega il JD-Xi per salvarci il programma</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/programs.py" line="188" />
@@ -4922,7 +4942,7 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/programs.py" line="383" />
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="624" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="629" />
             <source>Connect the JD-Xi to load a program</source>
             <translation>Collega il JD-Xi per caricare un programma</translation>
         </message>
@@ -4962,17 +4982,17 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
             <translation>Nessuna playlist: creane una in Organizza</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="513" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="517" />
             <source>Click a tone to choose another for that part; Edit opens the part's editor.</source>
             <translation>Fai clic su un tono per sceglierne un altro per quella parte; Modifica apre l'editor della parte.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="611" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="615" />
             <source>Connect the JD-Xi to choose a tone</source>
             <translation>Collega il JD-Xi per scegliere un tono</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="701" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="706" />
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="251" />
             <source>Edit</source>
             <translation>Modifica</translation>
@@ -5000,12 +5020,12 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/programs.py" line="379" />
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="626" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="631" />
             <source>Load {program}</source>
             <translation>Carica {program}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="729" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="734" />
             <source>Tone of {part}</source>
             <translation>Tono di {part}</translation>
         </message>
@@ -5025,17 +5045,17 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
             <translation>Genere di {program}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="695" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="700" />
             <source>Choose another tone for {part}</source>
             <translation>Scegli un altro tono per {part}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="699" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="704" />
             <source>Ch. {n}</source>
             <translation>Can. {n}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="702" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="707" />
             <source>Open the {part} editor</source>
             <translation>Apri l'editor di {part}</translation>
         </message>
@@ -6288,6 +6308,118 @@ Le modifiche che non avevi salvato andrebbero perse. Le rimando al JD-Xi?</trans
             <location filename="../../jdxi_editor/ui/v2/widgets.py" line="952" />
             <source>Parameter Guide, p. {page}</source>
             <translation>Parameter Guide, p. {page}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="221" />
+            <source>Save on the JD-Xi</source>
+            <translation>Salva sul JD-Xi</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="285" />
+            <source>Replace a program</source>
+            <translation>Sostituire un programma</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="299" />
+            <source>Preparing: sending the name and reading the program…</source>
+            <translation>Preparo: invio il nome e leggo il programma…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="332" />
+            <source>Done</source>
+            <translation>Fatto</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="356" />
+            <source>Check again</source>
+            <translation>Verifica di nuovo</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="235" />
+            <source>The JD-Xi keeps a program only with its WRITE, in the user banks E–H. Here you name it and choose where; then you press WRITE on the JD-Xi and the app checks that it is there.</source>
+            <translation>Il JD-Xi conserva un programma solo con il suo WRITE, nei banchi utente E–H. Qui gli dai un nome e scegli dove; poi premi WRITE sul JD-Xi e l'app verifica che ci sia.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="239" />
+            <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="60" />
+            <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="119" />
+            <source>Name:</source>
+            <translation>Nome:</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="245" />
+            <source>Slot:</source>
+            <translation>Posto:</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="265" />
+            <source>Also save a backup file…</source>
+            <translation>Salva anche un file di backup…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="302" />
+            <source>The name could not be sent: is the JD-Xi connected?</source>
+            <translation>Non è stato possibile inviare il nome: il JD-Xi è collegato?</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="307" />
+            <source>The program could not be read whole: try again.</source>
+            <translation>Non è stato possibile leggere tutto il programma: riprova.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="250" />
+            <source>probably free</source>
+            <translation>probabilmente libero</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="259" />
+            <source>Names as last read from the JD-Xi (Edit › Update User Program Database): they may be old.</source>
+            <translation>Nomi dell'ultima lettura dal JD-Xi (Modifica › Aggiorna l'archivio dei programmi utente): potrebbero non essere aggiornati.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="286" />
+            <source>Replace {slot} «{name}»? The program in it is lost.</source>
+            <translation>Sostituire {slot} «{name}»? Il programma che contiene va perso.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="288" />
+            <source>Replace {slot}</source>
+            <translation>Sostituisci {slot}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="310" />
+            <source>Name prepared on the JD-Xi: &lt;b&gt;it is not saved yet&lt;/b&gt;.&lt;br&gt;&lt;br&gt;On the JD-Xi:&lt;br&gt;1. press &lt;b&gt;Shift&lt;/b&gt; + &lt;b&gt;Menu/Write&lt;/b&gt;&lt;br&gt;2. with Program [-] [+] choose &lt;b&gt;{slot}&lt;/b&gt;&lt;br&gt;3. press &lt;b&gt;Enter&lt;/b&gt;, then &lt;b&gt;Enter&lt;/b&gt; again to confirm&lt;br&gt;&lt;br&gt;Then press Done here: the app selects {slot} and checks it.</source>
+            <translation>Nome preparato sul JD-Xi: &lt;b&gt;non è ancora salvato&lt;/b&gt;.&lt;br&gt;&lt;br&gt;Sul JD-Xi:&lt;br&gt;1. premi &lt;b&gt;Shift&lt;/b&gt; + &lt;b&gt;Menu/Write&lt;/b&gt;&lt;br&gt;2. con Program [-] [+] scegli &lt;b&gt;{slot}&lt;/b&gt;&lt;br&gt;3. premi &lt;b&gt;Enter&lt;/b&gt;, poi di nuovo &lt;b&gt;Enter&lt;/b&gt; per confermare&lt;br&gt;&lt;br&gt;Poi premi Fatto qui: l'app seleziona {slot} e lo verifica.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="341" />
+            <source>Checking {slot}…</source>
+            <translation>Verifico {slot}…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="118" />
+            <source>Not confirmed: {slot} could not be selected on the JD-Xi.</source>
+            <translation>Non confermato: non è stato possibile selezionare {slot} sul JD-Xi.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="134" />
+            <source>Saved in {slot} ✓</source>
+            <translation>Salvato in {slot} ✓</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="123" />
+            <source>Not confirmed: {slot} could not be read back whole. It may be saved: select it on the JD-Xi to check.</source>
+            <translation>Non confermato: non è stato possibile rileggere tutto {slot}. Potrebbe essere salvato: selezionalo sul JD-Xi per controllare.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="130" />
+            <source>Not saved in {slot}: it holds something else ({parts}). Your sound is still only temporary.</source>
+            <translation>Non risulta salvato in {slot}: contiene altro ({parts}). Il tuo suono è ancora solo temporaneo.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="258" />
+            <source>Names as read on {date} (Edit › Update User Program Database): they may be old.</source>
+            <translation>Nomi letti il {date} (Modifica › Aggiorna l'archivio dei programmi utente): potrebbero non essere aggiornati.</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/widgets/button/sequencer.py" line="37" />
@@ -7736,12 +7868,6 @@ Esempio: F0 41 10 00 00 00 0E 12 19 01 20 00 01 F7</translation>
             <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="112" />
             <source>Patch Name</source>
             <translation>Nome della patch</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="60" />
-            <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="119" />
-            <source>Name:</source>
-            <translation>Nome:</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/windows/selftest.py" line="344" />

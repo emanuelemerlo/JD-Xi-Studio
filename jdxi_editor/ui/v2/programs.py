@@ -472,7 +472,11 @@ class ProgramEditor(_program.ProgramEditor):
         self.advanced_button.clicked.connect(self.open_advanced)
         actions = QVBoxLayout()
         actions.setSpacing(6)
+        self.write_button = QPushButton(tr("Save on the JD-Xi…"))
+        self.write_button.setToolTip(tr("Keep the program in the JD-Xi (WRITE in E–H), guided and checked"))
+        self.write_button.clicked.connect(self.save_on_jdxi)
         first = QHBoxLayout()
+        first.addWidget(self.write_button)
         first.addWidget(self.rename_button)
         first.addStretch()
         actions.addLayout(first)
@@ -609,6 +613,7 @@ class ProgramEditor(_program.ProgramEditor):
         self.connection.changed.connect(lambda _s: self._library_selection_changed())
         for button in self.part_tones.values():
             require_jdxi(button, self.connection, tr("Connect the JD-Xi to choose a tone"))
+        require_jdxi(self.write_button, self.connection, tr("Connect the JD-Xi to save on it"))
         self._library_selection_changed()
 
     def _can_talk(self) -> bool:
@@ -770,6 +775,21 @@ class ProgramEditor(_program.ProgramEditor):
             refresh = getattr(widget, method, None)
             if callable(refresh):
                 refresh()
+
+    def save_on_jdxi(self):
+        """The guided WRITE (sound-design Phase 4)."""
+        from jdxi_editor.ui.v2.context import sound_context
+        from jdxi_editor.ui.v2.write_wizard import WriteDialog, session_for
+
+        session = session_for(self.midi_helper, self)
+        instrument = self._instrument()
+        backup = getattr(instrument, "_patch_save", None)
+        dialog = WriteDialog(session, sound_context().program_name or getattr(self, "program_name", "") or "",
+                             self, backup=backup if callable(backup) else None)
+        session.finished.connect(lambda saved, _m: saved and self.library.set_loaded(session.slot))
+        dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        dialog.open()
+        return dialog
 
     def export_program(self) -> None:
         """Save the loaded program as a file (the main window's Save, which knows the format)."""
