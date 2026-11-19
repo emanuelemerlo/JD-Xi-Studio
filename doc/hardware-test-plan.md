@@ -54,6 +54,30 @@ Senza domande (solo i punti 1–3): `--auto`. Solo le porte: `--list`.
 
 ---
 
+## 1a. Prove automatiche sul JD-Xi (5 minuti) ★
+
+Sempre con JD-Xi Studio chiuso, dalla cartella del progetto:
+
+```
+pytest -m hardware tests/test_jdxi_checks.py
+```
+
+Le stesse prove girano a ogni modifica sul JD-Xi simulato; qui sullo strumento vero. Ognuna salva il
+programma temporaneo del JD-Xi prima di cominciare e lo rimette com'era alla fine. Controllano da
+sole: l'identità (collegato solo se risponde un JD-Xi, passo 2.9), la lettura completa del
+programma, una modifica «inviata» finché non viene riletta, la riconnessione senza cambiamenti
+(2.10) e con una parte cambiata e ripristinata (2.11), Init dell'Analog e il suo Annulla sullo
+strumento (6b.1).
+
+Il salvataggio con WRITE (6.8) chiede una mano sul JD-Xi e un posto che si può sovrascrivere:
+
+```
+JDXI_WRITE_SLOT=H64 pytest -m hardware -s tests/test_jdxi_checks.py -k write
+```
+
+La prova prepara il nome, dice cosa premere sul JD-Xi, aspetta Invio e verifica rileggendo il posto.
+Copia nel resoconto la riga finale di pytest (es. «7 passed, 1 skipped»).
+
 ## 1b. Autotest dentro l'app (5 minuti) ★
 
 Aiuto › **Autotest con il JD-Xi…** › Avvia. L'app carica un programma e dei toni, modifica e

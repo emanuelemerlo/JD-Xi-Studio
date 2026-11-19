@@ -5,6 +5,9 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- Checks against a JD-Xi (`tests/test_jdxi_checks.py`): identity, a whole reading, pending until
+  read back, reconnection, restore, Init and Undo, Save on the JD-Xi; on the simulated JD-Xi in
+  every run, on the real one with `pytest -m hardware` for each release
 - A «?» on the panels of the tone and effects editors (OSC, FILTER, AMP, LFO, PITCH, effects,
   delay, reverb): what the section changes, how the sound changes, an example, in the information
   panel
