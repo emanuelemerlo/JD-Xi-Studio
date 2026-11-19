@@ -4,6 +4,12 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+# [1.0.0-beta.2] - 2026-11-19
+
+Sound design and the Programs tab. Tried on the simulated JD-Xi (the automatic checks run on it in
+every build); on the real instrument the checks of `doc/hardware-test-plan.md` are still to run
+(section 1a: `pytest -m hardware tests/test_jdxi_checks.py`, then the ★ steps).
+
 ### Changes
 - Checks against a JD-Xi (`tests/test_jdxi_checks.py`): identity, a whole reading, pending until
   read back, reconnection, restore, Init and Undo, Save on the JD-Xi; on the simulated JD-Xi in
