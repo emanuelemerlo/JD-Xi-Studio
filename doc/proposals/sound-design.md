@@ -317,6 +317,8 @@ Elenco completo, in ordine di esecuzione. Stato: ☐ da fare · ◐ in corso · 
 | 23 | P | Contesto del programma = riga di contesto (dopo #14); stati e WRITE (dopo #8, #15) | | PR-17…21 | ☐ |
 | 24 | — | Presentazione «Visual Sound Design, Editing & Librarian» (il librarian resta): README, descrizione del pacchetto, finestra Informazioni, schermata d'avvio, note di rilascio | `README.md`, `pyproject.toml`, `ui/dialogs/about.py` | — | ☑ (README, pacchetto, Informazioni, schermata d'avvio; note di rilascio alla release) |
 
+| 25 | — | Revisione di testi e traduzioni: ogni finestra e dialogo in italiano e inglese (titoli tagliati, testi lunghi, termini coerenti con il manuale del JD-Xi), con controllo automatico dei titoli più larghi della finestra | tutte le finestre, `jdxi_editor/i18n` | prova automatica sui dialoghi | ◐ (dialogo del nome della patch allargato) |
+
 Fase **P** = revisione della tab Programmi (`doc/proposals/program-tab.md`, rev. 1.1): la parte
 grafica (#18–22) può partire subito dopo la Fase 0; #23 segue le Fasi 1–4.
 
