@@ -126,6 +126,19 @@ class TonesDelegate(QStyledItemDelegate):
                 break
         painter.restore()
 
+    def sizeHint(self, option, index):
+        hint = super().sizeHint(option, index)
+        tones = index.data(TONES_ROLE)
+        if tones:
+            font = QFont(option.font)
+            if index.data(Qt.ItemDataRole.FontRole) is not None:
+                font = QFont(index.data(Qt.ItemDataRole.FontRole))
+            from PySide6.QtGui import QFontMetrics
+
+            width = QFontMetrics(font).horizontalAdvance(" · ".join(n for n, _c in tones)) + 16
+            hint.setWidth(max(hint.width(), width))
+        return hint
+
 
 class ProgramLibrary(QWidget):
     """Every program (A–D preset, E–H user) as a table: search, genre, bank; a double click loads it."""
@@ -189,10 +202,15 @@ class ProgramLibrary(QWidget):
         self.table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.table.customContextMenuRequested.connect(self._context_menu)
         header = self.table.horizontalHeader()
-        header.setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
-        header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
-        header.setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
-        header.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
+        # every column can be resized by hand; the tones as wide as the longest
+        # list, with a scroll bar when they do not fit
+        header.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
+        header.setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
+        header.setStretchLastSection(False)
+        header.setMinimumSectionSize(40)
+        self.table.setHorizontalScrollMode(QAbstractItemView.ScrollMode.ScrollPerPixel)
+        self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self._widths_set = False
         self.table.setMinimumHeight(density.px(320, 200))
         self.table.setWordWrap(False)
         self.table.setTextElideMode(Qt.TextElideMode.ElideRight)
@@ -274,10 +292,27 @@ class ProgramLibrary(QWidget):
                 self.table.setItem(r, c, item)
         self.table.setSortingEnabled(sorting)
         self._mark_loaded()
+        self._fit_columns(rows)
         self.count_label.setText(
             tr("{shown} of {total} programs").format(shown=len(rows), total=len(self.programs)))
         if selected:
             self.select(selected)
+
+    def _fit_columns(self, rows=None) -> None:
+        """Once shown (with the page's font): number, name and genre to their text,
+        the name at most 220 px; then they are the user's to resize."""
+        if self._widths_set or not self.table.isVisible() or self.table.rowCount() == 0:
+            return
+        for column, cap in ((0, 90), (1, 220), (2, 170)):
+            self.table.resizeColumnToContents(column)
+            self.table.setColumnWidth(column, min(cap, self.table.columnWidth(column) + 12))
+        self._widths_set = True
+
+    def showEvent(self, event) -> None:
+        super().showEvent(event)
+        from PySide6.QtCore import QTimer
+
+        QTimer.singleShot(0, self._fit_columns)
 
     def set_loaded(self, program_id: str) -> None:
         """*program_id* is now on the JD-Xi: marked in the list (bold, ▶)."""
