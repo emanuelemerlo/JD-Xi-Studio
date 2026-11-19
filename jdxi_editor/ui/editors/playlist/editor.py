@@ -139,6 +139,7 @@ class PlaylistEditor(QWidget):
         # Connect to valueChanged signal (emits the value, not the index)
         self.playlist_editor_combo.valueChanged.connect(self._on_playlist_value_changed)
         self.playlist_select_layout.addWidget(self.playlist_editor_combo)
+        self._tidy_combo()
         self.playlist_select_layout.addStretch()
         layout.addLayout(self.playlist_select_layout)
 
@@ -437,6 +438,21 @@ class PlaylistEditor(QWidget):
             index = model.index(row, 5)
             self._play_playlist_program(index)
 
+    def _tidy_combo(self) -> None:
+        """The search box and the list one under the other, starting at the same
+        place: no "Search:" label in front of the box (its placeholder says it)."""
+        combo = self.playlist_editor_combo
+        if combo is None:
+            return
+        search_text = tr("Search:")
+        for label in combo.findChildren(QLabel):
+            if label.text() in (search_text, ""):
+                label.hide()
+        box, inner = getattr(combo, "search_box", None), getattr(combo, "combo_box", None)
+        if box is not None and inner is not None:  # same width: one column
+            box.setMaximumWidth(inner.maximumWidth())
+            box.setSizePolicy(inner.sizePolicy())
+
     def populate_playlist_combo(self) -> None:
         """Populate the playlist selection combo box."""
         if not self.playlist_editor_combo:
@@ -502,6 +518,7 @@ class PlaylistEditor(QWidget):
                     self.playlist_editor_combo.valueChanged.connect(
                         self._on_playlist_value_changed
                     )
+                    self._tidy_combo()
                     # Re-insert into layout at same position
                     self.playlist_select_layout.insertWidget(
                         combo_index, self.playlist_editor_combo
