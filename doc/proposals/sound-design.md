@@ -299,10 +299,10 @@ Elenco completo, in ordine di esecuzione. Stato: ☐ da fare · ◐ in corso · 
 | 5 | 0 | F0-05 esito reale di `send_identity_request` | `midi/io/output_handler.py` | unitario | ☑ 56b690f |
 | 6 | 0 | F0-06 eliminare i metodi morti di `MidiFileController` | `midi/file/controller.py` | suite pattern | ☑ 56b690f, 02373ab |
 | 7 | 0 | F0-07 `test_burst_of_changes_makes_one_request` | `tests/test_device_refresh.py` | il test stesso | ☑ (test dipendente dai tempi: attende la richiesta invece di un tempo fisso) |
-| 8 | 1 | Servizio Connection: stati, Identity Roland/JD-Xi, notifiche; A/B, follower, editor, Send all lo usano | nuovo `midi/io/connection.py` | SD-01, SD-02, SD-17, SD-14 | ☐ |
-| 9 | 1 | Off-line: avviso una volta per sessione, badge in tutte le finestre, comandi spenti con tooltip | finestre principale e secondarie | SD-01, SD-13, UI-01 | ☐ |
-| 10 | 1 | Collegamento dopo Off-line: avviso con «Salva come file», poi lettura completa | | SD-03 | ☐ |
-| 11 | 1 | Transazioni con esito (completa/parziale/fallita) su Read, Send all, patch, A/B | `RequestQueue`, `PatchReadSession` | SD-16 | ☐ |
+| 8 | 1 | Servizio Connection: stati, Identity Roland/JD-Xi, notifiche; A/B, follower, editor, Send all lo usano | nuovo `midi/io/connection.py` | SD-01, SD-02, SD-17, SD-14 | ☑ (`midi/io/connection.py`; A/B e follower lo usano) |
+| 9 | 1 | Off-line: avviso una volta per sessione, badge in tutte le finestre, comandi spenti con tooltip | finestre principale e secondarie | SD-01, SD-13, UI-01 | ☑ (badge nella barra di stato o nell'angolo di ogni finestra; comandi: Salva patch, Invia tutto, Aggiorna programmi utente, Carica programma, scelta del tono, A/B) |
+| 10 | 1 | Collegamento dopo Off-line: avviso con «Salva come file», poi lettura completa | | SD-03 | ☑ |
+| 11 | 1 | Transazioni con esito (completa/parziale/fallita) su Read, Send all, patch, A/B | `RequestQueue`, `PatchReadSession` | SD-16 | ◐ (Invia tutto e letture con esito; caricamento patch da fare) |
 | 12 | 2 | Servizio SynthState: LCS / WS / in sospeso, provenienza, stati interni | nuovo `midi/io/synth_state.py` | MEM-02, MEM-03 | ☐ |
 | 13 | 2 | Rete di sicurezza alla riconnessione e ripristino per parti | | SD-04…07, SD-15 | ☐ |
 | 14 | 3 | Riga di contesto (anche finestre staccate) e avviso uniforme | `ui/v2/framework.py` | SD-08, SD-10, UI-01 | ☐ |

@@ -5,6 +5,12 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- One connection state for the whole app: the JD-Xi counts as connected only once it answers as a
+  JD-Xi (a port named JD-Xi is not enough). Without it: a warning at start (once), an «Off-line»
+  badge in every window, and the commands that need it are off with the reason in the tooltip.
+  When it arrives after changes made without it, they are given up for what it holds, with
+  «Save as file» to keep them; requests that go unanswered show «Unstable connection»
+- Send all says whether it was complete, partial or failed
 - JD-Xi Studio presents itself as "Visual Sound Design, Editing & Librarian" (README, About, start screen)
 - Programs tab, simpler: the library searches number, name, genre and the four tones, sorts by
   number, name or genre, shows "N of M programs", marks the program loaded on the JD-Xi (▶, bold)

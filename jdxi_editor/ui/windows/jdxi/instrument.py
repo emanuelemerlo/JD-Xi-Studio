@@ -173,42 +173,6 @@ class JDXiInstrument(JDXiWindow):
         self._add_recent_files_menu()
         self._load_settings()
         self._toggle_illuminate_sequencer_lightshow(True)
-        self._setup_connection()
-
-    def _setup_connection(self) -> None:
-        """The shared connection: badge in every window, Off-line warning,
-        commands that need the JD-Xi, and what happens when it arrives."""
-        from jdxi_editor.midi.io.connection import connection_for
-        from jdxi_editor.ui.v2 import offline
-
-        self.connection = connection_for(self.midi_helper)
-        if self.connection is None:
-            return
-        self._connection_watcher = offline.install(self.connection, self)
-        self._offline_session = offline.OfflineSession(
-            self.connection, self, save_as_file=self._patch_save, read_all=self._read_everything,
-            warn_at_start=getattr(self.midi_helper, "midi_available", True))
-        for name, why in (
-            ("save_patch_action", tr("Connect the JD-Xi: a patch saved without it would hold values it never had")),
-            ("dump_settings_action", tr("Connect the JD-Xi to send it the settings")),
-            ("update_user_programs_action", tr("Connect the JD-Xi to read its user programs")),
-        ):
-            action = getattr(self, name, None)
-            if action is not None:
-                offline.require_jdxi(action, self.connection, why)
-        self.connection.changed.connect(self._update_midi_indicators)
-        self.connection.poll()
-
-    def _read_everything(self) -> None:
-        """Read what the JD-Xi holds: the program and every open editor."""
-        self.data_request()
-        for editor in list(getattr(self, "editors", []) or []):
-            request = getattr(editor, "data_request", None)
-            if callable(request):
-                try:
-                    request()
-                except RuntimeError:  # a closed editor
-                    pass
         self._load_saved_favorites()
         self._update_synth_button_styles()
         self._set_callbacks()
@@ -310,6 +274,7 @@ class JDXiInstrument(JDXiWindow):
         self.follower.start()
         self.on_closed = None  # set by main(): quits the application
         self._link_arpeggio_button()
+        self._setup_connection()
 
     def _init_update_checker(self) -> None:
         """Check GitHub Releases shortly after startup (at most once a day)."""
@@ -1583,6 +1548,41 @@ class JDXiInstrument(JDXiWindow):
         self.log_viewer.show()
         self.log_viewer.raise_()
         log.message(scope="JDXiInstrument", message="Showing LogViewer window")
+
+    def _setup_connection(self) -> None:
+        """The shared connection: badge in every window, Off-line warning,
+        commands that need the JD-Xi, and what happens when it arrives."""
+        from jdxi_editor.midi.io.connection import connection_for
+        from jdxi_editor.ui.v2 import offline
+
+        self.connection = connection_for(self.midi_helper)
+        if self.connection is None:
+            return
+        self._connection_watcher = offline.install(self.connection, self)
+        self._offline_session = offline.OfflineSession(
+            self.connection, self, save_as_file=self._patch_save, read_all=self._read_everything,
+            warn_at_start=getattr(self.midi_helper, "midi_available", True))
+        for name, why in (
+            ("save_patch_action", tr("Connect the JD-Xi: a patch saved without it would hold values it never had")),
+            ("dump_settings_action", tr("Connect the JD-Xi to send it the settings")),
+            ("update_user_programs_action", tr("Connect the JD-Xi to read its user programs")),
+        ):
+            action = getattr(self, name, None)
+            if action is not None:
+                offline.require_jdxi(action, self.connection, why)
+        self.connection.changed.connect(self._update_midi_indicators)
+        self.connection.poll()
+
+    def _read_everything(self) -> None:
+        """Read what the JD-Xi holds: the program and every open editor."""
+        self.data_request()
+        for editor in list(getattr(self, "editors", []) or []):
+            request = getattr(editor, "data_request", None)
+            if callable(request):
+                try:
+                    request()
+                except RuntimeError:  # a closed editor
+                    pass
 
     def _update_midi_indicators(self, *_args) -> None:
         """Show whether the MIDI input and output ports are open."""

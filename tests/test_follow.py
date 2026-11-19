@@ -183,6 +183,9 @@ def test_no_poll_just_after_input_or_while_playing(window, sent, monkeypatch):
 
 def test_no_poll_without_midi_out(window, sent, monkeypatch):
     monkeypatch.setattr(window.midi_helper, "midi_out", None, raising=False)
+    monkeypatch.undo()  # the real check: no output port, no connection
+    monkeypatch.setattr(follow, "send_with_delay", lambda helper, reqs: sent.append(reqs))
+    monkeypatch.setattr(window.midi_helper, "midi_out", None, raising=False)
     window.follower.poll()
     window.follower.read_all()
     assert sent == []
