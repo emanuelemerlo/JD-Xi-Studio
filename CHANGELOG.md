@@ -5,6 +5,8 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- Programs: one JD-Xi-style display only, the program's (it said "No file loaded"; now the number
+  and name of the program loaded). The playlist shows what plays as a line of text over its bars
 - One connection state for the whole app: the JD-Xi counts as connected only once it answers as a
   JD-Xi (a port named JD-Xi is not enough). Without it: a warning at start (once), an «Off-line»
   badge in every window, and the commands that need it are off with the reason in the tooltip.

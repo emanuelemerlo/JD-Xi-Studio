@@ -16,7 +16,6 @@ from PySide6.QtWidgets import QLabel, QProgressBar, QToolTip, QWidget
 
 from jdxi_editor.ui.common import JDXi, QVBoxLayout
 from jdxi_editor.ui.editors.midi_player.utils import format_time
-from jdxi_editor.ui.widgets.digital.title import DigitalTitle
 from jdxi_editor.i18n import tr
 
 SEGMENT_GAP = 3  # px between songs
@@ -121,6 +120,31 @@ class PlaylistSegmentBar(QWidget):
         super().mousePressEvent(event)
 
 
+class NowPlayingLine(QLabel):
+    """One line of plain text above the bars: the state and the song (the
+    JD-Xi-style display stays the program's own, the only one on the page)."""
+
+    def __init__(self, text: str = "", parent: Optional[QWidget] = None):
+        super().__init__(parent)
+        self._upper = ""
+        self.text = text  # the song (as the old display's attribute)
+        self.setTextFormat(Qt.TextFormat.PlainText)
+        self.setStyleSheet("QLabel { color: #d9dde3; font-size: 13px; padding: 2px 0; }")
+        self._update()
+
+    def set_upper_display_text(self, text: str) -> None:
+        self._upper = text
+        self._update()
+
+    def setText(self, text: str) -> None:  # noqa: N802 (Qt)
+        self.text = text
+        self._update()
+
+    def _update(self) -> None:
+        parts = [p for p in (self._upper, self.text) if p]
+        super().setText("  —  ".join(parts))
+
+
 class PlaylistProgressWidget(QWidget):
     """Now playing: song n of N, its progress, the playlist's progress, up next."""
 
@@ -134,7 +158,7 @@ class PlaylistProgressWidget(QWidget):
         self._paused = False
         self._status = tr("Stopped")  # shown while no song is playing
 
-        self.display = DigitalTitle(tr("No song playing"))
+        self.display = NowPlayingLine(tr("No song playing"))
         self.song_bar = QProgressBar()
         self.song_bar.setRange(0, 1000)
         self.song_bar.setTextVisible(True)
