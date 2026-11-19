@@ -53,13 +53,31 @@ def part_of_synth(synth_type) -> str:
     return PROGRAM
 
 
+_transaction: Optional[int] = None  # an action over several editors: one Undo for all
+
+
+@contextmanager
+def transaction():
+    """The steps made inside, in every editor, undo and redo together (a recipe step
+    that sets Digital 1 and the effects is one Undo, whichever editor it is pressed in)."""
+    global _transaction
+    outer = _transaction
+    if outer is None:
+        _transaction = next(_ids)
+    try:
+        yield
+    finally:
+        _transaction = outer
+
+
 class _Edit:
-    __slots__ = ("changes", "time", "id")
+    __slots__ = ("changes", "time", "id", "tx")
 
     def __init__(self, value, old: int, new: int):
         self.changes = {value: [old, new]}
         self.time = time.monotonic()
         self.id = next(_ids)
+        self.tx = None  # the transaction it belongs to (None: this editor only)
 
     def record(self, value, old: int, new: int) -> None:
         change = self.changes.get(value)
@@ -150,6 +168,7 @@ class EditHistory(QObject):
             return
         edit, self._group = self._group, None
         if edit is not None and edit.changes:
+            edit.tx = _transaction
             self._push(edit)
             self._redo.clear()
             self._sealed = True
@@ -187,7 +206,7 @@ class EditHistory(QObject):
     def can_redo(self) -> bool:
         return bool(self._redo)
 
-    def undo(self) -> bool:
+    def undo(self, _linked: bool = True) -> bool:
         while self._group_depth:
             self.end_group()
         if not self._undo:
@@ -199,9 +218,13 @@ class EditHistory(QObject):
         self._redo.append(edit)
         self._sealed = True
         self._update()
+        if _linked and edit.tx is not None:  # the same action in the other editors
+            for other in histories():
+                if other is not self and other._undo and other._undo[-1].tx == edit.tx:
+                    other.undo(_linked=False)
         return True
 
-    def redo(self) -> bool:
+    def redo(self, _linked: bool = True) -> bool:
         while self._group_depth:
             self.end_group()
         if not self._redo:
@@ -213,6 +236,10 @@ class EditHistory(QObject):
         self._undo.append(edit)
         self._sealed = True
         self._update()
+        if _linked and edit.tx is not None:
+            for other in histories():
+                if other is not self and other._redo and other._redo[-1].tx == edit.tx:
+                    other.redo(_linked=False)
         return True
 
     def revert(self) -> None:

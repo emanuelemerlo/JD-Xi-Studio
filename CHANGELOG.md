@@ -55,7 +55,7 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - A/B: a photo taken without the JD-Xi whose data is not all known can no longer be recalled or
   saved (bytes never read were sent as zeros); taking it again with the JD-Xi connected fixes it
 - A/B: when a photo cannot be written to disk it says so, instead of "captured"
-- Recipes: setting a row or a whole step is one Undo in each editor
+- Recipes: setting a row or a whole step is one Undo, also when it sets several editors
 - Program mixer: each part in the colour of its tab, the Master in a neutral light with an output
   icon; the faders light from the bottom up to the level (at 0 they looked full), centred over
   their icon and mute, without tick marks, with a box above showing the level, where it can also

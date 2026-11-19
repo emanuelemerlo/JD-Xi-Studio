@@ -726,13 +726,16 @@ class RecipesEditor(QWidget):
             history = getattr(self.editors(key), "history", None)
             if history is not None and history not in histories:
                 histories.append(history)
-        for history in histories:
-            history.begin_group()
-        try:
-            yield
-        finally:
+        from jdxi_editor.ui.v2.history import transaction
+
+        with transaction():  # one Undo for all the editors the step touches
             for history in histories:
-                history.end_group()
+                history.begin_group()
+            try:
+                yield
+            finally:
+                for history in histories:
+                    history.end_group()
 
     def set_row(self, c: check.Checked) -> None:
         with self._one_undo([c]):

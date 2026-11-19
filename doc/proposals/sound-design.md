@@ -295,7 +295,7 @@ Elenco completo, in ordine di esecuzione. Stato: ☐ da fare · ◐ in corso · 
 | 1 | 0 | F0-01 memoria aggiornata solo dopo invio riuscito | `midi/io/output_handler.py`, `midi/io/device.py` | MEM-01 | ☑ 56b690f |
 | 2 | 0 | F0-02 provenienza dei blocchi nello snapshot; foto incompleta non richiamabile/esportabile; nessuno zero inventato | `ui/v2/ab_compare.py`, `ui/v2/framework.py` | AB-01, MEM-04 | ☑ 56b690f |
 | 3 | 0 | F0-03 esito di `save_slots`, conferma solo a scrittura riuscita | `ui/v2/ab_compare.py` | AB-02 | ☑ 56b690f |
-| 4 | 0 | F0-04 ricette in un gruppo di Undo | `recipes/apply.py`, `ui/v2/recipes.py`, `ui/v2/history.py` | HIST-01 | ◐ 56b690f (un Undo per editor; Undo unico tra editor con SynthState, #12) |
+| 4 | 0 | F0-04 ricette in un gruppo di Undo | `recipes/apply.py`, `ui/v2/recipes.py`, `ui/v2/history.py` | HIST-01 | ☑ (un solo Undo anche tra più editor: `history.transaction()`) |
 | 5 | 0 | F0-05 esito reale di `send_identity_request` | `midi/io/output_handler.py` | unitario | ☑ 56b690f |
 | 6 | 0 | F0-06 eliminare i metodi morti di `MidiFileController` | `midi/file/controller.py` | suite pattern | ☑ 56b690f, 02373ab |
 | 7 | 0 | F0-07 `test_burst_of_changes_makes_one_request` | `tests/test_device_refresh.py` | il test stesso | ☑ (test dipendente dai tempi: attende la richiesta invece di un tempo fisso) |
