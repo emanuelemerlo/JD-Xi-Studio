@@ -5,6 +5,7 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- JD-Xi Studio presents itself as "Visual Sound Design, Editing & Librarian" (README, About, start screen)
 - Programs tab, simpler: the library searches number, name, genre and the four tones, sorts by
   number, name or genre, shows "N of M programs", marks the program loaded on the JD-Xi (▶, bold)
   apart from the one selected, and shows the tones in their parts' colours. Its menu (right

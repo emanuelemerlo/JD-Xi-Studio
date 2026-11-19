@@ -375,8 +375,13 @@
             <translation>Genere</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="260" />
-            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="146" />
+            <location filename="../../jdxi_editor/main.py" line="255" />
+            <source>Visual Sound Design, Editing &amp; Librarian</source>
+            <translation>Visual Sound Design, Editing &amp; Librarian</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/main.py" line="262" />
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="147" />
             <source>An independent, unofficial tool: not affiliated with, endorsed or sponsored by Roland Corporation. Roland and JD-Xi are trademarks of Roland Corporation in the United States and/or other countries; all other names belong to their owners.</source>
             <translation>Uno strumento indipendente e non ufficiale: non è affiliato, approvato né sponsorizzato da Roland Corporation. Roland e JD-Xi sono marchi di Roland Corporation negli Stati Uniti e/o in altri paesi; tutti gli altri nomi appartengono ai rispettivi proprietari.</translation>
         </message>
@@ -386,13 +391,13 @@
             <translation>Avvio del sistema MIDI…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="269" />
+            <location filename="../../jdxi_editor/main.py" line="271" />
             <location filename="../../jdxi_editor/ui/dialogs/about.py" line="102" />
             <source>Version {version}</source>
             <translation>Versione {version}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="309" />
+            <location filename="../../jdxi_editor/main.py" line="312" />
             <source>{home}  •  MIT licence</source>
             <translation>{home}  •  licenza MIT</translation>
         </message>
@@ -483,7 +488,7 @@
             <translation>Simili: {names}.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="155" />
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="156" />
             <location filename="../../jdxi_editor/ui/windows/jdxi/window_buttons.py" line="94" />
             <location filename="../../jdxi_editor/ui/windows/selftest.py" line="788" />
             <source>Close</source>
@@ -491,16 +496,16 @@
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/dialogs/about.py" line="107" />
-            <source>An editor and librarian for the Roland JD-Xi synthesizer: every sound, the pattern sequencer, the effects and the vocoder, from the computer.</source>
-            <translation>Editor e archivio per il sintetizzatore Roland JD-Xi: ogni suono, il sequencer di pattern, gli effetti e il vocoder, dal computer.</translation>
+            <source>Visual Sound Design, Editing &amp; Librarian for the Roland JD-Xi: see the sound you are shaping, edit every tone, the pattern sequencer, the effects and the vocoder, and keep your programs organised, from the computer.</source>
+            <translation>Visual Sound Design, Editing &amp; Librarian per il Roland JD-Xi: vedi il suono che stai modellando, modifica ogni tono, il pattern sequencer, gli effetti e il vocoder, e tieni in ordine i tuoi programmi, dal computer.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="112" />
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="113" />
             <source>Authors</source>
             <translation>Autori</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="127" />
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="128" />
             <source>Made with</source>
             <translation>Realizzato con</translation>
         </message>
@@ -510,22 +515,22 @@
             <translation>Informazioni su {program}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="114" />
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="115" />
             <source>{name} — this edition (JD-Xi Studio)</source>
             <translation>{name} — questa edizione (JD-Xi Studio)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="119" />
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="120" />
             <source>{name} — the original JDXI-Editor, on which it is based</source>
             <translation>{name} — il JDXI-Editor originale, su cui si basa</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="137" />
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="138" />
             <source>Source code on {github}, under the {license}.</source>
             <translation>Codice sorgente su {github}, con {license}.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="139" />
+            <location filename="../../jdxi_editor/ui/dialogs/about.py" line="140" />
             <source>MIT License</source>
             <translation>licenza MIT</translation>
         </message>
@@ -7776,6 +7781,10 @@ Il suono sul JD-Xi viene sostituito: se vuoi tenerlo, salvalo prima sul JD-Xi (W
             <location filename="../../jdxi_editor/ui/windows/selftest.py" line="865" />
             <source>report not saved: {error}</source>
             <translation>resoconto non salvato: {error}</translation>
+        </message>
+        <message>
+            <source>An editor and librarian for the Roland JD-Xi synthesizer: every sound, the pattern sequencer, the effects and the vocoder, from the computer.</source>
+            <translation type="vanished">Editor e archivio per il sintetizzatore Roland JD-Xi: ogni suono, il sequencer di pattern, gli effetti e il vocoder, dal computer.</translation>
         </message>
         <message>
             <source>Search name…</source>

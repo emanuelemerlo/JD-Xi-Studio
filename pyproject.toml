@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 [project]
 name = "JDXI-Editor"
 dynamic = ["version"]  # from jdxi_editor/project.py (__version__), the one the app shows
-description = "JD-Xi Studio: an editor and librarian for the Roland JD-Xi synthesizer (based on JDXI-Editor by Mark Brooks)"
+description = "JD-Xi Studio: visual sound design, editing and librarian for the Roland JD-Xi synthesizer (based on JDXI-Editor by Mark Brooks)"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }

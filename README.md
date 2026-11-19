@@ -4,8 +4,11 @@
   <img src="resources/jdxi_studio_logo.png" alt="JD-Xi Studio" width="320" />
 </p>
 
-**JD-Xi Studio** is an editor and librarian for the **Roland JD-Xi** synthesizer: every sound, the
-pattern sequencer, the effects and the vocoder, on the computer screen instead of the JD-Xi's menus.
+**JD-Xi Studio — Visual Sound Design, Editing & Librarian for the Roland JD-Xi.**
+
+See the sound you are shaping, edit every parameter of the **Roland JD-Xi** synthesizer — every
+tone, the pattern sequencer, the effects and the vocoder — and keep your programs organised, on the
+computer screen instead of the JD-Xi's menus.
 
 > JD-Xi Studio is developed by **Emanuele Merlo**. It is an independent edition of
 > [JDXI-Editor](https://github.com/markxbrooks/JDXI-Editor) by **Mark Brooks**, on which it is based

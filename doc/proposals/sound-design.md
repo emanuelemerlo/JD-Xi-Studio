@@ -315,7 +315,7 @@ Elenco completo, in ordine di esecuzione. Stato: ☐ da fare · ◐ in corso · 
 | 21 | P | User Programs → filtro E–H della Library; Playlist + editor in un'unica sezione «Organizza» | `user_programs_widget`, `playlist_*` | PR-11, PR-15 | ☑ (User Programs = banchi E–H; il genere dal menu) |
 | 22 | P | Menu contestuale della Library (Carica, Rinomina, Aggiungi a playlist, Esporta) | `ui/v2/programs.py` | PR-28 | ☑ (niente Elimina: il JD-Xi non cancella) |
 | 23 | P | Contesto del programma = riga di contesto (dopo #14); stati e WRITE (dopo #8, #15) | | PR-17…21 | ☐ |
-| 24 | — | Presentazione «Visual Sound Design, Editing & Librarian» (il librarian resta): README, descrizione del pacchetto, finestra Informazioni, schermata d'avvio, note di rilascio | `README.md`, `pyproject.toml`, `ui/dialogs/about.py` | — | ☐ |
+| 24 | — | Presentazione «Visual Sound Design, Editing & Librarian» (il librarian resta): README, descrizione del pacchetto, finestra Informazioni, schermata d'avvio, note di rilascio | `README.md`, `pyproject.toml`, `ui/dialogs/about.py` | — | ☑ (README, pacchetto, Informazioni, schermata d'avvio; note di rilascio alla release) |
 
 Fase **P** = revisione della tab Programmi (`doc/proposals/program-tab.md`, rev. 1.1): la parte
 grafica (#18–22) può partire subito dopo la Fase 0; #23 segue le Fasi 1–4.

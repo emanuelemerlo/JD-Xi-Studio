@@ -85,7 +85,7 @@ def test_programs_compact_puts_the_library_in_the_tabs(app, compact):
 
     editor = ProgramEditor(midi_helper=MidiIOHelper())
     try:
-        assert editor.more_tabs.count() >= 5 and editor.more_tabs.currentIndex() == 0
+        assert editor.more_tabs.count() == 2 and editor.more_tabs.currentIndex() == 0  # Library, Organize
         horizontal, vertical = _overflow(editor, 1496, 760, app)
         assert horizontal <= 0 and vertical <= 40
     finally:
