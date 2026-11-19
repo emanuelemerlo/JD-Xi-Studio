@@ -133,6 +133,13 @@ def layout_of(editor) -> list:
 
 
 def _connected(helper) -> bool:
+    """The JD-Xi answered as a JD-Xi and is still there (the shared connection)."""
+    from jdxi_editor.midi.io.connection import can_talk
+
+    return can_talk(helper)
+
+
+def _ports_open(helper) -> bool:
     """Both ports open: a recall needs to send and to read back."""
     for name in ("midi_out", "midi_in"):
         port = getattr(helper, name, None)

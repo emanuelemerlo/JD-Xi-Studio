@@ -67,6 +67,7 @@ class Connection(QObject):
     """The state of the connection to one JD-Xi (one MIDI helper)."""
 
     changed = Signal(str)  # the new state
+    _identity_seen = Signal(object)  # from the MIDI input thread to this object's thread
 
     def __init__(self, helper, poll_ms: int = POLL_MS, parent: Optional[QObject] = None):
         super().__init__(parent)
@@ -78,6 +79,7 @@ class Connection(QObject):
         self._timer = QTimer(self)
         self._timer.setInterval(poll_ms)
         self._timer.timeout.connect(self.poll)
+        self._identity_seen.connect(self.identity_reply)
         if poll_ms > 0:
             self._timer.start()
 
@@ -127,6 +129,10 @@ class Connection(QObject):
         if callable(send) and send():
             self._set(VERIFYING)
 
+    def identity_seen(self, data: Sequence[int]) -> None:
+        """From any thread (the MIDI input): handled in this object's thread."""
+        self._identity_seen.emit(list(data))
+
     def identity_reply(self, data: Sequence[int]) -> None:
         """An Identity Reply came in: a JD-Xi makes the connection ONLINE."""
         if is_jdxi_identity(data) and self.state in (DETECTED, VERIFYING, OFFLINE) \
@@ -172,6 +178,10 @@ def connection_for(helper) -> Optional[Connection]:
 
 
 def can_talk(helper) -> bool:
-    """For the windows: the JD-Xi can be read and written through *helper*."""
+    """For the windows: the JD-Xi can be read and written through *helper*
+    (looked at now: a closed port counts at once, a new one is asked who it is)."""
     connection = connection_for(helper)
-    return connection.can_talk() if connection is not None else False
+    if connection is None:
+        return False
+    connection.poll()
+    return connection.can_talk()

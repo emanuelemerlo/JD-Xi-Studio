@@ -30,6 +30,9 @@ def app():
 def editor(app):
     with patch.object(old_program.JDXiUIProgramList, "list_rom_and_user_programs", return_value=list(PROGRAMS)):
         ed = programs.ProgramEditor(midi_helper=MagicMock(), preset_helper=MagicMock())
+    from jdxi_editor.midi.io import connection as conn
+
+    ed.connection.set_state_for_tests(conn.ONLINE)  # a JD-Xi there
     yield ed
     ed.close()
 
@@ -158,4 +161,22 @@ def test_library_menu_only_offers_what_the_program_allows(editor, monkeypatch):
     monkeypatch.setattr("jdxi_editor.ui.programs.database.get_database",
                         lambda: MagicMock(add_program_to_playlist=lambda pl, pid, *a: added.append((pl, pid)) or True))
     assert lib.add_to_playlist(3, "A01") and added == [(3, "A01")]
+
+
+def test_without_the_jdxi_nothing_is_loaded_and_says_why(editor):
+    from jdxi_editor.midi.io import connection as conn
+
+    sent = []
+    with patch("jdxi_editor.ui.midi.selection_info.send_program_with_expectation",
+               side_effect=lambda helper, pid, **kw: sent.append(pid)):
+        editor.library.select("A11")
+        editor.connection.set_state_for_tests(conn.OFFLINE)
+        assert not editor.load_button.isEnabled() and "Connect" in editor.load_button.toolTip()
+        assert not any(b.isEnabled() for b in editor.part_tones.values())
+        menu = editor.library.build_menu("A11")
+        assert not next(a for a in menu.actions() if a.text() == "Load A11").isEnabled()
+        editor.load_program_by_id("A11")
+        assert sent == []
+        editor.connection.set_state_for_tests(conn.ONLINE)
+        assert editor.load_button.isEnabled() and all(b.isEnabled() for b in editor.part_tones.values())
 

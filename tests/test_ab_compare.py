@@ -27,6 +27,10 @@ from jdxi_editor.ui.v2 import ab_compare as ab
 APP = QApplication.instance() or QApplication([])
 
 
+# 7E dev 06 02 | Roland 41 | family 0E 03 | number 00 00 | version
+IDENTITY_REPLY = (0x7E, 0x10, 0x06, 0x02, 0x41, 0x0E, 0x03, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00)
+
+
 class FakeJDXi(QObject):
     """The JD-Xi on the other end of a MidiIOHelper."""
 
@@ -76,6 +80,10 @@ class FakeJDXi(QObject):
         data = bytes(int(b) for b in message)
         if self.refuse_sends:
             return False
+        if data[:1] == b"\xf0" and data[1:2] == b"\x7e" and data[3:5] == b"\x06\x01":
+            # Identity Request: a Roland JD-Xi answers (as the real one does)
+            self.reply.emit(list(IDENTITY_REPLY))
+            return True
         if data[:7] != bytes([0xF0, 0x41, 0x10, 0x00, 0x00, 0x00, 0x0E]):
             return True
         if data[7] == 0x12:

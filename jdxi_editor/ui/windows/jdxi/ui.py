@@ -345,19 +345,17 @@ class JDXiWindow(QMainWindow):
         file_menu.addAction(
             self._menu_action(tr("Load &Patch..."), self._patch_load, "Ctrl+Alt+O")
         )
-        file_menu.addAction(
-            self._menu_action(tr("Save Patc&h..."), self._patch_save, "Ctrl+Alt+S")
-        )
+        self.save_patch_action = self._menu_action(tr("Save Patc&h..."), self._patch_save, "Ctrl+Alt+S")
+        file_menu.addAction(self.save_patch_action)
 
         file_menu.addSeparator()
 
-        file_menu.addAction(
-            self._menu_action(
-                tr("&Dump Settings to Synth"),
-                self._dump_settings_to_synth,
-                "Ctrl+Shift+D",
-            )
+        self.dump_settings_action = self._menu_action(
+            tr("&Dump Settings to Synth"),
+            self._dump_settings_to_synth,
+            "Ctrl+Shift+D",
         )
+        file_menu.addAction(self.dump_settings_action)
 
         file_menu.addSeparator()
 
@@ -384,13 +382,12 @@ class JDXiWindow(QMainWindow):
 
         edit_menu.addSeparator()
 
-        edit_menu.addAction(
-            self._menu_action(
-                tr("&Update User Program Database"),
-                self._update_user_program_database,
-                "Ctrl+Shift+U",
-            )
+        self.update_user_programs_action = self._menu_action(
+            tr("&Update User Program Database"),
+            self._update_user_program_database,
+            "Ctrl+Shift+U",
         )
+        edit_menu.addAction(self.update_user_programs_action)
 
     def _create_parts_menu(self) -> None:
         """Create editors menu"""

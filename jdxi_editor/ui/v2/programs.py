@@ -150,6 +150,7 @@ class ProgramLibrary(QWidget):
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
         self.programs: list = []
+        self.connection = None  # set by the editor: Load needs the JD-Xi
         self.loaded_id = ""  # the program on the JD-Xi (not just selected)
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -376,6 +377,10 @@ class ProgramLibrary(QWidget):
         loaded = program_id == self.loaded_id
         user = program_id[:1].upper() in USER_BANKS
         load = menu.addAction(tr("Load {program}").format(program=program_id))
+        connection = getattr(self, "connection", None)
+        if connection is not None and not connection.can_talk():
+            load.setEnabled(False)
+            load.setToolTip(tr("Connect the JD-Xi to load a program"))
         load.triggered.connect(lambda: self.load_requested.emit(program_id))
         rename = menu.addAction(tr("Rename…"))
         rename.setEnabled(loaded)
@@ -576,6 +581,7 @@ class ProgramEditor(_program.ProgramEditor):
 
         self.library.set_programs(getattr(group, "_program_list_data", []))
         restyle(self, ACCENT)
+        self._follow_connection()
 
     # --- the library
 
@@ -585,9 +591,31 @@ class ProgramEditor(_program.ProgramEditor):
         if library is not None and self.program_group_widget is not None:
             library.set_programs(self.program_group_widget._program_list_data)
 
+    def _follow_connection(self) -> None:
+        """Loading a program and choosing a tone need the JD-Xi."""
+        from jdxi_editor.midi.io.connection import connection_for
+        from jdxi_editor.ui.v2.offline import require_jdxi
+
+        self.connection = connection_for(self.midi_helper)
+        self.library.connection = self.connection
+        if self.connection is None:
+            return
+        self.connection.changed.connect(lambda _s: self._library_selection_changed())
+        for button in self.part_tones.values():
+            require_jdxi(button, self.connection, tr("Connect the JD-Xi to choose a tone"))
+        self._library_selection_changed()
+
+    def _can_talk(self) -> bool:
+        connection = getattr(self, "connection", None)
+        return connection is None or connection.can_talk()
+
     def _library_selection_changed(self) -> None:
         program_id = self.library.selected_id()
-        self.load_button.setEnabled(bool(program_id))
+        online = self._can_talk()
+        self.load_button.setEnabled(bool(program_id) and online)
+        self.load_button.setToolTip(
+            tr("Load the program selected in the library (or double-click it)") if online
+            else tr("Connect the JD-Xi to load a program"))
         self.load_button.setText(
             tr("Load {program}").format(program=program_id) if program_id else tr("Load program")
         )
@@ -611,6 +639,8 @@ class ProgramEditor(_program.ProgramEditor):
         from jdxi_editor.ui.midi.selection_info import send_program_with_expectation
 
         program_id = program_id.strip().upper()
+        if not self._can_talk():
+            return  # the JD-Xi is not there: nothing would be loaded
         details = next((p for p in self.library.programs if p.id == program_id), None)
         if details is None and program_id[:1] in "ABCD":
             details = get_program_by_id(program_id)
