@@ -745,8 +745,20 @@ class RecipesEditor(QWidget):
         with self._one_undo(rows):
             for c in rows:
                 count += recipe_apply.apply(c, self.editors)
+        if count and self.recipe is not None:
+            self._recipe_origin(rows)
         self._fill_guide()
         return count
+
+    def _recipe_origin(self, rows) -> None:
+        """The parts a recipe step set: their origin in the context line."""
+        from jdxi_editor.ui.v2.context import sound_context
+
+        title = getattr(self.recipe, "title", "") or tr("recipe")
+        for key in {c.target.editor_key for c in rows if c.target is not None}:
+            history = getattr(self.editors(key), "history", None)
+            part = getattr(history, "part", "")
+            sound_context().part_origin(part, tr("recipe «{title}»").format(title=title))
 
     def read_again(self) -> None:
         keys = {c.target.editor_key for c in self.checked if c.target is not None}

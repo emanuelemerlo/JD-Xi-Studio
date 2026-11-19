@@ -566,6 +566,10 @@ class ProgramEditor(_program.ProgramEditor):
         badge.addStretch()
         page.addLayout(badge)
         page.addLayout(header)
+        from jdxi_editor.ui.v2.context import ContextRow
+
+        self.context_row = ContextRow(None, self.midi_helper)
+        page.addWidget(self.context_row)
         page.addLayout(top, 1)
         if not density.compact():
             page.addWidget(self.more_tabs)
@@ -650,6 +654,9 @@ class ProgramEditor(_program.ProgramEditor):
             self.update_current_synths(details)
             self.set_current_program_name(details.name)
             self.lcd.setText(f"{program_id}  {details.name or ''}".strip())
+        from jdxi_editor.ui.v2.context import sound_context
+
+        sound_context().program_loaded(program_id, details.name if details is not None else "")
         self.library.set_loaded(program_id)
         group = self.program_group_widget
         send_program_with_expectation(
@@ -659,6 +666,16 @@ class ProgramEditor(_program.ProgramEditor):
             channel=group.channel if group is not None else self.channel,
         )
         self.data_request()
+
+    def set_current_program_name(self, program_name: str, synth_type: str = None) -> None:
+        super().set_current_program_name(program_name, synth_type)
+        from jdxi_editor.ui.v2.context import sound_context
+
+        context = sound_context()
+        context.set_program_name(program_name)
+        lcd = getattr(self, "lcd", None)
+        if lcd is not None and context.program_id and program_name:
+            lcd.setText(f"{context.program_id}  {program_name}")
 
     # --- parts
 

@@ -453,6 +453,7 @@ class PatchManager(QMainWindow):
                     if self.midi_helper.save_patch_as_syx(file_path, temp_folder):
                         log.message(f"SysEx patch saved to {file_path}")
                         mark_all_saved()
+                        _context_saved(file_path)
                     else:
                         log.warning("Failed to save .syx file")
                     return
@@ -468,11 +469,13 @@ class PatchManager(QMainWindow):
                 file_type = "Music Bundle" if file_path.endswith(".msz") else "Patch"
                 log.message(f"{file_type} saved to {file_path}")
                 mark_all_saved()
+                _context_saved(file_path)
             else:
                 # Load patch (JSON files): it replaces the sounds, unsaved changes first
                 if not confirm_discard(ALL_PARTS, tr("Loading the patch replaces every part's sound.")):
                     return
                 self.midi_helper.load_patch(file_path)
+                _context_saved(file_path, loaded=True)
 
                 # Load MIDI file from bundle if it's an .msz file
                 if file_path.endswith(".msz"):
@@ -541,3 +544,14 @@ class PatchManager(QMainWindow):
             log.error(
                 f"Error {'saving' if self.save_mode else 'loading'} patch: {str(ex)}"
             )
+
+
+def _context_saved(file_path: str, loaded: bool = False) -> None:
+    """The context line: the file is the reference now (and the origin, if loaded)."""
+    try:
+        from jdxi_editor.ui.v2.context import sound_context
+
+        sound_context().file_saved(file_path, loaded=loaded)
+    except Exception:
+        pass
+

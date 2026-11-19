@@ -191,8 +191,19 @@ class SettingsEditor(V2Editor):
         out = bool(getattr(helper, "is_output_open", False))
         in_name = getattr(helper, "in_port_name", "") or "—"
         out_name = getattr(helper, "out_port_name", "") or "—"
-        color = "#6fcf97" if inp and out else ("#f2c94c" if inp or out else "#eb5757")
-        state = tr("Connected") if inp and out else (tr("Half connected") if inp or out else tr("Offline"))
+        from jdxi_editor.midi.io import connection as conn
+        from jdxi_editor.ui.v2.offline import badge_text
+
+        connection = conn.connection_for(helper)
+        shared = connection.state if connection is not None else conn.OFFLINE
+        if shared == conn.ONLINE:
+            color, state = "#6fcf97", tr("Connected")
+        elif inp and out:  # ports open, but no JD-Xi answering (yet)
+            color, state = "#f2c94c", badge_text(shared) or tr("Verifying the JD-Xi…")
+        elif inp or out:
+            color, state = "#f2c94c", tr("Half connected")
+        else:
+            color, state = "#eb5757", tr("Offline")
         label = getattr(self, "connection_label", None)
         if label is not None:
             label.setText(

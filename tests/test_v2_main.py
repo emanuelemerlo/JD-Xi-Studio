@@ -33,11 +33,16 @@ def test_header_program_connection_and_accent(app):
     editors.set_program_name("A11 CARONDO")
     editors.set_tone_name("Springer")
     assert editors.program_chip.text() == "A11 CARONDO  ·  Springer"
-    editors.update_connection()
+    from jdxi_editor.midi.io import connection as conn
+
+    # the shared connection: «connected» only once the JD-Xi answered (ports alone are not enough)
+    shared = conn.connection_for(keyboard.midi_helper)
+    shared.set_state_for_tests(conn.VERIFYING)
+    assert "Verifying" in editors.connection_label.text()
+    shared.set_state_for_tests(conn.ONLINE)
     assert "JD-Xi connected" in editors.connection_label.text()
-    keyboard.midi_helper.is_output_open = False
-    editors.update_connection()
-    assert "half" in editors.connection_label.text()
+    shared.set_state_for_tests(conn.OFFLINE)
+    assert "Off-line" in editors.connection_label.text()
 
     class Coloured(QWidget):
         ACCENT = "#eb5757"

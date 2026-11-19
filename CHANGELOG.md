@@ -5,6 +5,12 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- A context line under each editor's header and on the Programs page: program › part › tone ·
+  origin (program, preset, recipe, file, A/B) · state (original, modified and temporary, modified
+  and not sent, saved to file, saved in a program slot)
+- The «JD-Xi connected» indicators (editors window, Settings) follow the shared connection: green
+  only once the JD-Xi answered; the main window shows the badge under MIDI IN / OUT; no badge
+  over dialogs' buttons
 - What the JD-Xi confirmed (read back) is kept apart from what was only sent. When the JD-Xi comes
   back after a disconnection everything is read and compared: same → says so; different with
   unsaved changes → the parts that differ and «Restore on the JD-Xi / Keep what the JD-Xi has»

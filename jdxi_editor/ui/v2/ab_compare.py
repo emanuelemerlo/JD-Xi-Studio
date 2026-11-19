@@ -513,6 +513,9 @@ class ABSession(QObject):
         self.modified = False
         self.changed.emit()
         self.message.emit(tr("{slot} recalled").format(slot=slot), False)
+        from jdxi_editor.ui.v2.context import sound_context
+
+        sound_context().part_origin(self.part, tr("A/B: photo {slot}").format(slot=slot))
 
     # ------------------------------------------------------------ the rest
     def clear(self) -> None:

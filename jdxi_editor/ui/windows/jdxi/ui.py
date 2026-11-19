@@ -575,6 +575,7 @@ class JDXiWindow(QMainWindow):
         layout.addLayout(build_wheel_row(midi_helper=self.midi_helper, owner=self))
         layout.addStretch()
         layout.addLayout(self._build_midi_indicator_row())
+        self.status_column = layout  # the connection badge goes under MIDI IN / OUT
         return layout
 
     def _build_midi_indicator_row(self) -> QLayout:
@@ -591,6 +592,7 @@ class JDXiWindow(QMainWindow):
         row.addWidget(QLabel("MIDI OUT:"))
         row.addWidget(self.midi_out_indicator)
         row.addStretch()
+        self.midi_indicator_row = row  # the connection badge joins it (Off-line, …)
         return row
 
     def _update_display(self):

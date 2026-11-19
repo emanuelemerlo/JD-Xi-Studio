@@ -357,6 +357,11 @@ class V2Editor(SynthBase):
         self.read_button.clicked.connect(self._read)
         bar.addWidget(self.read_button)
         left.addLayout(bar)
+        from jdxi_editor.ui.v2.context import ContextRow
+
+        # where: program › part › tone · origin · state (the same line in every editor)
+        self.context_row = ContextRow(self, getattr(self, "midi_helper", None))
+        left.addWidget(self.context_row)
         self.scroll = QScrollArea()
         self.scroll.setWidgetResizable(True)
         self.scroll.setFrameShape(QScrollArea.Shape.NoFrame)

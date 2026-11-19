@@ -162,19 +162,27 @@ class MainEditor(QMainWindow):
             lines.append(self._tone_name)
         self.program_chip.setText("  ·  ".join(lines))
 
-    def update_connection(self) -> None:
+    def update_connection(self, *_args) -> None:
+        """The shared connection: connected only once the JD-Xi answered as a JD-Xi."""
         from jdxi_editor.i18n import tr
+        from jdxi_editor.midi.io import connection as conn
+        from jdxi_editor.ui.v2.offline import OWN_INDICATOR, badge_text, badge_tooltip
 
+        self.setProperty(OWN_INDICATOR, True)  # this line is its indicator: no extra badge
         helper = getattr(self.jdxi_main_window, "midi_helper", None)
-        inp = bool(getattr(helper, "is_input_open", False))
-        out = bool(getattr(helper, "is_output_open", False))
-        if inp and out:
+        connection = conn.connection_for(helper)
+        if connection is not None and not getattr(self, "_follows_connection", False):
+            connection.changed.connect(self.update_connection)
+            self._follows_connection = True
+        state = connection.state if connection is not None else conn.OFFLINE
+        if state == conn.ONLINE:
             text, color = tr("JD-Xi connected"), "#6fcf97"
-        elif inp or out:
-            text, color = tr("MIDI half connected"), "#f2c94c"
+        elif state in (conn.DETECTED, conn.VERIFYING, conn.UNSTABLE):
+            text, color = badge_text(state), "#f2c94c" if state != conn.UNSTABLE else "#f2994a"
         else:
-            text, color = tr("Offline"), "#eb5757"
+            text, color = badge_text(conn.OFFLINE), "#eb5757"
         self.connection_label.setText(f"<span style='color:{color}'>●</span> {text}")
+        self.connection_label.setToolTip(badge_tooltip(state) if state != conn.ONLINE else "")
 
     def closeEvent(self, event) -> None:  # pylint: disable=unused-argument
         """

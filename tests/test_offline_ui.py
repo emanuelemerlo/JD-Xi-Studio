@@ -14,7 +14,7 @@ from unittest.mock import Mock
 
 import pytest
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QApplication, QDialog, QMainWindow, QMessageBox, QPushButton
+from PySide6.QtWidgets import QApplication, QDialog, QMainWindow, QMessageBox, QPushButton, QWidget
 
 from jdxi_editor.midi.io import connection as conn
 from jdxi_editor.ui.v2 import offline
@@ -37,13 +37,16 @@ def test_every_window_gets_the_badge_and_follows_the_state(connection):
     main = QMainWindow()
     main.resize(600, 400)
     watcher = offline.install(connection, main)
-    dialog = QDialog()
+    dialog = QDialog()  # short-lived: no badge over its buttons
     dialog.resize(500, 300)
     dialog.show()
+    detached = QWidget()  # a window of its own (a detached editor)
+    detached.resize(500, 300)
+    detached.show()
     QApplication.processEvents()
     try:
         badges = list(watcher.badges)
-        assert len(badges) == 2
+        assert len(badges) == 2 and not any(b.window() is dialog for b in badges)
         assert all(b.isVisibleTo(b.parentWidget()) and "Off-line" in b.text() for b in badges)
         connection.set_state_for_tests(conn.VERIFYING)
         assert all("Verifying" in b.text() for b in badges)
@@ -53,6 +56,7 @@ def test_every_window_gets_the_badge_and_follows_the_state(connection):
         assert all("Unstable" in b.text() for b in badges)
     finally:
         QApplication.instance().removeEventFilter(watcher)
+        detached.close()
         dialog.close()
         main.close()
 

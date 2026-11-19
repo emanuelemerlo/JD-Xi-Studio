@@ -222,12 +222,15 @@ def send_tone_with_expectation(
     if is_midi_selection_validation_enabled():
         log_midi_wire_info(expected)
 
-    return midi_helper.send_bank_select_and_program_change(
+    sent = midi_helper.send_bank_select_and_program_change(
         expected.channel,
         expected.cc0,
         expected.cc32,
         expected.midi_pc,
     )
+    if sent:
+        _tone_origin(expected.channel, preset_id)
+    return sent
 
 
 def send_program_with_expectation(
@@ -261,3 +264,17 @@ def send_program_with_expectation(
         expected.cc32,
         expected.midi_pc,
     )
+
+
+def _tone_origin(channel: int, preset_id) -> None:
+    """The part on *channel* now plays a preset: its origin in the context line."""
+    try:
+        from jdxi_editor.i18n import tr
+        from jdxi_editor.ui.v2.context import sound_context
+        from jdxi_editor.ui.v2.history import CHANNEL_PARTS
+
+        parts = CHANNEL_PARTS.get(int(channel), ())
+        if len(parts) == 1:
+            sound_context().part_origin(parts[0], tr("preset {preset}").format(preset=preset_id))
+    except Exception:  # never in the way of the program change
+        pass

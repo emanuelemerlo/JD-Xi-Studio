@@ -1558,7 +1558,13 @@ class JDXiInstrument(JDXiWindow):
         self.connection = connection_for(self.midi_helper)
         if self.connection is None:
             return
+        row = getattr(self, "status_column", None)
+        if row is not None:  # beside MIDI IN / OUT, in sight (not in the status bar)
+            self.setProperty(offline.OWN_INDICATOR, True)
         self._connection_watcher = offline.install(self.connection, self)
+        if row is not None:
+            self.connection_badge = self._connection_watcher.add(offline.ConnectionBadge())
+            row.addWidget(self.connection_badge, 0, Qt.AlignmentFlag.AlignHCenter)
         self._offline_session = offline.OfflineSession(
             self.connection, self, save_as_file=self._patch_save, read_all=self._read_everything,
             warn_at_start=getattr(self.midi_helper, "midi_available", True))

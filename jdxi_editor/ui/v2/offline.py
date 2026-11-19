@@ -32,6 +32,7 @@ from jdxi_editor.i18n import tr
 from jdxi_editor.midi.io import connection as conn
 
 BADGE_NAME = "jdxiConnectionBadge"
+OWN_INDICATOR = "jdxiOwnConnectionIndicator"  # a window property: no badge added to it
 WARNING_DELAY_MS = 4000  # the JD-Xi gets this long to answer before the start-up warning
 
 _STYLES = {
@@ -105,6 +106,12 @@ class _WindowWatcher(QObject):
         self.badges: "weakref.WeakSet[ConnectionBadge]" = weakref.WeakSet()
         connection.changed.connect(self._show)
 
+    def add(self, badge: "ConnectionBadge") -> "ConnectionBadge":
+        """A badge a window placed itself: it follows the state too."""
+        badge.show_state(self.connection.state)
+        self.badges.add(badge)
+        return badge
+
     def _show(self, state: str) -> None:
         for badge in list(self.badges):
             try:
@@ -115,6 +122,10 @@ class _WindowWatcher(QObject):
     @staticmethod
     def _wants_badge(widget: QWidget) -> bool:
         if not widget.isWindow() or widget.objectName() == BADGE_NAME:
+            return False
+        if isinstance(widget, QDialog):  # short-lived, and the badge would cover their buttons
+            return False
+        if widget.property(OWN_INDICATOR):  # it shows the connection itself
             return False
         if widget.windowType() in (Qt.WindowType.Popup, Qt.WindowType.ToolTip, Qt.WindowType.SplashScreen):
             return False
@@ -326,7 +337,7 @@ def install(connection: conn.Connection, main: Optional[QWidget] = None) -> _Win
     app = QApplication.instance()
     if app is not None:
         app.installEventFilter(watcher)
-    if main is not None:
+    if main is not None and not main.property(OWN_INDICATOR):
         watcher.attach(main)
     for widget in QApplication.topLevelWidgets():
         if widget.isVisible() and watcher._wants_badge(widget):
