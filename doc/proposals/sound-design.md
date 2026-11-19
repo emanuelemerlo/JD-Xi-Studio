@@ -308,7 +308,7 @@ Elenco completo, in ordine di esecuzione. Stato: ☐ da fare · ◐ in corso · 
 | 14 | 3 | Riga di contesto (anche finestre staccate) e avviso uniforme | `ui/v2/framework.py` | SD-08, SD-10, UI-01 | ☑ (`ui/v2/context.py`; l'avviso uniforme c'era già: `confirm_discard`) |
 | 15 | 4 | Salva sul JD-Xi guidato, posti candidati, verifica sul contenuto riletto | | SD-11, SD-12, WR-01…04 | ☑ (`ui/v2/write_wizard.py`, pulsante «Salva sul JD-Xi…» nella pagina Programmi; prova automatica sul JD-Xi simulato; collaudo sullo strumento ancora da fare) |
 | 16 | 5 | Nuovo suono: Init Digital e Analog separati, un solo Undo | | SD-09, HIST-02 | ☑ (`ui/v2/new_sound.py`, «Nuovo suono ▾» negli editor Digital e Analog) |
-| 17 | 6 | Aiuti per sezione, senza duplicare il pannello informativo esistente | | — | ☐ |
+| 17 | 6 | Aiuti per sezione, senza duplicare il pannello informativo esistente | | — | ☑ (`ui/v2/section_help.py`: «?» su OSC, FILTER, AMP, LFO, MOD LFO, PITCH, EFFECT, DELAY, REVERB) |
 | 18 | P | Mixer: colore della tab per ogni parte, Master neutro, icona Master leggibile | `ui/editors/program/mixer/section.py`, tema | PR-26 | ☑ (fader acceso dal basso: prima a zero sembrava pieno) |
 | 19 | P | Library: ricerca su Tone e genere, ordinamento, programma caricato marcato, colonne Tone | `ui/v2/programs.py` | PR-07…10, PR-27 | ☑ |
 | 20 | P | Card delle parti = strisce del mixer (Tone cliccabile, canale, fader, mute, Modifica); sotto-tab Presets sostituita | `ui/v2/programs.py`, `mixer_panel`, `PresetWidget` | PR-12…14, PR-25 | ☑ |

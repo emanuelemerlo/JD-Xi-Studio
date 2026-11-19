@@ -1942,7 +1942,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <location filename="../../jdxi_editor/ui/v2/program.py" line="412" />
             <location filename="../../jdxi_editor/ui/v2/settings.py" line="22" />
             <location filename="../../jdxi_editor/ui/v2/vocal.py" line="38" />
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="952" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="968" />
             <source>MIDI Implementation</source>
             <translation>MIDI Implementation</translation>
         </message>
@@ -2859,7 +2859,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/drums.py" line="323" />
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="714" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="730" />
             <source>key off</source>
             <translation>rilascio</translation>
         </message>
@@ -4283,7 +4283,7 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/players.py" line="260" />
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="895" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="911" />
             <source>Point at a control</source>
             <translation>Punta un controllo</translation>
         </message>
@@ -5807,6 +5807,161 @@ Le modifiche che non avevi salvato andrebbero perse. Le rimando al JD-Xi?</trans
             <translation>niente</translation>
         </message>
         <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="110" />
+            <source>About this section</source>
+            <translation>Questa sezione</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="44" />
+            <source>The raw sound: the waveform and its pitch, before anything shapes it.</source>
+            <translation>Il suono di partenza: la forma d'onda e la sua intonazione, prima che altro lo modelli.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="45" />
+            <source>Sawtooth is bright and full, square hollow, triangle and sine soft; PCM is a sampled sound.</source>
+            <translation>Il dente di sega è brillante e pieno, l'onda quadra vuota, triangolo e sinusoide morbidi; PCM è un suono campionato.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="46" />
+            <source>A bass: sawtooth one octave down; a soft pad: triangle with a little detune.</source>
+            <translation>Un basso: dente di sega un'ottava sotto; un pad morbido: triangolo con un po' di detune.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="49" />
+            <source>Which frequencies pass: cutoff, resonance, and the envelope that moves the cutoff.</source>
+            <translation>Quali frequenze passano: cutoff, risonanza e l'inviluppo che muove il cutoff.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="50" />
+            <source>Lower cutoff = darker; resonance stresses the cutoff; the envelope makes the «wah» of a note.</source>
+            <translation>Cutoff più basso = più scuro; la risonanza accentua il cutoff; l'inviluppo dà il «wah» della nota.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="51" />
+            <source>A plucked bass: cutoff low, envelope depth up, short decay, sustain at zero.</source>
+            <translation>Un basso pizzicato: cutoff basso, profondità dell'inviluppo alta, decay breve, sustain a zero.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="54" />
+            <source>The volume of each note over time (attack, decay, sustain, release) and its level.</source>
+            <translation>Il volume di ogni nota nel tempo (attack, decay, sustain, release) e il suo livello.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="55" />
+            <source>Attack slow = it swells; release long = it lingers after the key is let go.</source>
+            <translation>Attack lento = cresce piano; release lungo = continua dopo che lasci il tasto.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="56" />
+            <source>A pad: attack around 60, release around 70; an organ: attack 0, sustain max, release short.</source>
+            <translation>Un pad: attack intorno a 60, release intorno a 70; un organo: attack 0, sustain al massimo, release breve.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="59" />
+            <source>A slow, repeating movement applied to pitch, filter or volume.</source>
+            <translation>Un movimento lento e ripetuto applicato a intonazione, filtro o volume.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="60" />
+            <source>On pitch it is vibrato, on the filter a «wah» that comes and goes, on volume tremolo.</source>
+            <translation>Sull'intonazione è vibrato, sul filtro un «wah» che va e viene, sul volume tremolo.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="61" />
+            <source>Vibrato: triangle, rate around 70, a little pitch depth, a fade so it comes in late.</source>
+            <translation>Vibrato: triangolo, rate intorno a 70, poca profondità sull'intonazione, un fade perché entri in ritardo.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="64" />
+            <source>A second LFO, brought in by the modulation lever of the JD-Xi.</source>
+            <translation>Un secondo LFO, attivato dalla leva di modulazione del JD-Xi.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="65" />
+            <source>Nothing changes until the lever moves: then the movement grows with it.</source>
+            <translation>Non cambia nulla finché non muovi la leva: poi il movimento cresce con essa.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="66" />
+            <source>Vibrato only when wanted: pitch depth here, and the lever up while playing.</source>
+            <translation>Vibrato solo quando serve: profondità sull'intonazione qui, e la leva su mentre suoni.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="69" />
+            <source>The pitch of the note and how it moves at its start (pitch envelope).</source>
+            <translation>L'intonazione della nota e come si muove all'inizio (inviluppo di intonazione).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="70" />
+            <source>A short pitch envelope gives the note a «chirp» or a drop at the start.</source>
+            <translation>Un inviluppo di intonazione breve dà alla nota un «cinguettio» o una caduta all'inizio.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="71" />
+            <source>A laser or a tom: pitch envelope depth up, decay short.</source>
+            <translation>Un laser o un tom: profondità dell'inviluppo di intonazione alta, decay breve.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="74" />
+            <source>A processor after the parts: distortion, fuzz, compressor, bit crusher, flanger, phaser…</source>
+            <translation>Un processore dopo le parti: distorsione, fuzz, compressore, bit crusher, flanger, phaser…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="75" />
+            <source>It colours every part sent to it (each part's send level decides how much).</source>
+            <translation>Colora ogni parte che gli viene mandata (quanto lo decide il livello di mandata di ciascuna).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="76" />
+            <source>A dirtier lead: distortion on Effect 1, Digital 1's send to Effect 1 up.</source>
+            <translation>Un lead più sporco: distorsione su Effect 1, mandata di Digital 1 verso Effect 1 alta.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="79" />
+            <source>Echoes of the sound: their time, how many (feedback) and their level.</source>
+            <translation>Le eco del suono: il loro tempo, quante (feedback) e il loro livello.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="80" />
+            <source>Short times thicken the sound; times in step with the tempo make rhythmic echoes.</source>
+            <translation>Tempi brevi ispessiscono il suono; tempi a tempo con il brano danno eco ritmiche.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="81" />
+            <source>Echoes in time: delay time synced to a dotted eighth, feedback around 30.</source>
+            <translation>Eco a tempo: tempo del delay sincronizzato a un ottavo puntato, feedback intorno a 30.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="84" />
+            <source>The room around the sound: its type, its length and its level.</source>
+            <translation>L'ambiente intorno al suono: tipo, durata e livello.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="85" />
+            <source>More reverb = farther away and wider; too much blurs fast parts.</source>
+            <translation>Più riverbero = più lontano e più ampio; troppo confonde le parti veloci.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="86" />
+            <source>A pad in a hall: hall type, long time, send from the pad's part up.</source>
+            <translation>Un pad in una sala: tipo hall, tempo lungo, mandata dalla parte del pad alta.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="95" />
+            <source>What it changes: {text}</source>
+            <translation>Cosa modifica: {text}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="96" />
+            <source>How the sound changes: {text}</source>
+            <translation>Come cambia il suono: {text}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/section_help.py" line="97" />
+            <source>Example: {text}</source>
+            <translation>Esempio: {text}</translation>
+        </message>
+        <message>
             <location filename="../../jdxi_editor/ui/v2/settings.py" line="126" />
             <source>MIDI CONNECTION</source>
             <translation>CONNESSIONE MIDI</translation>
@@ -6305,57 +6460,62 @@ Le modifiche che non avevi salvato andrebbero perse. Le rimando al JD-Xi?</trans
             <translation>Solo con Scale su Maj(Min).</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="632" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="648" />
             <source>Drag the points to change the envelope</source>
             <translation>Trascina i punti per cambiare l'inviluppo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="727" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="743" />
             <source>Drag sideways for Cutoff, up and down for Resonance</source>
             <translation>Trascina di lato per Cutoff, in alto e in basso per Resonance</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="889" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="905" />
             <source>PARAMETER</source>
             <translation>PARAMETRO</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="909" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="925" />
             <source>Its name on the display, range and explanation appear here, with what it depends on.</source>
             <translation>Qui compaiono il nome sul display, l'intervallo e la spiegazione, con ciò da cui dipende.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="805" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="119" />
+            <source>What this section does, with an example</source>
+            <translation>Cosa fa questa sezione, con un esempio</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="821" />
             <source>BYPASS: no filter</source>
             <translation>BYPASS: nessun filtro</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="868" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="884" />
             <source>full depth</source>
             <translation>piena profondità</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="829" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="845" />
             <source>1 cycle = {note}</source>
             <translation>1 ciclo = {note}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="832" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="848" />
             <source>Rate {rate}</source>
             <translation>Rate {rate}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="946" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="962" />
             <source>Range: {range}</source>
             <translation>Intervallo: {range}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="962" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="978" />
             <source>Inactive now. {reason}</source>
             <translation>Ora inattivo. {reason}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="952" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="968" />
             <source>Parameter Guide, p. {page}</source>
             <translation>Parameter Guide, p. {page}</translation>
         </message>

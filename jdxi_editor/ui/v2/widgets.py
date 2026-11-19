@@ -108,6 +108,22 @@ class Card(QFrame):
             sub = QLabel(subtitle)
             sub.setStyleSheet("color: #a3a6ad; font-size: 11px; background: transparent;")
             head.addWidget(sub)
+        from jdxi_editor.ui.v2 import section_help
+
+        self.help_button = None
+        if section_help.kind_of(title):  # a «?»: the section as a whole, in the information panel
+            from PySide6.QtWidgets import QToolButton
+
+            self.help_button = QToolButton()
+            self.help_button.setText("?")
+            self.help_button.setToolTip(tr("What this section does, with an example"))
+            self.help_button.setStyleSheet(
+                f"QToolButton {{ color: {accent}; border: 1px solid #3a3d44; border-radius: 9px;"
+                " min-width: 16px; max-width: 16px; min-height: 16px; max-height: 16px;"
+                " font-size: 11px; font-weight: 700; background: transparent; padding: 0; }"
+                f" QToolButton:hover {{ border-color: {accent}; }}")
+            self.help_button.clicked.connect(lambda: section_help.show(self, title, subtitle))
+            head.addWidget(self.help_button)
         layout.addLayout(head)
         self.body = layout
 

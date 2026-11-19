@@ -5,6 +5,9 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- A «?» on the panels of the tone and effects editors (OSC, FILTER, AMP, LFO, PITCH, effects,
+  delay, reverb): what the section changes, how the sound changes, an example, in the information
+  panel
 - «New sound ▾» in the Digital and Analog editors: from scratch (Init: this part's tone only, a
   plain sawtooth with the filter open; one Undo brings the sound back), from a preset, from a recipe
 - «Save on the JD-Xi…» (Programs): name the program, choose the slot (E–H, «Init Program» slots

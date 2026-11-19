@@ -192,6 +192,13 @@ class NewSoundButton(QToolButton):
         recipe.triggered.connect(self._recipes)
         self.setMenu(menu)
         self.menu_actions = {"init": init, "preset": preset, "recipe": recipe}
+        model = (getattr(editor, "edit_buttons", None) or [None])[0]
+        if model is not None:  # the look of Undo / Redo / Reload beside it
+            self.setAutoRaise(model.autoRaise())
+            self.setStyleSheet(model.styleSheet() + " QToolButton { padding: 2px 10px; }"
+                               " QToolButton::menu-indicator { subcontrol-position: right center; }")
+            self.setMinimumHeight(model.sizeHint().height())
+        self.setMinimumWidth(self.fontMetrics().horizontalAdvance(self.text()) + 40)  # the text and its ▾
 
     def _instrument(self):
         widget = self.editor
