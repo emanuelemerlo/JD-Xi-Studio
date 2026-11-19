@@ -10,6 +10,8 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   saved (bytes never read were sent as zeros); taking it again with the JD-Xi connected fixes it
 - A/B: when a photo cannot be written to disk it says so, instead of "captured"
 - Recipes: setting a row or a whole step is one Undo in each editor
+- Program mixer: each part in the colour of its tab, the Master in a neutral light with an output
+  icon; the faders light from the bottom up to the level (at 0 they looked full)
 - MIDI Debugger, CC / PC tab: the fields were squeezed flat; the tab now scrolls
 - MIDI Monitor: says why it stays empty while the JD-Xi is not connected (nothing is sent)
 - Program icon: at 32 px and below (title bar, taskbar) it shows the name, "JD" over "Xi", instead
