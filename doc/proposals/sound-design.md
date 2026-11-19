@@ -292,13 +292,13 @@ Elenco completo, in ordine di esecuzione. Stato: ☐ da fare · ◐ in corso · 
 
 | # | Fase | Intervento | File principali | Test | Stato |
 |---|---|---|---|---|---|
-| 1 | 0 | F0-01 memoria aggiornata solo dopo invio riuscito | `midi/io/output_handler.py`, `midi/io/device.py` | MEM-01 | ☐ |
-| 2 | 0 | F0-02 provenienza dei blocchi nello snapshot; foto incompleta non richiamabile/esportabile; nessuno zero inventato | `ui/v2/ab_compare.py`, `ui/v2/framework.py` | AB-01, MEM-04 | ☐ |
-| 3 | 0 | F0-03 esito di `save_slots`, conferma solo a scrittura riuscita | `ui/v2/ab_compare.py` | AB-02 | ☐ |
-| 4 | 0 | F0-04 ricette in un gruppo di Undo | `recipes/apply.py`, `ui/v2/recipes.py`, `ui/v2/history.py` | HIST-01 | ☐ |
-| 5 | 0 | F0-05 esito reale di `send_identity_request` | `midi/io/output_handler.py` | unitario | ☐ |
-| 6 | 0 | F0-06 eliminare i metodi morti di `MidiFileController` | `midi/file/controller.py` | suite pattern | ☐ |
-| 7 | 0 | F0-07 `test_burst_of_changes_makes_one_request` | `tests/test_device_refresh.py` | il test stesso | ☐ |
+| 1 | 0 | F0-01 memoria aggiornata solo dopo invio riuscito | `midi/io/output_handler.py`, `midi/io/device.py` | MEM-01 | ☑ 56b690f |
+| 2 | 0 | F0-02 provenienza dei blocchi nello snapshot; foto incompleta non richiamabile/esportabile; nessuno zero inventato | `ui/v2/ab_compare.py`, `ui/v2/framework.py` | AB-01, MEM-04 | ☑ 56b690f |
+| 3 | 0 | F0-03 esito di `save_slots`, conferma solo a scrittura riuscita | `ui/v2/ab_compare.py` | AB-02 | ☑ 56b690f |
+| 4 | 0 | F0-04 ricette in un gruppo di Undo | `recipes/apply.py`, `ui/v2/recipes.py`, `ui/v2/history.py` | HIST-01 | ◐ 56b690f (un Undo per editor; Undo unico tra editor con SynthState, #12) |
+| 5 | 0 | F0-05 esito reale di `send_identity_request` | `midi/io/output_handler.py` | unitario | ☑ 56b690f |
+| 6 | 0 | F0-06 eliminare i metodi morti di `MidiFileController` | `midi/file/controller.py` | suite pattern | ☑ 56b690f, 02373ab |
+| 7 | 0 | F0-07 `test_burst_of_changes_makes_one_request` | `tests/test_device_refresh.py` | il test stesso | ☑ (test dipendente dai tempi: attende la richiesta invece di un tempo fisso) |
 | 8 | 1 | Servizio Connection: stati, Identity Roland/JD-Xi, notifiche; A/B, follower, editor, Send all lo usano | nuovo `midi/io/connection.py` | SD-01, SD-02, SD-17, SD-14 | ☐ |
 | 9 | 1 | Off-line: avviso una volta per sessione, badge in tutte le finestre, comandi spenti con tooltip | finestre principale e secondarie | SD-01, SD-13, UI-01 | ☐ |
 | 10 | 1 | Collegamento dopo Off-line: avviso con «Salva come file», poi lettura completa | | SD-03 | ☐ |
@@ -315,7 +315,7 @@ Elenco completo, in ordine di esecuzione. Stato: ☐ da fare · ◐ in corso · 
 | 21 | P | User Programs → filtro E–H della Library; Playlist + editor in un'unica sezione «Organizza» | `user_programs_widget`, `playlist_*` | PR-11, PR-15 | ☐ |
 | 22 | P | Menu contestuale della Library (Carica, Rinomina, Aggiungi a playlist, Esporta) | `ui/v2/programs.py` | PR-28 | ☐ |
 | 23 | P | Contesto del programma = riga di contesto (dopo #14); stati e WRITE (dopo #8, #15) | | PR-17…21 | ☐ |
-| 24 | — | Presentazione «Visual Sound Design & Editing»: README, descrizione del pacchetto, finestra Informazioni, schermata d'avvio, note di rilascio | `README.md`, `pyproject.toml`, `ui/dialogs/about.py` | — | ☐ |
+| 24 | — | Presentazione «Visual Sound Design, Editing & Librarian» (il librarian resta): README, descrizione del pacchetto, finestra Informazioni, schermata d'avvio, note di rilascio | `README.md`, `pyproject.toml`, `ui/dialogs/about.py` | — | ☐ |
 
 Fase **P** = revisione della tab Programmi (`doc/proposals/program-tab.md`, rev. 1.1): la parte
 grafica (#18–22) può partire subito dopo la Fase 0; #23 segue le Fasi 1–4.

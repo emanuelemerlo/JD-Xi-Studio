@@ -367,11 +367,12 @@ def test_tc14_disconnected_capture_is_local_and_recall_is_refused(rig):
     helper, jdxi, eds = rig
     editor = eds["analog"]
     session = session_of(editor)
+    capture(session, "B")  # read once from the JD-Xi: every byte of the Tone known
     helper.midi_out.is_port_open.return_value = False
     messages = []
     session.message.connect(lambda text, problem: messages.append(text))
     a = capture(session, "A")
-    assert a.source == "local" and a.complete()
+    assert a.source == "local" and a.complete() and not a.unknown
     jdxi.writes.clear()
     assert not session.recall("A")
     assert jdxi.writes == [] and "connect" in messages[-1]

@@ -5,6 +5,11 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Fixes
+- A message that cannot go out (JD-Xi not connected) is no longer taken as what the JD-Xi holds
+- A/B: a photo taken without the JD-Xi whose data is not all known can no longer be recalled or
+  saved (bytes never read were sent as zeros); taking it again with the JD-Xi connected fixes it
+- A/B: when a photo cannot be written to disk it says so, instead of "captured"
+- Recipes: setting a row or a whole step is one Undo in each editor
 - MIDI Debugger, CC / PC tab: the fields were squeezed flat; the tab now scrolls
 - MIDI Monitor: says why it stays empty while the JD-Xi is not connected (nothing is sent)
 - Program icon: at 32 px and below (title bar, taskbar) it shows the name, "JD" over "Xi", instead
