@@ -189,6 +189,12 @@ def test_the_window_imports_checks_guides_and_edits(app, tmp_path):
     count = w.set_step()
     assert count >= 6 and not w.set_all_button.isEnabled()
     assert editors("analog").values[next(p for p in editors("analog").values if p.name == "FILTER_RESONANCE")].value() == 127
+    # HIST-01: the whole step is one Undo in each editor it touched
+    for key in editors.open:
+        history = getattr(editors(key), "history", None)
+        if history is not None and history.can_undo():
+            assert history.undo() and not history.can_undo()
+    assert editors("analog").values[next(p for p in editors("analog").values if p.name == "FILTER_RESONANCE")].value() != 127
     w.show_editor_page()
     assert w.ed_table.rowCount() == len(w.recipe.rows)
     w.add_editor_row()

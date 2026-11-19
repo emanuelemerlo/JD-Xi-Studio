@@ -95,10 +95,6 @@ class MidiOutHandler(MidiIOController):
                 if not validate_midi_message(message):
                     log.message("[MidiOutHandler] MIDI message validation failed.")
                     return False
-                # A parameter write is what the synth will hold (recorded even
-                # with the port closed: it is the state the editor shows)
-                message_bytes = [int(b) for b in message]
-                self.device.sent(message_bytes)
 
                 # Ensure message is a list of integers before formatting
                 def safe_int(val):
@@ -184,6 +180,10 @@ class MidiOutHandler(MidiIOController):
                         level=logging.DEBUG if is_rq1 else logging.INFO,
                         silent=False,
                     )
+                # What the synth will hold: recorded only when the message really
+                # goes out (not with the port closed), and before sending, so a
+                # fast reply to a request always finds it
+                self.device.sent([int(x) for x in message])
                 # Send the message
                 self.midi_out.send_message(message)
                 self.midi_message_outgoing.emit(message)
@@ -293,8 +293,7 @@ class MidiOutHandler(MidiIOController):
                 message="sending identity_request request message: "
                 f"{type(identity_request_bytes_list)} {identity_request_bytes_list}",
             )
-            self.send_raw_message(identity_request_bytes_list)
-            return True
+            return bool(self.send_raw_message(identity_request_bytes_list))
         except (ValueError, TypeError, OSError, IOError) as ex:
             log.error(
                 scope="MidiOutHandler",

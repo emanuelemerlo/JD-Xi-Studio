@@ -540,12 +540,14 @@ class V2Editor(SynthBase):
         return bool(helper.send_midi_message(JDXiSysEx(sysex_address=address, value=list(data))))
 
     # ------------------------------------------------------- whole blocks
-    def export_dt1s(self) -> list[bytes]:
+    def export_dt1s(self, unknown: Optional[list] = None) -> list[bytes]:
         """
         Every block as one DT1 with the values shown (for patches and .syx).
 
         Bytes the editor has no control for (reserves) come from the copy of
-        the JD-Xi's memory when it holds them, otherwise they are 0.
+        the JD-Xi's memory when it holds them, otherwise they are 0. The
+        address (hex) of every block that got such made-up bytes is added
+        to *unknown*, when given.
         """
         from jdxi_editor.midi.io.synth_memory import build_dt1
 
@@ -566,16 +568,20 @@ class V2Editor(SynthBase):
             address = block.address_bytes()
             known = memory.read(address, size) if memory is not None else None
             data = bytearray(known if known is not None else bytes(size))
+            covered = set()
             for spec in block.params:
                 pos, width = seven_bit(spec.offset), spec.get_nibbled_size()
                 if pos + width > size:
                     continue
+                covered.update(range(pos, pos + width))
                 raw = spec.convert_to_midi(self.values[spec].value())
                 if width == 1:
                     data[pos] = raw & 0x7F
                 else:
                     for i in range(width):
                         data[pos + i] = (raw >> (4 * (width - 1 - i))) & 0x0F
+            if known is None and unknown is not None and len(covered) < size:
+                unknown.append(bytes(address).hex())
             messages.append(build_dt1(address, data))
         return messages
 
