@@ -648,9 +648,12 @@ def tone_editor_base():
             from jdxi_editor.ui.v2.ab_compare import ABControl, supports
 
             if not supports(self):
-                return []  # A/B for Digital 1, Digital 2 and Analog
+                return []  # A/B and New sound for Digital 1, Digital 2 and Analog
+            from jdxi_editor.ui.v2.new_sound import NewSoundButton
+
+            self.new_sound_button = NewSoundButton(self)
             self.ab_control = ABControl(self)
-            return [self.ab_control]
+            return [self.new_sound_button, self.ab_control]
 
         def _selected_category(self) -> str:
             return selected_category(self)

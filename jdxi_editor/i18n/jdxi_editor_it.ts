@@ -3761,17 +3761,17 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Numeri dei parametri presi da JD-Xi Manager, da verificare sullo strumento: {which}.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/framework.py" line="797" />
+            <location filename="../../jdxi_editor/ui/v2/framework.py" line="800" />
             <source>CATEGORY</source>
             <translation>CATEGORIA</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/framework.py" line="801" />
+            <location filename="../../jdxi_editor/ui/v2/framework.py" line="804" />
             <source>All sounds</source>
             <translation>Tutti i suoni</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/framework.py" line="918" />
+            <location filename="../../jdxi_editor/ui/v2/framework.py" line="921" />
             <source>Reloading restores the values from before the changes in this editor.</source>
             <translation>Ricarica i valori precedenti alle modifiche di questo editor.</translation>
         </message>
@@ -3874,6 +3874,56 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1108" />
             <source>Settings</source>
             <translation>Impostazioni</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/new_sound.py" line="148" />
+            <source>Init</source>
+            <translation>Init</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/new_sound.py" line="127" />
+            <source>Init replaces this part's tone (Undo brings it back).</source>
+            <translation>Init sostituisce il tono di questa parte (Annulla lo riporta indietro).</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/new_sound.py" line="176" />
+            <source>New sound</source>
+            <translation>Nuovo suono</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/new_sound.py" line="178" />
+            <source>Start a new sound for this part: from scratch, from a preset or from a recipe</source>
+            <translation>Inizia un nuovo suono per questa parte: da zero, da un preset o da una ricetta</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/new_sound.py" line="182" />
+            <source>From scratch (Init)</source>
+            <translation>Da zero (Init)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/new_sound.py" line="183" />
+            <source>This part only: a plain sawtooth, filter open, no LFO. Undo brings back the sound before.</source>
+            <translation>Solo questa parte: un dente di sega semplice, filtro aperto, niente LFO. Annulla riporta il suono di prima.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/new_sound.py" line="186" />
+            <source>From a preset…</source>
+            <translation>Da un preset…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/new_sound.py" line="187" />
+            <source>A factory tone (the preset itself never changes). It is a tone change on the JD-Xi, not undoable: take an A/B photo first to come back.</source>
+            <translation>Un tono di fabbrica (il preset non cambia mai). È un cambio di tono sul JD-Xi, non annullabile: scatta prima una foto A/B per poter tornare indietro.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/new_sound.py" line="190" />
+            <source>From a recipe…</source>
+            <translation>Da una ricetta…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/new_sound.py" line="191" />
+            <source>A recipe from the library, step by step</source>
+            <translation>Una ricetta della libreria, passo per passo</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/offline.py" line="169" />

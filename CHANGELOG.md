@@ -5,6 +5,8 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- «New sound ▾» in the Digital and Analog editors: from scratch (Init: this part's tone only, a
+  plain sawtooth with the filter open; one Undo brings the sound back), from a preset, from a recipe
 - «Save on the JD-Xi…» (Programs): name the program, choose the slot (E–H, «Init Program» slots
   proposed as probably free, a used slot asks first), press WRITE on the JD-Xi as shown, and the app
   selects the slot and checks that it holds the sound: «Saved in E02 ✓» only then
