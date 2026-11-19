@@ -6,7 +6,8 @@ Rev. 1: proposte (17/11). Rev. 2: integra la revisione esterna (17/11) e i vinco
 verificati nel codice e nel manuale. Rev. 3 (18/11): integra la seconda revisione esterna (problemi
 SD-001…006, verificati nel codice) e aggiunge la **Fase 0 – Stabilizzazione** (§1bis), il registro
 degli interventi (§12) e il piano di collaudo sullo strumento (§13).
-Stato: **approvata con le decisioni del §11; sviluppo per fasi, a partire dalla Fase 0**.
+Stato: **implementata** (19/11, branch `dev/sound-design`): tutte le voci del registro (§12) sono
+fatte; restano i collaudi sullo strumento (§13), riportati in `doc/hardware-test-plan.md`.
 
 Obiettivo: JD-Xi Studio come ambiente di sound design guidato, non solo editor di parametri.
 L'utente deve sempre sapere **dove** sta lavorando, **cosa** è salvato e **dove**, e non deve mai

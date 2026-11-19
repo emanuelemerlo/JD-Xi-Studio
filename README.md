@@ -33,8 +33,14 @@ computer screen instead of the JD-Xi's menus.
 - **Effects** (Effect 1, Effect 2, Delay, Reverb, with the signal chain) and **Vocal FX** (Vocoder,
   Auto Pitch).
 - **Arpeggio** with its timing drawn and the parts it plays.
-- **Programs on one page**: library with search, genre and banks A–H, the parts of the program, the
-  mixer; presets, user programs and playlists.
+- **Programs on one page**: a library that searches number, name, genre and tones, sorts, and marks
+  the program loaded; the parts inside the mixer (tone, channel, Edit) in their tabs' colours;
+  playlists; **Save on the JD-Xi**, guided (name, slot, WRITE) and checked by reading the slot back.
+- **New sound** in the Digital and Analog editors: from scratch (Init, one Undo), from a preset or
+  from a recipe; a **«?»** on each section says what it changes, how the sound changes, an example.
+- **A/B compare** (Digital 1, Digital 2, Analog): two photos of a tone, recalled and checked.
+- **Where you are**: a line under each editor says program › part › tone, where the sound came from
+  and whether it is original, modified and temporary, saved to a file or saved in the JD-Xi.
 - **Pattern sequencer**: four parts × 16 steps, measures, copy and paste, MIDI files, USB recording.
 - **MIDI file player**: track classification, channel assignment, automation; plays on the JD-Xi or
   with FluidSynth and a SoundFont, without hardware.
@@ -52,7 +58,10 @@ computer screen instead of the JD-Xi's menus.
   programs, tones, edits and Undo, octave, notes — checks each result and saves a report.
 - **Parameter panel**: point at a control to read its name on the display, its range and what it
   does, with the page of Roland's Parameter Guide.
-- **Offline mode**: opens and edits without a JD-Xi or a MIDI system; it connects when one is there.
+- **Connection you can trust**: the JD-Xi counts as connected only once it answers as a JD-Xi.
+  Without it, an «Off-line» badge in every window, the commands that need it off with the reason,
+  and the changes made meanwhile can be saved as a file when it arrives. When it comes back after a
+  disconnection, the app compares what it holds with before and offers to restore what differs.
 - **Languages**: English and Italian.
 
 ## 🎹 Screenshots

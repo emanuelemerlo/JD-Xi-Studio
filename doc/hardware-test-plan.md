@@ -73,6 +73,12 @@ al tuo resoconto.
 | 2.3 | Guarda la barra in alto a destra dell'editor | «JD-Xi collegato» in verde; il nome del programma corrente del JD-Xi nel display |
 | 2.4 | Aiuto › Visualizzatore log | Il log di questa sessione (con data e ora nel nome); scheda *Avvisi ed errori* vuota o quasi; **nessuna** riga «MIDI output port is not open» o «No reply to RQ1» |
 | 2.5 | Cambia programma **dal JD-Xi** (manopola PROGRAM) | Il display dell'app segue entro un secondo |
+| 2.6 ★ | Avvia l'app **senza** JD-Xi (cavo staccato) | Lo splash arriva in fondo; poi, dopo lo splash, l'avviso «JD-Xi non collegato» (una volta sola) e il badge **Off-line** sotto MIDI IN/OUT e in alto a destra negli editor |
+| 2.7 | Off-line: passa il mouse su «Salva sul JD-Xi…», su un tono nel mixer, su File › Salva patch | Spenti, il tooltip dice perché |
+| 2.8 ★ | Off-line: cambia il cutoff in Digital 1, poi collega il JD-Xi | «Verifica del JD-Xi…», poi verde; avviso «Le modifiche fatte senza JD-Xi vengono abbandonate» con **Salva come file…**; dopo, l'editor mostra i valori del JD-Xi |
+| 2.9 | Configurazione MIDI: scegli due porte che **non** sono il JD-Xi (es. un'altra interfaccia) | Mai «JD-Xi collegato»: resta «Verifica del JD-Xi…» |
+| 2.10 ★ | Collegato, modifica un suono senza salvare; **stacca e riattacca** il cavo USB | Off-line, poi di nuovo collegato: «Ricollegato: il JD-Xi contiene quello che conteneva prima» |
+| 2.11 ★ | Come 2.10, ma da staccato **spegni e riaccendi** il JD-Xi e cambia programma prima di ricollegarlo | Domanda con le parti diverse: **Ripristina sul JD-Xi** riporta il tuo suono (e lo dice parte per parte); **Tieni quello che ha il JD-Xi** lascia quello nuovo |
 
 ---
 
@@ -164,7 +170,22 @@ TC-xx della proposta; gli stessi casi girano in automatico con un JD-Xi simulato
 | 6.1 ★ | Libreria: cerca un nome, filtra per genere, banco B | La lista si filtra; doppio clic carica il programma sul JD-Xi; display aggiornato |
 | 6.2 | Parti del programma | I quattro toni corrispondono a quelli mostrati dal JD-Xi |
 | 6.3 | Mixer: abbassa Digital 1, muta Drums | Lo senti; il JD-Xi segue |
-| 6.4 | Schede in basso: Preset, Programmi utente, Playlist | Le liste si aprono senza cambiare l'altezza della pagina |
+| 6.4 | Libreria: cerca il nome di un **tono** (es. «Saw»), ordina per nome, allarga la colonna Nome | Trova i programmi che lo usano; i toni colorati come le parti; la barra orizzontale se non entrano |
+| 6.5 | Carica un programma, poi selezionane un altro | Il caricato resta marcato ▶ in grassetto; il pulsante dice «Carica» + quello selezionato; la riga di contesto dice «Programma A11 «…» · originale» |
+| 6.6 | Nel mixer: clic sul nome di un tono | Si apre la scelta dei toni di **quella** parte; scegline uno: lo senti, l'origine nella riga di contesto diventa «preset …» |
+| 6.7 | Organizza: crea una playlist, aggiungi un programma **A–D** e uno **E–H**, avvia | Entrambi in lista; mentre suona la riga di stato e le barre dicono quale brano |
+| 6.8 ★ | **Salva sul JD-Xi…**: nome, posto proposto («probabilmente libero»), Avanti; fai sul JD-Xi i passi indicati (Shift + Menu/Write, scegli il posto, Enter, Enter), poi **Fatto** | «Salvato in E.. ✓»; il JD-Xi resta su quel posto; la riga di contesto dice «salvato in E..» |
+| 6.9 ★ | Come 6.8, ma **non** premere WRITE sul JD-Xi prima di Fatto | Nessuna conferma: «Non risulta salvato…», con le parti diverse |
+| 6.10 | Come 6.8 scegliendo un posto con un programma tuo | Prima la domanda «Sostituire E.. «…»?», con Annulla predefinito |
+
+## 6b. Nuovo suono e aiuti (5 minuti)
+
+| | Fai | Deve succedere |
+|---|---|---|
+| 6b.1 ★ | Digital 1: Nuovo suono › Da zero (Init) | Un dente di sega semplice, filtro aperto; le altre parti e gli effetti non cambiano; **un** Annulla riporta il suono di prima |
+| 6b.2 | Analog: Nuovo suono › Da zero (Init) | Come sopra, per l'Analog |
+| 6b.3 | Ricette: applica un passo che tocca più editor, poi Annulla in uno solo | Tornano indietro tutti gli editor toccati dal passo |
+| 6b.4 | Il «?» di OSC, FILTER, AMP, LFO, EFFECT | Nel pannello informativo: cosa modifica, come cambia il suono, un esempio |
 
 ---
 

@@ -7,7 +7,7 @@ Devono essere mantenuti approcci coerenti con lo stile dell'applicazione, e ladd
 **Componente principale:** `jdxi_editor/ui/v2/programs.py`  
 **Classe principale:** `ProgramEditor`  
 **Revisione:** 1.1 (19/11: valutazione e modifiche nel §18, che prevalgono sul testo precedente)  
-**Stato:** Approvata con le modifiche del §18; interventi nel registro di `sound-design.md` §12
+**Stato:** Implementata (19/11) con le modifiche del §18: voci 18–23 del registro di `sound-design.md` §12
 
 ---
 
