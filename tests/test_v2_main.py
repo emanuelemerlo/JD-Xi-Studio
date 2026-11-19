@@ -37,12 +37,17 @@ def test_header_program_connection_and_accent(app):
 
     # the shared connection: «connected» only once the JD-Xi answered (ports alone are not enough)
     shared = conn.connection_for(keyboard.midi_helper)
-    shared.set_state_for_tests(conn.VERIFYING)
-    assert "Verifying" in editors.connection_label.text()
-    shared.set_state_for_tests(conn.ONLINE)
-    assert "JD-Xi connected" in editors.connection_label.text()
-    shared.set_state_for_tests(conn.OFFLINE)
-    assert "Off-line" in editors.connection_label.text()
+    saved = shared.state
+    shared.blockSignals(True)  # only this indicator: no «reconnection» for the other windows
+    try:
+        for state, text in ((conn.VERIFYING, "Verifying"), (conn.ONLINE, "JD-Xi connected"),
+                            (conn.OFFLINE, "Off-line")):
+            shared.state = state
+            editors.update_connection()
+            assert text in editors.connection_label.text()
+    finally:
+        shared.state = saved
+        shared.blockSignals(False)
 
     class Coloured(QWidget):
         ACCENT = "#eb5757"

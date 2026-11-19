@@ -170,11 +170,20 @@ def test_identity_makes_it_connected(jdxi):
     """2.9: connected only once it answers as a JD-Xi."""
     from jdxi_editor.midi.io import connection as conn
 
-    connection = conn.connection_for(jdxi.helper)
-    connection.set_state_for_tests(conn.OFFLINE)
-    connection.poll()
-    assert wait_for(connection.can_talk, 5), f"state {connection.state}"
-    assert connection.state == conn.ONLINE
+    # a connection of its own, as at start-up: the app's shared one is left as it is
+    # (changing it would look like a reconnection to the windows that follow it)
+    shared = conn.connection_for(jdxi.helper)
+    replies = []
+    shared._identity_seen.connect(replies.append)
+    try:
+        fresh = conn.Connection(jdxi.helper, poll_ms=0)
+        assert jdxi.helper.send_identity_request()
+        assert wait_for(lambda: replies, 5), "no Identity Reply"
+        fresh.set_state_for_tests(conn.VERIFYING)
+        fresh.identity_reply(replies[0])
+        assert fresh.state == conn.ONLINE, replies[0]
+    finally:
+        shared._identity_seen.disconnect(replies.append)
 
 
 def test_the_whole_program_reads_back(jdxi):
