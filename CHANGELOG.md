@@ -5,6 +5,10 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- What the JD-Xi confirmed (read back) is kept apart from what was only sent. When the JD-Xi comes
+  back after a disconnection everything is read and compared: same → says so; different with
+  unsaved changes → the parts that differ and «Restore on the JD-Xi / Keep what the JD-Xi has»
+  (the restore is checked part by part); different with nothing at risk → the JD-Xi's is shown
 - Programs: one JD-Xi-style display only, the program's (it said "No file loaded"; now the number
   and name of the program loaded). The playlist shows what plays as a line of text over its bars
 - One connection state for the whole app: the JD-Xi counts as connected only once it answers as a

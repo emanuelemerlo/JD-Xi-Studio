@@ -137,3 +137,43 @@ def test_an_incomplete_reading_compares_nothing(app):
     net = rig.net()
     net.start(BEFORE)
     assert net.outcome == sn.INCOMPLETE and rig.asked == [] and rig.sent == [] and rig.messages[-1][1]
+
+
+def test_reconnection_against_a_simulated_jdxi_restores_the_part_that_changed(app):
+    """CON-06 on the simulated JD-Xi: reading through the real MIDI path, the
+    Analog part changed while away, restored on request and read back."""
+    import os
+    import sys
+    import time
+
+    sys.path.insert(0, os.path.dirname(__file__))
+    from test_ab_compare import FakeJDXi, pump  # the JD-Xi of the A/B tests
+
+    from jdxi_editor.midi.io.device import device_for
+    from jdxi_editor.midi.io.helper import MidiIOHelper
+    from jdxi_editor.midi.sysex.request.read_session import patch_section_requests, start_read_session
+
+    helper = MidiIOHelper()
+    device = device_for(helper)
+    device.state.program_changed()
+    jdxi = FakeJDXi(helper)
+    jdxi.load([build_dt1(ANALOG, [i % 100 for i in range(64)])])
+    requests = [rq for _l, rq in patch_section_requests()]
+
+    def read(done):
+        session = start_read_session(helper, requests, on_finished=lambda r: done(bool(r.complete)))
+        assert pump(lambda: session._done, 20)
+
+    def send(key, data):
+        return bool(helper.send_raw_message(list(build_dt1(bytes.fromhex(key), list(data)))))
+
+    results = []
+    read(results.append)
+    assert results == [True]
+    before = device.state.snapshot()
+    assert before["19420000"][:3] == bytes([0, 1, 2])
+    jdxi.load([build_dt1(ANALOG, [7] * 64)])  # switched off and on: another Analog tone
+    net = sn.SafetyNet(read, device.state.snapshot, send, lambda: True, ask=lambda parts: parts == ["analog"])
+    net.start(before)
+    assert net.outcome == sn.RESTORED, net.parts
+    assert jdxi.read(ANALOG, 3) == bytes([0, 1, 2])

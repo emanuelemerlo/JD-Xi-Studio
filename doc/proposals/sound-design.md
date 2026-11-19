@@ -303,8 +303,8 @@ Elenco completo, in ordine di esecuzione. Stato: ☐ da fare · ◐ in corso · 
 | 9 | 1 | Off-line: avviso una volta per sessione, badge in tutte le finestre, comandi spenti con tooltip | finestre principale e secondarie | SD-01, SD-13, UI-01 | ☑ (badge nella barra di stato o nell'angolo di ogni finestra; comandi: Salva patch, Invia tutto, Aggiorna programmi utente, Carica programma, scelta del tono, A/B) |
 | 10 | 1 | Collegamento dopo Off-line: avviso con «Salva come file», poi lettura completa | | SD-03 | ☑ |
 | 11 | 1 | Transazioni con esito (completa/parziale/fallita) su Read, Send all, patch, A/B | `RequestQueue`, `PatchReadSession` | SD-16 | ◐ (Invia tutto e letture con esito; caricamento patch da fare) |
-| 12 | 2 | Servizio SynthState: LCS / WS / in sospeso, provenienza, stati interni | nuovo `midi/io/synth_state.py` | MEM-02, MEM-03 | ☐ |
-| 13 | 2 | Rete di sicurezza alla riconnessione e ripristino per parti | | SD-04…07, SD-15 | ☐ |
+| 12 | 2 | Servizio SynthState: LCS / WS / in sospeso, provenienza, stati interni | nuovo `midi/io/synth_state.py` | MEM-02, MEM-03 | ☑ (`midi/io/synth_state.py`: confermato / in sospeso / diverso; la memoria degli editor resta quella di lavoro) |
+| 13 | 2 | Rete di sicurezza alla riconnessione e ripristino per parti | | SD-04…07, SD-15 | ☑ (`ui/v2/safety_net.py`; prova automatica sul JD-Xi simulato) |
 | 14 | 3 | Riga di contesto (anche finestre staccate) e avviso uniforme | `ui/v2/framework.py` | SD-08, SD-10, UI-01 | ☐ |
 | 15 | 4 | Salva sul JD-Xi guidato, posti candidati, verifica sul contenuto riletto | | SD-11, SD-12, WR-01…04 | ☐ |
 | 16 | 5 | Nuovo suono: Init Digital e Analog separati, un solo Undo | | SD-09, HIST-02 | ☐ |

@@ -203,6 +203,11 @@ class OfflineSession(QObject):
         self.warned = False
         self.last_box: Optional[QMessageBox] = None
         self._previous = connection.state
+        self._was_online = connection.can_talk()  # online once: a later arrival is a reconnection
+        import time
+
+        self._started = time.monotonic()
+        self.safety_net = None
         connection.changed.connect(self._changed)
         if warn_at_start:
             QTimer.singleShot(WARNING_DELAY_MS, self.warn_if_offline)
@@ -231,7 +236,45 @@ class OfflineSession(QObject):
     def _changed(self, state: str) -> None:
         previous, self._previous = self._previous, state
         if state == conn.ONLINE and previous in (conn.OFFLINE, conn.DETECTED, conn.VERIFYING):
-            self.jdxi_arrived()
+            if self._was_online:
+                self.jdxi_back()
+            else:
+                self.jdxi_arrived()
+        if state == conn.ONLINE:
+            self._was_online = True
+
+    def jdxi_back(self) -> None:
+        """After a disconnection: read everything and compare (the safety net)."""
+        from jdxi_editor.midi.io.synth_memory import build_dt1
+        from jdxi_editor.midi.io.synth_state import state_of
+        from jdxi_editor.ui.v2 import history
+        from jdxi_editor.ui.v2.safety_net import SafetyNet
+
+        helper = self.connection.helper
+        state = state_of(helper)
+        if helper is None or state is None:
+            return
+
+        def read(done) -> None:
+            from jdxi_editor.midi.sysex.request.read_session import patch_section_requests, start_read_session
+
+            requests = [rq for _label, rq in patch_section_requests()]
+            start_read_session(helper, requests, on_finished=lambda result: done(bool(result.complete)),
+                               parent=self)
+
+        def send(key: str, data: bytes) -> bool:
+            return bool(helper.send_raw_message(list(build_dt1(bytes.fromhex(key), list(data)))))
+
+        def notify(text: str, problem: bool) -> None:
+            window = self.window()
+            status = window.statusBar() if hasattr(window, "statusBar") else None
+            if status is not None:
+                status.showMessage(text, 0 if problem else 10000)
+
+        self.safety_net = SafetyNet(read, state.snapshot, send,
+                                    lambda: any(h.modified for h in history.histories()),
+                                    parent=self.window(), notify=notify)
+        self.safety_net.start()
 
     def jdxi_arrived(self) -> None:
         """Changes made without the JD-Xi are given up for what it holds."""
@@ -264,12 +307,16 @@ class OfflineSession(QObject):
         else:
             self._read_and_reset()
 
+    STARTUP_SECONDS = 6.0  # a JD-Xi there from the start: the editors read it as they open
+
     def _read_and_reset(self) -> None:
+        import time
+
         from jdxi_editor.ui.v2 import history
 
         for h in history.histories():
             h.reset()  # what the JD-Xi holds is the new starting point
-        if self.read_all is not None:
+        if self.read_all is not None and time.monotonic() - self._started > self.STARTUP_SECONDS:
             self.read_all()
 
 

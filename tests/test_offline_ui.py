@@ -97,6 +97,7 @@ def test_changes_made_without_the_jdxi_are_given_up_with_save_as_file(connection
     window = QMainWindow()
     session = offline.OfflineSession(connection, window, save_as_file=lambda: saved.append(1),
                                      read_all=lambda: read.append(1), warn_at_start=False)
+    session._started -= 60  # connected later, not at start-up
     connection.set_state_for_tests(conn.VERIFYING)
     connection.set_state_for_tests(conn.ONLINE)  # the JD-Xi arrives
     box = session.last_box
@@ -117,8 +118,26 @@ def test_without_changes_the_jdxi_is_simply_read(connection, monkeypatch):
     window = QMainWindow()
     session = offline.OfflineSession(connection, window, read_all=lambda: read.append(1),
                                      warn_at_start=False)
+    connection.set_state_for_tests(conn.ONLINE)  # at start-up: the editors read as they open
+    assert read == [] and session.last_box is None
+    connection.set_state_for_tests(conn.OFFLINE)
+    session._was_online = False
+    session._started -= 60
+    connection.set_state_for_tests(conn.ONLINE)  # later: everything is read
+    assert read == [1]
+
+
+def test_a_reconnection_runs_the_safety_net(connection, monkeypatch):
+    calls = []
+    window = QMainWindow()
+    session = offline.OfflineSession(connection, window, warn_at_start=False)
+    monkeypatch.setattr(session, "jdxi_back", lambda: calls.append("back"))
+    monkeypatch.setattr(session, "jdxi_arrived", lambda: calls.append("arrived"))
     connection.set_state_for_tests(conn.ONLINE)
-    assert read == [1] and session.last_box is None
+    connection.set_state_for_tests(conn.OFFLINE)  # cable out
+    connection.set_state_for_tests(conn.VERIFYING)
+    connection.set_state_for_tests(conn.ONLINE)  # back
+    assert calls == ["arrived", "back"]
 
 
 def test_an_operation_says_complete_partial_or_failed():
