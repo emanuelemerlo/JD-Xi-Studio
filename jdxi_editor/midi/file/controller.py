@@ -8,10 +8,11 @@ Handles tempo management, bar detection, and note-to-button mapping.
 from typing import Callable, Optional
 
 from decologr import Decologr as log
-from mido import MidiFile, MidiTrack, tempo2bpm
+from mido import MetaMessage, MidiFile, MidiTrack, tempo2bpm
 
 from jdxi_editor.midi.channel.channel import MidiChannel
 from jdxi_editor.midi.conversion.note import MidiNoteConverter
+from picomidi import MidiTempo
 from picomidi.message.type import MidoMessageType
 
 
@@ -157,6 +158,21 @@ class MidiFileController:
                 return int(tempo2bpm(msg.tempo))
 
         return self.current_bpm
+
+    def _add_tempo_to_track(self, track: MidiTrack, bpm: int) -> None:
+        """
+        Add tempo message to a track.
+
+        :param track: MidiTrack to add tempo to
+        :param bpm: Tempo in BPM
+        """
+        microseconds_per_beat = int(MidiTempo.MICROSECONDS_PER_MINUTE / bpm)
+        tempo_msg = MetaMessage(
+            MidoMessageType.SET_TEMPO.value,
+            tempo=microseconds_per_beat,
+            time=0,
+        )
+        track.insert(0, tempo_msg)
 
     def set_config(self, config: MidiFileControllerConfig) -> None:
         """
