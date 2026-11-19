@@ -181,7 +181,12 @@ class MainEditor(QMainWindow):
             text, color = badge_text(state), "#f2c94c" if state != conn.UNSTABLE else "#f2994a"
         else:
             text, color = badge_text(conn.OFFLINE), "#eb5757"
-        self.connection_label.setText(f"<span style='color:{color}'>●</span> {text}")
+        # a pill, as the badge of the other windows: Off-line must catch the eye
+        background = {"#6fcf97": "#16281f", "#f2c94c": "#2f2a1a", "#f2994a": "#3a2a14"}.get(color, "#3a1f1f")
+        self.connection_label.setText(f"● {text}")
+        self.connection_label.setStyleSheet(
+            f"QLabel {{ background: {background}; color: {color}; border: 1px solid {color};"
+            " border-radius: 10px; padding: 2px 10px; font-size: 12px; font-weight: 600; }")
         self.connection_label.setToolTip(badge_tooltip(state) if state != conn.ONLINE else "")
 
     def closeEvent(self, event) -> None:  # pylint: disable=unused-argument
