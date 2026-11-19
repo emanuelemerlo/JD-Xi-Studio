@@ -10,7 +10,7 @@ reference in the editor keeps working).
 
 from __future__ import annotations
 
-from PySide6.QtCore import QSize, Qt
+from PySide6.QtCore import QObject, QSize, Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QGroupBox, QLabel, QLayout, QPushButton, QTabWidget, QWidget
 
@@ -242,6 +242,41 @@ TOOLTIP_STYLE = (
 )
 
 
+MESSAGE_BOX_STYLE = (
+    "QMessageBox { background-color: #1b1c1f; }"
+    " QMessageBox QLabel { color: #e6e8eb; font-size: 13px; background: transparent; }"
+    " QMessageBox QPushButton { background: #26282d; color: #e6e8eb; border: 1px solid #3a3d44;"
+    " border-radius: 6px; padding: 5px 14px; min-width: 72px; }"
+    " QMessageBox QPushButton:hover { border-color: #6fcf97; }"
+    " QMessageBox QPushButton:default { border-color: #6fcf97; }"
+    " QMessageBox QCheckBox { color: #a3a6ad; }"
+)
+
+
+class _MessageBoxLook(QObject):
+    """Every message box in the app's look as it is shown: dark, light text (the
+    windows' style sheets made their text red on a light background)."""
+
+    def eventFilter(self, watched, event):  # noqa: N802 (Qt)
+        from PySide6.QtCore import QEvent
+        from PySide6.QtWidgets import QMessageBox
+
+        if event.type() == QEvent.Type.Show and isinstance(watched, QMessageBox):
+            if watched.styleSheet() != MESSAGE_BOX_STYLE:
+                watched.setStyleSheet(MESSAGE_BOX_STYLE)
+        return False
+
+
+_message_box_look = None
+
+
+def apply_message_box_style(app) -> None:
+    global _message_box_look
+    if _message_box_look is None:
+        _message_box_look = _MessageBoxLook()
+        app.installEventFilter(_message_box_look)
+
+
 def apply_tooltip_style(app) -> None:
     """Dark tooltips with light text everywhere. A tooltip is a window of its
     own: an editor's style sheet does not reach it, so the colours are set on
@@ -258,3 +293,4 @@ def apply_tooltip_style(app) -> None:
     QToolTip.setPalette(palette)
     if TOOLTIP_STYLE not in app.styleSheet():
         app.setStyleSheet(app.styleSheet() + "\n" + TOOLTIP_STYLE)
+    apply_message_box_style(app)

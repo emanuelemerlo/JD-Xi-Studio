@@ -231,11 +231,14 @@ class MIDIConfigDialog(QDialog):
         status_row = QHBoxLayout()
         self.status_dot = QLabel("●")
         self.status_dot.setFixedWidth(18)
+        # as tall as one line of the message and centred in it: the dot sits on its first line
+        self.status_dot.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.status_label = QLabel()
         self.status_label.setWordWrap(True)
         # Room for three lines, so a longer message does not get cut
         self.status_label.setMinimumHeight(self.status_label.fontMetrics().lineSpacing() * 3)
         self.status_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        self.status_dot.setFixedHeight(self.status_label.fontMetrics().lineSpacing())
         status_row.addWidget(self.status_dot, 0, Qt.AlignmentFlag.AlignTop)
         status_row.addWidget(self.status_label, 1)
         jdxi_layout.addLayout(status_row)
@@ -354,7 +357,8 @@ class MIDIConfigDialog(QDialog):
     # ------------------------------------------------------------------ status
     def _set_status(self, kind: str, text: str) -> None:
         colours = {"ok": "#3cc98a", "busy": "#f2c94c", "error": "#f0483e", "idle": "#8a8d94"}
-        self.status_dot.setStyleSheet(f"color: {colours.get(kind, '#8a8d94')}; font-size: 16px;")
+        self.status_dot.setStyleSheet(f"color: {colours.get(kind, '#8a8d94')}; font-size: 12px;"
+                                      " padding: 0; margin: 0;")
         self.status_label.setText(text)
         self.status_kind = kind
 

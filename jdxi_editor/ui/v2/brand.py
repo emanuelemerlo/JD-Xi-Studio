@@ -60,12 +60,7 @@ def draw_mark(size: int = 256) -> QPixmap:
     p.setBrush(QColor("#050505"))
     p.drawRoundedRect(display, 5 * s, 5 * s)
     p.setBrush(red)
-    bars = 1 if tiny else (2 if small else 5)
-    inset = 12 * s if small else 8 * s
-    bar_h = display.height() - 2 * inset
-    for i in range(bars):  # the display's text, as red segments
-        w = (display.width() - 2 * inset) / bars
-        p.drawRoundedRect(QRectF(display.left() + inset + i * w, display.top() + inset, w - 6 * s, bar_h), 2 * s, 2 * s)
+    _display_text(p, display, red, s)
     # the big category dial: an endless knob, no pointer; the category LED lit
     # on the white circle around it shows where it is (Bass, as in the manual)
     if not small:
@@ -134,6 +129,29 @@ def draw_mark(size: int = 256) -> QPixmap:
             p.fillPath(path, QColor("#0e0f11"))
     p.end()
     return pm
+
+
+def _display_text(p, display, colour, s) -> None:
+    """«JD-Xi» on the display, in a monospaced (LCD-like) bold face, fitted to it."""
+    from PySide6.QtGui import QPainterPath
+
+    font = QFont()
+    font.setFamilies(["DejaVu Sans Mono", "Consolas", "Menlo", "Courier New", "monospace"])
+    font.setStyleHint(QFont.StyleHint.Monospace)
+    font.setPixelSize(100)
+    font.setWeight(QFont.Weight.Bold)
+    path = QPainterPath()
+    path.addText(0, 0, font, "JD-Xi")
+    box = path.boundingRect()
+    inset_x, inset_y = 7 * s, 6 * s
+    scale = min((display.width() - 2 * inset_x) / box.width(), (display.height() - 2 * inset_y) / box.height())
+    p.save()
+    p.translate(display.center().x() - box.center().x() * scale, display.center().y() - box.center().y() * scale)
+    p.scale(scale, scale)
+    p.setPen(Qt.PenStyle.NoPen)
+    p.setBrush(colour)
+    p.drawPath(path)
+    p.restore()
 
 
 def _draw_name_mark(p: QPainter, size: int) -> None:

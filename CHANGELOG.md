@@ -34,6 +34,12 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   chosen from each part, user programs are the library's E–H banks
 
 ### Fixes
+- Start-up: the dialogs (MIDI configuration, Off-line notice) wait for the start screen to go;
+  its progress steps reach the end and the last one is seen
+- Message boxes in the app's look (dark, light text): their text was red on light grey; the
+  Off-line notices carry a warning sign
+- MIDI configuration: the status dot level with its message
+- Program icon: the display reads «JD-Xi»
 - A message that cannot go out (JD-Xi not connected) is no longer taken as what the JD-Xi holds
 - A/B: a photo taken without the JD-Xi whose data is not all known can no longer be recalled or
   saved (bytes never read were sent as zeros); taking it again with the JD-Xi connected fixes it

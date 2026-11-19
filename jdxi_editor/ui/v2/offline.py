@@ -232,7 +232,7 @@ class OfflineSession(QObject):
             return
         self.warned = True
         box = QMessageBox(
-            QMessageBox.Icon.Information,
+            QMessageBox.Icon.Warning,
             tr("JD-Xi not connected"),
             tr("The JD-Xi is not connected: you can try everything, but nothing is saved or sent.\n\n"
                "When you connect it, its settings are read and shown in place of the changes made "

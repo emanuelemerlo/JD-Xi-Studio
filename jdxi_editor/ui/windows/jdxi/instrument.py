@@ -152,17 +152,19 @@ class JDXiInstrument(JDXiWindow):
         # Try to auto-connect to JD-Xi
         self._midi_config_dialog = None
         self.midi_helper.auto_connect_jdxi()
+        # Dialogs at start wait for the splash screen to go (see splash_done)
+        self._after_splash: list = []
         if not getattr(self.midi_helper, "midi_available", True):
             # No MIDI API on this system: start offline and say so once the
             # window is up, instead of offering ports that cannot exist
-            QTimer.singleShot(0, self._show_midi_unavailable)
+            self._when_splash_gone(self._show_midi_unavailable)
         elif (
             not self.midi_helper.current_in_port
             or not self.midi_helper.current_out_port
         ):
             # Opened from the event loop, after the window is shown, so the
             # constructor does not block waiting for the dialog
-            QTimer.singleShot(0, self._show_midi_config)
+            self._when_splash_gone(self._show_midi_config)
         self._update_midi_indicators()
         self.sysex_composer = JDXiSysExComposer()
         self.program_helper = JDXiProgramHelper(self.midi_helper, MidiChannel.PROGRAM)
@@ -262,7 +264,9 @@ class JDXiInstrument(JDXiWindow):
         # Note: Removed automatic data_request() at startup to reduce MIDI flood
         # Each editor requests its own data via showEvent() when displayed
         self._show_main_editor()
+        self._splash_step(70, tr("Preparing the editors window…"))
         self.init_main_editor()
+        self._splash_step(80, tr("Laying out the windows…"))
         self._init_window_layout()
         # Initialize the current preset and synth type
         self.current_synth_type = JDXiSynth.DIGITAL_SYNTH_1
@@ -270,6 +274,7 @@ class JDXiInstrument(JDXiWindow):
         self._init_update_checker()
         # What is changed on the JD-Xi itself shows here (tone names, octave,
         # sliders, keys); the state is read once the ports are open
+        self._splash_step(90, tr("Following the JD-Xi…"))
         self.follower = InstrumentFollower(self)
         self.follower.start()
         self.on_closed = None  # set by main(): quits the application
@@ -1549,6 +1554,37 @@ class JDXiInstrument(JDXiWindow):
         self.log_viewer.raise_()
         log.message(scope="JDXiInstrument", message="Showing LogViewer window")
 
+    def _splash_step(self, value: int, text: str) -> None:
+        """The splash screen's progress (steps after the editors are loaded)."""
+        bar, label = getattr(self, "splash_progress_bar", None), getattr(self, "splash_status_label", None)
+        if bar is None:
+            return
+        try:
+            bar.setValue(value)
+            if label is not None:
+                label.setText(text)
+            QApplication.processEvents()
+        except RuntimeError:
+            pass
+
+    def _when_splash_gone(self, call) -> None:
+        """Run *call* once the splash screen has gone (at once without one)."""
+        if self.splash is None:
+            QTimer.singleShot(0, call)
+        else:
+            self._after_splash.append(call)
+
+    def splash_done(self) -> None:
+        """The splash screen is gone: now the start-up dialogs, one after the other."""
+        calls, self._after_splash = list(getattr(self, "_after_splash", [])), []
+        for i, call in enumerate(calls):
+            QTimer.singleShot(150 + 50 * i, call)
+        session = getattr(self, "_offline_session", None)
+        if session is not None:
+            from jdxi_editor.ui.v2.offline import WARNING_DELAY_MS
+
+            QTimer.singleShot(WARNING_DELAY_MS, session.warn_if_offline)
+
     def _setup_connection(self) -> None:
         """The shared connection: badge in every window, Off-line warning,
         commands that need the JD-Xi, and what happens when it arrives."""
@@ -1567,7 +1603,10 @@ class JDXiInstrument(JDXiWindow):
             row.addWidget(self.connection_badge, 0, Qt.AlignmentFlag.AlignHCenter)
         self._offline_session = offline.OfflineSession(
             self.connection, self, save_as_file=self._patch_save, read_all=self._read_everything,
-            warn_at_start=getattr(self.midi_helper, "midi_available", True))
+            # with a splash screen the warning waits for it (splash_done)
+            warn_at_start=getattr(self.midi_helper, "midi_available", True) and self.splash is None)
+        if not getattr(self.midi_helper, "midi_available", True):
+            self._offline_session.warned = True  # the "MIDI not available" box says it already
         for name, why in (
             ("save_patch_action", tr("Connect the JD-Xi: a patch saved without it would hold values it never had")),
             ("dump_settings_action", tr("Connect the JD-Xi to send it the settings")),

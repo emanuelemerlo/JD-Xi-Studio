@@ -174,12 +174,19 @@ def main() -> None:
             splash=splash, progress_bar=progress_bar, status_label=status_label
         )
 
-        # --- Finalize splash screen (every step lit)
+        # --- Finalize splash screen: every step lit, and seen lit for a moment
+        status_label.setText(tr("Ready"))
         progress_bar.setValue(100)
-        app.processEvents()
+        import time
+
+        shown_until = time.monotonic() + 0.35
+        while time.monotonic() < shown_until:
+            app.processEvents()
+            time.sleep(0.02)
         splash.finish(window)
         window.on_closed = app.quit  # closing the keyboard window ends the program
         window.show()
+        window.splash_done()  # the start-up dialogs, after the splash
 
         # --- Start event loop
         return app.exec()
