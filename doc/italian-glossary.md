@@ -27,5 +27,10 @@ così chi passa dal manuale al programma trova gli stessi nomi.
 | effects (in un testo) | effetti |
 | MIDI file | file MIDI |
 | log | log |
+| Off-line / connected / unstable connection | Off-line / collegato / comunicazione instabile |
+| Save on the JD-Xi (WRITE) | Salva sul JD-Xi (il JD-Xi conserva solo con WRITE) |
+| context line / origin / temporary | riga di contesto / origine / temporaneo |
+| New sound / From scratch (Init) | Nuovo suono / Da zero (Init) |
+| slot (program slot) | posto (E01–H64) |
 
 Per controllare un testo nuovo: `python -m building.i18n check`.
