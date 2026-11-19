@@ -4,6 +4,81 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+# [1.0.0-beta.2] - 2026-11-19
+
+Sound design and the Programs tab. Tried on the simulated JD-Xi (the automatic checks run on it in
+every build); on the real instrument the checks of `doc/hardware-test-plan.md` are still to run
+(section 1a: `pytest -m hardware tests/test_jdxi_checks.py`, then the ★ steps).
+
+### Changes
+- Checks against a JD-Xi (`tests/test_jdxi_checks.py`): identity, a whole reading, pending until
+  read back, reconnection, restore, Init and Undo, Save on the JD-Xi; on the simulated JD-Xi in
+  every run, on the real one with `pytest -m hardware` for each release
+- A «?» on the panels of the tone and effects editors (OSC, FILTER, AMP, LFO, PITCH, effects,
+  delay, reverb): what the section changes, how the sound changes, an example, in the information
+  panel
+- «New sound ▾» in the Digital and Analog editors: from scratch (Init: this part's tone only, a
+  plain sawtooth with the filter open; one Undo brings the sound back), from a preset, from a recipe
+- «Save on the JD-Xi…» (Programs): name the program, choose the slot (E–H, «Init Program» slots
+  proposed as probably free, a used slot asks first), press WRITE on the JD-Xi as shown, and the app
+  selects the slot and checks that it holds the sound: «Saved in E02 ✓» only then
+- A context line under each editor's header and on the Programs page: program › part › tone ·
+  origin (program, preset, recipe, file, A/B) · state (original, modified and temporary, modified
+  and not sent, saved to file, saved in a program slot)
+- The «JD-Xi connected» indicators (editors window, Settings) follow the shared connection: green
+  only once the JD-Xi answered; the main window shows the badge under MIDI IN / OUT; no badge
+  over dialogs' buttons
+- What the JD-Xi confirmed (read back) is kept apart from what was only sent. When the JD-Xi comes
+  back after a disconnection everything is read and compared: same → says so; different with
+  unsaved changes → the parts that differ and «Restore on the JD-Xi / Keep what the JD-Xi has»
+  (the restore is checked part by part); different with nothing at risk → the JD-Xi's is shown
+- Programs: one JD-Xi-style display only, the program's (it said "No file loaded"; now the number
+  and name of the program loaded). The playlist shows what plays as a line of text over its bars
+- One connection state for the whole app: the JD-Xi counts as connected only once it answers as a
+  JD-Xi (a port named JD-Xi is not enough). Without it: a warning at start (once), an «Off-line»
+  badge in every window, and the commands that need it are off with the reason in the tooltip.
+  When it arrives after changes made without it, they are given up for what it holds, with
+  «Save as file» to keep them; requests that go unanswered show «Unstable connection»
+- Send all says whether it was complete, partial or failed
+- JD-Xi Studio presents itself as "Visual Sound Design, Editing & Librarian" (README, About, start screen)
+- Programs tab, simpler: the library searches number, name, genre and the four tones, sorts by
+  number, name or genre, shows "N of M programs", marks the program loaded on the JD-Xi (▶, bold)
+  apart from the one selected, and shows the tones in their parts' colours. Its menu (right
+  click): Load, Rename and Export (the loaded program), Genre (user programs), Add to playlist
+- Parts and mixer in one card: under each part's fader its tone (click: choose another, the
+  part's presets), MIDI channel and Edit; the separate list of parts is gone
+- Below, Organize: the playlists and, beside them, the selected playlist's programs. Presets are
+  chosen from each part, user programs are the library's E–H banks
+
+### Fixes
+- Dialog titles no longer cut in the title bar (every dialog is at least as wide as its title)
+- Playlists: «Add to playlist» offers every program, factory ones (A–D) included; it said «All
+  programs are already in this playlist» when no user program had been read yet
+- Loading a patch says whether it reached the JD-Xi whole, in part or not at all
+- Start-up: the dialogs (MIDI configuration, Off-line notice) wait for the start screen to go;
+  its progress steps reach the end and the last one is seen
+- Message boxes in the app's look (dark, light text): their text was red on light grey; the
+  Off-line notices carry a warning sign
+- MIDI configuration: the status dot level with its message
+- Program icon: the display reads «JD-Xi»
+- A message that cannot go out (JD-Xi not connected) is no longer taken as what the JD-Xi holds
+- A/B: a photo taken without the JD-Xi whose data is not all known can no longer be recalled or
+  saved (bytes never read were sent as zeros); taking it again with the JD-Xi connected fixes it
+- A/B: when a photo cannot be written to disk it says so, instead of "captured"
+- Recipes: setting a row or a whole step is one Undo, also when it sets several editors
+- Program mixer: each part in the colour of its tab, the Master in a neutral light with an output
+  icon; the faders light from the bottom up to the level (at 0 they looked full), centred over
+  their icon and mute, without tick marks, with a box above showing the level, where it can also
+  be typed
+- MIDI Debugger, CC / PC tab: the fields were squeezed flat; the tab now scrolls
+- MIDI Monitor: says why it stays empty while the JD-Xi is not connected (nothing is sent)
+- Program icon: at 32 px and below (title bar, taskbar) it shows the name, "JD" over "Xi", instead
+  of the drawing, which was unreadable at that size
+- The middle C
+  mark on the keyboard is smaller and quieter
+- Tooltips were black (unreadable) on the settings page and in the new editors on Windows: a
+  tooltip is a window of its own, so the colours are now set for the whole app
+
 ### A/B compare of a Tone (Digital 1, Digital 2, Analog)
 - In the tone editors' bar: **A B** to choose (and recall) a photo of the whole Tone, **camera** to
   capture the Tone in the chosen slot, **⇄** (Ctrl+Shift+A) to switch while playing, **disk** to

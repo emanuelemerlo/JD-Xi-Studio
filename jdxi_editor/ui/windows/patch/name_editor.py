@@ -46,6 +46,8 @@ class PatchNameEditor(QDialog):
         super().__init__(parent)
         self.setWindowTitle(tr("Edit Patch Name"))
         self.setModal(True)
+        # wide enough for its title in the title bar (the Italian one was cut)
+        self.setMinimumWidth(max(380, self.fontMetrics().horizontalAdvance(self.windowTitle()) + 170))
 
         main_layout = QVBoxLayout(self)
         group = QGroupBox(tr("Patch Name"))

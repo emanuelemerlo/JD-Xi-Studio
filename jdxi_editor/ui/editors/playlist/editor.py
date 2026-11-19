@@ -43,9 +43,7 @@ from jdxi_editor.ui.editors.helpers.preset import (
     load_digital_cheat_preset_on_analog,
 )
 from jdxi_editor.ui.editors.playlist.progress import PlaylistProgressWidget
-from jdxi_editor.ui.style.editor_style import mark_sheen
 from jdxi_editor.ui.editors.helpers.widgets import (
-    create_panel,
     create_jdxi_button,
     create_jdxi_row,
 )
@@ -141,6 +139,7 @@ class PlaylistEditor(QWidget):
         # Connect to valueChanged signal (emits the value, not the index)
         self.playlist_editor_combo.valueChanged.connect(self._on_playlist_value_changed)
         self.playlist_select_layout.addWidget(self.playlist_editor_combo)
+        self._tidy_combo()
         self.playlist_select_layout.addStretch()
         layout.addLayout(self.playlist_select_layout)
 
@@ -178,9 +177,8 @@ class PlaylistEditor(QWidget):
         # Now playing: song n of N, its progress and the playlist's
         self.playlist_progress = PlaylistProgressWidget()
         self.playlist_progress.song_clicked.connect(self._play_song)
-        # ... on a glossy black panel, like the other editors' displays
-        self.playlist_progress_panel = create_panel(self.playlist_progress)
-        mark_sheen(self.playlist_progress_panel)
+        # plain text and bars under the transport (not a second JD-Xi-style display)
+        self.playlist_progress_panel = self.playlist_progress
         layout.addWidget(self.playlist_progress_panel)
 
         # Create playlist programs table
@@ -440,6 +438,21 @@ class PlaylistEditor(QWidget):
             index = model.index(row, 5)
             self._play_playlist_program(index)
 
+    def _tidy_combo(self) -> None:
+        """The search box and the list one under the other, starting at the same
+        place: no "Search:" label in front of the box (its placeholder says it)."""
+        combo = self.playlist_editor_combo
+        if combo is None:
+            return
+        search_text = tr("Search:")
+        for label in combo.findChildren(QLabel):
+            if label.text() in (search_text, ""):
+                label.hide()
+        box, inner = getattr(combo, "search_box", None), getattr(combo, "combo_box", None)
+        if box is not None and inner is not None:  # same width: one column
+            box.setMaximumWidth(inner.maximumWidth())
+            box.setSizePolicy(inner.sizePolicy())
+
     def populate_playlist_combo(self) -> None:
         """Populate the playlist selection combo box."""
         if not self.playlist_editor_combo:
@@ -486,6 +499,7 @@ class PlaylistEditor(QWidget):
                 if combo_index >= 0:
                     # Remove old combo box
                     self.playlist_select_layout.removeWidget(self.playlist_editor_combo)
+                    self.playlist_editor_combo.hide()  # out of sight until deleted
                     self.playlist_editor_combo.deleteLater()
 
                     # Create new combo box with updated data
@@ -504,6 +518,7 @@ class PlaylistEditor(QWidget):
                     self.playlist_editor_combo.valueChanged.connect(
                         self._on_playlist_value_changed
                     )
+                    self._tidy_combo()
                     # Re-insert into layout at same position
                     self.playlist_select_layout.insertWidget(
                         combo_index, self.playlist_editor_combo
@@ -852,12 +867,15 @@ class PlaylistEditor(QWidget):
         try:
             from jdxi_editor.ui.programs.database import get_database
 
+            from jdxi_editor.ui.programs.programs import JDXiUIProgramList
+
             db = get_database()
-            all_programs = db.get_all_programs()
+            # every program, as in the library: the factory ones (A–D) and the user ones
+            all_programs = JDXiUIProgramList.list_rom_and_user_programs()
 
             # --- Get programs already in playlist
             existing_programs = db.get_playlist_programs(playlist_id)
-            existing_program_ids = {item["program"].id for item in existing_programs}
+            existing_program_ids = {item["program"].id for item in existing_programs if item.get("program")}
 
             # --- Add programs that aren't already in the playlist
             for idx, program in enumerate(all_programs):
@@ -877,7 +895,8 @@ class PlaylistEditor(QWidget):
             QMessageBox.information(
                 self,
                 tr("No Programs Available"),
-                tr("All programs are already in this playlist."),
+                tr("All programs are already in this playlist.") if all_programs
+                else tr("No programs known yet: the program list is empty."),
             )
             return
 

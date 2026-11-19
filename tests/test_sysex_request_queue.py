@@ -160,7 +160,10 @@ class TestDeviceDataNotWrittenBack(unittest.TestCase):
             self.app.processEvents()
         finally:
             self.helper.midi_sysex_json.disconnect(listener)
-        self.out.send_message.assert_not_called()
+        # (the shared connection may ask the JD-Xi who it is meanwhile: not data written back)
+        written = [c for c in self.out.send_message.call_args_list  # DT1 only (requests are not writes)
+                   if len(c.args[0]) > 7 and list(c.args[0])[:2] == [0xF0, 0x41] and c.args[0][7] == 0x12]
+        self.assertEqual(written, [])
 
     def test_user_edits_are_still_sent(self):
         self.assertTrue(self.helper.send_raw_message(_DT1_ANALOG))

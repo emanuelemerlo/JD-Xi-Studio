@@ -365,6 +365,10 @@ class ProgramDatabase:
         :param position: Position in playlist (optional, will append if not provided)
         :return: True if successful, False otherwise
         """
+        if self.get_program_by_id(program_id) is None:
+            factory = self.program_anywhere(program_id)  # a playlist item needs the program's row
+            if factory is not None:
+                self.add_or_replace_program(factory)
         return self.playlist_orm.add_program_to_playlist(
             playlist_id, program_id, position
         )
@@ -387,8 +391,20 @@ class ProgramDatabase:
         :return: List of dictionaries with 'program' (JDXiProgram) and 'midi_file_path' (str)
         """
         return self.playlist_orm.get_playlist_programs(
-            playlist_id, get_program_func=self.get_program_by_id
+            playlist_id, get_program_func=self.program_anywhere
         )
+
+    def program_anywhere(self, program_id: str):
+        """A user program from this database, or a factory (A–D) one from the ROM list."""
+        program = self.get_program_by_id(program_id)
+        if program is not None:
+            return program
+        try:
+            from jdxi_editor.ui.programs.programs import JDXiUIProgramList
+
+            return next((p for p in JDXiUIProgramList.ROM_PROGRAM_LIST if p.id == program_id), None)
+        except Exception:
+            return None
 
     def update_playlist_item_midi_file(
         self, playlist_id: int, program_id: str, midi_file_path: str

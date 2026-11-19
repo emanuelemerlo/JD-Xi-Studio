@@ -3805,7 +3805,9 @@ class JDXiUIProgramList:
         from jdxi_editor.ui.programs.database import get_database
 
         db = get_database()
-        cls.USER_PROGRAMS = db.get_all_programs()
+        rom_ids = {p.id for p in cls.ROM_PROGRAM_LIST}
+        # factory programs kept in the database (a playlist holds them) are not listed twice
+        cls.USER_PROGRAMS = [p for p in db.get_all_programs() if p.id not in rom_ids]
         return cls.ROM_PROGRAM_LIST + cls.USER_PROGRAMS
 
     @classmethod

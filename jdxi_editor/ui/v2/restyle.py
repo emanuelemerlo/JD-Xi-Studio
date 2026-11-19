@@ -10,7 +10,7 @@ reference in the editor keeps working).
 
 from __future__ import annotations
 
-from PySide6.QtCore import QSize, Qt
+from PySide6.QtCore import QObject, QSize, Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QGroupBox, QLabel, QLayout, QPushButton, QTabWidget, QWidget
 
@@ -234,3 +234,81 @@ def edit_controls(editor, reload=None):
     history.stateChanged.connect(update)
     update()
     return mark, buttons
+
+
+TOOLTIP_STYLE = (
+    "QToolTip { background-color: #1f2025; color: #e8e8ea; border: 1px solid #3a3d44;"
+    " padding: 4px 6px; }"
+)
+
+
+MESSAGE_BOX_STYLE = (
+    "QMessageBox { background-color: #1b1c1f; }"
+    " QMessageBox QLabel { color: #e6e8eb; font-size: 13px; background: transparent; }"
+    " QMessageBox QPushButton { background: #26282d; color: #e6e8eb; border: 1px solid #3a3d44;"
+    " border-radius: 6px; padding: 5px 14px; min-width: 72px; }"
+    " QMessageBox QPushButton:hover { border-color: #6fcf97; }"
+    " QMessageBox QPushButton:default { border-color: #6fcf97; }"
+    " QMessageBox QCheckBox { color: #a3a6ad; }"
+)
+
+
+class _MessageBoxLook(QObject):
+    """Every message box in the app's look as it is shown: dark, light text (the
+    windows' style sheets made their text red on a light background)."""
+
+    def eventFilter(self, watched, event):  # noqa: N802 (Qt)
+        from PySide6.QtCore import QEvent
+        from PySide6.QtWidgets import QMessageBox
+
+        if event.type() == QEvent.Type.Show and isinstance(watched, QMessageBox):
+            if watched.styleSheet() != MESSAGE_BOX_STYLE:
+                watched.setStyleSheet(MESSAGE_BOX_STYLE)
+        if event.type() == QEvent.Type.Show:
+            fit_title(watched)
+        return False
+
+
+TITLE_BAR_EXTRA = 150  # icon, close button and margins of a title bar
+
+
+def fit_title(window) -> None:
+    """A dialog at least as wide as its title in the title bar (titles were cut,
+    the Italian ones above all)."""
+    from PySide6.QtWidgets import QDialog
+
+    if not isinstance(window, QDialog) or not window.isWindow():
+        return
+    needed = window.fontMetrics().horizontalAdvance(window.windowTitle()) + TITLE_BAR_EXTRA
+    if window.width() < needed:
+        window.setMinimumWidth(min(needed, 900))
+        window.resize(needed, window.height())
+
+
+_message_box_look = None
+
+
+def apply_message_box_style(app) -> None:
+    global _message_box_look
+    if _message_box_look is None:
+        _message_box_look = _MessageBoxLook()
+        app.installEventFilter(_message_box_look)
+
+
+def apply_tooltip_style(app) -> None:
+    """Dark tooltips with light text everywhere. A tooltip is a window of its
+    own: an editor's style sheet does not reach it, so the colours are set on
+    the application (style sheet and palette); without them Windows showed
+    the settings page's tooltips black."""
+    from PySide6.QtGui import QColor, QPalette
+    from PySide6.QtWidgets import QToolTip
+
+    palette = QToolTip.palette()
+    palette.setColor(QPalette.ColorRole.ToolTipBase, QColor("#1f2025"))
+    palette.setColor(QPalette.ColorRole.ToolTipText, QColor("#e8e8ea"))
+    palette.setColor(QPalette.ColorRole.Window, QColor("#1f2025"))
+    palette.setColor(QPalette.ColorRole.WindowText, QColor("#e8e8ea"))
+    QToolTip.setPalette(palette)
+    if TOOLTIP_STYLE not in app.styleSheet():
+        app.setStyleSheet(app.styleSheet() + "\n" + TOOLTIP_STYLE)
+    apply_message_box_style(app)

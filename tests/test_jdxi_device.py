@@ -153,3 +153,19 @@ def test_order_not_time_tells_a_write_after_the_request():
     body = [0x41, 0x10, 0, 0, 0, 0x0E, 0x12, 0x19, 0x42, 0, 0] + values
     fixed = device.fresh(body + [(128 - sum(body[7:]) % 128) % 128])
     assert fixed is not None and fixed[11 + 0x21] == 110
+
+
+def test_a_write_with_the_port_closed_leaves_the_memory_alone():
+    """MEM-01: a DT1 that never goes out is not what the synth holds."""
+    helper = MidiIOHelper()
+    helper.device.memory.clear()
+    saved_out = helper.midi_out
+    helper.midi_out = Mock()
+    helper.midi_out.is_port_open = Mock(return_value=False)
+    try:
+        assert helper.send_raw_message(list(_WRITE)) is False
+        assert helper.device.memory.read(bytes.fromhex("19420003"), 1) is None
+        helper.midi_out.send_message.assert_not_called()
+    finally:
+        helper.midi_out = saved_out
+        helper.device.memory.clear()

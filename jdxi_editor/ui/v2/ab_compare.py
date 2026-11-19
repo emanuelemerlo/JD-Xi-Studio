@@ -133,6 +133,13 @@ def layout_of(editor) -> list:
 
 
 def _connected(helper) -> bool:
+    """The JD-Xi answered as a JD-Xi and is still there (the shared connection)."""
+    from jdxi_editor.midi.io.connection import can_talk
+
+    return can_talk(helper)
+
+
+def _ports_open(helper) -> bool:
     """Both ports open: a recall needs to send and to read back."""
     for name in ("midi_out", "midi_in"):
         port = getattr(helper, name, None)
@@ -161,6 +168,7 @@ class Snapshot:
     schema: int = SCHEMA_VERSION
     epoch: Optional[int] = field(default=None)  # program context; None once reloaded from disk
     saved_to: str = ""  # the .syx it was last saved as ("" never saved)
+    unknown: list = field(default_factory=list)  # blocks (hex) with bytes not read from the JD-Xi
 
     def dt1s(self) -> list[bytes]:
         return [bytes.fromhex(b) for b in self.blocks]
@@ -194,6 +202,8 @@ class Snapshot:
             return tr("its parameters do not match this editor's")
         if not self.complete():
             return tr("it is incomplete or damaged")
+        if self.unknown:
+            return tr("it was taken without the JD-Xi and some of its data is not known: capture it again with the JD-Xi connected")
         return None
 
     def raw_values(self, editor) -> dict:
@@ -246,7 +256,8 @@ def take_snapshot(editor, slot: str, source: str) -> Snapshot:
     """A copy of the editor's whole Tone now (its blocks as DT1s)."""
     from jdxi_editor.ui.v2.framework import decode_dt1
 
-    messages = editor.export_dt1s()
+    unknown = []
+    messages = editor.export_dt1s(unknown=unknown)
     raw = {}
     for message in messages:
         raw.update(dict(decode_dt1(editor.blocks, message)))
@@ -262,6 +273,7 @@ def take_snapshot(editor, slot: str, source: str) -> Snapshot:
         name=name_from_raw(editor, raw),
         source=source,
         epoch=program_epoch(),
+        unknown=unknown,
     )
 
 
@@ -293,7 +305,8 @@ def load_slots(part: str) -> dict:
     return slots
 
 
-def save_slots(part: str, slots: dict) -> None:
+def save_slots(part: str, slots: dict) -> bool:
+    """Keep *part*'s photos on disk; False if they could not be written."""
     path = _store_file(part)
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -301,8 +314,10 @@ def save_slots(part: str, slots: dict) -> None:
         tmp = path.with_suffix(".tmp")
         tmp.write_text(json.dumps(data, indent=1), encoding="utf-8")
         tmp.replace(path)
-    except OSError as ex:
+        return True
+    except (OSError, TypeError, ValueError) as ex:
         log.warning(f"A/B photos of {part} not kept: {ex}", scope="ABCompare")
+        return False
 
 
 # ---------------------------------------------------------------- session
@@ -351,7 +366,8 @@ class ABSession(QObject):
         return SLOTS[1] if slot == SLOTS[0] else SLOTS[0]
 
     def can_switch(self) -> bool:
-        return not self.busy and self.connected() and all(self.slots.get(s) is not None for s in SLOTS)
+        return (not self.busy and self.connected()
+                and all(self.slots.get(s) is not None and not self.slots[s].unknown for s in SLOTS))
 
     def switch(self, confirm_context: Callable[[Snapshot], bool] = lambda s: True) -> bool:
         """Recall the other photo (A after B, B after A)."""
@@ -401,8 +417,12 @@ class ABSession(QObject):
         if callable(flush):
             flush()  # the editor's last changes go out before the reading
         if not _connected(self.helper):
-            self._store(slot, take_snapshot(self.editor, slot, source="local"))
-            self.message.emit(tr("{slot} captured from the editor: the JD-Xi is not connected (local photo)").format(slot=slot), False)
+            snapshot = take_snapshot(self.editor, slot, source="local")
+            if self._store(slot, snapshot):
+                if snapshot.unknown:
+                    self.message.emit(tr("{slot} captured from the editor, without the JD-Xi: some of its data is not known, so it cannot be recalled or saved until captured again with the JD-Xi connected").format(slot=slot), True)
+                else:
+                    self.message.emit(tr("{slot} captured from the editor: the JD-Xi is not connected (local photo)").format(slot=slot), False)
             return True
         self._set_busy(True)
         self.message.emit(tr("Capturing {slot}: reading the Tone from the JD-Xi…").format(slot=slot), False)
@@ -416,16 +436,20 @@ class ABSession(QObject):
                 tr("{slot} not captured: the JD-Xi did not send the whole Tone ({detail}). Try again.").format(
                     slot=slot, detail=result.summary()), True)
             return
-        self._store(slot, take_snapshot(self.editor, slot, source="jdxi"))
-        self.message.emit(tr("{slot} captured").format(slot=slot), False)
+        if self._store(slot, take_snapshot(self.editor, slot, source="jdxi")):
+            self.message.emit(tr("{slot} captured").format(slot=slot), False)
 
-    def _store(self, slot: str, snapshot: Snapshot) -> None:
+    def _store(self, slot: str, snapshot: Snapshot) -> bool:
+        """Keep the photo; False (and says so) if it could not be written to disk."""
         self.slots[slot] = snapshot
         self.selected = slot
-        save_slots(self.part, self.slots)
+        kept = save_slots(self.part, self.slots)
         if self.active == slot:  # the photo recalled last is this new one now
             self.check_modified()
         self.changed.emit()
+        if not kept:
+            self.message.emit(tr("{slot} captured, but it could not be written to disk: it will be lost when JD-Xi Studio closes").format(slot=slot), True)
+        return kept
 
     def _read(self, on_finished) -> None:
         from jdxi_editor.midi.sysex.request.read_session import start_read_session
@@ -489,6 +513,9 @@ class ABSession(QObject):
         self.modified = False
         self.changed.emit()
         self.message.emit(tr("{slot} recalled").format(slot=slot), False)
+        from jdxi_editor.ui.v2.context import sound_context
+
+        sound_context().part_origin(self.part, tr("A/B: photo {slot}").format(slot=slot))
 
     # ------------------------------------------------------------ the rest
     def clear(self) -> None:
@@ -501,6 +528,8 @@ class ABSession(QObject):
     def write_syx(self, slot: str, name: str, path: Path) -> Path:
         """*slot*'s photo as a .syx of the part, *name* as its Tone Name."""
         snapshot = self.slots[slot]
+        if snapshot.unknown:
+            raise ValueError(f"{slot}: data not read from the JD-Xi")
         path = Path(path)
         if path.suffix.lower() != ".syx":
             path = path.with_suffix(".syx")
@@ -731,6 +760,9 @@ class ABControl(QWidget):
         snapshot = self.session.slots.get(slot)
         if snapshot is None:
             return None
+        if snapshot.unknown:
+            self.show_message(tr("{slot} cannot be saved: it was taken without the JD-Xi and some of its data is not known").format(slot=slot), True)
+            return None
         name, ok = QInputDialog.getText(
             self, tr("Save {slot}").format(slot=slot),
             tr("Name of {slot} (12 characters, written as Tone Name):").format(slot=slot),
@@ -799,11 +831,17 @@ class ABControl(QWidget):
             self.swap.setToolTip(tr("Switch between A and B: connect the JD-Xi"))
         elif not all(session.slots.get(s) is not None for s in SLOTS):
             self.swap.setToolTip(tr("Switch between A and B: capture both first"))
+        elif any(session.slots[s].unknown for s in SLOTS):
+            self.swap.setToolTip(tr("Switch between A and B: capture again with the JD-Xi connected the photo taken without it"))
         else:
             self.swap.setToolTip(tr("Switch between A and B ({keys})").format(keys=SWITCH_SHORTCUT))
         target = self.target()
-        self.disk.setEnabled(not session.busy and session.slots.get(target) is not None)
-        self.disk.setToolTip(tr("Save {slot} as a .syx file, with a name").format(slot=target))
+        photo = session.slots.get(target)
+        self.disk.setEnabled(not session.busy and photo is not None and not photo.unknown)
+        if photo is not None and photo.unknown:
+            self.disk.setToolTip(tr("{slot} cannot be saved: it was taken without the JD-Xi and some of its data is not known").format(slot=target))
+        else:
+            self.disk.setToolTip(tr("Save {slot} as a .syx file, with a name").format(slot=target))
 
 
 def _file_stem(name: str) -> str:

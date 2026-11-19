@@ -152,17 +152,19 @@ class JDXiInstrument(JDXiWindow):
         # Try to auto-connect to JD-Xi
         self._midi_config_dialog = None
         self.midi_helper.auto_connect_jdxi()
+        # Dialogs at start wait for the splash screen to go (see splash_done)
+        self._after_splash: list = []
         if not getattr(self.midi_helper, "midi_available", True):
             # No MIDI API on this system: start offline and say so once the
             # window is up, instead of offering ports that cannot exist
-            QTimer.singleShot(0, self._show_midi_unavailable)
+            self._when_splash_gone(self._show_midi_unavailable)
         elif (
             not self.midi_helper.current_in_port
             or not self.midi_helper.current_out_port
         ):
             # Opened from the event loop, after the window is shown, so the
             # constructor does not block waiting for the dialog
-            QTimer.singleShot(0, self._show_midi_config)
+            self._when_splash_gone(self._show_midi_config)
         self._update_midi_indicators()
         self.sysex_composer = JDXiSysExComposer()
         self.program_helper = JDXiProgramHelper(self.midi_helper, MidiChannel.PROGRAM)
@@ -262,7 +264,9 @@ class JDXiInstrument(JDXiWindow):
         # Note: Removed automatic data_request() at startup to reduce MIDI flood
         # Each editor requests its own data via showEvent() when displayed
         self._show_main_editor()
+        self._splash_step(70, tr("Preparing the editors window…"))
         self.init_main_editor()
+        self._splash_step(80, tr("Laying out the windows…"))
         self._init_window_layout()
         # Initialize the current preset and synth type
         self.current_synth_type = JDXiSynth.DIGITAL_SYNTH_1
@@ -270,10 +274,12 @@ class JDXiInstrument(JDXiWindow):
         self._init_update_checker()
         # What is changed on the JD-Xi itself shows here (tone names, octave,
         # sliders, keys); the state is read once the ports are open
+        self._splash_step(90, tr("Following the JD-Xi…"))
         self.follower = InstrumentFollower(self)
         self.follower.start()
         self.on_closed = None  # set by main(): quits the application
         self._link_arpeggio_button()
+        self._setup_connection()
 
     def _init_update_checker(self) -> None:
         """Check GitHub Releases shortly after startup (at most once a day)."""
@@ -1548,6 +1554,81 @@ class JDXiInstrument(JDXiWindow):
         self.log_viewer.raise_()
         log.message(scope="JDXiInstrument", message="Showing LogViewer window")
 
+    def _splash_step(self, value: int, text: str) -> None:
+        """The splash screen's progress (steps after the editors are loaded)."""
+        bar, label = getattr(self, "splash_progress_bar", None), getattr(self, "splash_status_label", None)
+        if bar is None:
+            return
+        try:
+            bar.setValue(value)
+            if label is not None:
+                label.setText(text)
+            QApplication.processEvents()
+        except RuntimeError:
+            pass
+
+    def _when_splash_gone(self, call) -> None:
+        """Run *call* once the splash screen has gone (at once without one)."""
+        if self.splash is None:
+            QTimer.singleShot(0, call)
+        else:
+            self._after_splash.append(call)
+
+    def splash_done(self) -> None:
+        """The splash screen is gone: now the start-up dialogs, one after the other."""
+        calls, self._after_splash = list(getattr(self, "_after_splash", [])), []
+        for i, call in enumerate(calls):
+            QTimer.singleShot(150 + 50 * i, call)
+        session = getattr(self, "_offline_session", None)
+        if session is not None:
+            from jdxi_editor.ui.v2.offline import WARNING_DELAY_MS
+
+            QTimer.singleShot(WARNING_DELAY_MS, session.warn_if_offline)
+
+    def _setup_connection(self) -> None:
+        """The shared connection: badge in every window, Off-line warning,
+        commands that need the JD-Xi, and what happens when it arrives."""
+        from jdxi_editor.midi.io.connection import connection_for
+        from jdxi_editor.ui.v2 import offline
+
+        self.connection = connection_for(self.midi_helper)
+        if self.connection is None:
+            return
+        row = getattr(self, "status_column", None)
+        if row is not None:  # beside MIDI IN / OUT, in sight (not in the status bar)
+            self.setProperty(offline.OWN_INDICATOR, True)
+        self._connection_watcher = offline.install(self.connection, self)
+        if row is not None:
+            self.connection_badge = self._connection_watcher.add(offline.ConnectionBadge())
+            row.addWidget(self.connection_badge, 0, Qt.AlignmentFlag.AlignHCenter)
+        self._offline_session = offline.OfflineSession(
+            self.connection, self, save_as_file=self._patch_save, read_all=self._read_everything,
+            # with a splash screen the warning waits for it (splash_done)
+            warn_at_start=getattr(self.midi_helper, "midi_available", True) and self.splash is None)
+        if not getattr(self.midi_helper, "midi_available", True):
+            self._offline_session.warned = True  # the "MIDI not available" box says it already
+        for name, why in (
+            ("save_patch_action", tr("Connect the JD-Xi: a patch saved without it would hold values it never had")),
+            ("dump_settings_action", tr("Connect the JD-Xi to send it the settings")),
+            ("update_user_programs_action", tr("Connect the JD-Xi to read its user programs")),
+        ):
+            action = getattr(self, name, None)
+            if action is not None:
+                offline.require_jdxi(action, self.connection, why)
+        self.connection.changed.connect(self._update_midi_indicators)
+        self.connection.poll()
+
+    def _read_everything(self) -> None:
+        """Read what the JD-Xi holds: the program and every open editor."""
+        self.data_request()
+        for editor in list(getattr(self, "editors", []) or []):
+            request = getattr(editor, "data_request", None)
+            if callable(request):
+                try:
+                    request()
+                except RuntimeError:  # a closed editor
+                    pass
+
     def _update_midi_indicators(self, *_args) -> None:
         """Show whether the MIDI input and output ports are open."""
         self.midi_in_indicator.set_state(self.midi_helper.is_input_open)
@@ -1994,8 +2075,10 @@ class JDXiInstrument(JDXiWindow):
                 # The new editors send their blocks as they are
                 if hasattr(editor, "export_dt1s"):
                     for dt1 in editor.export_dt1s():
-                        self.midi_helper.send_raw_message(list(dt1))
-                        total_sent += 1
+                        if self.midi_helper.send_raw_message(list(dt1)):
+                            total_sent += 1
+                        else:  # the port closed, or the message was refused
+                            total_skipped += 1
                     continue
                 # Skip editors that don't have the required attributes
                 if not hasattr(editor, "address") or not hasattr(
@@ -2043,14 +2126,29 @@ class JDXiInstrument(JDXiWindow):
 
             log.message(
                 scope="JDXiInstrument",
-                message=f"Settings dump complete: {total_sent} parameters sent to synthesizer",
+                message=f"Settings dump: {total_sent} sent, {total_skipped} not sent",
             )
+            self._report_outcome(tr("Send all"), total_sent, total_skipped)
 
         except Exception as ex:
             log.error(
                 scope="JDXiInstrument",
                 message=f" Error dumping settings to synth: {ex}",
             )
+            self._report_outcome(tr("Send all"), 0, 1)
+
+    def _report_outcome(self, what: str, done: int, failed: int) -> str:
+        """Say how an operation that sends to the JD-Xi ended: complete, partial or failed
+        (never «done» when part of it did not go out)."""
+        from jdxi_editor.ui.v2.offline import outcome_text
+
+        text, problem = outcome_text(what, done, failed)
+        self.statusBar().showMessage(text, 0 if problem else 8000)
+        if problem:
+            box = QMessageBox(QMessageBox.Icon.Warning, what, text, QMessageBox.StandardButton.Ok, self)
+            box.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+            box.open()
+        return text
 
     def _update_user_program_database(self) -> None:
         """

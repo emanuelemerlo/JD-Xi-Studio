@@ -345,19 +345,17 @@ class JDXiWindow(QMainWindow):
         file_menu.addAction(
             self._menu_action(tr("Load &Patch..."), self._patch_load, "Ctrl+Alt+O")
         )
-        file_menu.addAction(
-            self._menu_action(tr("Save Patc&h..."), self._patch_save, "Ctrl+Alt+S")
-        )
+        self.save_patch_action = self._menu_action(tr("Save Patc&h..."), self._patch_save, "Ctrl+Alt+S")
+        file_menu.addAction(self.save_patch_action)
 
         file_menu.addSeparator()
 
-        file_menu.addAction(
-            self._menu_action(
-                tr("&Dump Settings to Synth"),
-                self._dump_settings_to_synth,
-                "Ctrl+Shift+D",
-            )
+        self.dump_settings_action = self._menu_action(
+            tr("&Dump Settings to Synth"),
+            self._dump_settings_to_synth,
+            "Ctrl+Shift+D",
         )
+        file_menu.addAction(self.dump_settings_action)
 
         file_menu.addSeparator()
 
@@ -384,13 +382,12 @@ class JDXiWindow(QMainWindow):
 
         edit_menu.addSeparator()
 
-        edit_menu.addAction(
-            self._menu_action(
-                tr("&Update User Program Database"),
-                self._update_user_program_database,
-                "Ctrl+Shift+U",
-            )
+        self.update_user_programs_action = self._menu_action(
+            tr("&Update User Program Database"),
+            self._update_user_program_database,
+            "Ctrl+Shift+U",
         )
+        edit_menu.addAction(self.update_user_programs_action)
 
     def _create_parts_menu(self) -> None:
         """Create editors menu"""
@@ -578,6 +575,7 @@ class JDXiWindow(QMainWindow):
         layout.addLayout(build_wheel_row(midi_helper=self.midi_helper, owner=self))
         layout.addStretch()
         layout.addLayout(self._build_midi_indicator_row())
+        self.status_column = layout  # the connection badge goes under MIDI IN / OUT
         return layout
 
     def _build_midi_indicator_row(self) -> QLayout:
@@ -594,6 +592,7 @@ class JDXiWindow(QMainWindow):
         row.addWidget(QLabel("MIDI OUT:"))
         row.addWidget(self.midi_out_indicator)
         row.addStretch()
+        self.midi_indicator_row = row  # the connection badge joins it (Off-line, …)
         return row
 
     def _update_display(self):

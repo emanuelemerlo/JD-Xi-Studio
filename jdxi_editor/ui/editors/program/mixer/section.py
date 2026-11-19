@@ -14,8 +14,8 @@ from typing import Dict, Optional
 
 from decologr import Decologr as log
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QGridLayout, QGroupBox, QLabel, QSlider, QWidget
+from PySide6.QtGui import QColor, QIcon
+from PySide6.QtWidgets import QGridLayout, QGroupBox, QLabel, QSlider, QSpinBox, QWidget
 
 from jdxi_editor.core.jdxi import JDXi
 from jdxi_editor.core.synth.factory import create_synth_data
@@ -122,13 +122,15 @@ class ProgramMixer(SynthBase):
             analog = True
         else:
             analog = False
+        colour = strip_colour(synth_type)
+        level_box = shape_fader(slider, colour)
         # Track name (static)
         name_label = QLabel(label_text)
-        JDXi.UI.Theme.apply_mixer_label(name_label, analog=analog)
+        name_label.setStyleSheet(label_style(colour))
 
         # Value label (dynamic)
         value_label = QLabel("---")
-        JDXi.UI.Theme.apply_mixer_label(value_label, analog=analog)
+        value_label.setStyleSheet(label_style(colour))
         if synth_type:
             self.label_widgets.register(synth_type, value_label)
 
@@ -136,6 +138,9 @@ class ProgramMixer(SynthBase):
         icon_label = QLabel()
         icon_label.setAlignment(Qt.AlignHCenter)
         icon_label.setPixmap(icon.pixmap(32, 32))
+        slider.setProperty("strip_colour", colour)
+        slider.level_box = level_box
+        value_label.setVisible(False)  # the level box above the fader shows it
 
         return MixerTrack(
             entity=entity,
@@ -191,7 +196,7 @@ class ProgramMixer(SynthBase):
         master_track_spec = TrackSpec(
             label="Master",
             synth=JDXiSynth.MASTER,
-            icon=JDXi.UI.Icon.get_icon(JDXi.UI.Icon.KEYBOARD),
+            icon=master_icon(),
             param=ProgramCommonParam.PROGRAM_LEVEL,
         )
         digital1_track_spec = TrackSpec(
@@ -260,7 +265,7 @@ class ProgramMixer(SynthBase):
                 1,
                 Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop,
             )
-            JDXi.UI.Theme.apply_adsr_style(track.slider, track.analog)
+            track.slider.setStyleSheet(fader_style(track.slider.property("strip_colour") or MASTER_COLOUR))
 
         self.mixer_layout.setRowStretch(0, 1)
 
@@ -284,8 +289,8 @@ class ProgramMixer(SynthBase):
 
         # Apply styling
         JDXi.UI.Theme.apply_adsr_style(widget=self.mixer_group)
-        if self.analog_level_slider:
-            JDXi.UI.Theme.apply_adsr_style(widget=self.analog_level_slider, analog=True)
+        for track in self.tracks:  # each part in its tab's colour, the Master neutral
+            track.slider.setStyleSheet(fader_style(track.slider.property("strip_colour") or MASTER_COLOUR))
 
         return self.mixer_group
 
@@ -333,3 +338,102 @@ class ProgramMixer(SynthBase):
         :return: Dict[AddressParameter, QWidget] controls dictionary
         """
         return self.controls
+
+
+# ------------------------------------------------------------------ colours
+# Each part in the colour of its tab (as everywhere in the app); the Master,
+# the sum of all, in a neutral light so it never reads as one of the parts.
+MASTER_COLOUR = "#d9dde3"
+
+
+def strip_colour(synth_type) -> str:
+    from jdxi_editor.ui.v2.brand import PART_COLOURS
+
+    return {
+        JDXiSynth.DIGITAL_SYNTH_1: PART_COLOURS[0],
+        JDXiSynth.DIGITAL_SYNTH_2: PART_COLOURS[1],
+        JDXiSynth.DRUM_KIT: PART_COLOURS[2],
+        JDXiSynth.ANALOG_SYNTH: PART_COLOURS[3],
+    }.get(synth_type, MASTER_COLOUR)
+
+
+def label_style(colour: str) -> str:
+    return f"QLabel {{ color: {colour}; background: transparent; }}"
+
+
+def fader_style(colour: str) -> str:
+    """A vertical fader lit from the bottom up to its value (Qt calls the part
+    below the handle of a vertical slider its add-page)."""
+    dim = QColor(colour).darker(260).name()
+    return f"""
+        QLabel {{ color: {colour}; background: transparent; }}
+        QSlider::groove:vertical {{ background: #111; width: 6px; border-radius: 3px; }}
+        QSlider::add-page:vertical {{
+            background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 {colour}, stop:1 {dim});
+            border-radius: 3px; }}
+        QSlider::sub-page:vertical {{ background: #222; border-radius: 3px; }}
+        QSlider {{ min-width: 30px; }}
+        QSlider::handle:vertical {{
+            background: #0b0b0d; border: 2px solid {colour};
+            height: 8px; margin: 0px -9px; border-radius: 5px; }}
+        QSlider::handle:vertical:hover {{ border-color: {QColor(colour).lighter(125).name()}; }}
+        QSlider::add-page:vertical:disabled, QSlider::handle:vertical:disabled {{
+            background: #333; border-color: #333; }}
+    """
+
+
+def level_box_style(colour: str) -> str:
+    return (f"QSpinBox {{ color: {colour}; background: #111214; border: 1px solid #2c2e33;"
+            f" border-radius: 4px; padding: 1px 2px; }}"
+            f" QSpinBox:focus {{ border-color: {colour}; }}"
+            f" QSpinBox:disabled {{ color: #555; }}")
+
+
+def shape_fader(slider, colour: str) -> QSpinBox:
+    """The mixer's fader: centred over its icon and mute, no tick marks, and a
+    level box above it that shows the level and takes a typed one."""
+    inner = slider.slider
+    slider.draw_tick_marks = False
+    inner.setTickPosition(QSlider.TickPosition.NoTicks)
+    layout = slider.layout()
+    for widget in (slider.label, inner):
+        layout.setAlignment(widget, Qt.AlignmentFlag.AlignHCenter)
+    slider.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+    if getattr(slider, "value_label", None) is not None:
+        slider.value_label.setVisible(False)
+    box = QSpinBox()
+    box.setRange(inner.minimum(), inner.maximum())
+    box.setValue(inner.value())
+    box.setButtonSymbols(QSpinBox.ButtonSymbols.NoButtons)
+    box.setAlignment(Qt.AlignmentFlag.AlignCenter)
+    box.setFixedWidth(44)
+    box.setKeyboardTracking(False)  # the level goes out once the number is typed
+    box.setToolTip(slider.toolTip())
+    box.setStyleSheet(level_box_style(colour))
+    layout.insertWidget(layout.indexOf(slider.label) + 1, box, 0, Qt.AlignmentFlag.AlignHCenter)
+
+    def from_fader(value: int) -> None:
+        box.blockSignals(True)
+        box.setValue(value)
+        box.blockSignals(False)
+
+    inner.valueChanged.connect(from_fader)
+    shown = getattr(slider, "_update_value_label", None)
+    if callable(shown):  # values from the JD-Xi come in silently (setValueSilently)
+        def update_both(*args, **kwargs):
+            shown(*args, **kwargs)
+            from_fader(inner.value())
+
+        slider._update_value_label = update_both
+    box.valueChanged.connect(slider.setValue)  # moves the fader, which sends the level
+    return box
+
+
+def master_icon() -> QIcon:
+    """The Master: the output (not a keyboard, which is a part)."""
+    try:
+        import qtawesome as qta
+
+        return qta.icon("mdi.volume-high", color=MASTER_COLOUR)
+    except Exception:  # without qtawesome: the old icon
+        return JDXi.UI.Icon.get_icon(JDXi.UI.Icon.KEYBOARD)

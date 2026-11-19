@@ -453,6 +453,7 @@ class PatchManager(QMainWindow):
                     if self.midi_helper.save_patch_as_syx(file_path, temp_folder):
                         log.message(f"SysEx patch saved to {file_path}")
                         mark_all_saved()
+                        _context_saved(file_path)
                     else:
                         log.warning("Failed to save .syx file")
                     return
@@ -468,11 +469,16 @@ class PatchManager(QMainWindow):
                 file_type = "Music Bundle" if file_path.endswith(".msz") else "Patch"
                 log.message(f"{file_type} saved to {file_path}")
                 mark_all_saved()
+                _context_saved(file_path)
             else:
                 # Load patch (JSON files): it replaces the sounds, unsaved changes first
                 if not confirm_discard(ALL_PARTS, tr("Loading the patch replaces every part's sound.")):
                     return
-                self.midi_helper.load_patch(file_path)
+                done, failed = _counting_sends(self.midi_helper, lambda: self.midi_helper.load_patch(file_path))
+                _context_saved(file_path, loaded=True)
+                report = getattr(self.parent, "_report_outcome", None)
+                if callable(report) and (done or failed):
+                    report(tr("Loading the patch"), done, failed)
 
                 # Load MIDI file from bundle if it's an .msz file
                 if file_path.endswith(".msz"):
@@ -541,3 +547,37 @@ class PatchManager(QMainWindow):
             log.error(
                 f"Error {'saving' if self.save_mode else 'loading'} patch: {str(ex)}"
             )
+
+
+def _context_saved(file_path: str, loaded: bool = False) -> None:
+    """The context line: the file is the reference now (and the origin, if loaded)."""
+    try:
+        from jdxi_editor.ui.v2.context import sound_context
+
+        sound_context().file_saved(file_path, loaded=loaded)
+    except Exception:
+        pass
+
+
+def _counting_sends(helper, action) -> tuple[int, int]:
+    """Run *action*, counting the messages *helper* sent and those that did not go out."""
+    counts = [0, 0]
+    original = helper.send_raw_message
+
+    def counting(message):
+        ok = original(message)
+        counts[0 if ok else 1] += 1
+        return ok
+
+    helper.send_raw_message = counting
+    try:
+        action()
+    finally:
+        try:
+            del helper.send_raw_message  # back to the class's own
+        except AttributeError:
+            helper.send_raw_message = original
+        if getattr(helper, "send_raw_message", None) is not original and "send_raw_message" not in vars(type(helper)):
+            helper.send_raw_message = original
+    return counts[0], counts[1]
+

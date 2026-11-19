@@ -211,7 +211,9 @@ class InstrumentFollower(QObject):
 
     # ------------------------------------------------------------ reading
     def _connected(self) -> bool:
-        return getattr(self.midi_helper, "midi_out", None) is not None
+        from jdxi_editor.midi.io.connection import can_talk
+
+        return can_talk(self.midi_helper)
 
     def _quiet(self) -> bool:
         """Nothing in the way of a reading: no playback, no recent input, app shown."""

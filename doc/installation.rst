@@ -98,7 +98,7 @@ The simplest way to install JDXI-Editor is using our pre-built packages. These i
    - Both packages include Python, Qt, the MIDI libraries and FluidSynth; nothing else is needed
    - The files are not signed: if SmartScreen warns, choose "More info" → "Run anyway"
    - Connect the JD-Xi by USB before starting the editor, then choose its MIDI ports in the
-     MIDI configuration dialog. Without a JD-Xi the editor opens anyway (offline mode)
+     MIDI configuration dialog. Without a JD-Xi the editor opens anyway (Off-line, with a badge in every window)
    - The interface language is chosen in Help › Preferences › Interface language
      (English, Italiano, or the system's); it applies at the next start
 
@@ -360,7 +360,8 @@ Troubleshooting
    - **AppImage won't run**: Install FUSE: ``sudo apt install fuse``
    - **MIDI permissions**: Add your user to the audio group: ``sudo usermod -a -G audio $USER``
    - **"MIDI not available" at startup**: the system has no ALSA sequencer, so the editor
-     runs offline (patches can be edited, opened and saved, nothing is sent to the JD-Xi).
+     runs Off-line: everything can be tried and patches opened, nothing is sent to the JD-Xi or
+     saved as its settings until it is connected and answers as a JD-Xi.
      Load it with ``sudo modprobe snd-seq`` and restart the editor; containers, VMs and
      WSL often lack it
    - **Qt issues**: Install Qt5 libraries: ``sudo apt install qt5-default``

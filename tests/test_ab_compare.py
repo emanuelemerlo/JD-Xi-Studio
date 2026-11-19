@@ -27,6 +27,10 @@ from jdxi_editor.ui.v2 import ab_compare as ab
 APP = QApplication.instance() or QApplication([])
 
 
+# 7E dev 06 02 | Roland 41 | family 0E 03 | number 00 00 | version
+IDENTITY_REPLY = (0x7E, 0x10, 0x06, 0x02, 0x41, 0x0E, 0x03, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00)
+
+
 class FakeJDXi(QObject):
     """The JD-Xi on the other end of a MidiIOHelper."""
 
@@ -76,6 +80,10 @@ class FakeJDXi(QObject):
         data = bytes(int(b) for b in message)
         if self.refuse_sends:
             return False
+        if data[:1] == b"\xf0" and data[1:2] == b"\x7e" and data[3:5] == b"\x06\x01":
+            # Identity Request: a Roland JD-Xi answers (as the real one does)
+            self.reply.emit(list(IDENTITY_REPLY))
+            return True
         if data[:7] != bytes([0xF0, 0x41, 0x10, 0x00, 0x00, 0x00, 0x0E]):
             return True
         if data[7] == 0x12:
@@ -367,11 +375,12 @@ def test_tc14_disconnected_capture_is_local_and_recall_is_refused(rig):
     helper, jdxi, eds = rig
     editor = eds["analog"]
     session = session_of(editor)
+    capture(session, "B")  # read once from the JD-Xi: every byte of the Tone known
     helper.midi_out.is_port_open.return_value = False
     messages = []
     session.message.connect(lambda text, problem: messages.append(text))
     a = capture(session, "A")
-    assert a.source == "local" and a.complete()
+    assert a.source == "local" and a.complete() and not a.unknown
     jdxi.writes.clear()
     assert not session.recall("A")
     assert jdxi.writes == [] and "connect" in messages[-1]
@@ -559,3 +568,40 @@ def test_a_notice_does_not_move_the_bar(rig):
     control.toast.mousePressEvent(None)  # a problem goes when clicked
     assert not control.toast.isVisible()
     editor.hide()
+
+
+def test_ab01_a_local_photo_with_unknown_bytes_is_never_sent(rig, tmp_path):
+    """AB-01 / MEM-04: bytes not read from the JD-Xi are not made up as zeros and sent."""
+    from jdxi_editor.midi.io.device import device_for
+
+    helper, jdxi, eds = rig
+    editor = eds["analog"]
+    session = session_of(editor)
+    capture(session, "B")  # a whole photo, read from the JD-Xi
+    device_for(helper).memory.clear()  # nothing known about the JD-Xi
+    helper.midi_out.is_port_open.return_value = False
+    messages = []
+    session.message.connect(lambda text, problem: messages.append((text, problem)))
+    a = capture(session, "A")
+    assert a.source == "local" and a.unknown and messages[-1][1]
+    helper.midi_out.is_port_open.return_value = True
+    jdxi.writes.clear()
+    assert not session.can_switch()
+    assert not session.recall("A") and jdxi.writes == []
+    assert "without the JD-Xi" in messages[-1][0]
+    with pytest.raises(ValueError):
+        session.write_syx("A", "x", tmp_path / "a.syx")
+    assert not (tmp_path / "a.syx").exists()
+    assert ab.load_slots(session.part)["A"].unknown == a.unknown  # kept as such after a restart
+
+
+def test_ab02_a_photo_not_written_to_disk_says_so(rig, monkeypatch):
+    """AB-02: no plain 'captured' when the photo will not survive a restart."""
+    helper, jdxi, eds = rig
+    session = session_of(eds["digital_1"])
+    monkeypatch.setattr(ab, "save_slots", lambda part, slots: False)
+    messages = []
+    session.message.connect(lambda text, problem: messages.append((text, problem)))
+    assert capture(session, "A") is not None
+    assert messages[-1][1] and "disk" in messages[-1][0]
+    assert not any(text == "A captured" for text, _ in messages)

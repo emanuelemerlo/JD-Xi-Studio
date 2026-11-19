@@ -121,6 +121,9 @@ def main() -> None:
             }
         """
         )
+        from jdxi_editor.ui.v2.restyle import apply_tooltip_style
+
+        apply_tooltip_style(app)  # tooltips readable on the dark windows
 
         logger.debug("Application initialized")
 
@@ -171,12 +174,19 @@ def main() -> None:
             splash=splash, progress_bar=progress_bar, status_label=status_label
         )
 
-        # --- Finalize splash screen (every step lit)
+        # --- Finalize splash screen: every step lit, and seen lit for a moment
+        status_label.setText(tr("Ready"))
         progress_bar.setValue(100)
-        app.processEvents()
+        import time
+
+        shown_until = time.monotonic() + 0.35
+        while time.monotonic() < shown_until:
+            app.processEvents()
+            time.sleep(0.02)
         splash.finish(window)
         window.on_closed = app.quit  # closing the keyboard window ends the program
         window.show()
+        window.splash_done()  # the start-up dialogs, after the splash
 
         # --- Start event loop
         return app.exec()
@@ -249,6 +259,8 @@ def setup_splash_screen(
     title.setObjectName("TitleLabel")
     title.setFont(title_font(34))
     title.setStyleSheet("color: #f3f3f3; background: transparent;")
+    tagline = QLabel(tr("Visual Sound Design, Editing & Librarian"))
+    tagline.setStyleSheet("color: #ff6a55; font-size: 15px; font-weight: 600; background: transparent;")
     origin = QLabel(origin_line())
     origin.setObjectName("SubtitleLabel")
     origin.setStyleSheet("color: #a3a6ad; font-size: 14px; background: transparent;")
@@ -275,6 +287,7 @@ def setup_splash_screen(
     side_layout.setSpacing(6)
     side_layout.addStretch()
     side_layout.addWidget(title)
+    side_layout.addWidget(tagline)
     side_layout.addWidget(origin)
     side_layout.addSpacing(6)
     side_layout.addWidget(version)

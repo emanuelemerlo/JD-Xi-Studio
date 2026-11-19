@@ -1,6 +1,7 @@
 # JD-Xi Studio Features and Usage
 
-This document covers patch loading/saving, undo and unsaved changes, and SoundFont usage.
+This document covers patch loading/saving, undo and unsaved changes, the connection to the JD-Xi,
+saving on it, new sounds, and SoundFont usage.
 
 ---
 
@@ -127,6 +128,49 @@ the Digital 1 tone with Undo, the octave, a note (you listen), then what you do 
 tone, OCTAVE, a few notes). Each result is checked by reading the JD-Xi back; the edits stay in
 its temporary memory and the starting program is loaded again at the end. The report (Markdown)
 is saved in `~/.jdxi_studio/reports`.
+
+### Connection and Off-line
+
+The app keeps one connection state for every window: **Off-line** (no ports), **Verifying the
+JD-Xi…** (ports open, no answer yet) and **connected** only once the instrument answers the
+Identity Request as a Roland JD-Xi (a port named "JD-Xi" is not enough). The state is shown as a
+badge under MIDI IN / OUT in the keyboard window, at the top right of the editors window and in the
+corner of the other windows.
+
+Off-line everything can be tried, but nothing is sent or saved: the commands that need the JD-Xi
+(Save on the JD-Xi, Save patch, Send all, loading programs and tones, A/B recall) are off, with the
+reason in their tooltip. When the JD-Xi arrives, the changes made without it are given up for what
+it holds; **Save as file…** in that notice keeps them first.
+
+### When the JD-Xi comes back (safety net)
+
+After a disconnection (cable, power) everything is read and compared with what the JD-Xi confirmed
+before: the same → «Reconnected»; different with unsaved changes → the parts that differ and
+**Restore on the JD-Xi / Keep what the JD-Xi has** (a restore is read back part by part); different
+with nothing at risk → the JD-Xi's settings are shown. Requests that go unanswered show «Unstable
+connection» until a whole reading succeeds.
+
+### Where you are: the context line
+
+Under each editor's header (and on the Programs page): program › part › tone · origin (program,
+preset, recipe, file, A/B, Init) · state: *original*, *modified, temporary* (sent, not kept),
+*modified, not sent* (Off-line), *saved to file «…»*, *saved in E-12*.
+
+### Save on the JD-Xi
+
+The JD-Xi keeps a program only with its WRITE, in E–H. **Programs › Save on the JD-Xi…**: name it,
+choose the slot (slots named «Init Program»/«Init Tone» are proposed as probably free; a slot with a
+program asks first), press WRITE on the JD-Xi as shown, then **Done**: the app selects the slot and
+reads it back. «Saved in E-12 ✓» only when it holds the sound; otherwise it says what differs.
+
+### New sound and section help
+
+**New sound ▾** (Digital and Analog editors): *From scratch (Init)* — this part's tone only, a plain
+sawtooth with the filter open; one Undo brings the sound back — *From a preset*, *From a recipe*.
+A **«?»** on OSC, FILTER, AMP, LFO, PITCH, effects, delay and reverb explains the section in the
+information panel: what it changes, how the sound changes, an example.
+
+---
 
 ## 3. SoundFont Usage
 

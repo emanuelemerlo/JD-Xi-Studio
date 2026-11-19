@@ -46,6 +46,8 @@ from decologr import Decologr as log
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QFormLayout,
+    QFrame,
+    QScrollArea,
     QGroupBox,
     QHBoxLayout,
     QLabel,
@@ -199,7 +201,12 @@ class MIDIDebugger(QMainWindow):
         self.tab_widget.addTab(sysex_tab, tr("SysEx"))
 
         # --- CC/PC tab ---
-        cc_pc_tab = self._build_cc_pc_panel()
+        # in a scroll area: the four groups are taller than the window, and
+        # squeezed they flattened the spin boxes (Windows)
+        cc_pc_tab = QScrollArea()
+        cc_pc_tab.setWidgetResizable(True)
+        cc_pc_tab.setFrameShape(QFrame.Shape.NoFrame)
+        cc_pc_tab.setWidget(self._build_cc_pc_panel())
         self.tab_widget.addTab(cc_pc_tab, "CC / PC")
 
         layout.addWidget(self.tab_widget)
@@ -238,7 +245,8 @@ class MIDIDebugger(QMainWindow):
         cc_layout.addLayout(cc_form)
         cc_ref = QPlainTextEdit()
         cc_ref.setReadOnly(True)
-        cc_ref.setMaximumHeight(140)
+        cc_ref.setMinimumHeight(110)
+        cc_ref.setMaximumHeight(160)
         cc_ref.setStyleSheet("font-family: monospace; font-size: 10px;")
         cc_ref.setPlainText(
             "CC#  | Name\n"
@@ -293,6 +301,7 @@ class MIDIDebugger(QMainWindow):
         # Quick reference: Bank Select (CC#0, CC#32) + JD-Xi bank mapping
         bank_ref = QPlainTextEdit()
         bank_ref.setReadOnly(True)
+        bank_ref.setMinimumHeight(150)
         bank_ref.setMaximumHeight(240)
         bank_ref.setStyleSheet("font-family: monospace; font-size: 10px;")
         bank_ref.setPlainText(

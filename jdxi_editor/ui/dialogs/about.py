@@ -104,8 +104,9 @@ class UiAboutDialog(QDialog):
         right.addWidget(name)
         right.addWidget(self.version_label)
         right.addWidget(
-            _text(tr("An editor and librarian for the Roland JD-Xi synthesizer: every sound, the "
-                     "pattern sequencer, the effects and the vocoder, from the computer."))
+            _text(tr("Visual Sound Design, Editing & Librarian for the Roland JD-Xi: see the sound "
+                     "you are shaping, edit every tone, the pattern sequencer, the effects and the "
+                     "vocoder, and keep your programs organised, from the computer."))
         )
         right.addWidget(
             _card(

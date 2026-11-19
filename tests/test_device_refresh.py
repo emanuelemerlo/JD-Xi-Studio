@@ -43,6 +43,12 @@ def test_burst_of_changes_makes_one_request(activity):
     for _ in range(10):  # a knob being turned
         refresher.schedule(1, 74, 64)
     request.assert_not_called()
+    # wait for the request rather than a fixed time: a busy event loop (other
+    # tests' windows closing) can delay the timer well past DELAY_MS
+    for _ in range(200):
+        if request.called:
+            break
+        QTest.qWait(10)
     QTest.qWait(DELAY_MS * 4)
     request.assert_called_once()
 

@@ -284,11 +284,13 @@ def test_program_change_resets_only_once_sent(app):
     a = _pv(app, 0)
     history = _history(app, h.DIGITAL_1, a)
     a.setValue(7)
-    assert h.confirm_discard([h.DIGITAL_1], "x", defer=True)
+    assert h.confirm_discard([h.DIGITAL_1], "x", defer=0)
     assert history.modified  # not yet
     h.program_change_done(0, False)  # not sent (port closed): the changes are still there
     assert history.modified and history.can_undo()
-    assert h.confirm_discard([h.DIGITAL_1], "x", defer=True)
+    assert h.confirm_discard([h.DIGITAL_1], "x", defer=0)
+    h.program_change_done(9, True)  # another channel's change: these histories stay
+    assert history.modified
     h.program_change_done(0, True)
     assert not history.modified and not history.can_undo()
 
@@ -320,3 +322,27 @@ def test_a_value_put_back_by_hand_is_not_a_change():
     assert history.modified
     history.undo()
     assert not history.modified  # back to the saved value
+
+
+def test_a_transaction_over_two_editors_is_one_undo(app):
+    """HIST-01: a recipe step setting Digital 1 and Analog: one Undo (and one Redo),
+    whichever of the two editors it is pressed in; steps outside are left alone."""
+    d_pv, a_pv = _pv(app, 10), _pv(app, 20)
+    digital = _history(app, h.DIGITAL_1, d_pv)
+    analog = _history(app, h.ANALOG, a_pv)
+    a_pv.setValue(25)  # an edit of its own, before
+    analog._sealed = True
+    with h.transaction():
+        for history in (digital, analog):
+            history.begin_group()
+        d_pv.setValue(11)
+        a_pv.setValue(30)
+        for history in (digital, analog):
+            history.end_group()
+    assert analog.undo()  # pressed in Analog
+    assert d_pv.value() == 10 and a_pv.value() == 25  # Digital 1 too; Analog's own edit stays
+    assert digital.redo()  # pressed in Digital 1
+    assert d_pv.value() == 11 and a_pv.value() == 30
+    assert digital.undo() and analog.undo()  # the step, then Analog's own edit
+    assert a_pv.value() == 20 and not analog.can_undo() and not digital.can_undo()
+

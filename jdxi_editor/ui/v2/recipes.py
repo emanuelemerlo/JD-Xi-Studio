@@ -12,6 +12,7 @@ Nothing is sent to the JD-Xi until you set a value in the guide.
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 import shutil
 from pathlib import Path
 from typing import Callable, Optional
@@ -717,17 +718,50 @@ class RecipesEditor(QWidget):
             state = self.guide_table.item(row, 4)
             self._explain_row(c, item.text() if item else "", state.text() if state else "")
 
+    @contextmanager
+    def _one_undo(self, rows):
+        """The values set for *rows* as one Undo step in each editor they touch."""
+        histories = []
+        for key in {c.target.editor_key for c in rows if c.target is not None}:
+            history = getattr(self.editors(key), "history", None)
+            if history is not None and history not in histories:
+                histories.append(history)
+        from jdxi_editor.ui.v2.history import transaction
+
+        with transaction():  # one Undo for all the editors the step touches
+            for history in histories:
+                history.begin_group()
+            try:
+                yield
+            finally:
+                for history in histories:
+                    history.end_group()
+
     def set_row(self, c: check.Checked) -> None:
-        recipe_apply.apply(c, self.editors)
+        with self._one_undo([c]):
+            recipe_apply.apply(c, self.editors)
         self._fill_guide()
 
     def set_step(self) -> int:
         count = 0
-        for c in self._step_checked():
-            if c.status != check.EARS:
+        rows = [c for c in self._step_checked() if c.status != check.EARS]
+        with self._one_undo(rows):
+            for c in rows:
                 count += recipe_apply.apply(c, self.editors)
+        if count and self.recipe is not None:
+            self._recipe_origin(rows)
         self._fill_guide()
         return count
+
+    def _recipe_origin(self, rows) -> None:
+        """The parts a recipe step set: their origin in the context line."""
+        from jdxi_editor.ui.v2.context import sound_context
+
+        title = getattr(self.recipe, "title", "") or tr("recipe")
+        for key in {c.target.editor_key for c in rows if c.target is not None}:
+            history = getattr(self.editors(key), "history", None)
+            part = getattr(history, "part", "")
+            sound_context().part_origin(part, tr("recipe «{title}»").format(title=title))
 
     def read_again(self) -> None:
         keys = {c.target.editor_key for c in self.checked if c.target is not None}

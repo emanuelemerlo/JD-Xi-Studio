@@ -83,6 +83,9 @@ class JDXiDevice:
         """
         self.requests = requests or SysExRequestQueue(send)
         self.memory = memory or SynthMemory()
+        from jdxi_editor.midi.io.synth_state import SynthState
+
+        self.state = SynthState()  # what the JD-Xi confirmed, apart from what was sent
         # Shared by default: the scope is per thread, and the input handler
         # and output handler must agree on it
         self.echo_guard = echo_guard or DEFAULT_ECHO_GUARD
@@ -120,11 +123,13 @@ class JDXiDevice:
         data = [int(b) for b in message]
         if _is_program_change(data):
             self.memory.clear()
+            self.state.program_changed()
             return
         if data and data[0] != SYSEX_START and data[0] >= 0x80:
             return  # other channel messages
         self.requests.notify_reply(data)
         self.memory.record_dt1(data)
+        self.state.received(data)
 
     def before_send(self, message: Sequence[int]) -> bool:
         """False if *message* must not be sent (a DT1 echoing received data)."""
@@ -136,8 +141,10 @@ class JDXiDevice:
         if _is_program_change(data):
             self.memory.clear()
             self._written.clear()
+            self.state.program_changed()
             return
         self.memory.record_dt1(data)
+        self.state.sent(data)
         body = _roland_body(data)
         if body is None:
             return
