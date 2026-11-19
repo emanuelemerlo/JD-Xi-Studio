@@ -33,7 +33,14 @@ PARTIAL = "partial"
 
 
 def part_label(part: str) -> str:
-    return tr(PART_NAMES.get(part, part))
+    names = {  # written out so the translation tools find them
+        "program": tr("Program (common, effects, arpeggio)"),
+        "digital_1": tr("Digital 1"),
+        "digital_2": tr("Digital 2"),
+        "analog": tr("Analog"),
+        "drums": tr("Drums"),
+    }
+    return names.get(part, PART_NAMES.get(part, part))
 
 
 class SafetyNet(QObject):

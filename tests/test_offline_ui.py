@@ -71,7 +71,8 @@ def test_commands_that_need_the_jdxi_are_off_with_the_reason(connection):
     assert not action.isEnabled()
 
 
-def test_the_start_up_warning_comes_once_and_not_once_the_jdxi_answered(connection):
+def test_the_start_up_warning_comes_once_and_not_once_the_jdxi_answered(connection, monkeypatch):
+    monkeypatch.setattr(QApplication, "activeModalWidget", staticmethod(lambda: None))  # none left by other tests
     window = QMainWindow()
     session = offline.OfflineSession(connection, window, warn_at_start=False)
     session.warn_if_offline()
