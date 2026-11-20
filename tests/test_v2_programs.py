@@ -185,15 +185,19 @@ def test_without_the_jdxi_nothing_is_loaded_and_says_why(editor):
 
 
 def test_playlist_commands_apart_from_the_playback(editor):
-    """Add / Remove beside the playlist's list; Play, Stop, Pause, Mix in a
-    compact row of their own with the now-playing line, not stretched wider
-    than the playlist's commands."""
+    """Add / Remove act on the songs: just above their table. Play, Stop,
+    Pause, Mix in a compact row of their own with the now-playing line, not
+    stretched wider than the songs' commands."""
     playlist = editor.playlist_editor_widget
     select = playlist.playlist_select_layout
     in_select_row = [select.itemAt(i).widget() for i in range(select.count())]
-    assert playlist.playlist_actions in in_select_row
+    assert playlist.playlist_actions not in in_select_row
     assert playlist.playlist_actions.isAncestorOf(playlist.add_to_playlist_button)
     assert playlist.playlist_actions.isAncestorOf(playlist.delete_from_playlist_button)
+    layout = playlist.layout()
+    order = [layout.itemAt(i).widget() for i in range(layout.count())]
+    table_at = order.index(playlist.playlist_programs_table)
+    assert order[table_at - 1] is playlist.playlist_actions  # right over the songs
 
     transport = playlist.playlist_transport
     assert transport.shuffle_button.text() == "Mix"

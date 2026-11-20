@@ -144,7 +144,7 @@ class PlaylistEditor(QWidget):
         self.playlist_select_layout.addStretch()
         layout.addLayout(self.playlist_select_layout)
 
-        # Add/Remove act on the playlist: beside its list, not with the playback
+        # Add/Remove act on the playlist's songs: just above their list (the table)
         actions = QWidget()
         button_layout = QHBoxLayout(actions)
         button_layout.setContentsMargins(0, 0, 0, 0)
@@ -169,14 +169,8 @@ class PlaylistEditor(QWidget):
         self.delete_from_playlist_button.setEnabled(
             False
         )  # Disabled until playlist is selected
-        self.playlist_actions = actions
-        # after the combo (populate_playlist_combo puts a new combo back at its index)
-        self.playlist_select_layout.insertWidget(
-            self.playlist_select_layout.count() - 1,  # before the stretch
-            actions,
-            0,
-            Qt.AlignmentFlag.AlignBottom,  # level with the list, under the search box
-        )
+        button_layout.addStretch()
+        self.playlist_actions = actions  # added over the table, below
 
         # Playback of the songs: a block of its own, under a line
         line = QFrame()
@@ -264,6 +258,7 @@ class PlaylistEditor(QWidget):
             self._on_playlist_programs_selection_changed
         )
 
+        layout.addWidget(self.playlist_actions)
         layout.addWidget(self.playlist_programs_table)
 
         # Populate playlist combo box
@@ -474,7 +469,7 @@ class PlaylistEditor(QWidget):
             if label.text() in (search_text, ""):
                 label.hide()
         box, inner = getattr(combo, "search_box", None), getattr(combo, "combo_box", None)
-        combo.setMinimumWidth(300)  # the playlist's name and count, beside Add / Remove
+        combo.setMinimumWidth(300)  # the playlist's name and its number of programs
         if box is not None and inner is not None:  # same width: one column
             box.setMaximumWidth(inner.maximumWidth())
             box.setSizePolicy(inner.sizePolicy())
