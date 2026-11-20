@@ -12,7 +12,7 @@ Installation
    use Method 2 or 3, or build a package yourself. The macOS and Linux packages below are
    produced by ``python -m building.buildsys``.
 
-Welcome to the comprehensive installation guide for **JDXI-Editor**! This guide will walk you through multiple installation methods, from simple pre-built packages to advanced development setups. Choose the method that best suits your needs and technical comfort level.
+Welcome to the comprehensive installation guide for **JD-Xi Studio**! This guide will walk you through multiple installation methods, from simple pre-built packages to advanced development setups. Choose the method that best suits your needs and technical comfort level.
 
 System Requirements
 ===================
@@ -54,7 +54,7 @@ Installation Methods
 Method 1: Pre-Built Packages (Recommended)
 ==========================================
 
-The simplest way to install JDXI-Editor is using our pre-built packages. These include all dependencies and are ready to run immediately.
+The simplest way to install JD-Xi Studio is using our pre-built packages. These include all dependencies and are ready to run immediately.
 
 **macOS Installation**
    Download and install the macOS package:
@@ -95,7 +95,7 @@ The simplest way to install JDXI-Editor is using our pre-built packages. These i
    - 4GB RAM minimum, 8GB recommended
 
    **Windows Installation Notes:**
-   - Both packages include Python, Qt, the MIDI libraries and FluidSynth; nothing else is needed
+   - Both packages include Python, Qt and the MIDI libraries; nothing else is needed
    - The files are not signed: if SmartScreen warns, choose "More info" → "Run anyway"
    - Connect the JD-Xi by USB before starting the editor, then choose its MIDI ports in the
      MIDI configuration dialog. Without a JD-Xi the editor opens anyway (Off-line, with a badge in every window)
@@ -124,7 +124,7 @@ The simplest way to install JDXI-Editor is using our pre-built packages. These i
 Method 2: Python Package Installation
 =====================================
 
-For users who prefer pip-based installation or want to integrate JDXI-Editor into their Python environment.
+For users who prefer pip-based installation or want to integrate JD-Xi Studio into their Python environment.
 
 **Prerequisites**
    Ensure you have Python 3.10 or higher installed:
@@ -153,17 +153,17 @@ For users who prefer pip-based installation or want to integrate JDXI-Editor int
          # On Windows:
          $ jdxi-editor-env\Scripts\activate
 
-   2. **Install JDXI-Editor**
+   2. **Install JD-Xi Studio**
       .. code-block:: console
 
-         # Install this fork from GitHub (the JDXI-Editor package on PyPI is
+         # Install this fork from GitHub (the JD-Xi Studio package on PyPI is
          # the original project, not this fork)
          $ pip install git+https://github.com/emanuelemerlo/JD-Xi-Studio.git
 
    3. **Run the Application**
       .. code-block:: console
 
-         # Launch JDXI-Editor
+         # Launch JD-Xi Studio
          $ python -m jdxi_editor.main
          
          # Or use the command-line interface
@@ -177,11 +177,6 @@ For users who prefer pip-based installation or want to integrate JDXI-Editor int
    - Pillow (image processing)
    - QtAwesome (icons)
    - Additional dependencies as needed
-
-   **Optional (SoundFont playback):**
-   - pyfluidsynth (FluidSynth for playback without hardware)
-   - sf2utils (SoundFont preset list extraction)
-   - sounddevice (hardware interface selection for FluidSynth)
 
 Method 3: Source Code Installation
 ==================================
@@ -200,7 +195,7 @@ For users who want to install from source code, modify the application, or get t
 
          # Clone the repository
          $ git clone https://github.com/emanuelemerlo/JD-Xi-Studio.git
-         $ cd JDXI-Editor
+         $ cd JD-Xi Studio
 
    2. **Create Virtual Environment**
       .. code-block:: console
@@ -232,7 +227,7 @@ For users who want to install from source code, modify the application, or get t
    5. **Run the Application**
       .. code-block:: console
 
-         # Launch JDXI-Editor
+         # Launch JD-Xi Studio
          $ python -m jdxi_editor.main
 
 **Source Code Structure**
@@ -247,7 +242,7 @@ For users who want to install from source code, modify the application, or get t
 Method 4: Development Setup
 ===========================
 
-For developers who want to contribute to JDXI-Editor or work on advanced features.
+For developers who want to contribute to JD-Xi Studio or work on advanced features.
 
 **Prerequisites**
    - Python 3.10 or higher
@@ -262,7 +257,7 @@ For developers who want to contribute to JDXI-Editor or work on advanced feature
 
          # Fork the repository on GitHub, then clone your fork
          $ git clone https://github.com/YOUR_USERNAME/JDXI-Editor.git
-         $ cd JDXI-Editor
+         $ cd JD-Xi Studio
          
          # Add upstream remote
          $ git remote add upstream https://github.com/emanuelemerlo/JD-Xi-Studio.git
@@ -323,7 +318,7 @@ Post-Installation Setup
 
 **First Launch**
    1. **Connect Your JD-Xi**: Use a USB cable to connect your synthesizer to your computer
-   2. **Launch JDXI-Editor**: Start the application using your preferred method
+   2. **Launch JD-Xi Studio**: Start the application using your preferred method
    3. **MIDI Configuration**: The app will attempt to auto-connect to your JD-Xi
    4. **Verify Connection**: Check that MIDI indicators show active input/output
 
@@ -353,7 +348,7 @@ Troubleshooting
 **Windows Issues**
    - **Missing DLLs**: Install the Microsoft Visual C++ Redistributable (x64)
    - **"Windows protected your PC"**: the build is not signed; choose "More info" → "Run anyway"
-   - **Antivirus blocking**: Add JDXI-Editor to your antivirus exceptions
+   - **Antivirus blocking**: Add JD-Xi Studio to your antivirus exceptions
    - **MIDI not detected**: Check Device Manager for MIDI devices
 
 **Linux Issues**
@@ -403,11 +398,11 @@ Getting Help
    When reporting issues, please include:
    - Operating system and version
    - Python version (if applicable)
-   - JDXI-Editor version
+   - JD-Xi Studio version
    - JD-Xi firmware version
    - Error messages or logs
    - Steps to reproduce the issue
 
-The JDXI-Editor installation process is designed to be as smooth as possible, with multiple installation methods to suit different user needs and technical comfort levels. Choose the method that works best for you, and don't hesitate to reach out for help if you encounter any issues!
+The JD-Xi Studio installation process is designed to be as smooth as possible, with multiple installation methods to suit different user needs and technical comfort levels. Choose the method that works best for you, and don't hesitate to reach out for help if you encounter any issues!
 
 

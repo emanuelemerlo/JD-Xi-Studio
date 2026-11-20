@@ -3,14 +3,17 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to JD-Xi Editor's documentation!
-=======================================
+JD-Xi Studio
+============
+
+**Visual Sound Design, Editing & Librarian for the Roland JD-Xi.**
 
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
 
    getting-started
+   whats-new
    editor-windows
    additional-editors
    playing-midi-files

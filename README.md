@@ -42,8 +42,7 @@ computer screen instead of the JD-Xi's menus.
 - **Where you are**: a line under each editor says program › part › tone, where the sound came from
   and whether it is original, modified and temporary, saved to a file or saved in the JD-Xi.
 - **Pattern sequencer**: four parts × 16 steps, measures, copy and paste, MIDI files, USB recording.
-- **MIDI file player**: track classification, channel assignment, automation; plays on the JD-Xi or
-  with FluidSynth and a SoundFont, without hardware.
+- **MIDI file player**: track classification, channel assignment, automation; plays on the JD-Xi.
 - **Recipes**: import a sound recipe (template .xlsx/.csv, Markdown, text, PDF or a pasted table) and
   follow it step by step with the JD-Xi's values beside the recipe's.
 - **Settings**: the JD-Xi's system settings, the MIDI connection, files and tools.
@@ -102,7 +101,7 @@ curl -fsSL https://raw.githubusercontent.com/emanuelemerlo/JD-Xi-Studio/main/ins
 Run it again to update; `... | bash -s -- --uninstall` removes the app (settings and patches stay),
 `--version v1.0.0-beta.1` installs a given release. It needs Python 3.10–3.13 and a few libraries
 (PortAudio, ALSA on Linux; Homebrew's `portaudio` on macOS): when one is missing it stops and shows
-the command to install it. FluidSynth is optional (the SoundFont player). The macOS part has not been
+the command to install it. The macOS part has not been
 tried on a Mac yet: reports welcome.
 
 ### Python 🐍
@@ -118,8 +117,7 @@ jdxi-editor
 
 The `JDXI-Editor` package on PyPI is the original project, not this one.
 PyAudio needs the PortAudio library (macOS `brew install portaudio`, Debian/Ubuntu
-`sudo apt install portaudio19-dev`) before the `pip install`; the FluidSynth player needs FluidSynth
-(`brew install fluid-synth`, `sudo apt install fluidsynth`).
+`sudo apt install portaudio19-dev`) before the `pip install`.
 
 ## 🌍 Languages
 
@@ -132,7 +130,7 @@ manuals, so what you read matches the instrument. To add a language, see
 ## 📖 Documentation
 
 - [CHANGELOG.md](CHANGELOG.md): what changed in each version.
-- [Features and usage](doc/features-and-usage.md): patch files (.jsz, .msz, .json, .syx), SoundFonts.
+- [Features and usage](doc/features-and-usage.md): patch files (.jsz, .msz, .json, .syx), connection, saving on the JD-Xi.
 - [Windows development](doc/dev-windows.md): Visual Studio, VS Code, local builds.
 - [Developer tools](doc/dev-tools.md): MIDI analysis and transcription tools.
 - The original project's documentation, which still describes the engine:
@@ -162,7 +160,7 @@ The pictures and icons are drawn by `python building/art/make_art.py`.
 
 Windows: the app (PyInstaller, one folder) and the installer (Inno Setup 6):
 ```commandline
-python -m pip install ".[soundfont,build-windows]"   # not -e: the spec bundles the installed resources
+python -m pip install ".[build-windows]"   # not -e: the spec bundles the installed resources
 cd %TEMP%
 pyinstaller --noconfirm --clean --distpath <repo>\dist <repo>\building\windows\jdxi_editor.spec
 cd <repo>

@@ -2,14 +2,14 @@
 Quick Start Guide
 =================
 
-Welcome to **JDXI-Editor**! This comprehensive quick start guide will get you up and running with your Roland JD-Xi synthesizer in minutes. Whether you're a beginner or an experienced musician, this guide will help you unlock the full potential of your JD-Xi through powerful computer-based editing.
+Welcome to **JD-Xi Studio**! This comprehensive quick start guide will get you up and running with your Roland JD-Xi synthesizer in minutes. Whether you're a beginner or an experienced musician, this guide will help you unlock the full potential of your JD-Xi through powerful computer-based editing.
 
 What You'll Learn
 =================
 
 This quick start guide covers:
 - **Hardware Setup**: Connecting your JD-Xi to your computer
-- **Software Launch**: Starting JDXI-Editor and initial configuration
+- **Software Launch**: Starting JD-Xi Studio and initial configuration
 - **Basic Navigation**: Understanding the main interface components
 - **First Sound Creation**: Creating your first custom sound
 - **Essential Workflows**: Key techniques for effective sound design
@@ -22,7 +22,7 @@ Before you begin, ensure you have:
 - **Roland JD-Xi Synthesizer**: Any firmware version supported
 - **Computer**: macOS 10.14+, Windows 10+, or Linux (Ubuntu 18.04+)
 - **USB Cable**: USB-B to USB-A or USB-C cable
-- **JDXI-Editor Installed**: Follow the installation guide if not already installed
+- **JD-Xi Studio Installed**: Follow the installation guide if not already installed
 
 Hardware Setup
 ==============
@@ -67,8 +67,8 @@ Hardware Setup
 Software Launch
 ===============
 
-**Step 1: Start JDXI-Editor**
-   Launch the JDXI-Editor application:
+**Step 1: Start JD-Xi Studio**
+   Launch the JD-Xi Studio application:
 
    .. code-block:: console
 
@@ -89,8 +89,9 @@ Software Launch
       # If successful, you'll see MIDI indicators active
       # If not, a MIDI configuration window will open
 
-   **SoundFont Mode (No Hardware):**
-   You can run JDXI-Editor without a connected JD-Xi by enabling **Enable FluidSynth for local playback** in MIDI Configuration. This uses a SoundFont (.sf2/.sf3) for MIDI playback. See :doc:`features-and-usage` for SoundFont setup.
+   **Without the JD-Xi (Off-line):**
+   JD-Xi Studio opens without the instrument: everything can be tried, nothing is sent or saved on
+   it, and an «Off-line» badge says so in every window. See :doc:`whats-new`.
 
    **Manual MIDI Configuration:**
    If auto-connection fails, manually configure MIDI ports:
@@ -121,7 +122,7 @@ Interface Overview
 ==================
 
 **Main Components**
-   JDXI-Editor consists of two main windows:
+   JD-Xi Studio consists of two main windows:
 
    **1. JDXi Instrument Window**
       - **Virtual Keyboard**: Play notes using your computer keyboard
@@ -273,7 +274,7 @@ Quick Tips for Success
    - **Check Connections**: Verify USB and MIDI connections
    - **Restart if Needed**: Sometimes a restart solves issues
    - **Check Logs**: Review log files for error information
-   - **Update Software**: Keep JDXI-Editor updated
+   - **Update Software**: Keep JD-Xi Studio updated
    - **Ask for Help**: Use community resources when stuck
 
 Common Issues and Solutions
@@ -306,7 +307,7 @@ Next Steps
    - **Read the Full Documentation**: Detailed guides for each editor
    - **Try Advanced Techniques**: Cross-modulation, complex effects chains
    - **Create Your Own Presets**: Build a personal sound library
-   - **Integrate with DAW**: Use JDXI-Editor in your production workflow
+   - **Integrate with DAW**: Use JD-Xi Studio in your production workflow
    - **Join the Community**: Connect with other users and share knowledge
 
 **Recommended Learning Path**

@@ -117,7 +117,6 @@ class PatternSequenceEditor(_pattern.PatternSequenceEditor):
             get_analog_options,
             get_digital_options,
             get_drum_options,
-            get_preset_signals,
         )
         from jdxi_editor.ui.widgets.digital.title import DigitalTitle
         from jdxi_editor.ui.widgets.pattern_file_group import PatternFileGroup
@@ -132,7 +131,6 @@ class PatternSequenceEditor(_pattern.PatternSequenceEditor):
         self.digital_options = get_digital_options()
         self.analog_options = get_analog_options()
         self.drum_options = get_drum_options()
-        get_preset_signals().soundfont_list_changed.connect(self._refresh_preset_options)
         self.specs = self._build_specs()
 
         # --- the editor's widgets, as the original builds them
