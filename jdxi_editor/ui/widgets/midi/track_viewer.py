@@ -5,6 +5,8 @@ Midi Track Viewer
 from copy import deepcopy
 
 import mido
+
+from jdxi_editor.midi.track.instrument import instrument_hint
 import qtawesome as qta
 from decologr import Decologr as log
 from PySide6.QtCore import QPoint, Qt, QEvent, QTimer, Signal
@@ -866,7 +868,10 @@ class MidiTrackViewer(QWidget):
             track_name_line_edit = QLineEdit()
             track_name_line_edit.setText(track_name.strip())
             track_name_line_edit.setCursorPosition(0)  # show the start of long names
-            track_name_line_edit.setPlaceholderText(tr("Unnamed"))
+            # no name in the file: what the track plays, in grey (the file
+            # is not changed; typing a name writes one)
+            hint = instrument_hint(track)
+            track_name_line_edit.setPlaceholderText(hint if hint else tr("Unnamed"))
             track_name_line_edit.setToolTip(tr("Track name (applied on Enter or when you click away)"))
             track_name_line_edit.editingFinished.connect(
                 lambda tr=i, le=track_name_line_edit: self._on_name_edited(tr, le.text())

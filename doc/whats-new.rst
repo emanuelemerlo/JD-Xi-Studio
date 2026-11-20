@@ -1,3 +1,41 @@
+What's New in 1.0.0 rc 1
+========================
+
+The release candidate: the MIDI Player fits a file to the JD-Xi, the state shown is closer to what
+the JD-Xi really holds, and FluidSynth is gone.
+
+MIDI Player
+-----------
+
+* The «MIDI file» tab is the **MIDI Player**.
+* **Fit to the JD-Xi** says which of the file's tracks the JD-Xi plays; **Assign tracks to
+  parts…** proposes a part for each (drums, then one track each for Digital 1, Digital 2, Analog),
+  to check and apply. **Starting sounds** gives the parts a sound to start from.
+* Big files load in seconds, with their progress on the display; the Pattern imports the file when
+  shown, its first 64 bars.
+* Tracks: **Expand** for more room, a grip for their height; a track without a name shows the
+  instrument it plays. The loop's A point shows as soon as it is set.
+* USB recorder: **Record on every Play**, now in stereo, on the JD-Xi's input.
+
+Programs
+--------
+
+* Playlist: Add / Remove over the songs, Play, Stop, Pause and **Mix** in a compact row; the
+  **Extra sound** column (a Digital preset on the Analog part) readable.
+
+What the JD-Xi holds
+--------------------
+
+* A typed name is an edit (one Undo, «Modified»).
+* Save on the JD-Xi asks before writing in a slot whose content is not known.
+* A tone change on one part forgets only that part; a message the port refuses is not counted as
+  held.
+
+Also: picomidi 0.3 (a muted track no longer cuts a note another track holds).
+
+Removed: the FluidSynth software synth and the SoundFont preset lists (they played General MIDI
+sounds, not the JD-Xi's, and only for notes coming from a MIDI keyboard).
+
 What's New in 1.0.0 beta 2
 ==========================
 
@@ -81,9 +119,3 @@ A/B compare and recipes
 * A/B compare (Digital 1, Digital 2, Analog): two photos of a tone, recalled and checked by reading
   it back; a photo taken without the JD-Xi whose data is not all known cannot be recalled.
 * A recipe step is one Undo, also when it sets several editors.
-
-Removed
--------
-
-* The FluidSynth software synth and the SoundFont preset lists: they played General MIDI sounds,
-  not the JD-Xi's, and only for notes coming from a MIDI keyboard.

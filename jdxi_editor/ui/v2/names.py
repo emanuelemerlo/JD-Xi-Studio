@@ -20,6 +20,7 @@ def short_name(title: str) -> str:
         "Preset": tr("Presets"),
         "Pattern": tr("Pattern"),
         "MIDI File": tr("MIDI Player"),
+        "MIDI Player": tr("MIDI Player"),
         "Recipes": tr("Recipes"),
         "Settings": tr("Settings"),
     }

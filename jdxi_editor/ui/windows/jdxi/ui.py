@@ -447,7 +447,7 @@ class JDXiWindow(QMainWindow):
 
         playback_menu.addAction(
             self._menu_action(
-                tr("&MIDI File"), lambda: self.show_editor("midi_player"), "Ctrl+8"
+                tr("&MIDI Player"), lambda: self.show_editor("midi_player"), "Ctrl+8"
             )
         )
         playback_menu.addAction(

@@ -239,8 +239,11 @@ TC-xx della proposta; gli stessi casi girano in automatico con un JD-Xi simulato
 |---|---|---|
 | 9.1 | Apri un file MIDI breve; Play | Suona sul JD-Xi con le parti assegnate; **nessuna** domanda sulle modifiche non salvate durante la riproduzione |
 | 9.2 | Mute di una traccia, Stop, ripresa | Come atteso; nessuna nota appesa dopo Stop |
-| 9.3 ★ | **Registratore USB** (cavo USB, nessun cavo audio): la porta proposta è l'**ingresso** del JD-Xi (non «Speakers»), con «(stereo)»; scegli il file, spunta **Salva**; Play di 20–30 secondi, Stop | Un `.wav` stereo, 16 bit, che si sente come il JD-Xi: suono **non** solo a sinistra, panning ed effetti stereo presenti; dopo lo Stop si chiude entro un secondo (non 10 secondi dopo) |
+| 9.3 ★ | **Registratore USB** (cavo USB, nessun cavo audio): la porta proposta è l'**ingresso** del JD-Xi (non «Speakers»), con «(stereo)»; scegli il file, spunta **Registra a ogni Play**; Play di 20–30 secondi, Stop | Un `.wav` stereo, 16 bit, che si sente come il JD-Xi: suono **non** solo a sinistra, panning ed effetti stereo presenti; dopo lo Stop si chiude entro un secondo (non 10 secondi dopo) |
 | 9.4 | Come 9.3 con una playlist di due brani brevi | Due `.wav`, uno per brano; il primo si chiude quando parte il secondo |
+| 9.5 ★ | Un file MIDI «generale» (molte tracce, canali oltre il 3): **Adatta al JD-Xi › Assegna le tracce alle parti…**, controlla la proposta, Applica; Play | La riga dice quante tracce non si sentono prima, «Pronto» o meno dopo; batteria su Drums, una traccia per Digital 1, Digital 2, Analog; nessuna nota appesa |
+| 9.6 | **Suoni di partenza**, poi Play | Digital 1 Picked Bass, Digital 2 Piano, Analog JP8 Strings (un preset Digital sulla parte Analog) |
+| 9.7 | Un file grande (40+ tracce): Carica | Il display mostra «Caricamento: traccia N di M», nessuna finestrella; pochi secondi |
 
 ---
 

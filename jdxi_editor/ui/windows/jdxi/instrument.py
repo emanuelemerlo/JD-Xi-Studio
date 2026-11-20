@@ -250,7 +250,7 @@ class JDXiInstrument(JDXiWindow):
                 title="Program", editor_class=ProgramEditor, icon="ri.speaker-line"
             ),
             "midi_player": EditorConfig(
-                title="MIDI File", editor_class=MidiFilePlayer, icon="mdi.midi-port"
+                title="MIDI Player", editor_class=MidiFilePlayer, icon="mdi.midi-port"
             ),
             "settings": EditorConfig(
                 title="Settings",

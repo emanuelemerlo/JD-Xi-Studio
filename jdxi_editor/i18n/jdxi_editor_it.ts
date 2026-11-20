@@ -4011,12 +4011,13 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/names.py" line="22" />
+            <location filename="../../jdxi_editor/ui/v2/names.py" line="23" />
             <location filename="../../jdxi_editor/ui/v2/players.py" line="448" />
             <source>MIDI Player</source>
             <translation>MIDI Player</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/names.py" line="23" />
+            <location filename="../../jdxi_editor/ui/v2/names.py" line="24" />
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="116" />
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="136" />
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="196" />
@@ -4025,7 +4026,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Ricette</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/names.py" line="24" />
+            <location filename="../../jdxi_editor/ui/v2/names.py" line="25" />
             <location filename="../../jdxi_editor/ui/v2/settings.py" line="85" />
             <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1109" />
             <source>Settings</source>
@@ -6898,57 +6899,57 @@ Le modifiche che non avevi salvato andrebbero perse. Le rimando al JD-Xi?</trans
             <translation>Velocity della traccia {percent}% (doppio clic: 100%)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="476" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="478" />
             <source>Delete Track?</source>
             <translation>Eliminare la traccia?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="110" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="112" />
             <source>Mute Channels:</source>
             <translation>Silenzia canali:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="150" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="152" />
             <source>Track Zoom</source>
             <translation>Zoom tracce</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="467" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="469" />
             <source>Delete Track</source>
             <translation>Elimina traccia</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="467" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="469" />
             <source>A MIDI file needs at least one track.</source>
             <translation>Un file MIDI deve avere almeno una traccia.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="869" />
-            <source>Unnamed</source>
-            <translation>Senza nome</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="870" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="875" />
             <source>Track name (applied on Enter or when you click away)</source>
             <translation>Nome della traccia (si applica con Invio o cliccando altrove)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="884" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="889" />
             <source>Mute Track</source>
             <translation>Silenzia traccia</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="901" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="906" />
             <source>Solo Track (mute all other tracks)</source>
             <translation>Solo (silenzia tutte le altre tracce)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="477" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="479" />
             <source>Are you sure you want to delete '{track_name}'?</source>
             <translation>Vuoi davvero eliminare '{track_name}'?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="917" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="874" />
+            <source>Unnamed</source>
+            <translation>Senza nome</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="922" />
             <source>MIDI channel of the track (changes apply immediately)</source>
             <translation>Canale MIDI della traccia (si applica subito)</translation>
         </message>
@@ -7745,8 +7746,8 @@ L'elenco dei programmi mostra ora i nomi aggiornati.</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/windows/jdxi/ui.py" line="450" />
-            <source>&amp;MIDI File</source>
-            <translation>&amp;File MIDI</translation>
+            <source>&amp;MIDI Player</source>
+            <translation>&amp;MIDI Player</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/windows/jdxi/ui.py" line="455" />
@@ -8487,6 +8488,10 @@ Il suono sul JD-Xi viene sostituito: se vuoi tenerlo, salvalo prima sul JD-Xi (W
             <location filename="../../jdxi_editor/ui/windows/selftest.py" line="865" />
             <source>report not saved: {error}</source>
             <translation>resoconto non salvato: {error}</translation>
+        </message>
+        <message>
+            <source>&amp;MIDI File</source>
+            <translation type="vanished">&amp;File MIDI</translation>
         </message>
         <message>
             <source>{tracks} tracks with notes; {off} are on channels the JD-Xi does not play (it plays 1 Digital 1, 2 Digital 2, 3 Analog, 10 Drums): they are not heard.</source>

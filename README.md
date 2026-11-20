@@ -42,7 +42,8 @@ computer screen instead of the JD-Xi's menus.
 - **Where you are**: a line under each editor says program › part › tone, where the sound came from
   and whether it is original, modified and temporary, saved to a file or saved in the JD-Xi.
 - **Pattern sequencer**: four parts × 16 steps, measures, copy and paste, MIDI files, USB recording.
-- **MIDI Player**: track classification, channel assignment, automation; plays on the JD-Xi.
+- **MIDI Player**: says which tracks the JD-Xi plays and fits them to its four parts; plays on the
+  JD-Xi, records its USB audio on every Play.
 - **Recipes**: import a sound recipe (template .xlsx/.csv, Markdown, text, PDF or a pasted table) and
   follow it step by step with the JD-Xi's values beside the recipe's.
 - **Settings**: the JD-Xi's system settings, the MIDI connection, files and tools.

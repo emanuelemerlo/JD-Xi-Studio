@@ -6,6 +6,8 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 ### Changes
 - The «MIDI file» tab is the **MIDI Player**.
+- A track without a name shows, in grey, the instrument it plays (the file's instrument name or
+  its General MIDI program; channel 10: drums).
 - MIDI Player › Tracks: **Expand** hides the cards not needed while listening (Player and Playback
   stay); a grip under the card sets its height (remembered; double click: back to normal).
 - USB recorder: «Save» is **Record on every Play**, with a tooltip saying what it records.
