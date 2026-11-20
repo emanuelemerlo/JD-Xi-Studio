@@ -9,9 +9,7 @@ The editor windows stay separate windows, but follow the keyboard window:
 - each window is moved on its own (working on two screens, say), and the
   editors window is not owned by the keyboard window, so clicking either
   brings it in front (the keyboard can also be kept always on top);
-- closing the keyboard window closes the linked windows;
-- line_up() places the editors right above the keyboard (or below it when
-  there is no room), aligned on its left edge.
+- closing the keyboard window closes the linked windows.
 """
 
 from __future__ import annotations
@@ -108,27 +106,6 @@ class WindowLink(QObject):
                 self._hidden.append(widget)
             return
         self.keyboard.showMinimized()  # hides and remembers the open editors, this one too
-
-    # --- placing
-
-    def line_up(self, editor: QWidget) -> None:
-        """Put *editor* right above the keyboard window (below it when there is no room)."""
-        if self.keyboard.isMinimized() or self.keyboard.isMaximized():
-            return
-        frame = self.keyboard.frameGeometry()
-        screen = (self.keyboard.screen() or editor.screen()).availableGeometry()
-        editor_frame = editor.frameGeometry()
-        height = editor_frame.height()
-        x = max(screen.left(), min(frame.left(), screen.right() - editor_frame.width()))
-        if frame.top() - height >= screen.top():
-            y = frame.top() - height
-        elif frame.bottom() + height <= screen.bottom():
-            y = frame.bottom() + 1
-        else:  # no room either side: the editor above, the keyboard below
-            y = screen.top()
-            self.keyboard.move(frame.left(), min(screen.bottom() - frame.height(), y + height))
-            frame = self.keyboard.frameGeometry()
-        editor.move(x, y)
 
 
 class DialogsInFront(QObject):

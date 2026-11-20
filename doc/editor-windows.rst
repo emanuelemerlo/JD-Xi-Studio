@@ -20,7 +20,7 @@ ending in «…» opens a dialog.
 
 * **File** — **Patch** › Open… / Save… (a program and its tones in a ``.jsz`` / ``.msz`` file;
   Open sends them to the JD-Xi); **MIDI Player** › Open… / Save / Save as… / Recent (the MIDI
-  Player's file); Quit.
+  Player's file; Save and Save as only with a file in the player); Preferences… (Ctrl+,); Quit.
 * **Editor** — the tabs of the editors window: Programs (Ctrl+0); *Parts*: Digital 1, Digital 2,
   Analog, Drums (Ctrl+1–4), Program: common and parts; *Effects*: Effects, Vocal FX (Ctrl+6, 7);
   *Playback*: Arpeggio (Ctrl+5), Pattern (Ctrl+8), MIDI Player (Ctrl+9); Recipes; Settings.
@@ -28,6 +28,18 @@ ending in «…» opens a dialog.
   **Send all…** (every value of the open editors into its current program; asks first, writes
   nothing in its memory), **Read the user programs (E–H)…** (loads the 256 user slots one by one
   and keeps their names in the library), **MIDI Configuration…**, **Self-test…**.
-* **Tools** — Preferences (Ctrl+,), MIDI Monitor, SysEx Debugger, Log Viewer.
-* **Window** — show the editors or the keyboard, keyboard on top, line them up.
+* **Tools** — MIDI Monitor, SysEx Debugger, Log Viewer.
+* **Window** — show the editors (Ctrl+Shift+W) or the keyboard (Ctrl+Shift+K), keyboard always on
+  top.
 * **Help** — Documentation (F1), Check for Updates, About.
+
+An item that needs the JD-Xi (Patch › Save…, everything in the JD-Xi menu but MIDI
+Configuration…) is off while it is not connected; its tooltip says why.
+
+Switching windows
+=================
+
+**Editors** at the right of the keyboard window's menu bar and **Keyboard** at the right of the
+editors window's tabs bring the other window to the front, also on another screen, without
+Alt+Tab. With the keyboard *always on top* the editors come in front of every other window but,
+where the two overlap, stay under the keyboard (the Editors button's tooltip says so).

@@ -79,15 +79,6 @@ def test_each_window_moves_on_its_own(windows, app):
     assert editors.pos() == start
 
 
-def test_line_up_puts_the_editors_above_the_keyboard(windows, app):
-    link, keyboard, editors, monitor, closed = windows
-    editors.move(700, 50)
-    link.line_up(editors)
-    _spin(app)
-    assert editors.frameGeometry().bottom() + 1 == keyboard.frameGeometry().top()
-    assert editors.frameGeometry().left() == keyboard.frameGeometry().left()
-
-
 def test_a_window_of_its_own_is_linked_too(app):
     keyboard = QMainWindow()
     editors = QMainWindow()  # not owned: the keyboard can come in front of it

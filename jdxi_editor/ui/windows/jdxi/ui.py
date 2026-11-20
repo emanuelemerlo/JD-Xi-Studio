@@ -339,11 +339,20 @@ class JDXiWindow(QMainWindow):
         midi.setToolTipsVisible(True)
         self._item(midi, tr("&Open…"), self._midi_file_load, QKeySequence.StandardKey.Open,
                    tr("Open a .mid file in the MIDI Player"))
-        self._item(midi, tr("&Save"), self._midi_file_save, QKeySequence.StandardKey.Save,
-                   tr("Save the MIDI file open in the MIDI Player"))
-        self._item(midi, tr("Save &as…"), self._midi_file_save_as, QKeySequence.StandardKey.SaveAs,
-                   tr("Save the MIDI file open in the MIDI Player under another name"))
+        self.midi_save_actions = [
+            self._item(midi, tr("&Save"), self._midi_file_save, QKeySequence.StandardKey.Save,
+                       tr("Save the MIDI file open in the MIDI Player")),
+            self._item(midi, tr("Save &as…"), self._midi_file_save_as, QKeySequence.StandardKey.SaveAs,
+                       tr("Save the MIDI file open in the MIDI Player under another name")),
+        ]
         midi.addSeparator()  # Recent MIDI Files go here
+        # Save / Save as only with a file in the player: checked when the menu
+        # opens and when the window comes in front (where the shortcuts work)
+        midi.aboutToShow.connect(self._refresh_menu_state)
+        file_menu.aboutToShow.connect(self._refresh_menu_state)
+        file_menu.addSeparator()
+        self._item(file_menu, tr("&Preferences…"), self.on_preferences, "Ctrl+,",
+                   tr("Language, startup and the editor's options"))
         file_menu.addSeparator()
         self._quit_action = self._item(file_menu, tr("&Quit"), self.close, "Ctrl+Q")
 
@@ -372,7 +381,7 @@ class JDXiWindow(QMainWindow):
 
         # --- JD-Xi: what is done on the instrument
         jdxi_menu = self._menu(tr("&JD-Xi"))
-        self._item(jdxi_menu, tr("&Save the program…"), self._save_on_jdxi, "Ctrl+Shift+J",
+        self.save_on_jdxi_action = self._item(jdxi_menu, tr("&Save the program…"), self._save_on_jdxi, "Ctrl+Shift+J",
                    tr("Keep the current program in a user slot (E–H), with the JD-Xi's WRITE"))
         self.dump_settings_action = self._item(
             jdxi_menu, tr("Send &all…"), self._dump_settings_to_synth, "Ctrl+Shift+D",
@@ -384,7 +393,7 @@ class JDXiWindow(QMainWindow):
         jdxi_menu.addSeparator()
         self._item(jdxi_menu, tr("&MIDI Configuration…"), self._show_midi_config, "Ctrl+Shift+M",
                    tr("The MIDI ports the JD-Xi is on"))
-        self._item(jdxi_menu, tr("Self-&test…"), self.show_self_test,
+        self.self_test_action = self._item(jdxi_menu, tr("Self-&test…"), self.show_self_test,
                    tip=tr("The app runs typical operations on the JD-Xi and checks the results"))
 
     def _create_parts_menu(self) -> None:
@@ -399,9 +408,6 @@ class JDXiWindow(QMainWindow):
     def _create_help_menu(self) -> None:
         # --- Tools: settings and what shows the traffic with the JD-Xi
         tools = self._menu(tr("&Tools"))
-        self._item(tools, tr("&Preferences…"), self.on_preferences, "Ctrl+,",
-                   tr("Language, startup and the editor's options"))
-        tools.addSeparator()
         self._item(tools, tr("MIDI &Monitor"), self._show_midi_message_monitor, "Ctrl+Alt+M",
                    tr("Every MIDI message in and out"))
         self._item(tools, tr("MIDI &SysEx Debugger"), self._show_midi_debugger, "Ctrl+Shift+Y",
@@ -700,6 +706,9 @@ class JDXiWindow(QMainWindow):
 
     def _midi_file_save_as(self):
         raise NotImplementedError("to be implemented in subclass")
+
+    def _refresh_menu_state(self) -> None:
+        """Enable the menu items whose condition is not the connection (see subclass)."""
 
     def _save_on_jdxi(self):
         raise NotImplementedError("to be implemented in subclass")

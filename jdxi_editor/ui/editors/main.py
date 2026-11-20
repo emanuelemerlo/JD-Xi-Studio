@@ -110,6 +110,22 @@ class MainEditor(QMainWindow):
         row.addWidget(self.tab_menu_button)
         row.addWidget(self.program_chip)
         row.addWidget(self.connection_label)
+        # «Keyboard»: the keyboard window in front, wherever it is (no Alt+Tab)
+        from jdxi_editor.ui.windows.jdxi.window_buttons import switch_button
+
+        self.keyboard_button = switch_button(tr("Keyboard"))
+        self.keyboard_button.setToolTip(tr("Bring the keyboard window to the front (Ctrl+Shift+K)"))
+        self.keyboard_button.setStyleSheet(  # as tall as the chips beside it
+            "QToolButton { color: #e6e6e6; background: #1b1c1f; border: 1px solid #2a2d33;"
+            " border-radius: 6px; padding: 4px 10px; font-size: 12px; }"
+            "QToolButton:hover { border-color: #ff2a1a; }"
+        )
+        bring = getattr(self.jdxi_main_window, "bring_keyboard_to_front", None)
+        if callable(bring):
+            self.keyboard_button.clicked.connect(bring)
+        else:
+            self.keyboard_button.setVisible(False)
+        row.addWidget(self.keyboard_button)
         self.editor_tab_widget.setCornerWidget(right, Qt.Corner.TopRightCorner)
 
         self._program_name = ""

@@ -90,6 +90,7 @@ from jdxi_editor.midi.sysex.sections import SysExSection
 from jdxi_editor.project import __package_name__
 from jdxi_editor.ui.dialogs.about import UiAboutDialog
 from jdxi_editor.ui.dialogs.settings import UiPreferencesDialog
+from jdxi_editor.ui.windows.jdxi.window_buttons import switch_button
 from jdxi_editor.ui.editors.config import EditorConfig
 from jdxi_editor.ui.editors.helpers.program import (
     calculate_midi_values,
@@ -172,6 +173,7 @@ class JDXiInstrument(JDXiWindow):
         self.recent_files_menu = None
         # Add Recent Files menu now that recent_files_manager is initialized
         self._add_recent_files_menu()
+        self._refresh_menu_state()  # nothing in the MIDI Player yet: Save off
         self._load_settings()
         self._toggle_illuminate_sequencer_lightshow(True)
         self._load_saved_favorites()
@@ -1149,14 +1151,6 @@ class JDXiInstrument(JDXiWindow):
         )
         self.on_top_action.setCheckable(True)
         menu.addAction(self.on_top_action)
-        menu.addSeparator()
-        menu.addAction(
-            self._menu_action(
-                tr("&Line up the editors with the keyboard"),
-                lambda: self.window_link.line_up(self.main_editor),
-                status_tip=tr("Place the editors window right above the keyboard"),
-            )
-        )
         self.menuBar().insertMenu(self.help_menu.menuAction(), menu)
         self.window_menu = menu
         # The editors where they were left
@@ -1171,6 +1165,22 @@ class JDXiInstrument(JDXiWindow):
         # the pin next to minimise / maximise / close
         self.on_top_pin = self.window_buttons.pin_button
         self.on_top_pin.toggled.connect(self.set_keyboard_on_top)
+        # «Editors», before the pin: the editors window in front, wherever it is
+        self.editors_button = switch_button(tr("Editors"))
+        self.editors_button.clicked.connect(self._show_main_editor)
+        self.window_buttons.layout().insertWidget(0, self.editors_button)
+        self._switch_tips()
+
+    def _switch_tips(self) -> None:
+        """The Editors button's tooltip; with the keyboard always on top it says
+        that the editors come in front of everything but the keyboard."""
+        button = getattr(self, "editors_button", None)
+        if button is None:
+            return
+        tip = tr("Bring the editors window to the front (Ctrl+Shift+W)")
+        if self.windowFlags() & Qt.WindowType.WindowStaysOnTopHint:
+            tip += "\n" + tr("The keyboard is always on top: where they overlap, it stays over the editors")
+        button.setToolTip(tip)
 
     def bring_keyboard_to_front(self) -> None:
         """The keyboard window in front (from an editor window too: Ctrl+Shift+K)."""
@@ -1203,6 +1213,7 @@ class JDXiInstrument(JDXiWindow):
             self._dialogs_in_front.deleteLater()
             self._dialogs_in_front = None
         self.on_top_action.setChecked(on)
+        self._switch_tips()
         pin = getattr(self, "on_top_pin", None)
         if pin is not None and pin.isChecked() != on:
             pin.setChecked(on)
@@ -1611,6 +1622,8 @@ class JDXiInstrument(JDXiWindow):
             ("save_patch_action", tr("Connect the JD-Xi: a patch saved without it would hold values it never had")),
             ("dump_settings_action", tr("Connect the JD-Xi to send it the settings")),
             ("update_user_programs_action", tr("Connect the JD-Xi to read its user programs")),
+            ("save_on_jdxi_action", tr("Connect the JD-Xi to save the program on it")),
+            ("self_test_action", tr("Connect the JD-Xi: the self-test runs on it")),
         ):
             action = getattr(self, name, None)
             if action is not None:
@@ -1928,6 +1941,17 @@ class JDXiInstrument(JDXiWindow):
             self.show_editor("midi_player")
         self.midi_file_editor.midi_save_file_as()
         self.show_editor("midi_player")
+
+    def _refresh_menu_state(self) -> None:
+        """File › MIDI Player › Save / Save as: only with a file in the player."""
+        player = self.get_existing_editor(MidiFilePlayer)
+        state = getattr(player, "midi_state", None)
+        loaded = getattr(state, "file", None) is not None
+        for action, tip in zip(getattr(self, "midi_save_actions", []), (
+                tr("Save the MIDI file open in the MIDI Player"),
+                tr("Save the MIDI file open in the MIDI Player under another name"))):
+            action.setEnabled(loaded)
+            action.setToolTip(tip if loaded else f"{tip}\n{tr('Open a MIDI file in the MIDI Player first')}")
 
     def _save_on_jdxi(self) -> None:
         """JD-Xi › Save the program: the Programs tab's guided WRITE."""

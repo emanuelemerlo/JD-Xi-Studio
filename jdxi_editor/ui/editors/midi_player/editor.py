@@ -1400,6 +1400,10 @@ class MidiFilePlayer(SynthEditor):
         # Notify Pattern Sequencer if it exists
         if notify_pattern_sequencer:
             self._notify_pattern_sequencer_file_loaded()
+        # File › MIDI Player › Save / Save as: on now that there is a file
+        refresh = getattr(self.parent, "_refresh_menu_state", None)
+        if callable(refresh):
+            refresh()
 
         # Add to recent files if parent has recent_files_manager
         if update_recent_files and (

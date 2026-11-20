@@ -274,7 +274,34 @@ def test_the_main_menus_match_the_app(window, monkeypatch):
     assert all(a.text().endswith("…") for a in items("JD-Xi") if a.text())
     assert not [a.text() for a in items("JD-Xi") if "JD-Xi" in a.text()]  # the menu says it
     file_menu = {a.text().replace("&", ""): a for a in items("File") if a.text()}
-    assert list(file_menu) == ["Patch", "MIDI Player", "Quit"]
+    assert list(file_menu) == ["Patch", "MIDI Player", "Preferences…", "Quit"]
+    assert not [a.text() for a in items("Tools") if "Preferences" in a.text()]
+    # Save / Save as only with a file in the MIDI Player (none here)
+    assert window.midi_save_actions and not [a for a in window.midi_save_actions if a.isEnabled()]
+    assert all("Open a MIDI file" in a.toolTip() for a in window.midi_save_actions)
+    from types import SimpleNamespace
+
+    monkeypatch.setattr(window, "midifileplayer_instance",
+                        SimpleNamespace(midi_state=SimpleNamespace(file=object())), raising=False)
+    window._refresh_menu_state()  # what the player calls once a file is loaded
+    assert all(a.isEnabled() and "Open a MIDI file" not in a.toolTip() for a in window.midi_save_actions)
+    # what needs the JD-Xi is off offline, the tooltip saying why
+    if not window.connection.can_talk():
+        for action in (window.save_on_jdxi_action, window.dump_settings_action,
+                       window.update_user_programs_action, window.self_test_action,
+                       window.save_patch_action):
+            assert not action.isEnabled() and "Connect the JD-Xi" in action.toolTip(), action.text()
+    window_menu = [a.text().replace("&", "") for a in items("Window") if a.text()]
+    assert not [t for t in window_menu if "Line up" in t]
+    # a button on each window brings the other one in front
+    assert window.editors_button.text() == "Editors"
+    window._show_main_editor()
+    assert window.main_editor.keyboard_button.text() == "Keyboard"
+    window.main_editor.keyboard_button.click()
+    window.set_keyboard_on_top(True)
+    assert "always on top" in window.editors_button.toolTip()
+    window.set_keyboard_on_top(False)
+    assert "always on top" not in window.editors_button.toolTip()
     for sub in ("Patch", "MIDI Player"):
         for action in file_menu[sub].menu().actions():
             if action.text() and action.menu() is None:
@@ -284,7 +311,8 @@ def test_the_main_menus_match_the_app(window, monkeypatch):
     # Send all asks first, naming the editors, and does nothing on No
     asked = []
     monkeypatch.setattr(QMessageBox, "question", lambda *a, **k: asked.append(a[2]) or QMessageBox.StandardButton.No)
-    window.midi_helper.midi_out = type("Out", (), {"is_port_open": lambda self: True})()
+    monkeypatch.setattr(window.midi_helper, "midi_out",
+                        type("Out", (), {"is_port_open": lambda self: True, "close_port": lambda self: None})())
     sent = []
     monkeypatch.setattr(window.midi_helper, "send_raw_message", lambda m: sent.append(m) or True)
     window._dump_settings_to_synth()

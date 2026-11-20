@@ -24,6 +24,21 @@ MENU_BAR_STYLE = (
 )
 
 
+def switch_button(text: str) -> QToolButton:
+    """A text button that brings the other window (editors / keyboard) to the
+    front: no Alt+Tab, also with the windows on two screens."""
+    button = QToolButton()
+    button.setText(text)
+    button.setCursor(Qt.CursorShape.PointingHandCursor)
+    button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+    button.setStyleSheet(
+        "QToolButton { color: #e6e6e6; background: transparent; border: 1px solid #3a3c42;"
+        " border-radius: 4px; padding: 0 8px; margin: 1px 8px 1px 0; }"
+        "QToolButton:hover { border-color: #ff2a1a; background: #333333; }"
+    )
+    return button
+
+
 class _WindowButton(QToolButton):
     """A flat button with its symbol drawn, so it looks the same everywhere."""
 

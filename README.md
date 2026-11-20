@@ -122,7 +122,7 @@ PyAudio needs the PortAudio library (macOS `brew install portaudio`, Debian/Ubun
 
 ## 🌍 Languages
 
-The interface is in **English** and **Italiano**: choose it in **Tools › Preferences › Interface
+The interface is in **English** and **Italiano**: choose it in **File › Preferences › Interface
 language** ("Same as the system" follows the operating system; the change applies at the next start).
 Parameter names (Cutoff, Resonance, Porta Time…) stay as on the JD-Xi's display and in Roland's
 manuals, so what you read matches the instrument. To add a language, see

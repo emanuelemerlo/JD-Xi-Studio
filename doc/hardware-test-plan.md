@@ -118,6 +118,8 @@ al tuo resoconto.
 | 3.6 | All'avvio, senza toccare nulla | Entro 2–3 secondi il display mostra il programma e il tono della parte del JD-Xi (non «Init Tone»); gli slider del pannello sono sui valori del tono |
 | 3.7 | Scegli la parte nell'app, poi cambia tono **dal JD-Xi** | Entro ~2 secondi il display mostra il nuovo tono e gli slider si spostano sui suoi valori |
 | 3.8 | OCTAVE −/+ **sul JD-Xi** | Entro ~2 secondi si accende Octave − o + nell'app |
+| 3.9 | Finestre su due monitor (o sovrapposte): **Editor** nella barra dei menu della tastiera, poi **Tastiera** in alto a destra negli editor; ripeti con lo spillo attivo | Ogni pulsante porta l'altra finestra davanti, sul suo monitor, senza Alt+Tab; con lo spillo gli editor vengono avanti ma, dove si sovrappongono, restano sotto la tastiera |
+| 3.10 | JD-Xi scollegato: apri i menu File e JD-Xi | Spenti, con il motivo nel suggerimento: Patch › Salva…, MIDI Player › Salva / Salva con nome (finché non apri un file), Salva il programma, Invia tutto, Leggi i programmi utente, Autotest |
 | 3.9 | Suona sulla tastiera del JD-Xi, poi ripeti con OCTAVE +1 e −1 | Nella finestra si illuminano i tasti nella stessa posizione di quelli premuti, a ogni ottava (anche il Do più alto e il più basso); rilasciati, si spengono |
 | 3.9a | Muovi la leva pitch e la rotella mod del JD-Xi; poi muovi quelle della finestra e lasciale | Le rotelle della finestra seguono quelle del JD-Xi; la leva pitch della finestra, lasciata, torna al centro e il suono torna intonato; la mod resta dove la lasci |
 | 3.9b | Con Digital 1 mostrato, gira sul JD-Xi Cutoff, Resonance, Level, LFO Rate e le manopole degli effetti (Reverb, Delay) | Gli slider della finestra si muovono subito con le manopole (non dopo un paio di secondi) |
@@ -260,7 +262,7 @@ TC-xx della proposta; gli stessi casi girano in automatico con un JD-Xi simulato
 
 | | Fai | Deve succedere |
 |---|---|---|
-| 11.1 | Preferenze (Ctrl+, oppure Strumenti › Preferenze): livello di log WARNING, OK; riaprile | Resta WARNING; dopo il riavvio il log contiene solo avvisi ed errori |
+| 11.1 | Preferenze (Ctrl+, oppure File › Preferenze): livello di log WARNING, OK; riaprile | Resta WARNING; dopo il riavvio il log contiene solo avvisi ed errori |
 | 11.2 | Riporta il livello a INFO | — |
 | 11.3 | Strumenti › Visualizzatore log, scheda *Avvisi ed errori* | Annota ogni riga presente: è la lista dei problemi visti dal programma |
 | 11.4 | Chiudi il programma | Si chiude entro qualche secondo; la porta MIDI torna libera (lo script `--list` la vede) |

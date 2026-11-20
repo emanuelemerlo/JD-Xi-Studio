@@ -99,7 +99,7 @@ The simplest way to install JD-Xi Studio is using our pre-built packages. These 
    - The files are not signed: if SmartScreen warns, choose "More info" → "Run anyway"
    - Connect the JD-Xi by USB before starting the editor, then choose its MIDI ports in the
      MIDI configuration dialog. Without a JD-Xi the editor opens anyway (Off-line, with a badge in every window)
-   - The interface language is chosen in Tools › Preferences › Interface language
+   - The interface language is chosen in File › Preferences › Interface language
      (English, Italiano, or the system's); it applies at the next start
 
 **Linux Installation**
