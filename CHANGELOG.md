@@ -31,6 +31,8 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   mid-song comes with its bank select; a track's velocity scale at 0 silences it.
 
 ### Fixed
+- On 1080p screens the envelopes, filter curves and LFO views were squashed (an envelope ~68 px
+  high): about 90 px now, room to drag their points.
 - MIDI Player: Play, Stop, Pause, Panic, Load and Save at one width (the first four stretched with
   the window, Load and Save stayed small).
 - A typed name (program, tones, drum kit) is an edit: one Undo step, «Modified» (it was taken for

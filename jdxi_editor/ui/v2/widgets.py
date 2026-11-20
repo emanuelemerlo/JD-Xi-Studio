@@ -543,7 +543,9 @@ class _Graph(QWidget):
         super().__init__(parent)
         self.accent = QColor(accent)
         self.hub = hub
-        self.setMinimumHeight(max(56, round(height * 0.62)) if density.compact() else height)
+        # compact screens: a little lower, not squashed (at 62 % an envelope was
+        # ~68 px high, too little room to drag its points)
+        self.setMinimumHeight(max(84, round(height * 0.8)) if density.compact() else height)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self.setMouseTracking(True)
         self._drag: Optional[int] = None
