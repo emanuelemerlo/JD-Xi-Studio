@@ -80,7 +80,10 @@ def test_slots_free_proposed_and_confirmation(app):
     session = rig.session
     assert session.proposed() == "E02"  # «Init Program»
     assert session.needs_confirmation("E01") and not session.needs_confirmation("E02")
-    assert not session.needs_confirmation("F10")  # nothing known: free
+    # nothing known is not free (review 3.3): the database may be old
+    assert session.needs_confirmation("F10")
+    assert session.known_name("F10") == "" and not ww.is_free("")
+    assert not any(free for slot, _name, free in session.slots() if slot == "F10")
     assert ww.clean_name("Bass ½ très long name") == "Bass   tr s "  # ASCII only, 12 characters
     assert len(ww.clean_name("x")) == 12
 
@@ -136,3 +139,11 @@ def test_the_dialog_walks_the_steps(app, monkeypatch):
     monkeypatch.setattr(dialog2, "confirm_overwrite", lambda slot: False)
     dialog2.prepare()
     assert dialog2.pages.currentIndex() == 0
+    # a slot whose content is not known asks too, and says so
+    dialog3 = ww.WriteDialog(rig.session, "x")
+    dialog3.slot_combo.setCurrentIndex(dialog3.slot_combo.findData("F10"))
+    assert "content not known" in dialog3.slot_combo.currentText()
+    asked = []
+    monkeypatch.setattr(dialog3, "confirm_overwrite", lambda slot: asked.append(slot) or False)
+    dialog3.prepare()
+    assert asked == ["F10"] and dialog3.pages.currentIndex() == 0

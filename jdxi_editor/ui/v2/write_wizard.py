@@ -39,7 +39,10 @@ from jdxi_editor.i18n import tr
 from jdxi_editor.midi.io.synth_state import parts_that_differ
 
 USER_BANKS = "EFGH"
-FREE_NAMES = ("init program", "init tone", "")
+# a slot holding the init program is probably free; a slot with no name known
+# is NOT: the database may be old or incomplete, and the JD-Xi cannot be asked
+# without loading the slot (which would replace the sound being saved)
+FREE_NAMES = ("init program", "init tone")
 NAME_ADDRESS = bytes.fromhex("18000000")  # Program Common: the name, 12 characters
 NAME_LENGTH = 12
 
@@ -93,7 +96,12 @@ class WriteSession(QObject):
         return next((slot for slot, _n, free in self.slots() if free), "E01")
 
     def needs_confirmation(self, slot: str) -> bool:
+        """Every slot but one known to hold the init program (unknown ≠ free)."""
         return not is_free(getattr(self.programs.get(slot.upper()), "name", ""))
+
+    def known_name(self, slot: str) -> str:
+        """The name the database has for *slot* ("" when nothing is known)."""
+        return (getattr(self.programs.get(slot.upper()), "name", "") or "").strip()
 
     # ------------------------------------------------------------- the steps
     def prepare(self, name: str, done: Callable[[bool], None]) -> bool:
@@ -245,7 +253,7 @@ class WriteDialog(QDialog):
         row.addWidget(QLabel(tr("Slot:")))
         self.slot_combo = QComboBox()
         for slot, name, free in self.session.slots():
-            label = f"{slot}  {name}" if name else slot
+            label = f"{slot}  {name}" if name else f"{slot}  " + tr("(content not known)")
             if free:
                 label += "  — " + tr("probably free")
             self.slot_combo.addItem(label, slot)
@@ -280,11 +288,15 @@ class WriteDialog(QDialog):
         return self.slot_combo.currentData() or "E01"
 
     def confirm_overwrite(self, slot: str) -> bool:
-        """A slot that holds a program: say which, and ask (not the default button)."""
-        name = (getattr(self.session.programs.get(slot), "name", "") or "").strip()
-        box = QMessageBox(QMessageBox.Icon.Warning, tr("Replace a program"),
-                          tr("Replace {slot} «{name}»? The program in it is lost.").format(slot=slot, name=name),
-                          parent=self)
+        """A slot that holds a program, or whose content is not known: say
+        which, and ask (not the default button)."""
+        name = self.session.known_name(slot)
+        if name:
+            text = tr("Replace {slot} «{name}»? The program in it is lost.").format(slot=slot, name=name)
+        else:
+            text = tr("What {slot} holds is not known (it is not in the user program database): "
+                      "if it holds a program, that program is lost. Write in {slot} anyway?").format(slot=slot)
+        box = QMessageBox(QMessageBox.Icon.Warning, tr("Replace a program"), text, parent=self)
         replace = box.addButton(tr("Replace {slot}").format(slot=slot), QMessageBox.ButtonRole.DestructiveRole)
         cancel = box.addButton(tr("Cancel"), QMessageBox.ButtonRole.RejectRole)
         box.setDefaultButton(cancel)

@@ -157,6 +157,22 @@ def test_the_common_dump_and_the_name(editor):
     assert editor.sent == [dt1([0x19, 0x01, 0x00, 0x00], [ord(c) for c in "Saw Lead".ljust(12)])]
 
 
+def test_a_typed_name_is_an_edit_with_one_undo_step(editor):
+    """Review 3.2: the name typed by the user was taken for a value from the
+    JD-Xi (no Undo, no «Modified», and it became the original)."""
+    editor.receive_dt1(dt1([0x19, 0x01, 0x00, 0x00], [ord(c) for c in "JP8 Strings "]))
+    editor.history.reset()
+    editor.sent.clear()
+    editor.name_field.setText("Saw Lead")
+    editor.name_field.editingFinished.emit()
+    assert editor.history.modified
+    assert editor.sent == [dt1([0x19, 0x01, 0x00, 0x00], [ord(c) for c in "Saw Lead".ljust(12)])]  # one message
+    assert editor.history.undo()  # the whole name in one step
+    assert editor.name_field.text() == "JP8 Strings"
+    assert not editor.history.modified
+    assert editor.history.redo() and editor.name_field.text() == "Saw Lead"
+
+
 def test_controls_without_effect_are_greyed_out(editor):
     v = lambda name: editor.partial(name, 0)  # noqa: E731
     v("OSC_WAVE").setValue(2)  # PW-SQR

@@ -221,10 +221,20 @@ class NameField(QLineEdit):
         if text.rstrip() == self.text_from_values():
             return
         codes = [ord(ch) for ch in text]
-        for pv, code in zip(self.pvs, codes):
-            pv.blockSignals(True)
-            pv.setValue(code)
-            pv.blockSignals(False)
+        # A change by the user, like any other: one Undo step for the whole
+        # name and «Modified» (not blocked signals, which mean «a value from
+        # the JD-Xi» to the history); the name still goes out in one message
+        history = getattr(self.pvs[0], "_edit_history", None) if self.pvs else None
+        if history is not None:
+            history.begin_group()
+        self.editor._hold_sends = True
+        try:
+            for pv, code in zip(self.pvs, codes):
+                pv.setValue(code)
+        finally:
+            self.editor._hold_sends = False
+            if history is not None:
+                history.end_group()
         self.editor.send_bytes(self.address, codes)
 
 
@@ -244,6 +254,7 @@ class V2Editor(SynthBase):
         self.values: dict[PSpec, ParamValue] = {}
         self.block_of: dict[PSpec, Block] = {}
         self._pending: dict = {}
+        self._hold_sends = False
         self._send_timer = QTimer(self)
         self._send_timer.setInterval(SEND_INTERVAL_MS)
         self._send_timer.timeout.connect(self._flush_pending)
@@ -446,6 +457,8 @@ class V2Editor(SynthBase):
 
     # ------------------------------------------------------------- sending
     def _queue_send(self, spec: PSpec, value: int) -> None:
+        if self._hold_sends:  # a name: sent as one message by NameField
+            return
         self._pending[spec] = value
         if not self._send_timer.isActive():
             self._flush_pending()

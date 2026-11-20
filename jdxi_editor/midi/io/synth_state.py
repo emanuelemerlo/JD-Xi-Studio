@@ -102,12 +102,20 @@ class SynthState:
                 if sent is not None and sent != (int(value) & 0x7F):
                     self._different[linear] = (sent, int(value) & 0x7F)
 
-    def program_changed(self) -> None:
-        """A new program on the JD-Xi: nothing of the old one holds."""
-        self.confirmed.clear()
+    def program_changed(self, ranges: Optional[Sequence[tuple[int, int]]] = None) -> None:
+        """A new program on the JD-Xi: nothing of the old one holds. With
+        *ranges* (linear [start, end)), only a part changed: only those bytes."""
+        if ranges is None:
+            self.confirmed.clear()
+            with self._lock:
+                self._pending.clear()
+                self._different.clear()
+            return
+        self.confirmed.forget(ranges)
         with self._lock:
-            self._pending.clear()
-            self._different.clear()
+            for table in (self._pending, self._different):
+                for linear in [k for k in table if any(s <= k < e for s, e in ranges)]:
+                    del table[linear]
 
     # -------------------------------------------------------------- queries
     def pending_count(self) -> int:

@@ -75,7 +75,8 @@ def test_the_reference_follows_loads_and_saves(app, fresh):
     fresh.slot_saved("E14")
     assert row.plain_text().startswith("Program E14") and row.plain_text().endswith("saved in E14")
     editor.history.set_modified(True)
-    assert row.plain_text().endswith("modified, temporary")
+    # no connection known (no MIDI helper): not sent, never «temporary» (review 4.1)
+    assert row.plain_text().endswith("modified, not sent (Off-line)")
 
 
 def test_a_file_saved_after_a_slot_is_the_reference(app, fresh):
@@ -103,4 +104,4 @@ def test_the_programs_page_shows_the_program_and_any_modified_part(app, fresh, m
     fresh.program_loaded("B03", "CLUBBIN'")
     assert row.plain_text() == "Program B03 «CLUBBIN'» · original"
     changed.modified = True
-    assert row.plain_text() == "Program B03 «CLUBBIN'» · modified, temporary"
+    assert row.plain_text() == "Program B03 «CLUBBIN'» · modified, not sent (Off-line)"
