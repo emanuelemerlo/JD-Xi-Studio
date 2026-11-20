@@ -96,6 +96,7 @@ class MidiIOHelper(MidiInHandler, MidiOutHandler):
     # (MidiOutHandler) was listed but never delivered, so nothing heard the
     # messages sent (MIDI OUT light, MIDI monitor, the window's follower)
     midi_message_outgoing = Signal(object)
+    midi_send_failed = Signal(str)
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:

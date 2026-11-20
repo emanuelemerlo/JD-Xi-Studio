@@ -12,6 +12,15 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   mid-song comes with its bank select; a track's velocity scale at 0 silences it.
 
 ### Fixed
+- A typed name (program, tones, drum kit) is an edit: one Undo step, «Modified» (it was taken for
+  a value from the JD-Xi: no Undo, and it became the original).
+- Save on the JD-Xi: a slot whose content is not known asks before writing and is no longer
+  proposed as probably free (only slots known to hold the init program are).
+- A tone change on one part forgets only that part's data; the others stay known and confirmed
+  (A/B photos of the other parts can still be recalled). Program changes on channels the JD-Xi does
+  not play change nothing.
+- A message the MIDI port refuses no longer counts as held by the JD-Xi; the window says so.
+- The context line says «not sent» when no connection is known (it said «temporary»).
 - USB recording: stereo (it saved only one channel of the JD-Xi); only the devices that can record
   are listed, and the JD-Xi's input is chosen (it could pick its output, which cannot record); the
   format is 16 bit (the 32 bit the interface asked for was never used).

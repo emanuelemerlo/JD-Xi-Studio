@@ -160,7 +160,8 @@ class ContextRow(QLabel):
         return any(h.modified for h in history.histories())
 
     def _online(self) -> bool:
-        return self._connection is None or self._connection.can_talk()
+        # no connection known is not a connection: «not sent» (review 4.1)
+        return self._connection is not None and self._connection.can_talk()
 
     def plain_text(self) -> str:
         """The line without markup (for tests and tooltips)."""

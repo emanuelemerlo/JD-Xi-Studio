@@ -163,6 +163,19 @@ class JDXiDevice:
                          if not any(s <= k < e for s, e in ranges)}
         self.state.program_changed(ranges)
 
+    def send_failed(self, message: Sequence[int]) -> None:
+        """*message* was recorded by sent() but did not go out: what it would
+        have written is not known any more (not «held»), nothing is pending."""
+        body = _roland_body([int(b) for b in message])
+        if body is None or body[6] != DT1_COMMAND:
+            return
+        start = address_to_linear(body[7:11])
+        span = [(start, start + len(body[11:-1]))]
+        self.memory.forget(span)
+        self.state.program_changed(span)  # neither confirmed nor pending there
+        for offset in range(len(body[11:-1])):
+            self._written.pop(start + offset, None)
+
     def before_send(self, message: Sequence[int]) -> bool:
         """False if *message* must not be sent (a DT1 echoing received data)."""
         return not self.echo_guard.is_echo(message)

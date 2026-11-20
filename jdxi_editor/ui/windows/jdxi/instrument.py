@@ -382,6 +382,7 @@ class JDXiInstrument(JDXiWindow):
         self.midi_helper.update_program_name.connect(self.set_current_program_name)
         self.midi_helper.midi_message_incoming.connect(self._midi_blink_input)
         self.midi_helper.midi_message_outgoing.connect(self._midi_blink_output)
+        self.midi_helper.midi_send_failed.connect(self._midi_send_failed)
         self.midi_helper.update_tone_name.connect(
             lambda tone_name, synth_type: self.set_tone_name_by_type(
                 tone_name, synth_type
@@ -2136,6 +2137,13 @@ class JDXiInstrument(JDXiWindow):
                 message=f" Error dumping settings to synth: {ex}",
             )
             self._report_outcome(tr("Send all"), 0, 1)
+
+    def _midi_send_failed(self, reason: str) -> None:
+        """A message did not go out: say so (it stays until another message);
+        what it would have written counts as not known, not as held."""
+        self.statusBar().showMessage(
+            tr("A change could not be sent to the JD-Xi ({reason}): the JD-Xi may hold "
+               "another value than the editors show.").format(reason=reason or "?"), 0)
 
     def _report_outcome(self, what: str, done: int, failed: int) -> str:
         """Say how an operation that sends to the JD-Xi ended: complete, partial or failed

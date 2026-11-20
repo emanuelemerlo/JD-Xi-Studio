@@ -122,6 +122,33 @@ def test_helper_reports_traffic_to_its_device():
         helper.device.memory.clear()
 
 
+def test_a_write_the_port_refuses_is_not_held_nor_pending():
+    """Review 3.1: sent() records a write before it goes out (a fast reply
+    must find it); when the port then refuses it, it is forgotten, and the
+    window is told."""
+    helper = MidiIOHelper()
+    helper.device.memory.clear()
+    helper.device.received(_REPLY)  # Analog known and confirmed
+    saved_out = helper.midi_out
+    helper.midi_out = Mock()
+    helper.midi_out.is_port_open = Mock(return_value=True)
+    helper.midi_out.send_message.side_effect = OSError("device unplugged")
+    told = []
+    helper.midi_send_failed.connect(told.append)
+    try:
+        assert helper.send_raw_message(list(_WRITE)) is False
+        assert helper.device.memory.read(bytes.fromhex("19420003"), 1) is None  # not «held»
+        assert helper.device.memory.read(_ADDRESS, 3) == bytes([0, 1, 2])  # the rest still known
+        assert helper.device.state.pending_count() == 0
+        assert not helper.device.state.is_confirmed(bytes.fromhex("19420003"))
+        assert told and "unplugged" in told[0]
+    finally:
+        helper.midi_send_failed.disconnect(told.append)
+        helper.midi_out = saved_out
+        helper.device.memory.clear()
+        helper.device.state.program_changed()
+
+
 def test_a_reply_asked_for_before_a_write_keeps_the_written_value():
     """RQ1, then the editor writes Cutoff, then the reply (with the old Cutoff) arrives:
     the reply carries the written value, so the editor does not jump back."""
