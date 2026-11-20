@@ -78,6 +78,22 @@ def test_the_reference_follows_loads_and_saves(app, fresh):
     assert row.plain_text().endswith("modified, temporary")
 
 
+def test_a_file_saved_after_a_slot_is_the_reference(app, fresh):
+    """Saved in E14, changed, then saved to a file: E14 no longer holds the
+    sound, the state is the file's (the last save wins)."""
+    editor = Editor("digital_1")
+    row = ctx.ContextRow(editor)
+    fresh.program_loaded("E12", "My Bass")
+    fresh.slot_saved("E14")
+    assert row.plain_text().endswith("saved in E14")
+    editor.history.set_modified(True)
+    fresh.file_saved("/x/My Bass 2.msz")
+    editor.history.set_modified(False)
+    assert row.plain_text().endswith("saved to file «My Bass 2.msz»")
+    fresh.slot_saved("E15")
+    assert row.plain_text().endswith("saved in E15")
+
+
 def test_the_programs_page_shows_the_program_and_any_modified_part(app, fresh, monkeypatch):
     from jdxi_editor.ui.v2 import history
 
