@@ -120,7 +120,9 @@ class USBFileRecordingWidget(JDXiMidiGroup):
         # row += 1
 
         # --- Row 2 still: Save USB recording checkbox
-        self.file_record_checkbox = QCheckBox(tr("Save"))
+        self.file_record_checkbox = QCheckBox(tr("Record on every Play"))
+        self.file_record_checkbox.setToolTip(tr(
+            "Record the JD-Xi's USB audio into a WAV on every Play, until 10 s after the song ends"))
         JDXi.UI.Theme.apply_button_mini_style(self.file_record_checkbox)
         self.file_record_checkbox.setChecked(self.recorder.file_save_recording)
         self.file_record_checkbox.stateChanged.connect(

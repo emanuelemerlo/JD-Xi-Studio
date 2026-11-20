@@ -58,7 +58,6 @@
         </message>
         <message>
             <location filename="../../jdxi_editor/i18n/ui_strings.py" line="13" />
-            <location filename="../../jdxi_editor/ui/widgets/usb/recording.py" line="123" />
             <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="69" />
             <location filename="../../jdxi_editor/ui/windows/patch/name_editor.py" line="128" />
             <source>Save</source>
@@ -846,18 +845,18 @@
             <translation>Nessuna nota in questo file.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="117" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="136" />
             <location filename="../../jdxi_editor/ui/v2/players.py" line="404" />
             <source>Fit to the JD-Xi</source>
             <translation>Adatta al JD-Xi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="121" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="140" />
             <source>The JD-Xi plays four parts: Digital 1, Digital 2, Analog, Drums. Choose the part for each track; «Not played» leaves it on its channel, silent on the JD-Xi. Several tracks can share a part. Nothing changes until Apply; the file on disk changes only when you save.</source>
             <translation>Il JD-Xi suona quattro parti: Digital 1, Digital 2, Analog, Drums. Scegli la parte per ogni traccia; «Non suonata» la lascia sul suo canale, muta sul JD-Xi. Più tracce possono condividere una parte. Non cambia nulla fino ad Applica; il file su disco cambia solo quando salvi.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="152" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="171" />
             <source>Apply</source>
             <translation>Applica</translation>
         </message>
@@ -872,22 +871,22 @@
             <translation>{off} tracce su {tracks} sono su canali che nessuna parte del JD-Xi suona: non si sentono.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="129" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="148" />
             <source>Track</source>
             <translation>Traccia</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="129" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="148" />
             <source>Notes</source>
             <translation>Note</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="129" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="148" />
             <source>Now</source>
             <translation>Ora</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="129" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="148" />
             <source>Part on the JD-Xi</source>
             <translation>Parte sul JD-Xi</translation>
         </message>
@@ -902,12 +901,12 @@
             <translation>Traccia {n}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="143" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="162" />
             <source>Not played (stays on channel {ch})</source>
             <translation>Non suonata (resta sul canale {ch})</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="144" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="163" />
             <source>Not played (to channel {ch})</source>
             <translation>Non suonata (sul canale {ch})</translation>
         </message>
@@ -1027,7 +1026,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         <message>
             <location filename="../../jdxi_editor/ui/editors/pattern/ui.py" line="472" />
             <location filename="../../jdxi_editor/ui/v2/players.py" line="202" />
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="417" />
+            <location filename="../../jdxi_editor/ui/v2/players.py" line="428" />
             <source>USB Recorder</source>
             <translation>Registratore USB</translation>
         </message>
@@ -4012,7 +4011,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/names.py" line="22" />
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="437" />
+            <location filename="../../jdxi_editor/ui/v2/players.py" line="448" />
             <source>MIDI Player</source>
             <translation>MIDI Player</translation>
         </message>
@@ -4460,17 +4459,17 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
             <translation>Canali in mute</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="415" />
+            <location filename="../../jdxi_editor/ui/v2/players.py" line="426" />
             <source>Playback</source>
             <translation>Riproduzione</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="416" />
+            <location filename="../../jdxi_editor/ui/v2/players.py" line="427" />
             <source>Automation</source>
             <translation>Automazione</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="419" />
+            <location filename="../../jdxi_editor/ui/v2/players.py" line="430" />
             <source>Event filter</source>
             <translation>Filtro eventi</translation>
         </message>
@@ -4622,7 +4621,7 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
             <translation>Silenzia questa parte mentre il pattern suona; i suoi passi restano.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="421" />
+            <location filename="../../jdxi_editor/ui/v2/players.py" line="432" />
             <source>Program changes (PC) and controllers (CC) of the file not sent to the JD-Xi.</source>
             <translation>Program change (PC) e controller (CC) del file da non inviare al JD-Xi.</translation>
         </message>
@@ -6395,6 +6394,32 @@ Le modifiche che non avevi salvato andrebbero perse. Le rimando al JD-Xi?</trans
             <translation>Uscita</translation>
         </message>
         <message>
+            <location filename="../../jdxi_editor/ui/v2/tracks_space.py" line="49" />
+            <source>Drag to make the tracks taller or shorter</source>
+            <translation>Trascina per allungare o accorciare le tracce (doppio clic: altezza normale)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/tracks_space.py" line="103" />
+            <source>Show the other cards again</source>
+            <translation>Mostra di nuovo gli altri riquadri</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/tracks_space.py" line="106" />
+            <source>More room for the tracks: hide Fit to the JD-Xi, Automation, USB recorder and Event filter (Player and Playback stay)</source>
+            <translation>Più spazio per le tracce: nasconde Adatta al JD-Xi, Automazione, Registratore USB e Filtro eventi (Player e Riproduzione restano)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/tracks_space.py" line="102" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/window_buttons.py" line="115" />
+            <source>Restore</source>
+            <translation>Ripristina</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/tracks_space.py" line="105" />
+            <source>Expand</source>
+            <translation>Espandi</translation>
+        </message>
+        <message>
             <location filename="../../jdxi_editor/ui/v2/vocal.py" line="152" />
             <source>VOCAL EFFECT OF THE PROGRAM</source>
             <translation>VOCAL FX DEL PROGRAMMA</translation>
@@ -7066,7 +7091,17 @@ Nota: se il Sync del JD-Xi è MIDI o AUTO, Start avvia anche il suo pattern sequ
             <translation>Nessun file scelto</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/usb/recording.py" line="133" />
+            <location filename="../../jdxi_editor/ui/widgets/usb/recording.py" line="123" />
+            <source>Record on every Play</source>
+            <translation>Registra a ogni Play</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/widgets/usb/recording.py" line="124" />
+            <source>Record the JD-Xi's USB audio into a WAV on every Play, until 10 s after the song ends</source>
+            <translation>Registra l'audio USB del JD-Xi in un WAV a ogni Play, fino a 10 s dopo la fine del brano</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/widgets/usb/recording.py" line="135" />
             <source>Auto-generate filename</source>
             <translation>Nome del file automatico</translation>
         </message>
@@ -7798,11 +7833,6 @@ L'elenco dei programmi mostra ora i nomi aggiornati.</translation>
             <location filename="../../jdxi_editor/ui/windows/jdxi/window_buttons.py" line="115" />
             <source>Maximize</source>
             <translation>Ingrandisci</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/window_buttons.py" line="115" />
-            <source>Restore</source>
-            <translation>Ripristina</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="132" />
