@@ -46,7 +46,7 @@ Key Features & Capabilities
 
 ** Pattern & MIDI Tools**
    - **Pattern Sequencer**: 4×16 step grid with MIDI load/save, part muting, USB recording
-   - **MIDI File Player**: Track classification, channel assignment, playback on the JD-Xi
+   - **MIDI Player**: fit a MIDI file to the JD-Xi's parts, play it, record the USB audio
 
 ** Performance Features**
    - **On-Screen Keyboard**: Play and test sounds directly from your computer
@@ -112,7 +112,7 @@ The application consists of two main windows that work together:
    - Vocal Effects (Vocoder, Auto-Pitch)
    - Arpeggiator
    - Pattern Sequencer
-   - MIDI File Player
+   - MIDI Player
    - Program Management (including System Settings)
 
 **Instrument Window**

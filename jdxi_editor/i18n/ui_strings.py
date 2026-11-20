@@ -22,6 +22,8 @@ UI_STRINGS = (
     tr("Add to Playlist"), tr("Delete from Playlist"), tr("New Playlist"), tr("Delete Playlist"),
     tr("Refresh Playlist"), tr("Save Changes"), tr("Mixer Level Settings"), tr("Program"), tr("Preset"),
     tr("Genre:"), tr("Bank:"), tr("Search programs..."), tr("Search presets..."), tr("Search playlists..."),
-    tr("-- Select a Playlist --"), tr("Program Name"), tr("MIDI File Name"), tr("Cheat Preset"), tr("Number"),
+    tr("-- Select a Playlist --"), tr("Program Name"), tr("MIDI File Name"), tr("Cheat Preset"), tr("Extra sound"), tr("Number"),
     tr("Description"), tr("Programs"), tr("Bank"), tr("Name"), tr("Genre"), tr("Play"),
+    tr("Digital 1 (channel 1)"), tr("Digital 2 (channel 2)"), tr("Analog (channel 3)"), tr("Drums (channel 10)"),
+    tr("Assign tracks to parts…"), tr("Starting sounds"),
 )

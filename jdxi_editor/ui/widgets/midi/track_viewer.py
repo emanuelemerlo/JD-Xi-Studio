@@ -5,6 +5,8 @@ Midi Track Viewer
 from copy import deepcopy
 
 import mido
+
+from jdxi_editor.midi.track.instrument import instrument_hint
 import qtawesome as qta
 from decologr import Decologr as log
 from PySide6.QtCore import QPoint, Qt, QEvent, QTimer, Signal
@@ -51,6 +53,7 @@ class MidiTrackViewer(QWidget):
         )
 
         self.midi_file = None
+        self._file_length = 0.0
         self.event_index = None
         self.ruler = TimeRulerWidget()
         self.midi_track_widgets = {}  # MidiTrackWidget()
@@ -280,7 +283,7 @@ class MidiTrackViewer(QWidget):
     def set_playhead(self, seconds: float | None) -> None:
         """Show the playback position on the ruler and every track (None hides it)."""
         self.ruler.set_playhead(seconds)
-        length = self.midi_file.length if self.midi_file else 0
+        length = self._file_length if self.midi_file else 0
         norm = None if seconds is None or not length else seconds / length
         for widget in self.midi_track_widgets.values():
             widget.set_playhead(norm)
@@ -654,13 +657,16 @@ class MidiTrackViewer(QWidget):
             changed.get(i, track) for i, track in enumerate(self.midi_file.tracks)
         )
         self.midi_file = new_midi
-        self.ruler.set_midi_file(new_midi)
+        # mido's length reads the whole file: once per file, not per track
+        # or per playhead step (seconds for a 45-track file)
+        self._file_length = new_midi.length
+        self.ruler.set_midi_file(new_midi, self._file_length)
         tick_to_seconds = build_tick_to_seconds(new_midi)
         for track_index, track in changed.items():
             widget = self.midi_track_widgets.get(track_index)
             if widget is not None:
                 widget.tick_to_seconds = tick_to_seconds
-                widget.set_track(track, new_midi.length, new_midi.ticks_per_beat)
+                widget.set_track(track, self._file_length, new_midi.ticks_per_beat)
             has_channel = any(hasattr(msg, "channel") for msg in track)
             first_channel = get_first_channel(track) + Midi.channel.BINARY_TO_DISPLAY
             part, pixmap = self._track_part(first_channel, has_channel)
@@ -756,7 +762,8 @@ class MidiTrackViewer(QWidget):
         log.message(f"Track index: {track_name}, Text: {text_edit.text()}")
         return lambda: self.change_track_name(track_name, text_edit.text())
 
-    def set_midi_file(self, midi_file: mido.MidiFile, keep_track_state: bool = False) -> None:
+    def set_midi_file(self, midi_file: mido.MidiFile, keep_track_state: bool = False,
+                      progress=None) -> None:
         """
         Set the MIDI file for the widget and create channel controls.
 
@@ -780,7 +787,8 @@ class MidiTrackViewer(QWidget):
             else {}
         )
         self.midi_file = midi_file
-        self.ruler.set_midi_file(midi_file)
+        self._file_length = midi_file.length  # once (see apply edits)
+        self.ruler.set_midi_file(midi_file, self._file_length)
 
         # Clear existing selectors if reloading
         if not hasattr(self, "channel_controls_vlayout"):
@@ -808,6 +816,8 @@ class MidiTrackViewer(QWidget):
         tick_to_seconds = build_tick_to_seconds(midi_file)
         # Create each track widget and add it to the layout
         for i, track in enumerate(midi_file.tracks):
+            if progress is not None:
+                progress(i, len(midi_file.tracks))  # building the rows is the long part
             hlayout = QHBoxLayout()
             first_channel = get_first_channel(track) + Midi.channel.BINARY_TO_DISPLAY
             # Optional: Get the track name to show in dialog
@@ -858,7 +868,10 @@ class MidiTrackViewer(QWidget):
             track_name_line_edit = QLineEdit()
             track_name_line_edit.setText(track_name.strip())
             track_name_line_edit.setCursorPosition(0)  # show the start of long names
-            track_name_line_edit.setPlaceholderText(tr("Unnamed"))
+            # no name in the file: what the track plays, in grey (the file
+            # is not changed; typing a name writes one)
+            hint = instrument_hint(track)
+            track_name_line_edit.setPlaceholderText(hint if hint else tr("Unnamed"))
             track_name_line_edit.setToolTip(tr("Track name (applied on Enter or when you click away)"))
             track_name_line_edit.editingFinished.connect(
                 lambda tr=i, le=track_name_line_edit: self._on_name_edited(tr, le.text())
@@ -930,8 +943,11 @@ class MidiTrackViewer(QWidget):
                     tr, sl.scale()
                 )
             )
-            velocity_slider.setVisible(has_notes)
             bottom_row.addWidget(velocity_slider)
+            # hide only: setVisible(True) on a widget not yet in a window
+            # opens it as a window of its own (a tiny window flashed per track)
+            if not has_notes:
+                velocity_slider.hide()
             self.track_velocity_sliders[i] = velocity_slider
 
             hlayout.addWidget(header)
@@ -940,7 +956,7 @@ class MidiTrackViewer(QWidget):
             self.midi_track_widgets[i] = MidiTrackWidget(
                 track=track,
                 track_number=i,
-                total_length=midi_file.length,
+                total_length=self._file_length,
                 ticks_per_beat=midi_file.ticks_per_beat,
                 tick_to_seconds=tick_to_seconds,
             )

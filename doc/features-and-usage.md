@@ -50,7 +50,7 @@ the internals of the first editors, replaced in 1.0 by the current ones.)
 | Arpeggiator | Yes |
 | Pattern Sequencer | No |
 | Program Editor | No |
-| MIDI File Player | MIDI saved separately in .msz |
+| MIDI Player | MIDI saved separately in .msz |
 
 ### Undo, Reload and unsaved changes
 

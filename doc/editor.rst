@@ -59,7 +59,7 @@ Available Editors
 ** Project & File Management Editors**
    Professional project organization and file handling:
 
-   - **MIDI File Player & Recorder**: Comprehensive MIDI and audio file handling with production tools
+   - **MIDI Player & Recorder**: Comprehensive MIDI and audio file handling with production tools
 
 Getting Started with Editor Windows
 ===================================

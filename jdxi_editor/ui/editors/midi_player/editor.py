@@ -376,6 +376,34 @@ class MidiFilePlayer(SynthEditor):
                 message=f"An error occurred while detecting drum tracks:\n\n{ex}",
             )
 
+    def fit_tracks_to_jdxi(self) -> None:
+        """Propose a JD-Xi part for every track with notes, to check and apply."""
+        if not self._validate_midi_loaded():
+            return
+        from jdxi_editor.ui.editors.midi_player.fit_jdxi import FitDialog, note_tracks, propose
+
+        tracks = note_tracks(self.midi_state.file)
+        drums = self._detect_drum_tracks()
+        proposal = propose(tracks, drums, self._classify_tracks(drums))
+        dialog = FitDialog(tracks, proposal, parent=self)
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return
+        spins = self.midi_file.midi_track_viewer.track_channel_spins
+        for index, channel in dialog.changes().items():
+            spin = spins.get(index)
+            if spin is not None:
+                spin.setValue(channel)  # applied like an edit by hand
+        self.midi_file.midi_track_viewer.flush_pending_edits()
+        self._refresh_fit_summary()
+
+    def _refresh_fit_summary(self) -> None:
+        """What the JD-Xi plays of the file, in the Fit to the JD-Xi group."""
+        from jdxi_editor.ui.editors.midi_player.fit_jdxi import summary
+
+        group = getattr(self, "classification_group", None)
+        if group is not None and getattr(group, "summary_label", None) is not None:
+            group.set_summary(*summary(self.midi_state.file))
+
     def classify_and_assign_tracks(self) -> None:
         """classify and assign tracks"""
         if not self._validate_midi_loaded():
@@ -982,6 +1010,7 @@ class MidiFilePlayer(SynthEditor):
                 btn.setChecked(channel in muted_channels)
                 btn.blockSignals(False)
         midi_file = self.midi_state.file
+        self._refresh_fit_summary()
         if midi_file is not None:
             self.mute_channels_group.set_used_channels(
                 {
@@ -1062,6 +1091,8 @@ class MidiFilePlayer(SynthEditor):
                 from jdxi_editor.ui.v2.history import paused
 
                 with paused():  # the file's own sounds: played, not asked
+                    # on channel 3 too: a Digital preset's bank select on the
+                    # Analog part is the JD-Xi's «cheat preset» (Digital sound)
                     self.midi_helper.send_bank_select_and_program_change(
                         channel=channel,
                         bank_msb=spec["MSB"],
@@ -1228,7 +1259,51 @@ class MidiFilePlayer(SynthEditor):
 
         self.midi_load_file_from_path(file_path)
 
-    def midi_load_file_from_path(
+    def midi_load_file_from_path(self, file_path: str, **options) -> bool:
+        """Load a MIDI file (see _load_file_from_path), saying meanwhile that it
+        is loading: a big file takes seconds and the window must not look stuck."""
+        from PySide6.QtWidgets import QApplication as Qt_app  # the module's QApplication is a test placeholder
+
+        status = getattr(self.window(), "statusBar", None)
+        status = status() if callable(status) else None
+        name = Path(file_path).name if file_path else ""
+        started = time.monotonic()
+        previous_title = self.ui.digital_title_file_name.text  # a property here
+        Qt_app.setOverrideCursor(Qt.CursorShape.WaitCursor)
+        try:
+            if name:
+                self.ui.digital_title_file_name.setText(tr("Loading {name}…").format(name=name))
+                if status is not None:
+                    status.showMessage(tr("Loading {name}…").format(name=name))
+                Qt_app.processEvents()  # show it before the work starts
+            loaded = self._load_file_from_path(file_path, **options)
+        finally:
+            Qt_app.restoreOverrideCursor()
+        if not loaded and name:  # the file that was there is still there
+            self.ui.digital_title_file_name.setText(previous_title)
+        if status is not None and name:
+            if loaded:
+                tracks = len(self.midi_state.file.tracks) if self.midi_state.file else 0
+                status.showMessage(tr("{name}: {tracks} tracks, loaded in {seconds:.1f} s").format(
+                    name=name, tracks=tracks, seconds=time.monotonic() - started), 8000)
+            else:
+                status.clearMessage()
+        return loaded
+
+    def _show_load_progress(self, track: int, tracks: int) -> None:
+        """On the player's own display: «Loading: track 12 of 45» (a few times
+        per second at most, so it costs nothing on small files)."""
+        from PySide6.QtWidgets import QApplication as Qt_app  # the module's QApplication is a test placeholder
+
+        now = time.monotonic()
+        if track and now - getattr(self, "_load_progress_shown", 0.0) < 0.15:
+            return
+        self._load_progress_shown = now
+        self.ui.digital_title_file_name.setText(
+            tr("Loading: track {track} of {tracks}").format(track=track + 1, tracks=tracks))
+        Qt_app.processEvents()
+
+    def _load_file_from_path(
         self,
         file_path: str,
         *,
@@ -1287,9 +1362,12 @@ class MidiFilePlayer(SynthEditor):
         # The rest of this method sets up playback; skip the file_changed handler
         self._loading_file = True
         try:
-            self.midi_file.midi_track_viewer.set_midi_file(self.midi_state.file)
+            self.midi_file.midi_track_viewer.set_midi_file(
+                self.midi_state.file, progress=self._show_load_progress
+            )
         finally:
             self._loading_file = False
+            self.ui.digital_title_file_name.setText(file_name)  # after the progress
         # Sync mute buttons after loading MIDI file
         self._sync_mute_buttons_from_track_viewer()
 
@@ -1313,6 +1391,7 @@ class MidiFilePlayer(SynthEditor):
         self._sync_transport_settings()
         self._loop_points = (None, None)
         self.playback_options.set_loop_points(None, None)
+        self.midi_file.midi_track_viewer.ruler.set_loop_marks(None, None)
         self._refresh_program_change_markers()
         self.calculate_duration()
         self.calculate_tick_duration()
@@ -1627,6 +1706,7 @@ class MidiFilePlayer(SynthEditor):
         else:
             self._loop_points = (a, b)
             self.playback_options.set_loop_points(a, b)
+            self.midi_file.midi_track_viewer.ruler.set_loop_marks(a, b)
 
     # --- Trim ---------------------------------------------------------------
 
@@ -1700,6 +1780,7 @@ class MidiFilePlayer(SynthEditor):
     def midi_loop_clear(self, *_args) -> None:
         """Forget the A–B range so Loop repeats the whole song."""
         self._loop_points = (None, None)
+        self.midi_file.midi_track_viewer.ruler.set_loop_marks(None, None)
         self.transport_controller.clear_loop_range()
 
     def _on_transport_loop_changed(self) -> None:
@@ -1710,7 +1791,9 @@ class MidiFilePlayer(SynthEditor):
         if loop_range is not None:
             self._loop_points = loop_range
         self.playback_options.set_loop_points(*self._loop_points)
-        self.midi_file.midi_track_viewer.ruler.set_loop_region(loop_range, enabled)
+        ruler = self.midi_file.midi_track_viewer.ruler
+        ruler.set_loop_marks(*self._loop_points)
+        ruler.set_loop_region(loop_range, enabled)
 
     def on_playback_speed_changed(self, percent: int) -> None:
         """Speed spin box (percent of the file's tempo)."""

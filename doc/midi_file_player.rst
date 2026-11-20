@@ -1,50 +1,70 @@
-MIDI File Player
+MIDI Player
+===========
+
+The **MIDI Player** plays MIDI files on the Roland JD-Xi: it says which of a file's tracks the
+JD-Xi plays, helps put them on its four parts, and records the JD-Xi's USB audio while it plays.
+
+What the JD-Xi plays
+====================
+
+The JD-Xi plays four parts, each on its own channel: **Digital 1** (1), **Digital 2** (2),
+**Analog** (3) and **Drums** (10). Notes on any other channel are not heard. A file made for the
+JD-Xi plays as it is; a general MIDI file (an orchestra on 16 channels) has to be fitted first.
+
+Fit to the JD-Xi
 ================
 
-The **MIDI File Player** plays MIDI files on the Roland JD-Xi. It includes track classification, channel assignment, and integration with the Pattern Editor.
+* A line says what of the file the JD-Xi plays: *Ready for the JD-Xi*, or for example
+  *28 of 44 tracks are on channels no JD-Xi part plays: they are not heard*.
+* **Assign tracks to parts…** proposes a part for each track that plays notes, in a table you
+  can change before **Apply**: the drum tracks to Drums; for each melodic part the one track
+  recognised best for it — the bass to Digital 1, keys or guitars to Digital 2, strings to Analog
+  (the Analog part plays one note at a time); the other tracks are not played. A track's channel
+  can also be set by hand in its header.
+* **Starting sounds** gives the parts a sound to start from, also written into the file:
+  Digital 1 Picked Bass, Digital 2 Piano, Analog JP8 Strings.
+* The mute buttons of channels 1, 2, 3 and 10 stand out; their tooltip says which part plays them.
 
-What is the MIDI File Player?
-==============================
+The file on disk changes only when you save it.
 
-The MIDI File Player loads standard MIDI files (.mid, .midi) and routes tracks to the JD-Xi's four parts: Digital 1 (Ch 1), Digital 2 (Ch 2), Analog (Ch 3), and Drums (Ch 10). You can classify tracks automatically, assign channels, and load the current file into the Pattern Editor for step editing.
+Tracks
+======
 
-Core Features
-=============
+* One row per track: name (when the file has none, the instrument it plays, in grey), channel,
+  part, mute, solo, velocity scale, and its notes on the time line.
+* **Expand** hides the cards not needed while listening (Fit to the JD-Xi, Automation,
+  USB recorder, Event filter) so the tracks take the room; Player and Playback stay.
+  **Restore** brings them back.
+* The grip under the Tracks card sets its height (remembered; double click: the usual height).
+* Loading a big file shows its progress on the player's display (*Loading: track 12 of 45*).
 
-**MIDI Playback**
-   - **Load files**: Open .mid or .midi files via File menu or drag-and-drop
-   - **Playback control**: Play, pause, stop, and seek
-   - **JD-Xi playback**: Routes MIDI to the connected synthesizer
-
-**Track Classification**
-   - **Detect Drums**: Identifies drum tracks and assigns them to MIDI Channel 10
-   - **Classify Tracks**: Classifies non-drum tracks into Bass (Ch 1), Keys/Guitars (Ch 2), and Strings (Ch 3)
-   - **Apply Presets**: Applies channel presets for JD-Xi part routing
-   - Track names and channels edited in the track list apply immediately
-
-**Channel Assignment**
-   - Channels 1, 2, 3 map to Digital 1, Digital 2, Analog
-   - Channel 10 maps to Drums
-   - Drag-and-drop track reordering and channel assignment in the track list
-
-**Pattern Editor Integration**
-   - **Load into Pattern Editor**: Loads the current MIDI file into the Pattern Sequencer for step editing
-
-**Format Support**
-   - Standard MIDI Files: .mid, .midi
-   - MIDI Type 0 and Type 1
-
-Workflow
+Playback
 ========
 
-1. **Load a MIDI file**: File → Open… or drag-and-drop
-2. **Assign channels** (optional): use **Detect Drums** and **Classify Tracks**, or set a track's
-   channel in its header; changes apply immediately. **Apply Presets** inserts JD-Xi presets per channel
-3. **Play**: Start playback on the JD-Xi
-4. **Edit in Pattern Editor** (optional): Use **Load into Pattern Editor** to edit the file in the Pattern Sequencer
+* Play, Pause, Stop, Panic; speed in percent of the file's tempo.
+* **Loop** repeats the A–B range, or the whole song when none is set. **A** and **B** take the
+  playback position (snapped to bars if chosen); A shows on the ruler at once, the range when B
+  is set. **Trim** keeps only a part of the file.
+* **Event filter**: the file's program changes (PC) and controllers (CC) can be kept from the
+  JD-Xi.
+
+USB recorder
+============
+
+The JD-Xi is also a USB audio interface. With **Record on every Play**, every Play records its
+audio into a WAV (stereo, 16 bit) until 10 seconds after the song ends; in a playlist, one WAV per
+song. The port list shows only the inputs that can record, and the JD-Xi's is chosen by itself.
+
+Pattern Sequencer
+=================
+
+The Pattern imports the file opened here when it is shown, its first 64 bars (a pattern, not a
+whole song).
+
+Formats: Standard MIDI Files (.mid, .midi), types 0 and 1.
 
 .. figure:: images/jdxi-midi-editor.png
-   :alt: MIDI File Player - Track Classification and Playback
+   :alt: MIDI Player
    :width: 60%
 
-   MIDI File Player - Track Classification and Playback
+   The MIDI Player

@@ -196,17 +196,86 @@ def test_unused_channels_dimmed_and_classification_is_one_row(tmp_path):
         buttons = editor.mute_channels_group.mute_channel_buttons
         assert buttons[1].property("unused") is False
         assert buttons[2].property("unused") is True
+        assert "Digital 1" in buttons[1].toolTip() and buttons[1].property("part") is True
+        assert "no JD-Xi part" in buttons[5].toolTip() and buttons[5].property("part") is False
         group = editor.classification_group
-        tops = {
-            b.geometry().top()
-            for b in (
-                group.detect_drums_button,
-                group.classify_tracks_button,
-                group.apply_presets_button,
-            )
-        }
+        tops = {b.geometry().top() for b in (group.fit_tracks_button, group.apply_presets_button)}
         assert len(tops) == 1  # one row
+        # the file's only notes are on channel 1: ready for the JD-Xi
+        assert group.summary_label.text().startswith("Ready for the JD-Xi")
         assert not hasattr(group, "apply_all_track_changes_button")
     finally:
         editor.transport_controller.shutdown()
         editor.close()
+
+
+def test_the_file_length_is_read_once(viewer, monkeypatch):
+    """mido's length reads the whole file: it was asked for every track and
+    every playhead step (seconds for a 45-track song)."""
+    calls = []
+    real = mido.MidiFile.length
+    monkeypatch.setattr(mido.MidiFile, "length", property(lambda f: calls.append(1) or real.fget(f)))
+    song = _file()
+    for _ in range(5):
+        song.tracks.append(mido.MidiTrack([mido.Message("note_on", channel=1, note=60, time=0),
+                                           mido.Message("note_off", channel=1, note=60, time=480)]))
+    viewer.set_midi_file(song)
+    for second in (0.0, 0.5, 1.0):
+        viewer.set_playhead(second)
+    assert len(calls) == 1
+
+
+def test_building_the_rows_opens_no_windows_and_reports_progress():
+    """A velocity slider made visible before being in a window opened as a
+    window of its own: a tiny window flashed for each track while loading."""
+    from PySide6.QtWidgets import QApplication
+
+    song = _file()
+    for _ in range(4):
+        song.tracks.append(mido.MidiTrack([mido.Message("note_on", channel=1, note=60, time=0),
+                                           mido.Message("note_off", channel=1, note=60, time=480)]))
+    seen = []
+
+    def progress(track, tracks):
+        seen.append((track, tracks))
+        stray = [w for w in QApplication.topLevelWidgets()
+                 if w.isVisible() and type(w).__name__ == "TrackVelocitySlider"]
+        assert not stray
+
+    viewer = MidiTrackViewer()
+    viewer.set_midi_file(song, progress=progress)
+    assert seen[0] == (0, 6) and seen[-1] == (5, 6)
+    assert not [w for w in QApplication.topLevelWidgets()
+                if w.isVisible() and type(w).__name__ == "TrackVelocitySlider"]
+
+
+def test_the_a_point_shows_before_b():
+    """Setting A drew nothing until B made the range."""
+    viewer = MidiTrackViewer()
+    viewer.set_midi_file(_file())
+    viewer.ruler.set_loop_marks(1.0, None)
+    assert viewer.ruler._loop_marks == (1.0, None)
+    image = viewer.ruler.grab()  # paints the single A line without error
+    assert not image.isNull()
+
+
+def test_a_track_without_a_name_shows_what_it_plays():
+    """No name in the file: the instrument, in grey (GM program, or the file's
+    instrument name; channel 10: drums) instead of «Unnamed»."""
+    from jdxi_editor.midi.track.instrument import instrument_hint
+
+    flute = mido.MidiTrack([mido.Message("program_change", channel=2, program=73, time=0),
+                            mido.Message("note_on", channel=2, note=72, time=0)])
+    named = mido.MidiTrack([mido.MetaMessage("instrument_name", name="Tubular Bells", time=0)])
+    drums = mido.MidiTrack([mido.Message("note_on", channel=9, note=36, time=0)])
+    assert instrument_hint(flute) == "Flute"
+    assert instrument_hint(named) == "Tubular Bells"
+    assert instrument_hint(drums) == "Drums"
+    assert instrument_hint(mido.MidiTrack()) is None
+    song = _file()
+    song.tracks.append(flute)
+    viewer = MidiTrackViewer()
+    viewer.set_midi_file(song)
+    edit = viewer._track_name_edits[2]
+    assert edit.text() == "" and edit.placeholderText() == "Flute"
+    assert viewer._track_name_edits[1].text() == "Lead"  # a real name stays

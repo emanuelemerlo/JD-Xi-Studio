@@ -144,6 +144,10 @@ def get_channel_for_row(row: int) -> int:
     return channel
 
 
+
+# bars imported from a MIDI file at most (a pattern, not a whole song)
+MAX_IMPORT_BARS = 64
+
 class PatternSequenceEditor(PatternUI):
     """Pattern Sequencer with MIDI Integration using mido"""
 
@@ -216,7 +220,7 @@ class PatternSequenceEditor(PatternUI):
             # The strip's + tile adds like Add Measure (honours Copy previous)
             self.pattern_widget.on_add_requested = self._add_measure
             # New measures (Add Measure, loading) take on the current row mutes
-            self.pattern_widget.on_measure_added = lambda _index: self._apply_row_mutes()
+            self.pattern_widget.on_measure_added = lambda index: self._apply_row_mutes(only=index)
             self.pattern_widget.set_button_click_handler(self._on_button_clicked)
             self.pattern_widget.set_button_context_handler(self._on_step_context_menu)
 
@@ -230,6 +234,24 @@ class PatternSequenceEditor(PatternUI):
         """Apply Pattern Editor chrome (shared tokens with Midi Player)."""
         mark_editor_body(self)
         self.setStyleSheet(JDXi.UI.PatternEditor.editor_stylesheet())
+
+    def showEvent(self, event) -> None:
+        super().showEvent(event)
+        if getattr(self, "_midi_import_pending", False):
+            self._midi_import_pending = False
+            QTimer.singleShot(0, self._import_pending_midi_file)
+
+    def _import_pending_midi_file(self) -> None:
+        """The file opened in the MIDI player, imported now that the Pattern is shown."""
+        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
+        try:
+            self.load_from_midi_file_editor()
+        finally:
+            QApplication.restoreOverrideCursor()
+        imported = getattr(self, "last_import", None)
+        status = getattr(self.window(), "statusBar", None)
+        if imported is not None and imported.bars_left_out and callable(status):
+            status().showMessage(tr("Pattern: ") + imported.summary(), 15000)
 
     def _load_from_midi_file_editor_if_available(self) -> None:
         """Load from MidiFileEditor if it has a file."""
@@ -1196,10 +1218,15 @@ class PatternSequenceEditor(PatternUI):
         :param midi_file_editor: MidiFileEditor instance
         """
         self.midi_file_editor = midi_file_editor
-        # --- If MidiFileEditor already has a loaded file, load it
+        # --- If MidiFileEditor already has a loaded file, load it: now if the
+        # Pattern is on screen, else when it is shown (a file opened in the
+        # MIDI player no longer waits for the Pattern to be built)
         if self.midi_file_editor and hasattr(self.midi_file_editor, "midi_state"):
             if self.midi_file_editor.midi_state.file:
-                self.load_from_midi_file_editor()
+                if self.isVisible():
+                    self.load_from_midi_file_editor()
+                else:
+                    self._midi_import_pending = True
                 return self.midi_file_editor.midi_state.file.filename
             else:
                 log.debug(
@@ -1309,6 +1336,12 @@ class PatternSequenceEditor(PatternUI):
         """
         steps_per_bar = min(self.measure_beats, MeasureBeats.PER_MEASURE_4_4)
         imported = import_pattern(midi_file, self.channel_to_row, steps_per_bar)
+        if imported.bars > MAX_IMPORT_BARS:
+            # A whole song is not a pattern: hundreds of bars of step buttons
+            # took tens of seconds to build. The first bars only.
+            imported.bars_left_out = imported.bars - MAX_IMPORT_BARS
+            imported.bars = MAX_IMPORT_BARS
+            imported.notes = [n for n in imported.notes if n.bar < MAX_IMPORT_BARS]
         self.last_import = imported
 
         # Tempo first, so lengths shown in ms are right as notes arrive
@@ -1940,12 +1973,17 @@ class PatternSequenceEditor(PatternUI):
         self._apply_row_mutes()
         self._sync_transport_mutes()
 
-    def _apply_row_mutes(self) -> None:
-        """Mark the steps of muted rows (all measures) so their style dims them."""
+    def _apply_row_mutes(self, only: Optional[int] = None) -> None:
+        """Mark the steps of muted rows so their style dims them: all measures,
+        or *only* the one just added (all of them per added measure made
+        loading a long file slower with every bar)."""
         muted_rows = {
             row for row, button in enumerate(self.mute_buttons) if button.isChecked()
         }
-        for measure in self.measure_widgets:
+        measures = self.measure_widgets
+        if only is not None:
+            measures = measures[only:only + 1] if 0 <= only < len(measures) else []
+        for measure in measures:
             for row, buttons in enumerate(measure.buttons):
                 muted = row in muted_rows
                 for button in buttons:

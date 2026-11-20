@@ -250,7 +250,7 @@ class JDXiInstrument(JDXiWindow):
                 title="Program", editor_class=ProgramEditor, icon="ri.speaker-line"
             ),
             "midi_player": EditorConfig(
-                title="MIDI File", editor_class=MidiFilePlayer, icon="mdi.midi-port"
+                title="MIDI Player", editor_class=MidiFilePlayer, icon="mdi.midi-port"
             ),
             "settings": EditorConfig(
                 title="Settings",
@@ -1952,7 +1952,7 @@ class JDXiInstrument(JDXiWindow):
             QMessageBox.warning(
                 self,
                 tr("No MIDI file"),
-                tr("Open the MIDI File player and load a MIDI file first."),
+                tr("Open the MIDI Player and load a MIDI file first."),
             )
             return
         if not midi_editor.midi_state.file:

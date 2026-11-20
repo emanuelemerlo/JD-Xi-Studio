@@ -42,7 +42,8 @@ computer screen instead of the JD-Xi's menus.
 - **Where you are**: a line under each editor says program › part › tone, where the sound came from
   and whether it is original, modified and temporary, saved to a file or saved in the JD-Xi.
 - **Pattern sequencer**: four parts × 16 steps, measures, copy and paste, MIDI files, USB recording.
-- **MIDI file player**: track classification, channel assignment, automation; plays on the JD-Xi.
+- **MIDI Player**: says which tracks the JD-Xi plays and fits them to its four parts; plays on the
+  JD-Xi, records its USB audio on every Play.
 - **Recipes**: import a sound recipe (template .xlsx/.csv, Markdown, text, PDF or a pasted table) and
   follow it step by step with the JD-Xi's values beside the recipe's.
 - **Settings**: the JD-Xi's system settings, the MIDI connection, files and tools.
@@ -70,7 +71,7 @@ computer screen instead of the JD-Xi's menus.
 | **Digital Synth** <br> <a href="resources/digital_synth.png"><img src="resources/digital_synth_600.png" alt="Digital Synth" /></a> | **Analog Synth** <br> <a href="resources/analog_synth.png"><img src="resources/analog_synth_600.png" alt="Analog Synth" /></a> |
 | **Drum Kit** <br> <a href="resources/drum_editor.png"><img src="resources/drum_editor_600.png" alt="Drum Kit" /></a> | **Programs** <br> <a href="resources/programs_page.png"><img src="resources/programs_page_600.png" alt="Programs" /></a> |
 | **Effects** <br> <a href="resources/effects.png"><img src="resources/effects_600.png" alt="Effects" /></a> | **Vocal FX** <br> <a href="resources/vocal_effects.png"><img src="resources/vocal_effects_600.png" alt="Vocal FX" /></a> |
-| **Pattern** <br> <a href="resources/pattern.png"><img src="resources/pattern_600.png" alt="Pattern" /></a> | **MIDI file player** <br> <a href="resources/midi_player.png"><img src="resources/midi_player_600.png" alt="MIDI file player" /></a> |
+| **Pattern** <br> <a href="resources/pattern.png"><img src="resources/pattern_600.png" alt="Pattern" /></a> | **MIDI Player** <br> <a href="resources/midi_player.png"><img src="resources/midi_player_600.png" alt="MIDI Player" /></a> |
 | **Arpeggio** <br> <a href="resources/arpeggiator.png"><img src="resources/arpeggiator_600.png" alt="Arpeggio" /></a> | **MIDI connection** <br> <a href="resources/midi_config.png"><img src="resources/midi_config_200.png" alt="MIDI connection" /></a> |
 
 ## 🚀 Download and install

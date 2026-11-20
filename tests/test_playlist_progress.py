@@ -204,3 +204,20 @@ def test_segment_tooltip_names_the_song(app):
     assert segments.song_at(10) == 0
     assert segments.song_at(segments.width() - 10) == 1
     assert segments.song_at(-50) is None
+
+
+def test_the_extra_sound_cell_is_one_readable_combo(playlist):
+    """The extra-sound combo had a MIDI readout under it in the same row:
+    both squashed, the choice unreadable. One combo; its bytes in the tooltip."""
+    from PySide6.QtWidgets import QComboBox, QLabel
+
+    table = playlist.playlist_programs_table
+    assert table.horizontalHeaderItem(4).text() == "Extra sound"
+    assert "Analog" in table.horizontalHeaderItem(4).toolTip()
+    cell = table.cellWidget(0, 4)
+    combo = cell.findChild(QComboBox)
+    assert combo is not None and not cell.findChildren(QLabel)
+    assert combo.currentText() == "None" and "own Analog sound" in combo.toolTip()
+    combo.setCurrentIndex(combo.findData(1))
+    assert combo.currentText().startswith("001")
+    assert "Analog part" in combo.toolTip() and "PC" in combo.toolTip()

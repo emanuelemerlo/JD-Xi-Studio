@@ -93,10 +93,42 @@ def test_player_cards_as_in_the_mockup(app):
     editor.resize(1500, 950)
     editor.show()
     titles = [g.title() for g in editor.findChildren(QGroupBox) if g.title()]
-    for title in ("PLAYER", "CLASSIFICATION", "TRACKS", "PLAYBACK", "AUTOMATION", "USB RECORDER"):
+    for title in ("PLAYER", "FIT TO THE JD-XI", "TRACKS", "PLAYBACK", "AUTOMATION", "USB RECORDER"):
         assert title in titles, titles
     assert editor.midi_file.midi_track_viewer.isVisibleTo(editor)
     assert editor.usb_recorder.isVisibleTo(editor) and editor.automation.isVisibleTo(editor)
+    editor.close()
+
+
+def test_more_room_for_the_tracks(app, monkeypatch):
+    """Expand hides the cards not needed while listening (Player and Playback
+    stay); the grip under the card sets its height, remembered."""
+    from jdxi_editor.ui.v2 import tracks_space
+
+    store = {}
+    monkeypatch.setattr(tracks_space, "_settings", lambda: type("S", (), {
+        "value": lambda self, key, default=None: store.get(key, default),
+        "setValue": lambda self, key, value: store.__setitem__(key, value)})())
+    editor = players.MidiFilePlayer(midi_helper=_helper())
+    editor.resize(1500, 950)
+    editor.show()
+    app.processEvents()
+    button = editor.tracks_expand_button
+    assert button.text().endswith("Expand")
+    button.click()
+    assert not editor.automation.isVisibleTo(editor) and not editor.usb_recorder.isVisibleTo(editor)
+    assert not editor.classification_group.isVisibleTo(editor)
+    assert editor.playback_options.isVisibleTo(editor) and editor.transport.isVisibleTo(editor)
+    assert editor.midi_file.midi_track_viewer.isVisibleTo(editor)
+    assert button.text().endswith("Restore")
+    button.click()
+    assert editor.automation.isVisibleTo(editor) and editor.classification_group.isVisibleTo(editor)
+
+    grip = editor.tracks_grip
+    grip.set_height(520)
+    assert editor.tracks_card.minimumHeight() == 520 and store[tracks_space.SETTINGS_KEY] == 520
+    grip.set_height(10)  # never smaller than a few rows
+    assert editor.tracks_card.minimumHeight() == tracks_space.MIN_HEIGHT
     editor.close()
 
 

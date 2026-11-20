@@ -5,6 +5,25 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- The «MIDI file» tab is the **MIDI Player**.
+- A track without a name shows, in grey, the instrument it plays (the file's instrument name or
+  its General MIDI program; channel 10: drums).
+- MIDI Player › Tracks: **Expand** hides the cards not needed while listening (Player and Playback
+  stay); a grip under the card sets its height (remembered; double click: back to normal).
+- USB recorder: «Save» is **Record on every Play**, with a tooltip saying what it records.
+- MIDI Player › **Fit to the JD-Xi** (was Classification): a line says what of the file the JD-Xi
+  plays («28 of 44 tracks are on channels no JD-Xi part plays»); **Assign tracks to parts…**
+  proposes a part for each track (drums to Drums, the best bass, keys and strings track to Digital 1,
+  Digital 2, Analog, the rest not played), to check and apply; **Starting sounds** (was Apply
+  presets). The channel buttons of the four parts stand out and say which part plays them.
+- Setting the loop's A point shows it on the ruler at once (it showed only with B).
+- Opening a big MIDI file is much faster (a 45-track, 20-minute song: from 20–40 s to a few
+  seconds) and says so meanwhile on the player's display («Loading: track 12 of 45»), then tracks and
+  time in the status bar; no more tiny windows flashing while the tracks are built.
+  The Pattern imports the file when it is shown, and only its first 64 bars (a pattern, not a whole
+  song); the file's length is read once instead of once per track and per playhead step.
+- Programs › Organize: the «Cheat Preset» column is «Extra sound», one readable combo (its MIDI
+  bytes in the tooltip, what it does in the header's); the file and Play cells in the app's look.
 - Programs › Organize: Add to / Remove from playlist over the songs' table (they act on the songs);
   Play, Stop, Pause and **Mix** (was Shuffle Play) in a compact row of their own, with the
   now-playing line beside them.

@@ -53,11 +53,7 @@ from jdxi_editor.ui.widgets.combo_box import SearchableFilterableComboBox
 from jdxi_editor.ui.widgets.delegates.midi_file import MidiFileDelegate
 from jdxi_editor.ui.widgets.delegates.play_button import PlayButtonDelegate
 from jdxi_editor.ui.widgets.editor.helper import transfer_layout_items
-from jdxi_editor.ui.widgets.midi.selection_info_bar import (
-    MidiSelectionInfoBar,
-    MidiSelectionInfoController,
-)
-from jdxi_editor.ui.midi.selection_info import resolve_tone_midi_for_channel
+from jdxi_editor.ui.midi.selection_info import format_midi_wire_info, resolve_tone_midi_for_channel
 from jdxi_editor.i18n import tr
 
 
@@ -204,8 +200,13 @@ class PlaylistEditor(QWidget):
         self.playlist_programs_table = QTableWidget()
         self.playlist_programs_table.setColumnCount(6)
         self.playlist_programs_table.setHorizontalHeaderLabels(
-            [tr(h) for h in ("Bank", "Number", "Program Name", "MIDI File Name", "Cheat Preset", "Play")]
+            [tr(h) for h in ("Bank", "Number", "Program Name", "MIDI File Name", "Extra sound", "Play")]
         )
+        extra = self.playlist_programs_table.horizontalHeaderItem(4)
+        if extra is not None:
+            extra.setToolTip(tr(
+                "Extra sound: a Digital preset the Analog part plays (channel 3) when this song "
+                "starts (the JD-Xi's «cheat preset» trick). None: the program's own Analog sound."))
 
         # Apply custom styling
         self.playlist_programs_table.setStyleSheet(self._get_table_style())
@@ -681,18 +682,19 @@ class PlaylistEditor(QWidget):
         playlist_id: int,
         program_id: str,
     ) -> QWidget:
-        """Build cheat preset combo with live MIDI wire readout."""
+        """The extra-sound combo, the whole cell high (its MIDI bytes in the
+        tooltip: a second line under it did not fit the row and squashed it)."""
         container = QWidget()
         layout = QVBoxLayout(container)
-        layout.setContentsMargins(2, 2, 2, 2)
-        layout.setSpacing(2)
+        layout.setContentsMargins(4, 2, 4, 2)
+        layout.setSpacing(0)
 
         cheat_preset_combo = QComboBox()
         cheat_preset_combo.addItem(tr("None"), None)
         for preset in JDXi.UI.Preset.Digital.LIST:
             preset_id_int = int(preset["id"])
             cheat_preset_combo.addItem(
-                f"{preset_id_int} - {preset['name']}", preset_id_int
+                f"{preset_id_int:03d}  {preset['name']}", preset_id_int
             )
         self._set_cheat_preset_combo_selection(cheat_preset_combo, cheat_preset_id)
         cheat_preset_combo.currentIndexChanged.connect(
@@ -700,24 +702,24 @@ class PlaylistEditor(QWidget):
         )
         cheat_preset_combo.setProperty("playlist_id", playlist_id)
         cheat_preset_combo.setProperty("program_id", program_id)
+        cheat_preset_combo.setMinimumWidth(190)
+        cheat_preset_combo.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
+        layout.addWidget(cheat_preset_combo, 0, Qt.AlignmentFlag.AlignVCenter)
 
-        info_bar = MidiSelectionInfoBar()
-        layout.addWidget(cheat_preset_combo)
-        layout.addWidget(info_bar)
-
-        def resolver(preset_id: int):
-            return resolve_tone_midi_for_channel(
-                preset_id,
-                JDXi.UI.Preset.Digital.LIST,
-                MidiChannel.ANALOG_SYNTH,
-                "Analog",
+        def show_bytes(_index: int = 0) -> None:
+            preset_id = cheat_preset_combo.currentData()
+            if preset_id is None:
+                cheat_preset_combo.setToolTip(tr("No extra sound: the program's own Analog sound"))
+                return
+            info = resolve_tone_midi_for_channel(
+                preset_id, JDXi.UI.Preset.Digital.LIST, MidiChannel.ANALOG_SYNTH, "Analog"
+            )
+            cheat_preset_combo.setToolTip(
+                tr("Played by the Analog part when the song starts") + "\n" + format_midi_wire_info(info)
             )
 
-        controller = MidiSelectionInfoController(info_bar, resolver, parent=container)
-        controller.bind_plain_combo(
-            cheat_preset_combo,
-            lambda index: cheat_preset_combo.itemData(index),
-        )
+        cheat_preset_combo.currentIndexChanged.connect(show_bytes)
+        show_bytes()
         container.setProperty("cheat_preset_combo", cheat_preset_combo)
         return container
 

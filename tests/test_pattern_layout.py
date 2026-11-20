@@ -254,3 +254,48 @@ def test_grid_follows_playback_into_the_next_measure(editor):
         assert pw.current_measure_index == bar
         assert pw.sequencer_display.itemAt(0).widget() is widgets[bar]
         assert pw.measure_strip.current() == bar and pw.measure_strip.tiles[bar].playing
+
+
+def _long_song(bars: int):
+    import mido
+
+    song = mido.MidiFile(ticks_per_beat=480)
+    track = mido.MidiTrack()
+    song.tracks.append(track)
+    for _bar in range(bars):
+        track.append(mido.Message("note_on", channel=0, note=60, velocity=100, time=0))
+        track.append(mido.Message("note_off", channel=0, note=60, velocity=0, time=1920))
+    return song
+
+
+def test_a_song_imports_its_first_bars_only(editor):
+    """A whole song is not a pattern: hundreds of bars of step buttons took
+    tens of seconds. The first MAX_IMPORT_BARS, and the summary says so."""
+    from jdxi_editor.ui.editors.pattern.pattern import MAX_IMPORT_BARS
+
+    imported = editor._apply_pattern_import(_long_song(MAX_IMPORT_BARS + 36))
+    assert len(editor.measure_widgets) == MAX_IMPORT_BARS
+    assert imported.bars_left_out == 36
+    assert "only the first 64 bars imported (36 more bars in the file)" in imported.summary()
+    assert all(note.bar < MAX_IMPORT_BARS for note in imported.notes)
+
+
+def test_a_file_opened_in_the_player_waits_for_the_pattern_to_be_shown(editor, tmp_path):
+    """Opening a file in the MIDI player built the Pattern from it at once,
+    on screen or not; now when the Pattern is shown."""
+    from types import SimpleNamespace
+
+    song = _long_song(3)
+    path = str(tmp_path / "song.mid")
+    song.save(path)
+    song.filename = path
+    player = SimpleNamespace(midi_state=SimpleNamespace(file=song))
+    editor.hide()
+    before = len(editor.measure_widgets)
+    assert editor.set_midi_file_editor(player) == path
+    assert len(editor.measure_widgets) == before and editor._midi_import_pending
+    editor.show()
+    for _ in range(5):
+        _APP.processEvents()
+    assert not editor._midi_import_pending
+    assert len(editor.measure_widgets) == 3

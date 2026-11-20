@@ -195,7 +195,7 @@ class PatternSequenceEditor(_pattern.PatternSequenceEditor):
         files = _card(
             tr("File"),
             self.pattern_file_group,
-            note=tr("The pattern is saved as a standard MIDI file: open it in the MIDI file player or in a DAW."),
+            note=tr("The pattern is saved as a standard MIDI file: open it in the MIDI Player or in a DAW."),
         )
         self.usb_recorder.setVisible(True)
         recorder = _card(
@@ -399,20 +399,30 @@ class MidiFilePlayer(_player.MidiFilePlayer):
         player = _card(tr("Player"), top)
         mute_label = QLabel(tr("Mute channels"))
         mute_label.setStyleSheet("color: #c9cbd1;")
+        # what of the file the JD-Xi plays (the group's own summary line)
         classification = _card(
-            tr("Classification"),
+            tr("Fit to the JD-Xi"),
             self.classification_group,
             mute_label,
             self.mute_channels_group,
-            note=tr("The JD-Xi plays four parts: the editor tells each track's role (drums, bass, keys, "
-                    "strings) from its channel and notes and assigns it to a part."),
         )
         tracks = QGroupBox(tr("Tracks").upper())
         tracks_layout = QVBoxLayout(tracks)
+        # more room for the tracks: Expand (hides the cards not needed while
+        # listening) and a grip under the card (its height, remembered)
+        from jdxi_editor.ui.v2.tracks_space import ExpandButton, TracksGrip
+
+        self.tracks_expand_button = ExpandButton(lambda: self._hidden_while_expanded)
+        expand_row = QHBoxLayout()
+        expand_row.addStretch()
+        expand_row.addWidget(self.tracks_expand_button)
+        tracks_layout.addLayout(expand_row)
         tracks_layout.addWidget(self.midi_file)
         tracks_layout.addWidget(self.midi_file.midi_track_viewer, 1)
         tracks.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.midi_file.midi_track_viewer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.tracks_card = tracks
+        self.tracks_grip = TracksGrip(tracks)
         playback = _card(tr("Playback"), self.playback_options)
         automation = _card(tr("Automation"), self.automation)
         recorder = _card(tr("USB Recorder"), self.usb_recorder)
@@ -435,13 +445,15 @@ class MidiFilePlayer(_player.MidiFilePlayer):
         main.setContentsMargins(12, 12, 12, 12)
         main.setSpacing(12)
         badge = QHBoxLayout()
-        badge.addWidget(title_badge(tr("MIDI file"), PLAYER_ACCENT))
+        badge.addWidget(title_badge(tr("MIDI Player"), PLAYER_ACCENT))
         badge.addStretch()
         main.addLayout(badge)
         main.addLayout(first)
         main.addWidget(tracks, 1)
+        main.addWidget(self.tracks_grip)
         main.addWidget(playback)
         main.addLayout(last)
+        self._hidden_while_expanded = [classification, automation, recorder, events]
 
         self.base_widget = EditorBaseWidget(parent=self, analog=False)
         self.base_widget.setup_scrollable_content(center_horizontally=False)

@@ -1,12 +1,10 @@
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import (
     QFileDialog,
-    QStyle,
     QStyledItemDelegate,
-    QStyleOptionButton,
-    QWidget,
 )
 from jdxi_editor.i18n import tr
+from jdxi_editor.ui.widgets.delegates.paint import paint_cell_button
 
 
 class MidiFileDelegate(QStyledItemDelegate):
@@ -28,29 +26,10 @@ class MidiFileDelegate(QStyledItemDelegate):
         else:
             file_path = index.data(Qt.ItemDataRole.EditRole)
 
-        if file_path:
-            import os
+        import os
 
-            text = os.path.basename(file_path)
-        else:
-            text = "Select MIDI File..."
-
-        # Draw button-like appearance
-        button = QStyleOptionButton()
-        button.rect = option.rect
-        button.text = text
-        button.state = QStyle.StateFlag.State_Enabled
-        if option.state & QStyle.StateFlag.State_Selected:
-            button.state |= QStyle.StateFlag.State_HasFocus
-
-        if self.table_widget:
-            self.table_widget.style().drawControl(
-                QStyle.ControlElement.CE_PushButton, button, painter
-            )
-        else:
-            QWidget().style().drawControl(
-                QStyle.ControlElement.CE_PushButton, button, painter
-            )
+        text = os.path.basename(file_path) if file_path else tr("Choose a MIDI file…")
+        paint_cell_button(painter, option, text, dim=not file_path)
 
     def editorEvent(self, event, model, option, index):
         """Handle mouse clicks to open file dialog."""
