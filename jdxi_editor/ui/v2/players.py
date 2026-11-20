@@ -195,7 +195,7 @@ class PatternSequenceEditor(_pattern.PatternSequenceEditor):
         files = _card(
             tr("File"),
             self.pattern_file_group,
-            note=tr("The pattern is saved as a standard MIDI file: open it in the MIDI file player or in a DAW."),
+            note=tr("The pattern is saved as a standard MIDI file: open it in the MIDI Player or in a DAW."),
         )
         self.usb_recorder.setVisible(True)
         recorder = _card(
@@ -435,7 +435,7 @@ class MidiFilePlayer(_player.MidiFilePlayer):
         main.setContentsMargins(12, 12, 12, 12)
         main.setSpacing(12)
         badge = QHBoxLayout()
-        badge.addWidget(title_badge(tr("MIDI file"), PLAYER_ACCENT))
+        badge.addWidget(title_badge(tr("MIDI Player"), PLAYER_ACCENT))
         badge.addStretch()
         main.addLayout(badge)
         main.addLayout(first)

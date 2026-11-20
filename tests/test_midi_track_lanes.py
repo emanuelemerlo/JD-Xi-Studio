@@ -226,3 +226,37 @@ def test_the_file_length_is_read_once(viewer, monkeypatch):
     for second in (0.0, 0.5, 1.0):
         viewer.set_playhead(second)
     assert len(calls) == 1
+
+
+def test_building_the_rows_opens_no_windows_and_reports_progress():
+    """A velocity slider made visible before being in a window opened as a
+    window of its own: a tiny window flashed for each track while loading."""
+    from PySide6.QtWidgets import QApplication
+
+    song = _file()
+    for _ in range(4):
+        song.tracks.append(mido.MidiTrack([mido.Message("note_on", channel=1, note=60, time=0),
+                                           mido.Message("note_off", channel=1, note=60, time=480)]))
+    seen = []
+
+    def progress(track, tracks):
+        seen.append((track, tracks))
+        stray = [w for w in QApplication.topLevelWidgets()
+                 if w.isVisible() and type(w).__name__ == "TrackVelocitySlider"]
+        assert not stray
+
+    viewer = MidiTrackViewer()
+    viewer.set_midi_file(song, progress=progress)
+    assert seen[0] == (0, 6) and seen[-1] == (5, 6)
+    assert not [w for w in QApplication.topLevelWidgets()
+                if w.isVisible() and type(w).__name__ == "TrackVelocitySlider"]
+
+
+def test_the_a_point_shows_before_b():
+    """Setting A drew nothing until B made the range."""
+    viewer = MidiTrackViewer()
+    viewer.set_midi_file(_file())
+    viewer.ruler.set_loop_marks(1.0, None)
+    assert viewer.ruler._loop_marks == (1.0, None)
+    image = viewer.ruler.grab()  # paints the single A line without error
+    assert not image.isNull()

@@ -68,6 +68,7 @@ class TimeRulerWidget(QWidget):
         self._markers: list[RulerMarker] = []
         self._playhead_seconds: Optional[float] = None
         self._loop_range: Optional[tuple[float, float]] = None
+        self._loop_marks: tuple[Optional[float], Optional[float]] = (None, None)
         self._loop_enabled = False
         # Interaction state
         self._dragging_marker: Optional[RulerMarker] = None
@@ -99,6 +100,12 @@ class TimeRulerWidget(QWidget):
         """Show the A–B range (None = whole file) and whether looping is on."""
         self._loop_range = loop_range
         self._loop_enabled = enabled
+        self.update()
+
+    def set_loop_marks(self, a: Optional[float], b: Optional[float]) -> None:
+        """The A and B points as they are set: one shows at once, before the
+        other makes the range (A alone used to show nothing)."""
+        self._loop_marks = (a, b)
         self.update()
 
     def add_marker(
@@ -333,6 +340,15 @@ class TimeRulerWidget(QWidget):
         return interval
 
     def _paint_loop_region(self, painter: QPainter, height: int) -> None:
+        if self._loop_range is None:
+            # a single point set so far: its line and letter
+            for seconds, letter in zip(self._loop_marks, "AB"):
+                if seconds is None:
+                    continue
+                x = self._x_for(seconds)
+                painter.setPen(QPen(QColor(JDXi.UI.Style.ACCENT_ANALOG), 2))
+                painter.drawLine(x, 0, x, height)
+                painter.drawText(x + 3, height // 2 + 4, letter)
         if self._loop_range is None and not self._loop_enabled:
             return
         start, end = self._loop_range or (0.0, self.duration)

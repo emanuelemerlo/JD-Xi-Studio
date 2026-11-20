@@ -1237,14 +1237,19 @@ class MidiFilePlayer(SynthEditor):
         status = status() if callable(status) else None
         name = Path(file_path).name if file_path else ""
         started = time.monotonic()
+        previous_title = self.ui.digital_title_file_name.text  # a property here
         Qt_app.setOverrideCursor(Qt.CursorShape.WaitCursor)
         try:
-            if status is not None and name:
-                status.showMessage(tr("Loading {name}…").format(name=name))
+            if name:
+                self.ui.digital_title_file_name.setText(tr("Loading {name}…").format(name=name))
+                if status is not None:
+                    status.showMessage(tr("Loading {name}…").format(name=name))
                 Qt_app.processEvents()  # show it before the work starts
             loaded = self._load_file_from_path(file_path, **options)
         finally:
             Qt_app.restoreOverrideCursor()
+        if not loaded and name:  # the file that was there is still there
+            self.ui.digital_title_file_name.setText(previous_title)
         if status is not None and name:
             if loaded:
                 tracks = len(self.midi_state.file.tracks) if self.midi_state.file else 0
@@ -1253,6 +1258,19 @@ class MidiFilePlayer(SynthEditor):
             else:
                 status.clearMessage()
         return loaded
+
+    def _show_load_progress(self, track: int, tracks: int) -> None:
+        """On the player's own display: «Loading: track 12 of 45» (a few times
+        per second at most, so it costs nothing on small files)."""
+        from PySide6.QtWidgets import QApplication as Qt_app  # the module's QApplication is a test placeholder
+
+        now = time.monotonic()
+        if track and now - getattr(self, "_load_progress_shown", 0.0) < 0.15:
+            return
+        self._load_progress_shown = now
+        self.ui.digital_title_file_name.setText(
+            tr("Loading: track {track} of {tracks}").format(track=track + 1, tracks=tracks))
+        Qt_app.processEvents()
 
     def _load_file_from_path(
         self,
@@ -1313,9 +1331,12 @@ class MidiFilePlayer(SynthEditor):
         # The rest of this method sets up playback; skip the file_changed handler
         self._loading_file = True
         try:
-            self.midi_file.midi_track_viewer.set_midi_file(self.midi_state.file)
+            self.midi_file.midi_track_viewer.set_midi_file(
+                self.midi_state.file, progress=self._show_load_progress
+            )
         finally:
             self._loading_file = False
+            self.ui.digital_title_file_name.setText(file_name)  # after the progress
         # Sync mute buttons after loading MIDI file
         self._sync_mute_buttons_from_track_viewer()
 
@@ -1339,6 +1360,7 @@ class MidiFilePlayer(SynthEditor):
         self._sync_transport_settings()
         self._loop_points = (None, None)
         self.playback_options.set_loop_points(None, None)
+        self.midi_file.midi_track_viewer.ruler.set_loop_marks(None, None)
         self._refresh_program_change_markers()
         self.calculate_duration()
         self.calculate_tick_duration()
@@ -1653,6 +1675,7 @@ class MidiFilePlayer(SynthEditor):
         else:
             self._loop_points = (a, b)
             self.playback_options.set_loop_points(a, b)
+            self.midi_file.midi_track_viewer.ruler.set_loop_marks(a, b)
 
     # --- Trim ---------------------------------------------------------------
 
@@ -1726,6 +1749,7 @@ class MidiFilePlayer(SynthEditor):
     def midi_loop_clear(self, *_args) -> None:
         """Forget the A–B range so Loop repeats the whole song."""
         self._loop_points = (None, None)
+        self.midi_file.midi_track_viewer.ruler.set_loop_marks(None, None)
         self.transport_controller.clear_loop_range()
 
     def _on_transport_loop_changed(self) -> None:
@@ -1736,7 +1760,9 @@ class MidiFilePlayer(SynthEditor):
         if loop_range is not None:
             self._loop_points = loop_range
         self.playback_options.set_loop_points(*self._loop_points)
-        self.midi_file.midi_track_viewer.ruler.set_loop_region(loop_range, enabled)
+        ruler = self.midi_file.midi_track_viewer.ruler
+        ruler.set_loop_marks(*self._loop_points)
+        ruler.set_loop_region(loop_range, enabled)
 
     def on_playback_speed_changed(self, percent: int) -> None:
         """Speed spin box (percent of the file's tempo)."""

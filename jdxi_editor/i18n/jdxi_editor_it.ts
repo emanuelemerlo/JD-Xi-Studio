@@ -784,17 +784,23 @@
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/midi_player/automation.py" line="47" />
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="2078" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="2104" />
             <source>Insert Program Change at current position</source>
             <translation>Inserisci un Program Change nella posizione attuale</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1243" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1272" />
+            <source>Loading: track {track} of {tracks}</source>
+            <translation>Caricamento: traccia {track} di {tracks}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1244" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1246" />
             <source>Loading {name}…</source>
             <translation>Caricamento di {name}…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1251" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1256" />
             <source>{name}: {tracks} tracks, loaded in {seconds:.1f} s</source>
             <translation>{name}: {tracks} tracce, caricato in {seconds:.1f} s</translation>
         </message>
@@ -3900,8 +3906,8 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         <message>
             <location filename="../../jdxi_editor/ui/v2/names.py" line="22" />
             <location filename="../../jdxi_editor/ui/v2/players.py" line="438" />
-            <source>MIDI file</source>
-            <translation>File MIDI</translation>
+            <source>MIDI Player</source>
+            <translation>MIDI Player</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/names.py" line="23" />
@@ -4378,8 +4384,8 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/players.py" line="198" />
-            <source>The pattern is saved as a standard MIDI file: open it in the MIDI file player or in a DAW.</source>
-            <translation>Il pattern si salva come file MIDI standard: aprilo anche nel lettore MIDI o in una DAW.</translation>
+            <source>The pattern is saved as a standard MIDI file: open it in the MIDI Player or in a DAW.</source>
+            <translation>Il pattern viene salvato come file MIDI standard: aprilo nel MIDI Player o in una DAW.</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/players.py" line="204" />
@@ -6795,22 +6801,22 @@ Le modifiche che non avevi salvato andrebbero perse. Le rimando al JD-Xi?</trans
             <translation>Un file MIDI deve avere almeno una traccia.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="866" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="869" />
             <source>Unnamed</source>
             <translation>Senza nome</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="867" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="870" />
             <source>Track name (applied on Enter or when you click away)</source>
             <translation>Nome della traccia (si applica con Invio o cliccando altrove)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="881" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="884" />
             <source>Mute Track</source>
             <translation>Silenzia traccia</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="898" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="901" />
             <source>Solo Track (mute all other tracks)</source>
             <translation>Solo (silenzia tutte le altre tracce)</translation>
         </message>
@@ -6820,7 +6826,7 @@ Le modifiche che non avevi salvato andrebbero perse. Le rimando al JD-Xi?</trans
             <translation>Vuoi davvero eliminare '{track_name}'?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="914" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="917" />
             <source>MIDI channel of the track (changes apply immediately)</source>
             <translation>Canale MIDI della traccia (si applica subito)</translation>
         </message>
@@ -7303,8 +7309,8 @@ Può richiedere alcuni minuti. Continuare?</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1955" />
-            <source>Open the MIDI File player and load a MIDI file first.</source>
-            <translation>Apri il lettore di file MIDI e carica prima un file MIDI.</translation>
+            <source>Open the MIDI Player and load a MIDI file first.</source>
+            <translation>Apri prima il MIDI Player e carica un file MIDI.</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1962" />
@@ -8344,6 +8350,18 @@ Il suono sul JD-Xi viene sostituito: se vuoi tenerlo, salvalo prima sul JD-Xi (W
             <location filename="../../jdxi_editor/ui/windows/selftest.py" line="865" />
             <source>report not saved: {error}</source>
             <translation>resoconto non salvato: {error}</translation>
+        </message>
+        <message>
+            <source>MIDI file</source>
+            <translation type="vanished">File MIDI</translation>
+        </message>
+        <message>
+            <source>The pattern is saved as a standard MIDI file: open it in the MIDI file player or in a DAW.</source>
+            <translation type="vanished">Il pattern si salva come file MIDI standard: aprilo anche nel lettore MIDI o in una DAW.</translation>
+        </message>
+        <message>
+            <source>Open the MIDI File player and load a MIDI file first.</source>
+            <translation type="vanished">Apri il lettore di file MIDI e carica prima un file MIDI.</translation>
         </message>
         <message>
             <source>Listen without the JD-Xi (FluidSynth)</source>

@@ -1,12 +1,12 @@
-MIDI File Player
-================
+MIDI Player
+===========
 
-The **MIDI File Player** plays MIDI files on the Roland JD-Xi. It includes track classification, channel assignment, and integration with the Pattern Editor.
+The **MIDI Player** plays MIDI files on the Roland JD-Xi. It includes track classification, channel assignment, and integration with the Pattern Editor.
 
-What is the MIDI File Player?
+What is the MIDI Player?
 ==============================
 
-The MIDI File Player loads standard MIDI files (.mid, .midi) and routes tracks to the JD-Xi's four parts: Digital 1 (Ch 1), Digital 2 (Ch 2), Analog (Ch 3), and Drums (Ch 10). You can classify tracks automatically, assign channels, and load the current file into the Pattern Editor for step editing.
+The MIDI Player loads standard MIDI files (.mid, .midi) and routes tracks to the JD-Xi's four parts: Digital 1 (Ch 1), Digital 2 (Ch 2), Analog (Ch 3), and Drums (Ch 10). You can classify tracks automatically, assign channels, and load the current file into the Pattern Editor for step editing.
 
 Core Features
 =============
@@ -44,7 +44,7 @@ Workflow
 4. **Edit in Pattern Editor** (optional): Use **Load into Pattern Editor** to edit the file in the Pattern Sequencer
 
 .. figure:: images/jdxi-midi-editor.png
-   :alt: MIDI File Player - Track Classification and Playback
+   :alt: MIDI Player - Track Classification and Playback
    :width: 60%
 
-   MIDI File Player - Track Classification and Playback
+   MIDI Player - Track Classification and Playback

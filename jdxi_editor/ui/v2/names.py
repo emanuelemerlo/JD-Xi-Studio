@@ -19,7 +19,7 @@ def short_name(title: str) -> str:
         "Program: common and parts": tr("Program parts"),
         "Preset": tr("Presets"),
         "Pattern": tr("Pattern"),
-        "MIDI File": tr("MIDI file"),
+        "MIDI File": tr("MIDI Player"),
         "Recipes": tr("Recipes"),
         "Settings": tr("Settings"),
     }

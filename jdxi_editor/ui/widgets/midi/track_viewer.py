@@ -760,7 +760,8 @@ class MidiTrackViewer(QWidget):
         log.message(f"Track index: {track_name}, Text: {text_edit.text()}")
         return lambda: self.change_track_name(track_name, text_edit.text())
 
-    def set_midi_file(self, midi_file: mido.MidiFile, keep_track_state: bool = False) -> None:
+    def set_midi_file(self, midi_file: mido.MidiFile, keep_track_state: bool = False,
+                      progress=None) -> None:
         """
         Set the MIDI file for the widget and create channel controls.
 
@@ -813,6 +814,8 @@ class MidiTrackViewer(QWidget):
         tick_to_seconds = build_tick_to_seconds(midi_file)
         # Create each track widget and add it to the layout
         for i, track in enumerate(midi_file.tracks):
+            if progress is not None:
+                progress(i, len(midi_file.tracks))  # building the rows is the long part
             hlayout = QHBoxLayout()
             first_channel = get_first_channel(track) + Midi.channel.BINARY_TO_DISPLAY
             # Optional: Get the track name to show in dialog
@@ -935,8 +938,11 @@ class MidiTrackViewer(QWidget):
                     tr, sl.scale()
                 )
             )
-            velocity_slider.setVisible(has_notes)
             bottom_row.addWidget(velocity_slider)
+            # hide only: setVisible(True) on a widget not yet in a window
+            # opens it as a window of its own (a tiny window flashed per track)
+            if not has_notes:
+                velocity_slider.hide()
             self.track_velocity_sliders[i] = velocity_slider
 
             hlayout.addWidget(header)

@@ -1,7 +1,7 @@
 Pattern Sequencer
 =================
 
-The **Pattern Sequencer** (Pattern Editor) provides a 4×16 step grid for creating and editing patterns on the Roland JD-Xi. It supports loading and saving MIDI files, part muting, USB recording, and integration with the MIDI File Player.
+The **Pattern Sequencer** (Pattern Editor) provides a 4×16 step grid for creating and editing patterns on the Roland JD-Xi. It supports loading and saving MIDI files, part muting, USB recording, and integration with the MIDI Player.
 
 What is the Pattern Sequencer?
 ==============================
@@ -19,7 +19,7 @@ Core Features
 
 **MIDI Load and Save**
    - **Load from file**: Use **File → Load MIDI…** or the **Load** button to load a MIDI file into the grid
-   - **Load from MIDI File Player**: Use **Load into Pattern Editor** from the MIDI File Player to load the current MIDI file
+   - **Load from MIDI Player**: Use **Load into Pattern Editor** from the MIDI Player to load the current MIDI file
    - **Save**: Use **File → Save Pattern…** or the **Save** button; the dialog pre-fills with the loaded file path when available
    - **PPQ preservation**: The editor preserves the ticks-per-beat (PPQ) from the loaded file when saving
 
@@ -39,7 +39,7 @@ Workflow
 ========
 
 **Basic workflow**
-   1. **Load a MIDI file**: File → Load MIDI… or Load button (or load from MIDI File Player)
+   1. **Load a MIDI file**: File → Load MIDI… or Load button (or load from MIDI Player)
    2. **Edit steps**: Click steps to add or change notes; use combo selectors for note assignment
    3. **Save**: File → Save Pattern… or Save button; path pre-fills when loaded from file
 

@@ -138,7 +138,7 @@ Interface Overview
       - **Vocal Effects Editor**: Voice transformation and vocoder
       - **Arpeggiator Editor**: Pattern generation and sequencing
       - **Pattern Sequencer**: Multi-part step sequencing
-      - **MIDI File Player**: File playback and recording
+      - **MIDI Player**: File playback and recording
 
 **Navigation Basics**
    - **Tabbed Interface**: Switch between different editors
@@ -233,7 +233,7 @@ Essential Workflows
    2. **Add Layers**: Use other parts for additional elements
    3. **Apply Effects**: Add master effects for polish
    4. **Create Patterns**: Use arpeggiator or sequencer for movement
-   5. **Record and Playback**: Use MIDI file player for production
+   5. **Record and Playback**: Use MIDI Player for production
 
 **Performance Workflow**
    Optimize for live performance:

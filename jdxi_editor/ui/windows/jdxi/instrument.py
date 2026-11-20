@@ -1952,7 +1952,7 @@ class JDXiInstrument(JDXiWindow):
             QMessageBox.warning(
                 self,
                 tr("No MIDI file"),
-                tr("Open the MIDI File player and load a MIDI file first."),
+                tr("Open the MIDI Player and load a MIDI file first."),
             )
             return
         if not midi_editor.midi_state.file:
