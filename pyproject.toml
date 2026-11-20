@@ -50,7 +50,10 @@ dependencies = [
     "decologr",
     # 0.2.0: the first release that ships picomidi's subpackages (core,
     # playback, sysex, ...); 0.1.2 contains the top-level package only
-    "picomidi>=0.2.0",
+    # 0.3.0: the playback engine releases a note only when no other track
+    # holds it, sends a program's bank select with it, a velocity scale of 0
+    # silences the track; MidoMessageType values are strings
+    "picomidi>=0.3.0,<0.4",
     "pyfluidsynth",
     # recipes: the .xlsx template and recipes read from PDF files
     "openpyxl",

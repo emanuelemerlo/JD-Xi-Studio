@@ -96,7 +96,7 @@ def analyze_track_for_drums(track: MidiTrack, track_index: int) -> dict:
         ):
             analysis["note_offs"].append((absolute_time, msg.note))
 
-        elif msg.type == MidoMessageType.PITCH_WHEEL:
+        elif msg.type == MidoMessageType.PITCH_WHEEL.value:
             analysis["has_pitch_bend"] = True
 
         elif msg.type == MidoMessageType.CONTROL_CHANGE.value:
