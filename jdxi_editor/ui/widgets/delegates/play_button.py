@@ -1,5 +1,8 @@
 from PySide6.QtCore import QSize
-from PySide6.QtWidgets import QStyle, QStyledItemDelegate, QStyleOptionButton, QWidget
+from PySide6.QtWidgets import QStyle, QStyledItemDelegate
+
+from jdxi_editor.i18n import tr
+from jdxi_editor.ui.widgets.delegates.paint import paint_cell_button
 
 
 class PlayButtonDelegate(QStyledItemDelegate):
@@ -12,15 +15,7 @@ class PlayButtonDelegate(QStyledItemDelegate):
     def paint(self, painter, option, index):
         """Draw a play button."""
         if option.state & QStyle.StateFlag.State_Enabled:
-            button = QStyleOptionButton()
-            button.rect = option.rect
-            button.text = "▶ Play"
-            button.state = QStyle.StateFlag.State_Enabled
-            if option.state & QStyle.StateFlag.State_Selected:
-                button.state |= QStyle.StateFlag.State_HasFocus
-            QWidget().style().drawControl(
-                QStyle.ControlElement.CE_PushButton, button, painter
-            )
+            paint_cell_button(painter, option, "▶ " + tr("Play"))
 
     def editorEvent(self, event, model, option, index):
         """Handle button click."""
