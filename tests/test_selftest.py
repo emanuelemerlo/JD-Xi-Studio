@@ -280,6 +280,7 @@ def test_the_main_menus_match_the_app(window, monkeypatch):
 
     assert window.save_patch_action.shortcut() == QKeySequence(QKeySequence.StandardKey.Save)
     assert [a.shortcut().toString() for a in window.midi_save_actions] == ["Ctrl+Alt+S", "Ctrl+Alt+Shift+S"]
+    assert not window.midi_close_action.isEnabled()  # nothing to close
     # an item that is off looks off
     assert "QMenu::item:disabled" in window.menuBar().styleSheet()
     assert not [a.text() for a in items("Tools") if "Preferences" in a.text()]
@@ -292,6 +293,7 @@ def test_the_main_menus_match_the_app(window, monkeypatch):
                         SimpleNamespace(midi_state=SimpleNamespace(file=object())), raising=False)
     window._refresh_menu_state()  # what the player calls once a file is loaded
     assert all(a.isEnabled() and "Open a MIDI file" not in a.toolTip() for a in window.midi_save_actions)
+    assert window.midi_close_action.isEnabled()
     # what needs the JD-Xi is off offline, the tooltip saying why
     if not window.connection.can_talk():
         for action in (window.save_on_jdxi_action, window.dump_settings_action,

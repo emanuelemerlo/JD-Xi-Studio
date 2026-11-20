@@ -175,6 +175,7 @@ class MidiFilePlayer(SynthEditor):
         self.playback_options = PlaybackOptionsWidget(parent=self)
         self._loop_points: tuple[Optional[float], Optional[float]] = (None, None)
         self._loading_file = False
+        self._edited = False  # changed since loaded or saved (Close asks first)
         self._preset_names: dict[tuple[int, int, int], str] | None = None
         self.midi_file_group: MidiFileGroup = MidiFileGroup(
             parent=self, midi_state=self.midi_state
@@ -660,6 +661,7 @@ class MidiFilePlayer(SynthEditor):
         """
         if self._loading_file:
             return
+        self._edited = True
         previous = self.midi_state.file
         if midi_file is not previous and previous is not None:
             # Edited copies lose the path used for auto-generated WAV names
@@ -1243,6 +1245,68 @@ class MidiFilePlayer(SynthEditor):
         if file_path:
             self._save_midi_to_path(file_path)
 
+    def _file_state_changed(self) -> None:
+        """Save and Close (here and in File › MIDI Player) only with a file."""
+        loaded = self.midi_state.file is not None
+        group = getattr(self, "midi_file_group", None)
+        for name in ("save_button", "close_button"):
+            button = getattr(group, name, None)
+            if button is not None:
+                button.setEnabled(loaded)
+        refresh = getattr(self.parent, "_refresh_menu_state", None)
+        if callable(refresh):
+            refresh()
+
+    def midi_close_file(self) -> bool:
+        """
+        Close the file: playback stops, the player is empty as at start.
+        Changed since it was loaded or saved: asks first (Save / Close without
+        saving / Cancel).
+
+        :return: True if closed (or nothing was open)
+        """
+        from PySide6.QtWidgets import QMessageBox
+
+        if self.midi_state.file is None:
+            return True
+        if self._edited:
+            box = QMessageBox(self)
+            box.setIcon(QMessageBox.Icon.Question)
+            box.setWindowTitle(tr("Close the MIDI file"))
+            box.setText(tr("The MIDI file has changes that are not saved."))
+            save = box.addButton(tr("Save…"), QMessageBox.ButtonRole.AcceptRole)
+            discard = box.addButton(tr("Close without saving"), QMessageBox.ButtonRole.DestructiveRole)
+            box.addButton(QMessageBox.StandardButton.Cancel)
+            box.setDefaultButton(save)
+            box.exec()
+            clicked = box.clickedButton()
+            if clicked is save:
+                self.midi_save_file_as()
+                if self._edited:  # not saved (cancelled)
+                    return False
+            elif clicked is not discard:
+                return False
+        self.midi_playback_stop()
+        self.transport_controller.unload()
+        self.midi_state.file = None
+        self.midi_state.events = []
+        self._midi_file_path = None
+        self._edited = False
+        viewer = self.midi_file.midi_track_viewer
+        viewer.clear()
+        self._loop_points = (None, None)
+        self.playback_options.set_loop_points(None, None)
+        viewer.ruler.set_loop_marks(None, None)
+        self._refresh_program_change_markers()
+        self._sync_mute_buttons_from_track_viewer()
+        self.midi_total_ticks = 0
+        self.midi_state.file_duration_seconds = 0.0
+        self.ui_position_slider_reset()
+        self.ui.digital_title_file_name.setText("No file loaded")
+        self._refresh_fit_summary()
+        self._file_state_changed()
+        return True
+
     def midi_load_file(self) -> None:
         """
         Load a MIDI file and initialize parameters
@@ -1400,10 +1464,8 @@ class MidiFilePlayer(SynthEditor):
         # Notify Pattern Sequencer if it exists
         if notify_pattern_sequencer:
             self._notify_pattern_sequencer_file_loaded()
-        # File › MIDI Player › Save / Save as: on now that there is a file
-        refresh = getattr(self.parent, "_refresh_menu_state", None)
-        if callable(refresh):
-            refresh()
+        self._edited = False
+        self._file_state_changed()
 
         # Add to recent files if parent has recent_files_manager
         if update_recent_files and (

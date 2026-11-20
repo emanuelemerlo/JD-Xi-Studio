@@ -1941,15 +1941,26 @@ class JDXiInstrument(JDXiWindow):
         self.show_editor("midi_player")
 
     def _refresh_menu_state(self) -> None:
-        """File › MIDI Player › Save / Save as: only with a file in the player."""
+        """File › MIDI Player › Save / Save as / Close: only with a file in the player."""
         player = self.get_existing_editor(MidiFilePlayer)
         state = getattr(player, "midi_state", None)
         loaded = getattr(state, "file", None) is not None
-        for action, tip in zip(getattr(self, "midi_save_actions", []), (
+        actions = list(getattr(self, "midi_save_actions", []))
+        close = getattr(self, "midi_close_action", None)
+        if close is not None:
+            actions.append(close)
+        for action, tip in zip(actions, (
                 tr("Save the MIDI file open in the MIDI Player"),
-                tr("Save the MIDI file open in the MIDI Player under another name"))):
+                tr("Save the MIDI file open in the MIDI Player under another name"),
+                tr("Close the MIDI file open in the MIDI Player (asks first if it has unsaved changes)"))):
             action.setEnabled(loaded)
             action.setToolTip(tip if loaded else f"{tip}\n{tr('Open a MIDI file in the MIDI Player first')}")
+
+    def _midi_file_close(self) -> None:
+        """File › MIDI Player › Close."""
+        player = self.get_existing_editor(MidiFilePlayer)
+        if player is not None:
+            player.midi_close_file()
 
     def _save_on_jdxi(self) -> None:
         """JD-Xi › Save the program: the Programs tab's guided WRITE."""

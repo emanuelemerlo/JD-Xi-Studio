@@ -20,8 +20,8 @@ ending in «…» opens a dialog.
 
 * **File** — **Patch** › Open… (Ctrl+O) / Save… (Ctrl+S) (a program and its tones in a ``.jsz`` /
   ``.msz`` file; Open sends them to the JD-Xi); **MIDI Player** › Open… (Ctrl+Alt+O) / Save
-  (Ctrl+Alt+S) / Save as… / Recent (the MIDI Player's file; Save and Save as only with a file in
-  the player); Preferences… (Ctrl+,); Quit.
+  (Ctrl+Alt+S) / Save as… / Close (Ctrl+Alt+W) / Recent (the MIDI Player's file; Save, Save as
+  and Close only with a file in the player); Preferences… (Ctrl+,); Quit.
 * **Editor** — the tabs of the editors window: Programs (Ctrl+0); *Parts*: Digital 1, Digital 2,
   Analog, Drums (Ctrl+1–4), Program: common and parts; *Effects*: Effects, Vocal FX (Ctrl+6, 7);
   *Playback*: Arpeggio (Ctrl+5), Pattern (Ctrl+8), MIDI Player (Ctrl+9); Recipes; Settings.

@@ -25,7 +25,9 @@ Fit to the JD-Xi
   Digital 1 Picked Bass, Digital 2 Piano, Analog JP8 Strings.
 * The mute buttons of channels 1, 2, 3 and 10 stand out; their tooltip says which part plays them.
 
-The file on disk changes only when you save it.
+The file on disk changes only when you save it. **Close** (in the Player card, or File › MIDI
+Player › Close) empties the player as at start; when the file has changes not saved yet it asks
+first: *Save…*, *Close without saving* or *Cancel*.
 
 Tracks
 ======

@@ -73,6 +73,7 @@ class JDXiUIIconRegistry:
     FILE_MTZ = "mdi.data-matrix-edit"
     FILE_MOLECULE = "mdi.molecule"
     FLOPPY_DISK = "ph.floppy-disk-fill"
+    CLOSE_FILE = "msc.close"
 
     # Ports etc
     USB = "ri.usb-line"

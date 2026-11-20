@@ -345,6 +345,9 @@ class JDXiWindow(QMainWindow):
             self._item(midi, tr("Save &as…"), self._midi_file_save_as, "Ctrl+Alt+Shift+S",
                        tr("Save the MIDI file open in the MIDI Player under another name")),
         ]
+        self.midi_close_action = self._item(
+            midi, tr("&Close"), self._midi_file_close, "Ctrl+Alt+W",
+            tr("Close the MIDI file open in the MIDI Player (asks first if it has unsaved changes)"))
         midi.addSeparator()  # Recent MIDI Files go here
         # Save / Save as only with a file in the player: checked when the menu
         # opens and when the window comes in front (where the shortcuts work)
@@ -702,6 +705,9 @@ class JDXiWindow(QMainWindow):
         raise NotImplementedError("to be implemented in subclass")
 
     def _midi_file_save(self):
+        raise NotImplementedError("to be implemented in subclass")
+
+    def _midi_file_close(self):
         raise NotImplementedError("to be implemented in subclass")
 
     def _midi_file_save_as(self):
