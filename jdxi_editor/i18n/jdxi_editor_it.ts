@@ -784,64 +784,79 @@
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/midi_player/automation.py" line="47" />
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="2052" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="2078" />
             <source>Insert Program Change at current position</source>
             <translation>Inserisci un Program Change nella posizione attuale</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1445" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1243" />
+            <source>Loading {name}…</source>
+            <translation>Caricamento di {name}…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1251" />
+            <source>{name}: {tracks} tracks, loaded in {seconds:.1f} s</source>
+            <translation>{name}: {tracks} tracce, caricato in {seconds:.1f} s</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1478" />
             <location filename="../../jdxi_editor/ui/windows/midi/debugger.py" line="167" />
             <source>Clear</source>
             <translation>Cancella</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1446" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1479" />
             <source>What do you want to clear?</source>
             <translation>Cosa vuoi cancellare?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1447" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1480" />
             <source>Cleared steps cannot be restored.</source>
             <translation>I passi cancellati non si possono recuperare.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="559" />
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="567" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="581" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="589" />
             <source>Copy</source>
             <translation>Copia</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="559" />
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="589" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="581" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="611" />
             <source>No bar selected</source>
             <translation>Nessuna misura selezionata</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="567" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="589" />
             <source>Start step must be &lt;= end step</source>
             <translation>Il passo iniziale deve essere &lt;= di quello finale</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="584" />
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="589" />
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="597" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="606" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="611" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="619" />
             <source>Paste</source>
             <translation>Incolla</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="584" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="606" />
             <source>Nothing copied. Use Copy Section first.</source>
             <translation>Niente da incollare. Usa prima Copia.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="597" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="619" />
             <source>Invalid clipboard data</source>
             <translation>Dati negli appunti non validi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1488" />
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1072" />
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1101" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="254" />
+            <source>Pattern: </source>
+            <translation>Pattern: </translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1521" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1094" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1123" />
             <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="914" />
             <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="986" />
             <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1056" />
@@ -853,25 +868,25 @@
             <translation>Errore</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="638" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="660" />
             <source>{label}: {names}
 Shift+click: add/remove the selected note · Right-click: edit notes</source>
             <translation>{label}: {names}
 Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1093" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1115" />
             <source>Pattern Loaded</source>
             <translation>Pattern caricato</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1488" />
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1101" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1521" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1123" />
             <source>Could not load pattern: {value1}</source>
             <translation>Impossibile caricare il pattern: {value1}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1072" />
+            <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1094" />
             <source>Could not save pattern: {value1}</source>
             <translation>Impossibile salvare il pattern: {value1}</translation>
         </message>
@@ -6755,57 +6770,57 @@ Le modifiche che non avevi salvato andrebbero perse. Le rimando al JD-Xi?</trans
             <translation>Velocity della traccia {percent}% (doppio clic: 100%)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="475" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="476" />
             <source>Delete Track?</source>
             <translation>Eliminare la traccia?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="109" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="110" />
             <source>Mute Channels:</source>
             <translation>Silenzia canali:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="149" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="150" />
             <source>Track Zoom</source>
             <translation>Zoom tracce</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="466" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="467" />
             <source>Delete Track</source>
             <translation>Elimina traccia</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="466" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="467" />
             <source>A MIDI file needs at least one track.</source>
             <translation>Un file MIDI deve avere almeno una traccia.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="861" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="866" />
             <source>Unnamed</source>
             <translation>Senza nome</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="862" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="867" />
             <source>Track name (applied on Enter or when you click away)</source>
             <translation>Nome della traccia (si applica con Invio o cliccando altrove)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="876" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="881" />
             <source>Mute Track</source>
             <translation>Silenzia traccia</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="893" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="898" />
             <source>Solo Track (mute all other tracks)</source>
             <translation>Solo (silenzia tutte le altre tracce)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="476" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="477" />
             <source>Are you sure you want to delete '{track_name}'?</source>
             <translation>Vuoi davvero eliminare '{track_name}'?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="909" />
+            <location filename="../../jdxi_editor/ui/widgets/midi/track_viewer.py" line="914" />
             <source>MIDI channel of the track (changes apply immediately)</source>
             <translation>Canale MIDI della traccia (si applica subito)</translation>
         </message>

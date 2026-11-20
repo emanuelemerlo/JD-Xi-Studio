@@ -5,6 +5,12 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- Opening a big MIDI file is much faster (a 45-track, 20-minute song: from 20–40 s to a few
+  seconds) and says so meanwhile: wait cursor, «Loading …», then tracks and time in the status bar.
+  The Pattern imports the file when it is shown, and only its first 64 bars (a pattern, not a whole
+  song); the file's length is read once instead of once per track and per playhead step.
+- Programs › Organize: the «Cheat Preset» column is «Extra sound», one readable combo (its MIDI
+  bytes in the tooltip, what it does in the header's); the file and Play cells in the app's look.
 - Programs › Organize: Add to / Remove from playlist over the songs' table (they act on the songs);
   Play, Stop, Pause and **Mix** (was Shuffle Play) in a compact row of their own, with the
   now-playing line beside them.

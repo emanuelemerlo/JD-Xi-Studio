@@ -210,3 +210,19 @@ def test_unused_channels_dimmed_and_classification_is_one_row(tmp_path):
     finally:
         editor.transport_controller.shutdown()
         editor.close()
+
+
+def test_the_file_length_is_read_once(viewer, monkeypatch):
+    """mido's length reads the whole file: it was asked for every track and
+    every playhead step (seconds for a 45-track song)."""
+    calls = []
+    real = mido.MidiFile.length
+    monkeypatch.setattr(mido.MidiFile, "length", property(lambda f: calls.append(1) or real.fget(f)))
+    song = _file()
+    for _ in range(5):
+        song.tracks.append(mido.MidiTrack([mido.Message("note_on", channel=1, note=60, time=0),
+                                           mido.Message("note_off", channel=1, note=60, time=480)]))
+    viewer.set_midi_file(song)
+    for second in (0.0, 0.5, 1.0):
+        viewer.set_playhead(second)
+    assert len(calls) == 1

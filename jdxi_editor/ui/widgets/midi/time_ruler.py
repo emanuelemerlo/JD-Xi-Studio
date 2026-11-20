@@ -76,9 +76,10 @@ class TimeRulerWidget(QWidget):
 
     # --- Data -----------------------------------------------------------------
 
-    def set_midi_file(self, midi_file: mido.MidiFile) -> None:
+    def set_midi_file(self, midi_file: mido.MidiFile, length: float | None = None) -> None:
         self.midi_file = midi_file
-        self.midi_file_cached_total_length = self.midi_file.length
+        # *length* when the caller knows it (mido's length reads the whole file)
+        self.midi_file_cached_total_length = midi_file.length if length is None else length
         self.update()
 
     @property

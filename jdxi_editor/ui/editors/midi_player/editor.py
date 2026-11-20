@@ -1228,7 +1228,33 @@ class MidiFilePlayer(SynthEditor):
 
         self.midi_load_file_from_path(file_path)
 
-    def midi_load_file_from_path(
+    def midi_load_file_from_path(self, file_path: str, **options) -> bool:
+        """Load a MIDI file (see _load_file_from_path), saying meanwhile that it
+        is loading: a big file takes seconds and the window must not look stuck."""
+        from PySide6.QtWidgets import QApplication as Qt_app  # the module's QApplication is a test placeholder
+
+        status = getattr(self.window(), "statusBar", None)
+        status = status() if callable(status) else None
+        name = Path(file_path).name if file_path else ""
+        started = time.monotonic()
+        Qt_app.setOverrideCursor(Qt.CursorShape.WaitCursor)
+        try:
+            if status is not None and name:
+                status.showMessage(tr("Loading {name}…").format(name=name))
+                Qt_app.processEvents()  # show it before the work starts
+            loaded = self._load_file_from_path(file_path, **options)
+        finally:
+            Qt_app.restoreOverrideCursor()
+        if status is not None and name:
+            if loaded:
+                tracks = len(self.midi_state.file.tracks) if self.midi_state.file else 0
+                status.showMessage(tr("{name}: {tracks} tracks, loaded in {seconds:.1f} s").format(
+                    name=name, tracks=tracks, seconds=time.monotonic() - started), 8000)
+            else:
+                status.clearMessage()
+        return loaded
+
+    def _load_file_from_path(
         self,
         file_path: str,
         *,

@@ -55,6 +55,7 @@ class PatternImport:
     dropped_overlapping: int = 0  # same note starting again on the same step
     dropped_channels: dict[int, int] = field(default_factory=dict)  # channel -> notes
     tempo_changes_ignored: int = 0
+    bars_left_out: int = 0  # bars after the import limit (a whole song is not a pattern)
 
     @property
     def dropped_total(self) -> int:
@@ -75,6 +76,11 @@ class PatternImport:
                 f"Ch {ch + 1} ({count})" for ch, count in sorted(self.dropped_channels.items())
             )
             parts.append(f"notes on channels without a row not imported: {channels}")
+        if self.bars_left_out:
+            parts.append(
+                f"only the first {_count(self.bars, 'bar')} imported "
+                f"({_count(self.bars_left_out, 'more bar')} in the file)"
+            )
         if self.tempo_changes_ignored:
             parts.append(
                 f"{_count(self.tempo_changes_ignored, 'tempo change')} ignored "
