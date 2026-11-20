@@ -15,7 +15,7 @@ import pytest
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from PySide6.QtCore import QCoreApplication
+from PySide6.QtWidgets import QApplication
 from PySide6.QtTest import QTest
 
 from jdxi_editor.midi.recording.recording_thread import WavRecordingThread
@@ -24,7 +24,8 @@ from jdxi_editor.midi.utils import helpers
 
 @pytest.fixture(scope="module")
 def app():
-    return QCoreApplication.instance() or QCoreApplication([])
+    # a QApplication (not QCoreApplication): later tests in the same run build widgets
+    return QApplication.instance() or QApplication([])
 
 
 def _fake_record(self):

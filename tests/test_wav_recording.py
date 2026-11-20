@@ -41,13 +41,12 @@ class TestUSBRecorder(unittest.TestCase):
 
         self.assertIsNotNone(recorder.p)
         self.assertIsNone(recorder.input_device_index)
-        self.assertEqual(recorder.channels, 1)
+        self.assertEqual(recorder.channels, 2)  # stereo, as the JD-Xi sends it
         self.assertEqual(recorder.rate, 44100)
         self.assertEqual(recorder.frames_per_buffer, 1024)
         self.assertFalse(recorder.file_save_recording)
         self.assertIsNone(recorder.usb_port_input_device_index)
-        self.assertEqual(recorder.usb_recording_rates["16bit"], pyaudio.paInt16)
-        self.assertEqual(recorder.usb_recording_rates["32bit"], pyaudio.paInt32)
+        self.assertEqual(recorder.sample_format, pyaudio.paInt16)
 
     @patch("jdxi_editor.midi.utils.usb_recorder.pyaudio.PyAudio")
     def test_init_custom_values(self, mock_pyaudio_class):
@@ -82,10 +81,12 @@ class TestUSBRecorder(unittest.TestCase):
         recorder = USBRecorder()
         device_list = recorder.list_devices()
 
-        self.assertEqual(len(device_list), 3)
+        # Device 3 has no input: it cannot record, so it is not offered
+        self.assertEqual(len(device_list), 2)
         self.assertIn("Device 1", device_list[0])
+        self.assertIn("stereo", device_list[0])
         self.assertIn("Device 2", device_list[1])
-        self.assertIn("Device 3", device_list[2])
+        self.assertIn("mono", device_list[1])
         self.assertEqual(mock_pyaudio_instance.get_device_count.call_count, 1)
 
     @patch("jdxi_editor.midi.utils.usb_recorder.pyaudio.PyAudio")
@@ -263,6 +264,25 @@ class TestWavRecordingThread(unittest.TestCase):
         # So we just verify the method completes without error
         # The exact behavior depends on the duration calculation
         pass  # Test passes if no exception is raised
+
+    def test_record_stereo_when_the_device_has_it(self):
+        self.mock_recorder.channels = 2
+        thread = WavRecordingThread(recorder=self.mock_recorder, duration=0.05, output_file="/tmp/x.wav")
+        with patch("jdxi_editor.midi.recording.recording_thread.wave.open"):
+            thread.record()
+        self.assertEqual(self.mock_recorder.p.open.call_args.kwargs["channels"], 2)
+
+    def test_record_refuses_a_device_without_input(self):
+        """An output-only device (the JD-Xi's playback side) is not opened."""
+        self.mock_recorder.channels = 2
+        self.mock_device_info["maxInputChannels"] = 0
+        errors = []
+        thread = WavRecordingThread(recorder=self.mock_recorder, duration=1.0, output_file="/tmp/x.wav")
+        thread.recording_error.connect(errors.append)
+        thread.record()
+        self.mock_recorder.p.open.assert_not_called()
+        self.assertEqual(len(errors), 1)
+        self.assertIn("no input", errors[0])
 
     def test_record_stream_open_error(self):
         """Test recording when stream opening fails."""
@@ -539,3 +559,87 @@ def test_recorder_starts_portaudio_only_when_used(monkeypatch):
     assert recorder.list_devices() == []
     assert "host error" in recorder.error
     recorder.close()  # nothing to close
+
+
+class _FakePortAudio:
+    """Speakers, a microphone, and the JD-Xi as output and input under two
+    Windows audio APIs (MME, the default, and WASAPI)."""
+
+    DEVICES = [
+        {"name": "Speakers (Realtek)", "maxInputChannels": 0, "hostApi": 0},
+        {"name": "Microphone (Realtek)", "maxInputChannels": 2, "hostApi": 0},
+        {"name": "Speakers (JD-Xi)", "maxInputChannels": 0, "hostApi": 0},
+        {"name": "Line (JD-Xi)", "maxInputChannels": 2, "hostApi": 1},  # WASAPI first
+        {"name": "Line (JD-Xi)", "maxInputChannels": 2, "hostApi": 0},  # MME
+    ]
+
+    def get_device_count(self):
+        return len(self.DEVICES)
+
+    def get_device_info_by_index(self, i):
+        return self.DEVICES[i]
+
+    def get_host_api_count(self):
+        return 2
+
+    def get_host_api_info_by_index(self, i):
+        return {"name": ("MME", "Windows WASAPI")[i], "index": i}
+
+    def get_default_host_api_info(self):
+        return {"name": "MME", "index": 0}
+
+    def terminate(self):
+        pass
+
+
+def _recorder_widget(monkeypatch):
+    import os
+
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    from PySide6.QtWidgets import QApplication
+
+    QApplication.instance() or QApplication([])
+    monkeypatch.setattr(pyaudio, "PyAudio", _FakePortAudio)
+    from jdxi_editor.midi.playback.state import MidiPlaybackState
+    from jdxi_editor.ui.widgets.usb.recording import USBFileRecordingWidget
+
+    return USBFileRecordingWidget(MidiPlaybackState())
+
+
+def test_only_inputs_are_offered_and_the_jdxi_input_is_chosen(monkeypatch):
+    widget = _recorder_widget(monkeypatch)
+    labels = widget.populate_devices()
+    assert not any("Speakers" in label for label in labels)
+    assert len(labels) == 3 and all("stereo" in label for label in labels)
+    # the JD-Xi's input of the default API (MME), not the first JD-Xi listed
+    assert widget.port_select_combo.currentData() == 4
+    assert "MME" in widget.port_select_combo.currentText()
+    assert widget.recorder.channels == 2
+
+
+def test_recording_starts_on_the_chosen_device_index(monkeypatch):
+    widget = _recorder_widget(monkeypatch)
+    widget.populate_devices()
+    widget.file_output_name = "/tmp/take.wav"
+    widget.recorder.file_save_recording = True
+    with patch("jdxi_editor.ui.widgets.usb.recording.start_recording") as start:
+        widget.start_recording(duration_seconds=5.0)
+    args = start.call_args.args
+    assert args[3] == pyaudio.paInt16 and args[4] == 4  # 16 bit, the PortAudio index (not the row)
+
+
+def test_without_an_input_it_says_so_instead_of_recording(monkeypatch):
+    widget = _recorder_widget(monkeypatch)
+    _FakePortAudio.DEVICES, saved = [_FakePortAudio.DEVICES[0]], _FakePortAudio.DEVICES
+    try:
+        widget.populate_devices()
+    finally:
+        _FakePortAudio.DEVICES = saved
+    widget.file_output_name = "/tmp/take.wav"
+    widget.recorder.file_save_recording = True
+    with patch("jdxi_editor.ui.widgets.usb.recording.start_recording") as start, patch(
+        "jdxi_editor.ui.widgets.usb.recording.show_message_box_from_spec"
+    ) as box:
+        widget.start_recording(duration_seconds=5.0)
+    start.assert_not_called()
+    assert box.call_args.args[0].title == "No Audio Input"

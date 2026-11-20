@@ -3,6 +3,7 @@ USBRecorder
 """
 
 import wave
+from typing import Optional
 
 import pyaudio
 from decologr import Decologr as log
@@ -16,7 +17,7 @@ class USBRecorder:
     def __init__(
         self,
         input_device_index: int = None,
-        channels: int = 1,
+        channels: int = 2,  # the JD-Xi sends stereo over USB
         rate: int = 44100,
         frames_per_buffer: int = 1024,
     ):
@@ -35,7 +36,9 @@ class USBRecorder:
         self.frames_per_buffer = frames_per_buffer
         self.file_save_recording: bool = False  # Default to false
         self.usb_port_input_device_index = None
-        self.usb_recording_rates = {"16bit": pyaudio.paInt16, "32bit": pyaudio.paInt32}
+        # 16-bit PCM: what the recording thread opens and writes (the WAV header
+        # says the same); a wider format would need both changed together
+        self.sample_format = pyaudio.paInt16
 
     @property
     def p(self) -> "pyaudio.PyAudio":
@@ -44,36 +47,63 @@ class USBRecorder:
             self._p = pyaudio.PyAudio()
         return self._p
 
-    def list_devices(self):
-        """Prints a list of available audio input devices ([] without an audio system)."""
-        log.message("[USBRecorder] Available audio input devices:")
-        device_list = []
+    def input_devices(self) -> list[tuple[int, str]]:
+        """
+        The devices that can record: (PortAudio index, label), [] without an
+        audio system. Output-only devices (speakers, the JD-Xi's playback side)
+        are left out: opening one for input fails.
+        """
         try:
             count = self.p.get_device_count()
         except Exception as ex:  # no audio system: nothing to record from
             self.error = str(ex)
             log.warning(f"[USBRecorder] Audio system unavailable: {ex}")
-            return device_list
+            return []
+        host_apis = {}
+        try:
+            for api in range(self.p.get_host_api_count()):
+                host_apis[api] = self.p.get_host_api_info_by_index(api).get("name", "")
+        except Exception:
+            host_apis = {}
+        devices = []
         for i in range(count):
             info = self.p.get_device_info_by_index(i)
-            device_info = (
-                f"{i}: {info['name']} (input channels: {info['maxInputChannels']})"
-            )
+            channels = int(info.get("maxInputChannels", 0) or 0)
+            if channels <= 0:
+                continue
+            label = f"{info['name']}"
+            api = host_apis.get(info.get("hostApi"))
+            if api and len(host_apis) > 1:  # Windows: MME, WASAPI, … list a device several times
+                label += f" — {api}"
+            label += " (stereo)" if channels >= 2 else " (mono)"
+            devices.append((i, label))
+        return devices
+
+    def default_host_api(self) -> Optional[int]:
+        try:
+            return int(self.p.get_default_host_api_info()["index"])
+        except Exception:
+            return None
+
+    def list_devices(self):
+        """The labels of the devices that can record ([] without an audio system)."""
+        log.message("[USBRecorder] Available audio input devices:")
+        device_list = []
+        for index, label in self.input_devices():
+            device_info = f"{index}: {label}"
             log.info(device_info)
             device_list.append(device_info)
         return device_list
 
-    def record(self, duration, output_file, rate="16bit"):
+    def record(self, duration, output_file):
         """
         Records audio for the specified duration and saves to a .wav file.
         """
-        rates = {"16bit": pyaudio.paInt16, "32bit": pyaudio.paInt32}
-        rate = rates.get(rate, pyaudio.paInt16)
         log.message("[USBRecorder] Recording...")
         try:
             stream = self.p.open(
-                format=rate,
-                channels=1,  # self.channels,
+                format=self.sample_format,
+                channels=self.channels,
                 rate=self.rate,
                 input=True,
                 input_device_index=self.input_device_index,
@@ -103,7 +133,7 @@ class USBRecorder:
 
         with wave.open(output_file, "wb") as f:
             f.setnchannels(self.channels)
-            f.setsampwidth(self.p.get_sample_size(pyaudio.paInt16))
+            f.setsampwidth(self.p.get_sample_size(self.sample_format))
             f.setframerate(self.rate)
             f.writeframes(b"".join(frames))
 
