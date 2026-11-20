@@ -148,6 +148,12 @@ def test_keyboard_on_top_installs_the_dialog_filter_and_removes_it(app, tmp_path
     window = JDXiInstrument()
     try:
         assert not window.on_top_action.isChecked()  # always off at start
+        # «Editors» fits its text from the first layout (added late, it stayed blank)
+        window.show()
+        _spin(app)
+        button = window.editors_button
+        assert button.text() and button.width() >= button.sizeHint().width()
+        assert abs(button.geometry().center().y() - window.on_top_pin.geometry().center().y()) <= 1
         window.on_top_pin.click()
         assert window._dialogs_in_front is not None and window.on_top_action.isChecked()
         assert window.windowFlags() & Qt.WindowType.WindowStaysOnTopHint

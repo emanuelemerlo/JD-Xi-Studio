@@ -90,7 +90,6 @@ from jdxi_editor.midi.sysex.sections import SysExSection
 from jdxi_editor.project import __package_name__
 from jdxi_editor.ui.dialogs.about import UiAboutDialog
 from jdxi_editor.ui.dialogs.settings import UiPreferencesDialog
-from jdxi_editor.ui.windows.jdxi.window_buttons import switch_button
 from jdxi_editor.ui.editors.config import EditorConfig
 from jdxi_editor.ui.editors.helpers.program import (
     calculate_midi_values,
@@ -1166,9 +1165,8 @@ class JDXiInstrument(JDXiWindow):
         self.on_top_pin = self.window_buttons.pin_button
         self.on_top_pin.toggled.connect(self.set_keyboard_on_top)
         # «Editors», before the pin: the editors window in front, wherever it is
-        self.editors_button = switch_button(tr("Editors"))
+        self.editors_button = self.window_buttons.editors_button
         self.editors_button.clicked.connect(self._show_main_editor)
-        self.window_buttons.layout().insertWidget(0, self.editors_button)
         self._switch_tips()
 
     def _switch_tips(self) -> None:
