@@ -31,6 +31,8 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   mid-song comes with its bank select; a track's velocity scale at 0 silences it.
 
 ### Fixed
+- MIDI Player: Play, Stop, Pause, Panic, Load and Save at one width (the first four stretched with
+  the window, Load and Save stayed small).
 - A typed name (program, tones, drum kit) is an edit: one Undo step, «Modified» (it was taken for
   a value from the JD-Xi: no Undo, and it became the original).
 - Save on the JD-Xi: a slot whose content is not known asks before writing and is no longer

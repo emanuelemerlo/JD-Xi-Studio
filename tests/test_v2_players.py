@@ -148,3 +148,20 @@ def test_pattern_fills_the_width_with_the_side_panel(app):
     editor.explain(step)
     assert editor.info_panel.name.text() == "Step"
     editor.close()
+
+
+def test_player_buttons_one_width_not_stretched(app):
+    """Play … Panic stretched with the window while Load and Save stayed small:
+    all at one width now, whatever the window."""
+    from PySide6.QtWidgets import QPushButton
+
+    editor = players.MidiFilePlayer(midi_helper=_helper())
+    buttons = [b for holder in (editor.transport, editor.midi_file_group)
+               for b in holder.findChildren(QPushButton) if b.text().strip()]
+    assert len(buttons) >= 6
+    for width in (1300, 2400):
+        editor.resize(width, 950)
+        editor.show()
+        app.processEvents()
+        assert len({b.width() for b in buttons}) == 1, [(b.text(), b.width()) for b in buttons]
+    editor.close()

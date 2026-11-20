@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
     QLayout,
     QSizePolicy,
     QAbstractButton,
+    QPushButton,
     QApplication,
     QVBoxLayout,
     QWidget,
@@ -350,11 +351,22 @@ class MidiFilePlayer(_player.MidiFilePlayer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        restyle(self, PLAYER_ACCENT)
-        QTimer.singleShot(0, self, lambda: restyle(self, PLAYER_ACCENT))
+        self._apply_midi_player_style()
+        QTimer.singleShot(0, self, self._apply_midi_player_style)
 
     def _apply_midi_player_style(self) -> None:
         restyle(self, PLAYER_ACCENT)
+        self._equal_player_buttons()  # after restyle, which sizes each button to its text
+
+    def _equal_player_buttons(self) -> None:
+        """Play, Stop, Pause, Panic, Load, Save: one width, the widest text's."""
+        buttons = [b for holder in (getattr(self, "transport", None), getattr(self, "midi_file_group", None))
+                   if holder is not None for b in holder.findChildren(QPushButton) if b.text().strip()]
+        if not buttons:
+            return
+        width = max([b.sizeHint().width() for b in buttons] + [96])
+        for button in buttons:
+            button.setFixedWidth(width)
 
     def ui_init(self) -> None:
         """
@@ -389,8 +401,11 @@ class MidiFilePlayer(_player.MidiFilePlayer):
 
         controls = QVBoxLayout()
         controls.setSpacing(8)
-        controls.addWidget(self.transport)
-        controls.addWidget(self.midi_file_group)
+        # Play … Panic and Load / Save at one width, left-aligned (see
+        # _equal_player_buttons): the transport stretched with the window
+        # while Load and Save stayed small
+        controls.addWidget(self.transport, 0, Qt.AlignmentFlag.AlignLeft)
+        controls.addWidget(self.midi_file_group, 0, Qt.AlignmentFlag.AlignLeft)
         controls.addStretch()
         top = QHBoxLayout()
         top.setSpacing(12)
