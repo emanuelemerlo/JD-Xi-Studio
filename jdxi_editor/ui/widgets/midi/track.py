@@ -319,9 +319,9 @@ class MidiTrackWidget(QWidget):
                 MidoMessageType.NOTE_OFF.value,
                 MidoMessageType.CONTROL_CHANGE.value,
                 MidoMessageType.PROGRAM_CHANGE.value,
-                MidoMessageType.PITCH_WHEEL,
-                MidoMessageType.AFTERTOUCH,
-                MidoMessageType.POLYTOUCH,
+                MidoMessageType.PITCH_WHEEL.value,
+                MidoMessageType.AFTERTOUCH.value,
+                MidoMessageType.POLYTOUCH.value,
             ]:
                 msg.channel = new_channel
 
