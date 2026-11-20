@@ -10,7 +10,7 @@ from jdxi_editor.i18n import tr
 
 UI_STRINGS = (
     # transport, pattern, MIDI file player
-    tr("Play"), tr("Stop"), tr("Pause"), tr("Resume"), tr("Shuffle Play"), tr("Load"), tr("Save"),
+    tr("Play"), tr("Stop"), tr("Pause"), tr("Resume"), tr("Shuffle Play"), tr("Mix"), tr("Load"), tr("Save"),
     tr("Refresh"), tr("Clear…"), tr("Add Measure"), tr("Copy Section"), tr("Paste Section"), tr("Tap"),
     tr("Vel:"), tr("BPM:"), tr("Port"), tr("Loop"), tr("Set A"), tr("Set B"), tr("Clear A–B"), tr("Trim"),
     tr("Panic"), tr("Automation:"), tr("Insert Program Change Here"), tr("Detect Drums"),

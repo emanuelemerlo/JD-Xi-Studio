@@ -9,7 +9,7 @@
             <location filename="../../jdxi_editor/ui/v2/players.py" line="265" />
             <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="68" />
             <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="166" />
-            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="213" />
+            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="224" />
             <source>Play</source>
             <translation>Play</translation>
         </message>
@@ -18,7 +18,7 @@
             <location filename="../../jdxi_editor/ui/v2/players.py" line="266" />
             <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="77" />
             <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="175" />
-            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="222" />
+            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="233" />
             <location filename="../../jdxi_editor/ui/windows/midi/config_dialog.py" line="328" />
             <location filename="../../jdxi_editor/ui/windows/selftest.py" line="786" />
             <source>Stop</source>
@@ -29,7 +29,7 @@
             <location filename="../../jdxi_editor/ui/v2/players.py" line="267" />
             <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="126" />
             <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="184" />
-            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="231" />
+            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="242" />
             <source>Pause</source>
             <translation>Pausa</translation>
         </message>
@@ -42,9 +42,13 @@
         <message>
             <location filename="../../jdxi_editor/i18n/ui_strings.py" line="13" />
             <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="193" />
-            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="240" />
             <source>Shuffle Play</source>
             <translation>Riproduzione casuale</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="13" />
+            <source>Mix</source>
+            <translation>Mix</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/i18n/ui_strings.py" line="13" />
@@ -317,8 +321,8 @@
         </message>
         <message>
             <location filename="../../jdxi_editor/i18n/ui_strings.py" line="25" />
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="468" />
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="130" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="494" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="131" />
             <source>-- Select a Playlist --</source>
             <translation>-- Scegli una playlist --</translation>
         </message>
@@ -345,7 +349,7 @@
         </message>
         <message>
             <location filename="../../jdxi_editor/i18n/ui_strings.py" line="26" />
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="798" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="801" />
             <source>Description</source>
             <translation>Descrizione</translation>
         </message>
@@ -833,10 +837,10 @@
             <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1488" />
             <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1072" />
             <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1101" />
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="891" />
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="963" />
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1033" />
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1177" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="917" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="989" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1059" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1203" />
             <location filename="../../jdxi_editor/ui/editors/playlist/table.py" line="275" />
             <location filename="../../jdxi_editor/ui/editors/playlist/table.py" line="331" />
             <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="3032" />
@@ -1043,7 +1047,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Intero (16 passi)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="447" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="472" />
             <location filename="../../jdxi_editor/ui/editors/preset/editor.py" line="343" />
             <location filename="../../jdxi_editor/ui/editors/program/user_programs_widget.py" line="83" />
             <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="143" />
@@ -1051,115 +1055,115 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Cerca:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="670" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="696" />
             <source>None</source>
             <translation>Nessuno</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="852" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="878" />
             <source>Add Programs to Playlist</source>
             <translation>Aggiungi programmi alla playlist</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="991" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1017" />
             <source>Delete Programs</source>
             <translation>Elimina programmi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="126" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="127" />
             <source>Select Playlist:</source>
             <translation>Scegli la playlist:</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="844" />
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="976" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="870" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1002" />
             <source>No Playlist Selected</source>
             <translation>Nessuna playlist scelta</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="844" />
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="976" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="870" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1002" />
             <source>Please select a playlist first.</source>
             <translation>Scegli prima una playlist.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="897" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="923" />
             <source>No Programs Available</source>
             <translation>Nessun programma disponibile</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="984" />
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="932" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1010" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="958" />
             <location filename="../../jdxi_editor/ui/editors/playlist/table.py" line="291" />
             <source>No Selection</source>
             <translation>Nessuna selezione</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="984" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1010" />
             <source>Please select at least one program to delete.</source>
             <translation>Scegli almeno un programma da eliminare.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="371" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="396" />
             <location filename="../../jdxi_editor/ui/editors/playlist/progress.py" line="259" />
             <source>Playing</source>
             <translation>In riproduzione</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="898" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="924" />
             <source>All programs are already in this playlist.</source>
             <translation>Tutti i programmi sono già in questa playlist.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="899" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="925" />
             <source>No programs known yet: the program list is empty.</source>
             <translation>Nessun programma ancora noto: l'elenco dei programmi è vuoto.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="932" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="958" />
             <source>Please select a program to add.</source>
             <translation>Scegli un programma da aggiungere.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="963" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="989" />
             <source>Failed to add programs to playlist.</source>
             <translation>Impossibile aggiungere i programmi alla playlist.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="992" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1018" />
             <source>Are you sure you want to delete {value1} program(s) from the playlist?</source>
             <translation>Vuoi davvero togliere {value1} programmi dalla playlist?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1033" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1059" />
             <source>Failed to delete programs from playlist.</source>
             <translation>Impossibile togliere i programmi dalla playlist.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1099" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1125" />
             <location filename="../../jdxi_editor/ui/windows/jdxi/instrument.py" line="1884" />
             <source>File Not Found</source>
             <translation>File non trovato</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="861" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="887" />
             <source>Select a program to add to '{playlist_name}':</source>
             <translation>Scegli un programma da aggiungere a '{playlist_name}':</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="891" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="917" />
             <source>Failed to load programs: {e}</source>
             <translation>Impossibile caricare i programmi: {e}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1099" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1125" />
             <source>MIDI file not found:
 {midi_file_path}</source>
             <translation>File MIDI non trovato:
 {midi_file_path}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1177" />
+            <location filename="../../jdxi_editor/ui/editors/playlist/editor.py" line="1203" />
             <source>Failed to load MIDI file:
 {value1}</source>
             <translation>Impossibile caricare il file MIDI:
@@ -3791,22 +3795,22 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Lettura completata</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/history.py" line="351" />
+            <location filename="../../jdxi_editor/ui/v2/history.py" line="378" />
             <source>Unsaved changes</source>
             <translation>Modifiche non salvate</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/history.py" line="354" />
+            <location filename="../../jdxi_editor/ui/v2/history.py" line="381" />
             <source>Save to file…</source>
             <translation>Salva su file…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/history.py" line="355" />
+            <location filename="../../jdxi_editor/ui/v2/history.py" line="382" />
             <source>Discard the changes</source>
             <translation>Scarta le modifiche</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/history.py" line="356" />
+            <location filename="../../jdxi_editor/ui/v2/history.py" line="383" />
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="432" />
             <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="269" />
             <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="289" />
@@ -3818,22 +3822,22 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Annulla</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/history.py" line="358" />
+            <location filename="../../jdxi_editor/ui/v2/history.py" line="385" />
             <source>Do not ask again (Preferences can turn it back on)</source>
             <translation>Non chiedere più (si riattiva dalle Preferenze)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/history.py" line="417" />
+            <location filename="../../jdxi_editor/ui/v2/history.py" line="444" />
             <source>Changing the program replaces every part's sound.</source>
             <translation>Cambiando programma, il suono di tutte le parti viene sostituito.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/history.py" line="419" />
+            <location filename="../../jdxi_editor/ui/v2/history.py" line="446" />
             <source>Changing the sound replaces them.</source>
             <translation>Cambiando suono, vengono sostituite.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/history.py" line="352" />
+            <location filename="../../jdxi_editor/ui/v2/history.py" line="379" />
             <source>{parts}: the changes are not saved.</source>
             <translation>{parts}: le modifiche non sono salvate.</translation>
         </message>
@@ -4918,7 +4922,7 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/programs.py" line="397" />
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="820" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="823" />
             <source>Export…</source>
             <translation>Esporta…</translation>
         </message>
@@ -5246,64 +5250,64 @@ TONE: FILTER	Cutoff KF	+50</translation>
             <translation>Per conservare il suono salva il programma sul JD-Xi con [Menu/Write] (via MIDI non si può scrivere nella sua memoria); la ricetta suggerisce il programma utente {program}.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="757" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="760" />
             <source>recipe</source>
             <translation>ricetta</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="813" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="816" />
             <source>Add row</source>
             <translation>Aggiungi riga</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="815" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="818" />
             <source>Remove row</source>
             <translation>Togli riga</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="817" />
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1022" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="820" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1025" />
             <source>Take the values from the JD-Xi</source>
             <translation>Prendi i valori dal JD-Xi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="818" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="821" />
             <source>Writes in each row the value the parameter has now</source>
             <translation>Scrive in ogni riga il valore che il parametro ha adesso</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="822" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="825" />
             <source>Try the recipe</source>
             <translation>Prova la ricetta</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="824" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="827" />
             <source>Save recipe</source>
             <translation>Salva ricetta</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1010" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1013" />
             <source>Reading the JD-Xi…</source>
             <translation>Lettura dal JD-Xi…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1023" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1026" />
             <source>The editor is empty: which part do you want to take whole, every parameter with its value?</source>
             <translation>L'editor è vuoto: quale parte vuoi prendere per intero, ogni parametro con il suo valore?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1098" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1101" />
             <source>Check before importing</source>
             <translation>Controllo prima dell'importazione</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1099" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1102" />
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="186" />
             <source>Guide</source>
             <translation>Guida</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1100" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1103" />
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="191" />
             <source>Editor</source>
             <translation>Editor</translation>
@@ -5330,7 +5334,7 @@ TONE: FILTER	Cutoff KF	+50</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="180" />
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="803" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="806" />
             <source>Check</source>
             <translation>Controllo</translation>
         </message>
@@ -5513,47 +5517,47 @@ TONE: FILTER	Cutoff KF	+50</translation>
             <translation>Tutti i valori del passo sono impostati</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="792" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="795" />
             <source>Title</source>
             <translation>Titolo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="792" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="795" />
             <source>Starting tone</source>
             <translation>Tono di partenza</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="792" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="795" />
             <source>User program</source>
             <translation>Programma utente</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="810" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="813" />
             <source>The menus show only what exists: choosing the part AN, the group offers COMMON, OSC, PITCH, FILTER, AMP, LFO, and the parameter shows its range. The check is the same as for imported files, while you write.</source>
             <translation>I menu mostrano solo ciò che esiste: scegliendo la parte AN, il gruppo offre COMMON, OSC, PITCH, FILTER, AMP, LFO, e il parametro mostra il suo intervallo. Il controllo è lo stesso dell'importazione da file, ma qui gira mentre scrivi.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="955" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="958" />
             <source>No rows yet: «Add row» to start</source>
             <translation>Ancora nessuna riga: «Aggiungi riga» per iniziare</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1076" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1079" />
             <source>Export the recipe</source>
             <translation>Esporta la ricetta</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1077" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1080" />
             <source>Excel (*.xlsx);;CSV (*.csv);;Markdown (*.md)</source>
             <translation>Excel (*.xlsx);;CSV (*.csv);;Markdown (*.md)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1119" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1122" />
             <source>Recipe not saved</source>
             <translation>Ricetta non salvata</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1120" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1123" />
             <source>The changes to this recipe are not saved. Leave the editor anyway?</source>
             <translation>Le modifiche a questa ricetta non sono salvate. Uscire comunque dall'editor?</translation>
         </message>
@@ -5603,17 +5607,17 @@ TONE: FILTER	Cutoff KF	+50</translation>
             <translation>Imposta</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="991" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="994" />
             <source>No row to fill: add rows with Part, Group and Parameter, or choose a part to take whole.</source>
             <translation>Nessuna riga da compilare: aggiungi righe con Parte, Gruppo e Parametro, oppure scegli una parte da prendere per intero.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1062" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1065" />
             <source>Values taken from the JD-Xi: {n}</source>
             <translation>Valori presi dal JD-Xi: {n}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1069" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1072" />
             <source>Saved in the library: {path}</source>
             <translation>Salvata nella libreria: {path}</translation>
         </message>
@@ -5678,17 +5682,17 @@ TONE: FILTER	Cutoff KF	+50</translation>
             <translation>Imposta i {n} valori mancanti del passo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="761" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="764" />
             <source>recipe «{title}»</source>
             <translation>ricetta «{title}»</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="957" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="960" />
             <source>All {n} rows are valid</source>
             <translation>Tutte le {n} righe sono valide</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="958" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="961" />
             <source>{bad} of {n} rows to fix</source>
             <translation>{bad} righe su {n} da correggere</translation>
         </message>
@@ -5708,7 +5712,7 @@ TONE: FILTER	Cutoff KF	+50</translation>
             <translation>La ricetta suggerisce il programma utente {program}.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="950" />
+            <location filename="../../jdxi_editor/ui/v2/recipes.py" line="953" />
             <source>Range: {lo} … {hi}</source>
             <translation>Intervallo: {lo} … {hi}</translation>
         </message>
@@ -6887,6 +6891,11 @@ Nota: se il Sync del JD-Xi è MIDI o AUTO, Start avvia anche il suo pattern sequ
             <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="95" />
             <source>Silence everything: note-offs plus All Sound Off / All Notes Off on all channels</source>
             <translation>Silenzia tutto: note off più All Sound Off / All Notes Off su tutti i canali</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/widgets/transport/transport.py" line="251" />
+            <source>Mix: plays the playlist's songs in a random order</source>
+            <translation>Mix: suona i brani della playlist in ordine casuale</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/widgets/usb/recording.py" line="110" />
