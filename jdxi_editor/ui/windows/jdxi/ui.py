@@ -330,19 +330,19 @@ class JDXiWindow(QMainWindow):
         self.file_menu = file_menu = self._menu(tr("&File"))
         patch = file_menu.addMenu(tr("&Patch"))
         patch.setToolTipsVisible(True)
-        self._item(patch, tr("&Open…"), self._patch_load, "Ctrl+Alt+O",
+        self._item(patch, tr("&Open…"), self._patch_load, QKeySequence.StandardKey.Open,
                    tr("Load a program and its tones from a .jsz / .msz file and send them to the JD-Xi"))
         self.save_patch_action = self._item(
-            patch, tr("&Save…"), self._patch_save, "Ctrl+Alt+S",
+            patch, tr("&Save…"), self._patch_save, QKeySequence.StandardKey.Save,
             tr("Save the program and the tones in the editors to a .jsz / .msz file"))
         self.midi_file_menu = midi = file_menu.addMenu(tr("&MIDI Player"))
         midi.setToolTipsVisible(True)
-        self._item(midi, tr("&Open…"), self._midi_file_load, QKeySequence.StandardKey.Open,
+        self._item(midi, tr("&Open…"), self._midi_file_load, "Ctrl+Alt+O",
                    tr("Open a .mid file in the MIDI Player"))
         self.midi_save_actions = [
-            self._item(midi, tr("&Save"), self._midi_file_save, QKeySequence.StandardKey.Save,
+            self._item(midi, tr("&Save"), self._midi_file_save, "Ctrl+Alt+S",
                        tr("Save the MIDI file open in the MIDI Player")),
-            self._item(midi, tr("Save &as…"), self._midi_file_save_as, QKeySequence.StandardKey.SaveAs,
+            self._item(midi, tr("Save &as…"), self._midi_file_save_as, "Ctrl+Alt+Shift+S",
                        tr("Save the MIDI file open in the MIDI Player under another name")),
         ]
         midi.addSeparator()  # Recent MIDI Files go here

@@ -275,6 +275,13 @@ def test_the_main_menus_match_the_app(window, monkeypatch):
     assert not [a.text() for a in items("JD-Xi") if "JD-Xi" in a.text()]  # the menu says it
     file_menu = {a.text().replace("&", ""): a for a in items("File") if a.text()}
     assert list(file_menu) == ["Patch", "MIDI Player", "Preferences…", "Quit"]
+    # Ctrl+O / Ctrl+S are the patch's (the sound), not the MIDI Player's file
+    from PySide6.QtGui import QKeySequence
+
+    assert window.save_patch_action.shortcut() == QKeySequence(QKeySequence.StandardKey.Save)
+    assert [a.shortcut().toString() for a in window.midi_save_actions] == ["Ctrl+Alt+S", "Ctrl+Alt+Shift+S"]
+    # an item that is off looks off
+    assert "QMenu::item:disabled" in window.menuBar().styleSheet()
     assert not [a.text() for a in items("Tools") if "Preferences" in a.text()]
     # Save / Save as only with a file in the MIDI Player (none here)
     assert window.midi_save_actions and not [a for a in window.midi_save_actions if a.isEnabled()]

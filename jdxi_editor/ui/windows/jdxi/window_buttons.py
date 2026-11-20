@@ -21,6 +21,9 @@ MENU_BAR_STYLE = (
     "QMenuBar::item:selected { background: #333333; }"
     "QMenu { background: #111111; color: #e6e6e6; border: 1px solid #333333; }"
     "QMenu::item:selected { background: #333333; }"
+    # what cannot be done now looks so (dim, no highlight); its tooltip says why
+    "QMenu::item:disabled { color: #5c5f66; }"
+    "QMenu::item:disabled:selected { background: transparent; }"
 )
 
 

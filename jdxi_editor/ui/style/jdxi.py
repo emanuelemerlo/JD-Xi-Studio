@@ -440,6 +440,12 @@ class JDXiUIStyle:
             QMenu::item:selected {{
                 background-color: #333333;
             }}
+            QMenu::item:disabled {{
+                color: #5c5f66;
+            }}
+            QMenu::item:disabled:selected {{
+                background-color: transparent;
+            }}
             QGroupBox {{
                 font-family: {FONT_FAMILY};
                 border: none;
