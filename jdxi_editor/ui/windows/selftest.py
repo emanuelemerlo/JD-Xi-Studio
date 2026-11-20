@@ -2,7 +2,7 @@
 jdxi_editor.ui.windows.selftest
 Self-test with the JD-Xi: the app plays the user.
 
-Help › Self-test with the JD-Xi… runs a sequence of what a user does — load a
+JD-Xi › Self-test with the JD-Xi… runs a sequence of what a user does — load a
 program, choose tones, edit a value and undo it, change the octave, play a
 note — through the app's own windows and functions, and checks each result:
 by reading the value back from the JD-Xi when it can, by asking you when only
@@ -341,7 +341,7 @@ def step_connection(test: SelfTest):
     values = yield Read(PROGRAM_COMMON, 0x24)
     name = name_of(values)
     if name is None:
-        return KO, tr("no reply: check the MIDI ports (Edit › MIDI Configuration) and the USB cable")
+        return KO, tr("no reply: check the MIDI ports (JD-Xi › MIDI Configuration) and the USB cable")
     # the program to load again at the end
     editor = _program_editor(test.window)
     match = next((p for p in getattr(editor.library, "programs", []) if same_name(p.name, name)), None)
@@ -730,7 +730,7 @@ STATUS_COLOUR = {OK: "#6fcf97", KO: "#eb5757", SKIPPED: "#9aa0a6"}
 
 
 class SelfTestDialog(QDialog):
-    """Help › Self-test with the JD-Xi…"""
+    """JD-Xi › Self-test with the JD-Xi…"""
 
     def __init__(self, window, parent: Optional[QWidget] = None):
         super().__init__(parent or window)

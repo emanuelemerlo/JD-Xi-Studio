@@ -236,3 +236,43 @@ def _dispose(window) -> None:
     window.deleteLater()
     QApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
     QApplication.processEvents()
+
+
+def test_the_main_menus_match_the_app(window, monkeypatch):
+    """The menus as the app is now: no Digital 3 (the JD-Xi has two Digital
+    parts) nor sheet music; the parts named as their tabs; what talks to the
+    JD-Xi in a JD-Xi menu; every shortcut once; every item says what it does."""
+    from PySide6.QtWidgets import QMessageBox
+
+    bar = {a.text().replace("&", ""): a for a in window.menuBar().actions() if a.menu() is not None}
+    assert list(bar) == ["File", "JD-Xi", "Parts", "Effects", "Playback", "Tools", "Window", "Help"]
+
+    def items(title):
+        return bar[title].menu().actions()
+
+    texts, shortcuts = [], []
+    for title in bar:
+        for action in items(title):
+            if action.isSeparator() or action.menu():
+                continue
+            texts.append(action.text().replace("&", ""))
+            if action.shortcut().toString():
+                shortcuts.append(action.shortcut().toString())
+    assert not [t for t in texts if "Synth 3" in t or "PDF" in t]
+    assert len(shortcuts) == len(set(shortcuts)), sorted(shortcuts)
+    parts = [a.text().replace("&", "") for a in items("Parts") if not a.isSeparator()][:4]
+    assert parts == ["Digital 1", "Digital 2", "Analog", "Drums"]
+    for action in items("File") + items("JD-Xi"):
+        if not action.isSeparator() and not action.menu() and "Quit" not in action.text():
+            assert action.toolTip() and action.toolTip() != action.text().replace("&", ""), action.text()
+    # File: Recent MIDI Files before Quit
+    file_items = [a.text().replace("&", "") for a in items("File") if not a.isSeparator()]
+    assert file_items[-1] == "Quit" and file_items[-2] == "Recent MIDI Files"
+    # Send all asks first, naming the editors, and does nothing on No
+    asked = []
+    monkeypatch.setattr(QMessageBox, "question", lambda *a, **k: asked.append(a[2]) or QMessageBox.StandardButton.No)
+    window.midi_helper.midi_out = type("Out", (), {"is_port_open": lambda self: True})()
+    sent = []
+    monkeypatch.setattr(window.midi_helper, "send_raw_message", lambda m: sent.append(m) or True)
+    window._dump_settings_to_synth()
+    assert asked and "current program" in asked[0] and sent == []

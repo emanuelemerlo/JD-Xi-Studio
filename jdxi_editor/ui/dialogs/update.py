@@ -33,7 +33,7 @@ from jdxi_editor.i18n import tr
 
 AUTO_CHECK_NOTICE = (
     f"{__display_name__} checks GitHub for new releases automatically, at most once "
-    "a day. You can turn this off in Help → Preferences."
+    "a day. You can turn this off in Tools › Preferences."
 )
 
 

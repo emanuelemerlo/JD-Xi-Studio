@@ -54,7 +54,7 @@ computer screen instead of the JD-Xi's menus.
 - **Follows the JD-Xi**: it reads the instrument at start and every two seconds, so a tone or an
   octave chosen on the JD-Xi shows in the window, the panel sliders show the tone's values, the
   keys light as you play and the window selects the part you are playing.
-- **Self-test with the JD-Xi** (Help menu): the app runs the usual operations on the instrument —
+- **Self-test with the JD-Xi** (JD-Xi menu): the app runs the usual operations on the instrument —
   programs, tones, edits and Undo, octave, notes — checks each result and saves a report.
 - **Parameter panel**: point at a control to read its name on the display, its range and what it
   does, with the page of Roland's Parameter Guide.
@@ -122,7 +122,7 @@ PyAudio needs the PortAudio library (macOS `brew install portaudio`, Debian/Ubun
 
 ## 🌍 Languages
 
-The interface is in **English** and **Italiano**: choose it in **Help › Preferences › Interface
+The interface is in **English** and **Italiano**: choose it in **Tools › Preferences › Interface
 language** ("Same as the system" follows the operating system; the change applies at the next start).
 Parameter names (Cutoff, Resonance, Porta Time…) stay as on the JD-Xi's display and in Roland's
 manuals, so what you read matches the instrument. To add a language, see

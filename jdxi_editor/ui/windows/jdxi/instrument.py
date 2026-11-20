@@ -83,7 +83,6 @@ from jdxi_editor.update.checker import (
     UpdateChecker,
     should_auto_check,
 )
-from jdxi_editor.midi.music.pdf_export import export_midi_to_pdf
 from jdxi_editor.midi.program.helper import JDXiProgramHelper
 from jdxi_editor.midi.program.program import JDXiProgram
 from jdxi_editor.midi.sysex.composer import JDXiSysExComposer
@@ -530,7 +529,7 @@ class JDXiInstrument(JDXiWindow):
         arpeggio.part_provider = lambda: getattr(self, "current_synth_type", None)
 
     def show_self_test(self) -> None:
-        """Help › Self-test with the JD-Xi…"""
+        """JD-Xi › Self-test with the JD-Xi…"""
         from jdxi_editor.ui.windows.selftest import SelfTestDialog
 
         dialog = getattr(self, "self_test_dialog", None)
@@ -1796,25 +1795,12 @@ class JDXiInstrument(JDXiWindow):
         ):
             return
 
-        # Get the File menu by finding the action
-        file_menu = None
-        for action in self.menuBar().actions():
-            if action.text().replace("&", "") == "File":
-                file_menu = action.menu()
-                break
-
+        file_menu = getattr(self, "file_menu", None)
         if file_menu:
-            # Find the position after MIDI file load/save actions
-            actions = file_menu.actions()
-            insert_pos = 3  # After Load, Save, and Save As
-
-            # Add separator before Recent Files
-            file_menu.insertSeparator(
-                actions[insert_pos] if insert_pos < len(actions) else None
-            )
-
-            # Create Recent Files submenu
-            self.recent_files_menu = file_menu.addMenu(tr("Recent MIDI Files"))
+            # with the MIDI file items, before Quit
+            self.recent_files_menu = QMenu(tr("Recent MIDI Files"), file_menu)
+            file_menu.insertMenu(self._quit_action, self.recent_files_menu)
+            file_menu.insertSeparator(self._quit_action)
             self._update_recent_files_menu()
 
     def _update_recent_files_menu(self) -> None:
@@ -1945,64 +1931,13 @@ class JDXiInstrument(JDXiWindow):
         self.midi_file_editor.midi_save_file_as()
         self.show_editor("midi_player")
 
-    def _open_current_midi_as_pdf(self) -> None:
-        """Export the current MIDI file to PDF and open it with the system default viewer."""
-        midi_editor = self.get_existing_editor(MidiFilePlayer)
-        if not midi_editor or not getattr(midi_editor, "midi_state", None):
-            QMessageBox.warning(
-                self,
-                tr("No MIDI file"),
-                tr("Open the MIDI Player and load a MIDI file first."),
-            )
-            return
-        if not midi_editor.midi_state.file:
-            QMessageBox.warning(
-                self,
-                tr("No MIDI file"),
-                tr("No MIDI file is loaded. Load a MIDI file from the File menu first."),
-            )
-            return
-        midi_file = midi_editor.midi_state.file
-        path = getattr(midi_file, "filename", None)
-        if not path:
-            fd, path = tempfile.mkstemp(suffix=".mid")
-            os.close(fd)
-            try:
-                midi_file.save(path)
-            except Exception as ex:
-                log.error(
-                    scope="JDXiInstrument",
-                    message="Failed to save current MIDI to temp file",
-                    exception=ex,
-                )
-                QMessageBox.warning(
-                    self,
-                    tr("Export failed"),
-                    tr("Could not prepare the current MIDI file for export."),
-                )
-                return
-        try:
-            pdf_path = export_midi_to_pdf(path)
-        except Exception as ex:
-            log.error(
-                scope="JDXiInstrument",
-                message="PDF export failed",
-                exception=ex,
-            )
-            QMessageBox.warning(
-                self,
-                tr("Export failed"),
-                tr("Could not create PDF. Is LilyPond installed? See Help or preferences."),
-            )
-            return
-        if not pdf_path:
-            QMessageBox.warning(
-                self,
-                tr("Export failed"),
-                tr("Could not create PDF. Is LilyPond installed?"),
-            )
-            return
-        QDesktopServices.openUrl(QUrl.fromLocalFile(pdf_path))
+    def _save_on_jdxi(self) -> None:
+        """JD-Xi › Save on the JD-Xi: the Programs tab's guided WRITE."""
+        self.show_editor("program")
+        editor = self.get_existing_editor(ProgramEditor)
+        save = getattr(editor, "save_on_jdxi", None)
+        if callable(save):
+            save()
 
     def _patch_load(self) -> None:
         """Show load patch dialog"""
@@ -2059,6 +1994,22 @@ class JDXiInstrument(JDXiWindow):
                 )
                 return
 
+            # say what goes where before sending (it replaces the JD-Xi's
+            # current program, not a slot: nothing is written in its memory)
+            names = sorted({
+                getattr(editor, "windowTitle", lambda: "")() or type(editor).__name__
+                for editor in self.editors if hasattr(editor, "export_dt1s")
+            })
+            if names and not getattr(self, "_dump_without_asking", False):
+                answer = QMessageBox.question(
+                    self,
+                    tr("Send all to the JD-Xi"),
+                    tr("Send every value of these editors to the JD-Xi's current program?\n\n{editors}\n\n"
+                       "It replaces the sound the JD-Xi is playing; its memory is not written "
+                       "(that is JD-Xi › Save on the JD-Xi…).").format(editors=", ".join(names)),
+                )
+                if answer != QMessageBox.StandardButton.Yes:
+                    return
             log.message(
                 scope="JDXiInstrument",
                 message="Starting to dump all settings to synthesizer...",

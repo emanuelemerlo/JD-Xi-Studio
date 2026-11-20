@@ -263,8 +263,8 @@ class WriteDialog(QDialog):
         col.addLayout(row)
         updated = user_programs_updated()
         col.addWidget(_note(
-            (tr("Names as read on {date} (Edit › Update User Program Database): they may be old.").format(date=updated)
-             if updated else tr("Names as last read from the JD-Xi (Edit › Update User Program Database): "
+            (tr("Names as read on {date} (JD-Xi › Read the user programs): they may be old.").format(date=updated)
+             if updated else tr("Names as last read from the JD-Xi (JD-Xi › Read the user programs): "
                                 "they may be old."))))
         self.prepared = _note("")
         col.addWidget(self.prepared)

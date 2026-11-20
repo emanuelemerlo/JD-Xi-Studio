@@ -42,7 +42,6 @@ dependencies = [
     "qtawesome",
     "Pillow",
     "numpy",
-    "music21",
     "PyAudio",
     "pyqtdarktheme",
     "darkdetect",

@@ -10,7 +10,7 @@ segnati ★: circa 20 minuti).
 **Come segnare**: per ogni passo **OK**, **KO** (con una nota: cosa è successo, su quale schermo)
 o **—** (non eseguito). Un KO non ferma la sequenza, salvo dove è scritto. A fine sessione copia
 la tabella del [resoconto](#resoconto) nella issue o nella PR del rilascio, con il file dello
-script e, se ci sono KO, il log (Aiuto › Visualizzatore log, Ctrl+Maiusc+L, scheda *Avvisi ed errori*).
+script e, se ci sono KO, il log (Strumenti › Visualizzatore log, Ctrl+Maiusc+L, scheda *Avvisi ed errori*).
 
 ---
 
@@ -80,7 +80,7 @@ Copia nel resoconto la riga finale di pytest (es. «7 passed, 1 skipped»).
 
 ## 1b. Autotest dentro l'app (5 minuti) ★
 
-Aiuto › **Autotest con il JD-Xi…** › Avvia. L'app carica un programma e dei toni, modifica e
+JD-Xi › **Autotest con il JD-Xi…** › Avvia. L'app carica un programma e dei toni, modifica e
 annulla un valore, cambia ottava e suona una nota, verificando ogni risultato sul JD-Xi; poi ti
 chiede di agire sul JD-Xi (TONE, OCTAVE, qualche nota) e controlla che la finestra segua. Alla
 fine ricarica il programma iniziale e salva un resoconto in `~/.jdxi_studio/reports`: allegalo
@@ -93,12 +93,12 @@ al tuo resoconto.
 | | Fai | Deve succedere |
 |---|---|---|
 | 2.1 | Avvia JD-Xi Studio | Splash con il logo, «Versione 1.0.0-beta.N» uguale a quella installata; nessun messaggio d'errore |
-| 2.2 | Finestra MIDI all'avvio (o Modifica › Configurazione MIDI) | Ingresso e uscita **JD-Xi** già scelti; la finestra è davanti alle altre, anche con la tastiera fissata in primo piano |
+| 2.2 | Finestra MIDI all'avvio (o JD-Xi › Configurazione MIDI) | Ingresso e uscita **JD-Xi** già scelti; la finestra è davanti alle altre, anche con la tastiera fissata in primo piano |
 | 2.3 | Guarda la barra in alto a destra dell'editor | «JD-Xi collegato» in verde; il nome del programma corrente del JD-Xi nel display |
-| 2.4 | Aiuto › Visualizzatore log | Il log di questa sessione (con data e ora nel nome); scheda *Avvisi ed errori* vuota o quasi; **nessuna** riga «MIDI output port is not open» o «No reply to RQ1» |
+| 2.4 | Strumenti › Visualizzatore log | Il log di questa sessione (con data e ora nel nome); scheda *Avvisi ed errori* vuota o quasi; **nessuna** riga «MIDI output port is not open» o «No reply to RQ1» |
 | 2.5 | Cambia programma **dal JD-Xi** (manopola PROGRAM) | Il display dell'app segue entro un secondo |
 | 2.6 ★ | Avvia l'app **senza** JD-Xi (cavo staccato) | Lo splash arriva in fondo; poi, dopo lo splash, l'avviso «JD-Xi non collegato» (una volta sola) e il badge **Off-line** sotto MIDI IN/OUT e in alto a destra negli editor |
-| 2.7 | Off-line: passa il mouse su «Salva sul JD-Xi…», su un tono nel mixer, su File › Salva patch | Spenti, il tooltip dice perché |
+| 2.7 | Off-line: passa il mouse su «Salva sul JD-Xi…», su un tono nel mixer, su File › Salva i suoni in un file (patch) | Spenti, il tooltip dice perché |
 | 2.8 ★ | Off-line: cambia il cutoff in Digital 1, poi collega il JD-Xi | «Verifica del JD-Xi…», poi verde; avviso «Le modifiche fatte senza JD-Xi vengono abbandonate» con **Salva come file…**; dopo, l'editor mostra i valori del JD-Xi |
 | 2.9 | Configurazione MIDI: scegli due porte che **non** sono il JD-Xi (es. un'altra interfaccia) | Mai «JD-Xi collegato»: resta «Verifica del JD-Xi…» |
 | 2.10 ★ | Collegato, modifica un suono senza salvare; **stacca e riattacca** il cavo USB | Off-line, poi di nuovo collegato: «Ricollegato: il JD-Xi contiene quello che conteneva prima» |
@@ -217,8 +217,8 @@ TC-xx della proposta; gli stessi casi girano in automatico con un JD-Xi simulato
 
 | | Fai | Deve succedere |
 |---|---|---|
-| 7.1 ★ | File › Salva patch… (`.jsz`) | Il file viene creato; i *Modificato* spariscono |
-| 7.2 ★ | Cambia suoni, poi File › Carica patch… dello stesso file | Il suono torna quello salvato (ascolta) |
+| 7.1 ★ | File › Salva i suoni in un file (patch)… (`.jsz`) | Il file viene creato; i *Modificato* spariscono |
+| 7.2 ★ | Cambia suoni, poi File › Apri un file di suoni (patch)… dello stesso file | Il suono torna quello salvato (ascolta) |
 | 7.3 | Salva come `.syx`, ricarica | Come 7.2 |
 
 ---
@@ -260,9 +260,9 @@ TC-xx della proposta; gli stessi casi girano in automatico con un JD-Xi simulato
 
 | | Fai | Deve succedere |
 |---|---|---|
-| 11.1 | Preferenze (Ctrl+, oppure Aiuto › Preferenze): livello di log WARNING, OK; riaprile | Resta WARNING; dopo il riavvio il log contiene solo avvisi ed errori |
+| 11.1 | Preferenze (Ctrl+, oppure Strumenti › Preferenze): livello di log WARNING, OK; riaprile | Resta WARNING; dopo il riavvio il log contiene solo avvisi ed errori |
 | 11.2 | Riporta il livello a INFO | — |
-| 11.3 | Aiuto › Visualizzatore log, scheda *Avvisi ed errori* | Annota ogni riga presente: è la lista dei problemi visti dal programma |
+| 11.3 | Strumenti › Visualizzatore log, scheda *Avvisi ed errori* | Annota ogni riga presente: è la lista dei problemi visti dal programma |
 | 11.4 | Chiudi il programma | Si chiude entro qualche secondo; la porta MIDI torna libera (lo script `--list` la vede) |
 
 ---
