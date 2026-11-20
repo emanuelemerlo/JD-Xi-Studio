@@ -258,6 +258,22 @@ class ProgramLibrary(QWidget):
                   program.digital_1, program.digital_2, program.drums, program.analog)
         return any(text in (f or "").lower() for f in fields)
 
+    def _with_unknown_slots(self, bank: str = "") -> list:
+        """The programs and, for a user bank (E–H) chosen, its slots not known
+        yet: the database has only the user programs read from the JD-Xi, so
+        a bank never loaded (G, H) looked empty, as if it had no slots."""
+        from types import SimpleNamespace
+
+        if not bank or bank not in USER_BANKS:
+            return list(self.programs)
+        known = {p.id.upper() for p in self.programs if p.id}
+        missing = [
+            SimpleNamespace(id=f"{bank}{n:02d}", name="", genre="", digital_1=None, digital_2=None,
+                            drums=None, analog=None, unknown_slot=True)
+            for n in range(1, 65) if f"{bank}{n:02d}" not in known
+        ]
+        return list(self.programs) + missing
+
     def refresh(self) -> None:
         text = self.search.text().strip().lower()
         genre = self.genre.currentData() or ""
@@ -265,7 +281,7 @@ class ProgramLibrary(QWidget):
         selected = self.selected_id()
         rows = [
             p
-            for p in self.programs
+            for p in self._with_unknown_slots(bank)
             if p.id
             and (not bank or p.id[0].upper() == bank)
             and (not genre or (p.genre or "") == genre)
@@ -279,9 +295,15 @@ class ProgramLibrary(QWidget):
             parts = [(t, c) for t, c in zip((p.digital_1, p.digital_2, p.drums, p.analog), colours) if t]
             tones = " · ".join(t for t, _c in parts)
             user = p.id[0].upper() in USER_BANKS
+            unknown = getattr(p, "unknown_slot", False)
             genre_text = (p.genre or "") + (f" · {tr('user')}" if user else "")
-            for c, value in enumerate((p.id, p.name or "", genre_text.strip(" ·"), tones)):
+            name = tr("(not read yet)") if unknown else (p.name or "")
+            for c, value in enumerate((p.id, name, genre_text.strip(" ·"), tones)):
                 item = QTableWidgetItem(value)
+                if unknown and c == 1:
+                    item.setForeground(Qt.GlobalColor.gray)
+                    item.setToolTip(tr("JD-Xi Studio has not read this slot yet: load it to see its "
+                                       "program (its name is kept from then on)"))
                 item.setData(Qt.ItemDataRole.UserRole, p.id)
                 if c == 3:
                     item.setData(TONES_ROLE, parts)
@@ -294,8 +316,11 @@ class ProgramLibrary(QWidget):
         self.table.setSortingEnabled(sorting)
         self._mark_loaded()
         self._fit_columns(rows)
-        self.count_label.setText(
-            tr("{shown} of {total} programs").format(shown=len(rows), total=len(self.programs)))
+        unknown = sum(1 for p in rows if getattr(p, "unknown_slot", False))
+        text = tr("{shown} of {total} programs").format(shown=len(rows) - unknown, total=len(self.programs))
+        if unknown:
+            text += " · " + tr("{n} slots not read yet").format(n=unknown)
+        self.count_label.setText(text)
         if selected:
             self.select(selected)
 

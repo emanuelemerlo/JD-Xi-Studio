@@ -87,6 +87,11 @@ class AutomationWidget(JDXiMidiGroup):
         row += 1
         self.automation_midi_info_bar = MidiSelectionInfoBar()
         grid.addWidget(self.automation_midi_info_bar, row, 0, 1, 5)
+        # the room left after the controls: the label stays next to them
+        # (it drifted away from them as the window grew)
+        for column in range(5):
+            grid.setColumnStretch(column, 0)
+        grid.setColumnStretch(5, 1)
         return group
 
     def populate_automation_programs(self, source: PresetSource) -> None:

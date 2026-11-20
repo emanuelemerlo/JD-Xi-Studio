@@ -31,6 +31,12 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   mid-song comes with its bank select; a track's velocity scale at 0 silences it.
 
 ### Fixed
+- Programs › Library: a user bank (E–H) shows all its 64 slots; those JD-Xi Studio has not read
+  yet appear as «(not read yet)» (G and H looked empty: only programs read once are known).
+- Message boxes: buttons wide enough for their text («Scarta le modifiche» was cut).
+- Pattern: Play, Stop, Pause, Shuffle at one width (they stretched with the window).
+- Spin boxes (BPM, Vel, Steps…): wider up / down buttons with visible arrows.
+- MIDI Player › Automation: the label stays next to its controls.
 - On 1080p screens the envelopes, filter curves and LFO views were squashed (an envelope ~68 px
   high): about 90 px now, room to drag their points.
 - MIDI Player: Play, Stop, Pause, Panic, Load and Save at one width (the first four stretched with

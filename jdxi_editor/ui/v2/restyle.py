@@ -28,6 +28,62 @@ def modified_icon():
     return qta.icon("mdi.pencil", color=MODIFIED_COLOUR)
 
 
+_ARROWS: dict[str, str] = {}
+
+
+def spin_arrow(direction: str) -> str:
+    """A small light arrow ("up" / "down") as a PNG file for the style sheets
+    (a style sheet takes an image file, not a drawing): made once, cached."""
+    if direction in _ARROWS:
+        return _ARROWS[direction]
+    import tempfile
+    from pathlib import Path
+
+    from PySide6.QtCore import QPointF
+    from PySide6.QtGui import QColor, QImage, QPainter, QPolygonF
+
+    image = QImage(20, 12, QImage.Format.Format_ARGB32)
+    image.fill(Qt.GlobalColor.transparent)
+    painter = QPainter(image)
+    painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+    painter.setPen(Qt.PenStyle.NoPen)
+    painter.setBrush(QColor("#d6d8dd"))
+    points = ([QPointF(4, 10), QPointF(16, 10), QPointF(10, 2)] if direction == "up"
+              else [QPointF(4, 2), QPointF(16, 2), QPointF(10, 10)])
+    painter.drawPolygon(QPolygonF(points))
+    painter.end()
+    folder = Path(tempfile.gettempdir()) / "jdxi_studio_ui"
+    folder.mkdir(exist_ok=True)
+    path = folder / f"spin_{direction}.png"
+    image.save(str(path))
+    _ARROWS[direction] = path.as_posix()  # forward slashes: what a style sheet's url() wants
+    return _ARROWS[direction]
+
+
+def spin_buttons_style() -> str:
+    """Spin boxes' up and down buttons wide enough to hit, with visible arrows
+    (they were thin slits with tiny dots)."""
+    up, down = spin_arrow("up"), spin_arrow("down")
+    return f"""
+    QSpinBox, QDoubleSpinBox {{ padding-right: 24px; min-height: 22px; }}
+    QSpinBox::up-button, QDoubleSpinBox::up-button, QSpinBox::down-button, QDoubleSpinBox::down-button {{
+        subcontrol-origin: border; width: 22px; background: #26282d; border-left: 1px solid #3a3d44;
+    }}
+    QSpinBox::up-button, QDoubleSpinBox::up-button {{
+        subcontrol-position: top right; border-top-right-radius: 5px; border-bottom: 1px solid #3a3d44;
+    }}
+    QSpinBox::down-button, QDoubleSpinBox::down-button {{
+        subcontrol-position: bottom right; border-bottom-right-radius: 5px;
+    }}
+    QSpinBox::up-button:hover, QDoubleSpinBox::up-button:hover,
+    QSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover {{ background: #34373e; }}
+    QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {{ image: url({up}); width: 10px; height: 6px; }}
+    QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {{ image: url({down}); width: 10px; height: 6px; }}
+    QSpinBox::up-arrow:disabled, QSpinBox::down-arrow:disabled,
+    QDoubleSpinBox::up-arrow:disabled, QDoubleSpinBox::down-arrow:disabled {{ image: none; }}
+    """
+
+
 def stylesheet(root_class: str, accent: str) -> str:
     return f"""
     {root_class} {{ background: #121214; }}
@@ -64,7 +120,7 @@ def stylesheet(root_class: str, accent: str) -> str:
     QCheckBox {{ color: #c9cbd1; }}
     QTableWidget, QListWidget, QTreeWidget {{ background: #121214; color: #e6e6e6; border: 1px solid #2a2d33; }}
     QHeaderView::section {{ background: #1b1c1f; color: #a3a6ad; border: 0; padding: 4px; }}
-    """
+    """ + spin_buttons_style()  # after the rule that sets the spin boxes' padding
 
 
 def _is_round(button: QPushButton) -> bool:
@@ -264,9 +320,22 @@ class _MessageBoxLook(QObject):
         if event.type() == QEvent.Type.Show and isinstance(watched, QMessageBox):
             if watched.styleSheet() != MESSAGE_BOX_STYLE:
                 watched.setStyleSheet(MESSAGE_BOX_STYLE)
+            fit_buttons(watched)
         if event.type() == QEvent.Type.Show:
             fit_title(watched)
         return False
+
+
+def fit_buttons(box) -> None:
+    """Every button of a message box as wide as its text and padding: the
+    width was worked out before the style sheet's padding, which then cut
+    long labels («Scarta le modifiche»)."""
+    from PySide6.QtWidgets import QPushButton
+
+    for button in box.findChildren(QPushButton):
+        needed = button.fontMetrics().horizontalAdvance(button.text().replace("&", "")) + 40
+        if button.minimumWidth() < needed:
+            button.setMinimumWidth(needed)
 
 
 TITLE_BAR_EXTRA = 150  # icon, close button and margins of a title bar

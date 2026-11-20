@@ -63,7 +63,7 @@ def test_library_filters(editor):
     lib = editor.library
     assert lib.visible_ids() == ["A01", "A11", "E01"]
     lib.set_bank("E")
-    assert lib.visible_ids() == ["E01"]
+    assert lib.visible_ids()[0] == "E01" and len(lib.visible_ids()) == 64  # and the slots not read yet
     lib.set_bank("")
     lib.search.setText("caron")
     assert lib.visible_ids() == ["A11"]
@@ -213,3 +213,21 @@ def test_playlist_commands_apart_from_the_playback(editor):
     row_y = transport.mapTo(playlist, transport.rect().center()).y()
     line = playlist.playlist_progress.display
     assert abs(line.mapTo(playlist, line.rect().center()).y() - row_y) < transport.height()
+
+
+def test_a_user_bank_shows_its_slots_not_read_yet(editor):
+    """G and H looked empty: the database has only the user programs read from
+    the JD-Xi. A user bank shows all its 64 slots; those not read in grey."""
+    lib = editor.library
+    lib.set_bank("G")
+    assert lib.visible_ids() == [f"G{n:02d}" for n in range(1, 65)]
+    assert lib.table.item(0, 1).text() == "(not read yet)"
+    assert "load it" in lib.table.item(0, 1).toolTip()
+    assert lib.count_label.text() == "0 of 3 programs · 64 slots not read yet"
+    lib.set_bank("E")
+    ids = lib.visible_ids()
+    assert len(ids) == 64 and "E01" in ids
+    row = ids.index("E01")
+    assert lib.table.item(row, 1).text() != "(not read yet)"  # the known one keeps its name
+    lib.set_bank("")
+    assert lib.visible_ids() == ["A01", "A11", "E01"]  # «All»: only what is known
