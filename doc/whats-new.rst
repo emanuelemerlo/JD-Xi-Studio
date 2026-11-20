@@ -62,6 +62,12 @@ New sound and section help
 Programs
 --------
 
+.. figure:: images/jdxi-programs.png
+   :alt: The Programs page: library, parts and mixer
+   :width: 100%
+
+   The Programs page: the library on the left, the parts inside the mixer on the right.
+
 * The library searches number, name, genre and the four tones, sorts by number, name or genre,
   marks the program loaded on the JD-Xi apart from the one selected, and shows the tones in their
   parts' colours; right click: Load, Rename, Genre, Add to playlist, Export.
