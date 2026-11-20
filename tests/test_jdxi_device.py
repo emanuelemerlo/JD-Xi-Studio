@@ -41,6 +41,31 @@ def test_reply_is_recorded_and_program_change_clears():
     assert device.memory.sections() == []
 
 
+def test_a_tone_change_forgets_only_its_part():
+    """Review 2: a program change on a part's channel replaces that part's
+    tone only; the other parts stay known (and confirmed). Channel 16 is the
+    whole program; channels the JD-Xi does not play change nothing."""
+    device, _ = _device()
+    digital_1 = bytes.fromhex("19010000")
+    program_part_analog = bytes.fromhex("18002200")
+    for address in (_ADDRESS, digital_1, program_part_analog):  # Analog tone, Digital 1, Analog's part
+        device.received(build_dt1(address, list(range(10))))
+    device.sent(list(_WRITE))  # pending on Analog
+    device.received([0xC0, 0x05])  # Digital 1 (channel 1)
+    assert device.memory.read(digital_1, 10) is None
+    assert device.memory.read(_ADDRESS, 10) is not None
+    assert device.state.is_confirmed(_ADDRESS, 3) and device.state.pending_count() == 1
+    device.received([0xC2, 0x05])  # Analog (channel 3): its tone and its Program Part entry
+    assert device.memory.read(_ADDRESS, 10) is None
+    assert device.memory.read(program_part_analog, 10) is None
+    assert device.state.pending_count() == 0 and device.state.snapshot() == {}
+    device.received(build_dt1(digital_1, list(range(10))))
+    device.received([0xC5, 0x01])  # channel 6: not a JD-Xi part
+    assert device.memory.read(digital_1, 10) is not None
+    device.sent([0xCF, 0x01])  # the program (channel 16): everything
+    assert device.memory.sections() == [] and device.state.snapshot() == {}
+
+
 def test_sent_write_updates_memory():
     device, _ = _device()
     device.received(_REPLY)

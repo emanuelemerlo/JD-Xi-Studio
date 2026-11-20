@@ -68,6 +68,23 @@ def _is_program_change(message: Sequence[int]) -> bool:
     return bool(message) and int(message[0]) & 0xF0 == PROGRAM_CHANGE_STATUS
 
 
+def _area(start_hex: str, end_hex: str) -> tuple[int, int]:
+    return address_to_linear(bytes.fromhex(start_hex)), address_to_linear(bytes.fromhex(end_hex))
+
+
+# What a program change replaces, by MIDI channel (0-based, the JD-Xi's
+# defaults): on a part's channel only that part's tone (its temporary tone
+# area and its Program Part entry); on channel 16 the whole program (None).
+# Channels the JD-Xi does not play change nothing it holds.
+PROGRAM_CHANGE_AREAS: dict[int, Optional[list[tuple[int, int]]]] = {
+    0: [_area("19010000", "19210000"), _area("18002000", "18002100")],  # Digital 1
+    1: [_area("19210000", "19420000"), _area("18002100", "18002200")],  # Digital 2
+    2: [_area("19420000", "19700000"), _area("18002200", "18002300")],  # Analog
+    9: [_area("19700000", "1A000000"), _area("18002300", "18002400")],  # Drums
+    15: None,  # the program
+}
+
+
 class JDXiDevice:
     """Request queue, memory mirror and echo guard of one JD-Xi."""
 
@@ -122,14 +139,29 @@ class JDXiDevice:
         """
         data = [int(b) for b in message]
         if _is_program_change(data):
-            self.memory.clear()
-            self.state.program_changed()
+            self._program_changed(data[0] & 0x0F)
             return
         if data and data[0] != SYSEX_START and data[0] >= 0x80:
             return  # other channel messages
         self.requests.notify_reply(data)
         self.memory.record_dt1(data)
         self.state.received(data)
+
+    def _program_changed(self, channel: int) -> None:
+        """Forget what a program change on *channel* replaced (review: a tone
+        change on one part used to forget the whole program)."""
+        if channel not in PROGRAM_CHANGE_AREAS:
+            return  # a channel the JD-Xi does not play
+        ranges = PROGRAM_CHANGE_AREAS[channel]
+        if ranges is None:
+            self.memory.clear()
+            self._written.clear()
+            self.state.program_changed()
+            return
+        self.memory.forget(ranges)
+        self._written = {k: v for k, v in self._written.items()
+                         if not any(s <= k < e for s, e in ranges)}
+        self.state.program_changed(ranges)
 
     def before_send(self, message: Sequence[int]) -> bool:
         """False if *message* must not be sent (a DT1 echoing received data)."""
@@ -139,9 +171,7 @@ class JDXiDevice:
         """A message the editor sent: what the synth now holds."""
         data = [int(b) for b in message]
         if _is_program_change(data):
-            self.memory.clear()
-            self._written.clear()
-            self.state.program_changed()
+            self._program_changed(data[0] & 0x0F)
             return
         self.memory.record_dt1(data)
         self.state.sent(data)
