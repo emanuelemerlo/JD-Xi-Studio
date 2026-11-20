@@ -399,13 +399,12 @@ class MidiFilePlayer(_player.MidiFilePlayer):
         player = _card(tr("Player"), top)
         mute_label = QLabel(tr("Mute channels"))
         mute_label.setStyleSheet("color: #c9cbd1;")
+        # what of the file the JD-Xi plays (the group's own summary line)
         classification = _card(
-            tr("Classification"),
+            tr("Fit to the JD-Xi"),
             self.classification_group,
             mute_label,
             self.mute_channels_group,
-            note=tr("The JD-Xi plays four parts: the editor tells each track's role (drums, bass, keys, "
-                    "strings) from its channel and notes and assigns it to a part."),
         )
         tracks = QGroupBox(tr("Tracks").upper())
         tracks_layout = QVBoxLayout(tracks)

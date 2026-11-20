@@ -6,6 +6,11 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 ### Changes
 - The «MIDI file» tab is the **MIDI Player**.
+- MIDI Player › **Fit to the JD-Xi** (was Classification): a line says what of the file the JD-Xi
+  plays («28 of 44 tracks are on channels no JD-Xi part plays»); **Assign tracks to parts…**
+  proposes a part for each track (drums to Drums, the best bass, keys and strings track to Digital 1,
+  Digital 2, Analog, the rest not played), to check and apply; **Starting sounds** (was Apply
+  presets). The channel buttons of the four parts stand out and say which part plays them.
 - Setting the loop's A point shows it on the ruler at once (it showed only with B).
 - Opening a big MIDI file is much faster (a 45-track, 20-minute song: from 20–40 s to a few
   seconds) and says so meanwhile on the player's display («Loading: track 12 of 45»), then tracks and

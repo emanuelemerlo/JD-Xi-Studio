@@ -17,6 +17,9 @@ from picoui.helpers import create_layout_with_items
 from picoui.specs.widgets import ButtonSpec
 from jdxi_editor.i18n import tr
 
+# the channels the JD-Xi's parts play (1-based)
+JDXI_PART_CHANNELS = {1: "Digital 1", 2: "Digital 2", 3: "Analog", 10: "Drums"}
+
 if TYPE_CHECKING:
     from jdxi_editor.ui.editors.midi_player.editor import MidiFilePlayer
 
@@ -41,7 +44,8 @@ class MuteChannelsGroup(JDXiMidiGroup):
             btn = create_small_sequencer_square_for_channel(ch)
             btn.setCheckable(True)
             btn.setChecked(False)
-            btn.setToolTip(tr('Mute channel {ch}').format(ch=ch))
+            btn.setToolTip(self._tooltip(ch, unused=False))
+            btn.setProperty("part", ch in JDXI_PART_CHANNELS)  # the channels the JD-Xi plays
             btn.setStyleSheet(style)
             btn.toggled.connect(
                 lambda checked, c=ch, b=btn: self.parent._toggle_channel_mute(c, checked, b)
@@ -64,9 +68,16 @@ class MuteChannelsGroup(JDXiMidiGroup):
         for ch, btn in self.mute_channel_buttons.items():
             unused = ch not in channels
             btn.setProperty("unused", unused)
-            btn.setToolTip(f"Mute channel {ch}" + (" (not used in this file)" if unused else ""))
+            btn.setToolTip(self._tooltip(ch, unused))
             btn.style().unpolish(btn)
             btn.style().polish(btn)
+
+    @staticmethod
+    def _tooltip(ch: int, unused: bool) -> str:
+        part = JDXI_PART_CHANNELS.get(ch)
+        text = (tr("Mute channel {ch}: {part}").format(ch=ch, part=tr(part)) if part
+                else tr("Mute channel {ch}: no JD-Xi part plays it").format(ch=ch))
+        return text + (" " + tr("(not used in this file)") if unused else "")
 
     def _build_button_specs(self) -> dict[str, ButtonSpec]:
         """No buttons in this group (uses dynamic channel buttons)."""

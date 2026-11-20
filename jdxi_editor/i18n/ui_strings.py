@@ -24,4 +24,6 @@ UI_STRINGS = (
     tr("Genre:"), tr("Bank:"), tr("Search programs..."), tr("Search presets..."), tr("Search playlists..."),
     tr("-- Select a Playlist --"), tr("Program Name"), tr("MIDI File Name"), tr("Cheat Preset"), tr("Extra sound"), tr("Number"),
     tr("Description"), tr("Programs"), tr("Bank"), tr("Name"), tr("Genre"), tr("Play"),
+    tr("Digital 1 (channel 1)"), tr("Digital 2 (channel 2)"), tr("Analog (channel 3)"), tr("Drums (channel 10)"),
+    tr("Assign tracks to parts…"), tr("Starting sounds"),
 )

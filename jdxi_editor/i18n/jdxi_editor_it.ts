@@ -384,6 +384,36 @@
             <translation>Genere</translation>
         </message>
         <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="27" />
+            <source>Digital 1 (channel 1)</source>
+            <translation>Digital 1 (canale 1)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="27" />
+            <source>Digital 2 (channel 2)</source>
+            <translation>Digital 2 (canale 2)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="27" />
+            <source>Analog (channel 3)</source>
+            <translation>Analog (canale 3)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="27" />
+            <source>Drums (channel 10)</source>
+            <translation>Drums (canale 10)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="28" />
+            <source>Assign tracks to parts…</source>
+            <translation>Assegna le tracce alle parti…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/i18n/ui_strings.py" line="28" />
+            <source>Starting sounds</source>
+            <translation>Suoni di partenza</translation>
+        </message>
+        <message>
             <location filename="../../jdxi_editor/main.py" line="262" />
             <source>Visual Sound Design, Editing &amp; Librarian</source>
             <translation>Visual Sound Design, Editing &amp; Librarian</translation>
@@ -784,25 +814,102 @@
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/midi_player/automation.py" line="47" />
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="2104" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="2135" />
             <source>Insert Program Change at current position</source>
             <translation>Inserisci un Program Change nella posizione attuale</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1272" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1303" />
             <source>Loading: track {track} of {tracks}</source>
             <translation>Caricamento: traccia {track} di {tracks}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1244" />
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1246" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1275" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1277" />
             <source>Loading {name}…</source>
             <translation>Caricamento di {name}…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1256" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1287" />
             <source>{name}: {tracks} tracks, loaded in {seconds:.1f} s</source>
             <translation>{name}: {tracks} tracce, caricato in {seconds:.1f} s</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="76" />
+            <location filename="../../jdxi_editor/ui/widgets/classification_group.py" line="44" />
+            <source>Load a MIDI file: this says which of its tracks the JD-Xi plays.</source>
+            <translation>Carica un file MIDI: qui vedi quali tracce suona il JD-Xi.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="80" />
+            <source>No notes in this file.</source>
+            <translation>Nessuna nota in questo file.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="117" />
+            <location filename="../../jdxi_editor/ui/v2/players.py" line="404" />
+            <source>Fit to the JD-Xi</source>
+            <translation>Adatta al JD-Xi</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="121" />
+            <source>The JD-Xi plays four parts: Digital 1, Digital 2, Analog, Drums. Choose the part for each track; «Not played» leaves it on its channel, silent on the JD-Xi. Several tracks can share a part. Nothing changes until Apply; the file on disk changes only when you save.</source>
+            <translation>Il JD-Xi suona quattro parti: Digital 1, Digital 2, Analog, Drums. Scegli la parte per ogni traccia; «Non suonata» la lascia sul suo canale, muta sul JD-Xi. Più tracce possono condividere una parte. Non cambia nulla fino ad Applica; il file su disco cambia solo quando salvi.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="152" />
+            <source>Apply</source>
+            <translation>Applica</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="42" />
+            <source>channel {ch}</source>
+            <translation>canale {ch}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="83" />
+            <source>{off} of {tracks} tracks are on channels no JD-Xi part plays: they are not heard.</source>
+            <translation>{off} tracce su {tracks} sono su canali che nessuna parte del JD-Xi suona: non si sentono.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="129" />
+            <source>Track</source>
+            <translation>Traccia</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="129" />
+            <source>Notes</source>
+            <translation>Note</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="129" />
+            <source>Now</source>
+            <translation>Ora</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="129" />
+            <source>Part on the JD-Xi</source>
+            <translation>Parte sul JD-Xi</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="82" />
+            <source>Ready for the JD-Xi: its {n} tracks are on the JD-Xi's parts.</source>
+            <translation>Pronto per il JD-Xi: le sue {n} tracce sono sulle parti del JD-Xi.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="65" />
+            <source>Track {n}</source>
+            <translation>Traccia {n}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="143" />
+            <source>Not played (stays on channel {ch})</source>
+            <translation>Non suonata (resta sul canale {ch})</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="144" />
+            <source>Not played (to channel {ch})</source>
+            <translation>Non suonata (sul canale {ch})</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1478" />
@@ -920,7 +1027,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         <message>
             <location filename="../../jdxi_editor/ui/editors/pattern/ui.py" line="472" />
             <location filename="../../jdxi_editor/ui/v2/players.py" line="202" />
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="418" />
+            <location filename="../../jdxi_editor/ui/v2/players.py" line="417" />
             <source>USB Recorder</source>
             <translation>Registratore USB</translation>
         </message>
@@ -3905,7 +4012,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/names.py" line="22" />
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="438" />
+            <location filename="../../jdxi_editor/ui/v2/players.py" line="437" />
             <source>MIDI Player</source>
             <translation>MIDI Player</translation>
         </message>
@@ -4353,22 +4460,17 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
             <translation>Canali in mute</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="403" />
-            <source>Classification</source>
-            <translation>Classificazione</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="416" />
+            <location filename="../../jdxi_editor/ui/v2/players.py" line="415" />
             <source>Playback</source>
             <translation>Riproduzione</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="417" />
+            <location filename="../../jdxi_editor/ui/v2/players.py" line="416" />
             <source>Automation</source>
             <translation>Automazione</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="420" />
+            <location filename="../../jdxi_editor/ui/v2/players.py" line="419" />
             <source>Event filter</source>
             <translation>Filtro eventi</translation>
         </message>
@@ -4520,12 +4622,7 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
             <translation>Silenzia questa parte mentre il pattern suona; i suoi passi restano.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="407" />
-            <source>The JD-Xi plays four parts: the editor tells each track's role (drums, bass, keys, strings) from its channel and notes and assigns it to a part.</source>
-            <translation>Il JD-Xi suona quattro parti: l'editor riconosce il ruolo di ogni traccia (batteria, basso, tastiere, archi) dal canale e dalle note e la assegna a una parte.</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="422" />
+            <location filename="../../jdxi_editor/ui/v2/players.py" line="421" />
             <source>Program changes (PC) and controllers (CC) of the file not sent to the JD-Xi.</source>
             <translation>Program change (PC) e controller (CC) del file da non inviare al JD-Xi.</translation>
         </message>
@@ -4547,7 +4644,7 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
             <translation>Controllo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="410" />
+            <location filename="../../jdxi_editor/ui/v2/players.py" line="409" />
             <source>Tracks</source>
             <translation>Tracce</translation>
         </message>
@@ -6697,19 +6794,19 @@ Le modifiche che non avevi salvato andrebbero perse. Le rimando al JD-Xi?</trans
             <translation>Tono: {number} {name}, {type}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/classification_group.py" line="86" />
-            <source>Analyze MIDI file and assign Channel 10 to detected drum tracks</source>
-            <translation>Analizza il file MIDI e assegna il canale 10 alle tracce di batteria</translation>
+            <location filename="../../jdxi_editor/ui/widgets/classification_group.py" line="47" />
+            <source>The JD-Xi plays four parts, each on its channel: Digital 1 (1), Digital 2 (2), Analog (3), Drums (10). Notes on other channels are not heard.</source>
+            <translation>Il JD-Xi suona quattro parti, ognuna sul suo canale: Digital 1 (1), Digital 2 (2), Analog (3), Drums (10). Le note sugli altri canali non si sentono.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/classification_group.py" line="93" />
-            <source>Classify non-drum tracks into Bass (Ch 1), Keys/Guitars (Ch 2), and Strings (Ch 3)</source>
-            <translation>Dividi le altre tracce in Basso (can. 1), Tastiere/Chitarre (can. 2) e Archi (can. 3)</translation>
+            <location filename="../../jdxi_editor/ui/widgets/classification_group.py" line="98" />
+            <source>Propose a JD-Xi part for every track (drums, bass, keys, strings recognised from the notes), to check and apply</source>
+            <translation>Propone una parte del JD-Xi per ogni traccia (batteria, basso, tastiere, archi riconosciuti dalle note), da controllare e applicare</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/classification_group.py" line="100" />
-            <source>Insert JD-Xi presets per channel: Ch 1→Picked Bass, Ch 2→Piano, Ch 3→JP8 Strings</source>
-            <translation>Inserisci un preset JD-Xi per canale: can. 1→Picked Bass, can. 2→Piano, can. 3→JP8 Strings</translation>
+            <location filename="../../jdxi_editor/ui/widgets/classification_group.py" line="106" />
+            <source>Give the parts a sound to start from, also written into the file: Digital 1 Picked Bass, Digital 2 Piano, Analog JP8 Strings</source>
+            <translation>Dà alle parti un suono da cui partire, scritto anche nel file: Digital 1 Picked Bass, Digital 2 Piano, Analog JP8 Strings</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="169" />
@@ -6841,9 +6938,19 @@ Le modifiche che non avevi salvato andrebbero perse. Le rimando al JD-Xi?</trans
             <translation>Salva file MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/mute_channels_group.py" line="44" />
-            <source>Mute channel {ch}</source>
-            <translation>Silenzia il canale {ch}</translation>
+            <location filename="../../jdxi_editor/ui/widgets/mute_channels_group.py" line="78" />
+            <source>Mute channel {ch}: {part}</source>
+            <translation>Muta il canale {ch}: {part}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/widgets/mute_channels_group.py" line="79" />
+            <source>Mute channel {ch}: no JD-Xi part plays it</source>
+            <translation>Muta il canale {ch}: nessuna parte del JD-Xi lo suona</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/widgets/mute_channels_group.py" line="80" />
+            <source>(not used in this file)</source>
+            <translation>(non usato in questo file)</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/widgets/pattern/measure_strip.py" line="121" />
@@ -8350,6 +8457,34 @@ Il suono sul JD-Xi viene sostituito: se vuoi tenerlo, salvalo prima sul JD-Xi (W
             <location filename="../../jdxi_editor/ui/windows/selftest.py" line="865" />
             <source>report not saved: {error}</source>
             <translation>resoconto non salvato: {error}</translation>
+        </message>
+        <message>
+            <source>{tracks} tracks with notes; {off} are on channels the JD-Xi does not play (it plays 1 Digital 1, 2 Digital 2, 3 Analog, 10 Drums): they are not heard.</source>
+            <translation type="vanished">{tracks} tracce con note; {off} sono su canali che il JD-Xi non suona (suona 1 Digital 1, 2 Digital 2, 3 Analog, 10 Drums): non si sentono.</translation>
+        </message>
+        <message>
+            <source>Classification</source>
+            <translation type="vanished">Classificazione</translation>
+        </message>
+        <message>
+            <source>The JD-Xi plays four parts: the editor tells each track's role (drums, bass, keys, strings) from its channel and notes and assigns it to a part.</source>
+            <translation type="vanished">Il JD-Xi suona quattro parti: l'editor riconosce il ruolo di ogni traccia (batteria, basso, tastiere, archi) dal canale e dalle note e la assegna a una parte.</translation>
+        </message>
+        <message>
+            <source>Analyze MIDI file and assign Channel 10 to detected drum tracks</source>
+            <translation type="vanished">Analizza il file MIDI e assegna il canale 10 alle tracce di batteria</translation>
+        </message>
+        <message>
+            <source>Classify non-drum tracks into Bass (Ch 1), Keys/Guitars (Ch 2), and Strings (Ch 3)</source>
+            <translation type="vanished">Dividi le altre tracce in Basso (can. 1), Tastiere/Chitarre (can. 2) e Archi (can. 3)</translation>
+        </message>
+        <message>
+            <source>Insert JD-Xi presets per channel: Ch 1→Picked Bass, Ch 2→Piano, Ch 3→JP8 Strings</source>
+            <translation type="vanished">Inserisci un preset JD-Xi per canale: can. 1→Picked Bass, can. 2→Piano, can. 3→JP8 Strings</translation>
+        </message>
+        <message>
+            <source>Mute channel {ch}</source>
+            <translation type="vanished">Silenzia il canale {ch}</translation>
         </message>
         <message>
             <source>MIDI file</source>

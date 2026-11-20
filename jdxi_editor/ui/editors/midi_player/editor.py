@@ -376,6 +376,34 @@ class MidiFilePlayer(SynthEditor):
                 message=f"An error occurred while detecting drum tracks:\n\n{ex}",
             )
 
+    def fit_tracks_to_jdxi(self) -> None:
+        """Propose a JD-Xi part for every track with notes, to check and apply."""
+        if not self._validate_midi_loaded():
+            return
+        from jdxi_editor.ui.editors.midi_player.fit_jdxi import FitDialog, note_tracks, propose
+
+        tracks = note_tracks(self.midi_state.file)
+        drums = self._detect_drum_tracks()
+        proposal = propose(tracks, drums, self._classify_tracks(drums))
+        dialog = FitDialog(tracks, proposal, parent=self)
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return
+        spins = self.midi_file.midi_track_viewer.track_channel_spins
+        for index, channel in dialog.changes().items():
+            spin = spins.get(index)
+            if spin is not None:
+                spin.setValue(channel)  # applied like an edit by hand
+        self.midi_file.midi_track_viewer.flush_pending_edits()
+        self._refresh_fit_summary()
+
+    def _refresh_fit_summary(self) -> None:
+        """What the JD-Xi plays of the file, in the Fit to the JD-Xi group."""
+        from jdxi_editor.ui.editors.midi_player.fit_jdxi import summary
+
+        group = getattr(self, "classification_group", None)
+        if group is not None and getattr(group, "summary_label", None) is not None:
+            group.set_summary(*summary(self.midi_state.file))
+
     def classify_and_assign_tracks(self) -> None:
         """classify and assign tracks"""
         if not self._validate_midi_loaded():
@@ -982,6 +1010,7 @@ class MidiFilePlayer(SynthEditor):
                 btn.setChecked(channel in muted_channels)
                 btn.blockSignals(False)
         midi_file = self.midi_state.file
+        self._refresh_fit_summary()
         if midi_file is not None:
             self.mute_channels_group.set_used_channels(
                 {
@@ -1062,6 +1091,8 @@ class MidiFilePlayer(SynthEditor):
                 from jdxi_editor.ui.v2.history import paused
 
                 with paused():  # the file's own sounds: played, not asked
+                    # on channel 3 too: a Digital preset's bank select on the
+                    # Analog part is the JD-Xi's «cheat preset» (Digital sound)
                     self.midi_helper.send_bank_select_and_program_change(
                         channel=channel,
                         bank_msb=spec["MSB"],
