@@ -5,11 +5,12 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
-- The main window's menus follow the app: **File** (programs, sound files, the MIDI Player's file),
-  **JD-Xi** (Save on the JD-Xi, Send all — now asking first, naming the editors —, Read the user
-  programs, MIDI Configuration, Self-test), **Parts** named as their tabs (Ctrl+1–4), **Tools**
-  (Settings, Preferences, monitor, debugger, log), **Help**. Every item's tooltip says what it loads
-  or sends, and where.
+- The main window's menus follow the app: **File** (Patch › Open / Save, MIDI Player › Open / Save
+  / Save as / Recent), **Editor** (the editors window's tabs, by section: Programs, Parts, Effects,
+  Playback, Recipes, Settings; Ctrl+0–9 in tab order), **JD-Xi** (Save the program, Send all — now
+  asking first, naming the editors —, Read the user programs, MIDI Configuration, Self-test),
+  **Tools** (Preferences, monitor, debugger, log), **Help**. «…» only on what opens a dialog; every
+  File and JD-Xi item's tooltip says what it loads or sends, and where.
 - The «MIDI file» tab is the **MIDI Player**.
 - A track without a name shows, in grey, the instrument it plays (the file's instrument name or
   its General MIDI program; channel 10: drums).

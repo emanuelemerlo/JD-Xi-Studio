@@ -25,7 +25,7 @@ the internals of the first editors, replaced in 1.0 by the current ones.)
 
 ### Save Flow
 
-1. **File › Save the sounds to a file (patch)…** — Open the file dialog
+1. **File › Patch › Save…** — Open the file dialog
 2. Choose format by extension: `.jsz`, `.msz`, `.syx`, or `.json`
 3. **.jsz / .msz**: Saves each block of the JD-Xi's memory as JSON in a ZIP, in raw MIDI values with its
    DT1 (see [MSZ Bundle Format](msz-bundle-format.md)); `.msz` also includes the loaded MIDI file (if any)
@@ -33,7 +33,7 @@ the internals of the first editors, replaced in 1.0 by the current ones.)
 
 ### Load Flow
 
-1. **File › Open a sound file (patch)…** — Select a file
+1. **File › Patch › Open…** — Select a file
 2. **.jsz / .msz**: Extracts the JSON files and sends each block's DT1 to the instrument as saved
 3. **.json**: Sends single patch to the instrument
 4. **.syx**: Reads binary, splits on F0…F7 boundaries, sends each SysEx message to the instrument
@@ -122,7 +122,7 @@ the side panel is narrower; narrower than 1500 px, some rows of cards become col
 
 ### Self-test with the JD-Xi
 
-JD-Xi › **Self-test with the JD-Xi…** runs fifteen steps through the app's own functions: the
+JD-Xi › **Self-test…** runs fifteen steps through the app's own functions: the
 connection and the SYSTEM settings, loading a program and tones, a dozen edits to the Analog and
 the Digital 1 tone with Undo, the octave, a note (you listen), then what you do on the JD-Xi (a
 tone, OCTAVE, a few notes). Each result is checked by reading the JD-Xi back; the edits stay in

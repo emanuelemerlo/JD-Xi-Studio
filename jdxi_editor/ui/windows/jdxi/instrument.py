@@ -1795,12 +1795,10 @@ class JDXiInstrument(JDXiWindow):
         ):
             return
 
-        file_menu = getattr(self, "file_menu", None)
-        if file_menu:
-            # with the MIDI file items, before Quit
-            self.recent_files_menu = QMenu(tr("Recent MIDI Files"), file_menu)
-            file_menu.insertMenu(self._quit_action, self.recent_files_menu)
-            file_menu.insertSeparator(self._quit_action)
+        midi_menu = getattr(self, "midi_file_menu", None)
+        if midi_menu:
+            # File › MIDI Player › Recent
+            self.recent_files_menu = midi_menu.addMenu(tr("&Recent"))
             self._update_recent_files_menu()
 
     def _update_recent_files_menu(self) -> None:
@@ -1932,7 +1930,7 @@ class JDXiInstrument(JDXiWindow):
         self.show_editor("midi_player")
 
     def _save_on_jdxi(self) -> None:
-        """JD-Xi › Save on the JD-Xi: the Programs tab's guided WRITE."""
+        """JD-Xi › Save the program: the Programs tab's guided WRITE."""
         self.show_editor("program")
         editor = self.get_existing_editor(ProgramEditor)
         save = getattr(editor, "save_on_jdxi", None)

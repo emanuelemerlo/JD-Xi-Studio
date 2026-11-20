@@ -245,29 +245,42 @@ def test_the_main_menus_match_the_app(window, monkeypatch):
     from PySide6.QtWidgets import QMessageBox
 
     bar = {a.text().replace("&", ""): a for a in window.menuBar().actions() if a.menu() is not None}
-    assert list(bar) == ["File", "JD-Xi", "Parts", "Effects", "Playback", "Tools", "Window", "Help"]
+    assert list(bar) == ["File", "Editor", "JD-Xi", "Tools", "Window", "Help"]
 
     def items(title):
         return bar[title].menu().actions()
 
     texts, shortcuts = [], []
-    for title in bar:
-        for action in items(title):
-            if action.isSeparator() or action.menu():
+
+    def walk(actions):
+        for action in actions:
+            if action.isSeparator() or not action.text():  # separators, section headings
+                continue
+            if action.menu() is not None:
+                walk(action.menu().actions())
                 continue
             texts.append(action.text().replace("&", ""))
             if action.shortcut().toString():
                 shortcuts.append(action.shortcut().toString())
+
+    for title in bar:
+        walk(items(title))
     assert not [t for t in texts if "Synth 3" in t or "PDF" in t]
     assert len(shortcuts) == len(set(shortcuts)), sorted(shortcuts)
-    parts = [a.text().replace("&", "") for a in items("Parts") if not a.isSeparator()][:4]
-    assert parts == ["Digital 1", "Digital 2", "Analog", "Drums"]
-    for action in items("File") + items("JD-Xi"):
-        if not action.isSeparator() and not action.menu() and "Quit" not in action.text():
-            assert action.toolTip() and action.toolTip() != action.text().replace("&", ""), action.text()
-    # File: Recent MIDI Files before Quit
-    file_items = [a.text().replace("&", "") for a in items("File") if not a.isSeparator()]
-    assert file_items[-1] == "Quit" and file_items[-2] == "Recent MIDI Files"
+    editor = [a.text().replace("&", "") for a in items("Editor") if a.text()]
+    assert editor[:5] == ["Programs", "Digital 1", "Digital 2", "Analog", "Drums"]
+    # what opens a tab has no «…» nor icon; what opens a dialog ends in «…»
+    assert not [a.text() for a in items("Editor") if a.text().endswith("…") or not a.icon().isNull()]
+    assert all(a.text().endswith("…") for a in items("JD-Xi") if a.text())
+    assert not [a.text() for a in items("JD-Xi") if "JD-Xi" in a.text()]  # the menu says it
+    file_menu = {a.text().replace("&", ""): a for a in items("File") if a.text()}
+    assert list(file_menu) == ["Patch", "MIDI Player", "Quit"]
+    for sub in ("Patch", "MIDI Player"):
+        for action in file_menu[sub].menu().actions():
+            if action.text() and action.menu() is None:
+                assert action.toolTip() and action.toolTip() != action.text().replace("&", ""), action.text()
+    midi = [a.text().replace("&", "") for a in file_menu["MIDI Player"].menu().actions() if a.text()]
+    assert midi[-1] == "Recent"
     # Send all asks first, naming the editors, and does nothing on No
     asked = []
     monkeypatch.setattr(QMessageBox, "question", lambda *a, **k: asked.append(a[2]) or QMessageBox.StandardButton.No)

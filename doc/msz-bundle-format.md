@@ -39,7 +39,7 @@ song.msz
 1. **Set up your patches**: Configure all your synth parameters (Analog, Digital, Drum)
 2. **Load/Edit your MIDI file**: Open the «MIDI File» player and load or create your MIDI sequence
 3. **Save as .msz**:
-   - Go to **File › Save the sounds to a file (patch)…**
+   - Go to **File › Patch › Save…**
    - In the file dialog, select **"Music Bundle (*.msz)"** from the file type dropdown
    - Choose a filename (e.g., `my_song.msz`)
    - Click **Save**
@@ -51,7 +51,7 @@ The bundle will include:
 ### Loading a Music Bundle
 
 1. **Load the bundle**:
-   - Go to **File › Open a sound file (patch)…**
+   - Go to **File › Patch › Open…**
    - Select your `.msz` file
    - Click **Load**
 
