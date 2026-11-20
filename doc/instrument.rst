@@ -1,7 +1,7 @@
 JDXi Instrument Window
 ======================
 
-The **JDXi Instrument Window** is the central command center of the JDXI-Editor application—a sophisticated, real-time interface that transforms your Roland JD-Xi synthesizer into a powerful, computer-controlled instrument. This window serves as your primary gateway for sound design, performance, and comprehensive control over every aspect of your JD-Xi's capabilities.
+The **JDXi Instrument Window** is the central command center of the JD-Xi Studio application—a sophisticated, real-time interface that transforms your Roland JD-Xi synthesizer into a powerful, computer-controlled instrument. This window serves as your primary gateway for sound design, performance, and comprehensive control over every aspect of your JD-Xi's capabilities.
 
 .. figure:: images/keyboard_window.png
    :alt: JDXi Instrument Window - Main Interface
@@ -145,7 +145,7 @@ Getting Started with the Instrument Window
 
 **Initial Setup**
    1. **Connect Your JD-Xi**: Use a USB cable to connect your synthesizer to your computer
-   2. **Launch JDXI-Editor**: Start the application and wait for automatic MIDI detection
+   2. **Launch JD-Xi Studio**: Start the application and wait for automatic MIDI detection
    3. **Verify Connection**: Check that the MIDI indicators show active input/output
    4. **Load a Preset**: Select a preset to begin exploring the interface
 

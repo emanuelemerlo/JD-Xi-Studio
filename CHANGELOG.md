@@ -4,6 +4,11 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+### Removed
+- The FluidSynth software synth (MIDI configuration) and the SoundFont preset lists: they played
+  General MIDI sounds, not the JD-Xi's, and only for notes from a MIDI keyboard. pyfluidsynth, the
+  `soundfont` extra (sf2utils, sounddevice) and the bundled FluidSynth DLLs are gone with them.
+
 # [1.0.0-beta.2] - 2026-11-19
 
 Sound design and the Programs tab. Tried on the simulated JD-Xi (the automatic checks run on it in

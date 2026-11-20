@@ -45,7 +45,6 @@ class FakeHelper(QObject):
         self.current_out = outputs[0] if open_ports and outputs else None
         self.is_input_open = self.is_output_open = open_ports
         self.sent, self.reconnected = [], []
-        self.soundfont_synth = None
 
     def get_input_ports(self):
         return list(self.inputs)
@@ -96,18 +95,12 @@ def test_opens_at_once_while_slow_port_listing_runs_in_background(app, monkeypat
     dialog.reject()
 
 
-def test_fluidsynth_and_audio_devices_wait_until_asked(app, monkeypatch):
-    calls = []
-    monkeypatch.setattr(cd, "list_audio_outputs", lambda: calls.append("audio") or [])
-    monkeypatch.setattr(cd, "find_soundfonts", lambda *a: calls.append("sf2") or [])
-    helper = FakeHelper(["JD-Xi"], ["JD-Xi"])
-    dialog = cd.MIDIConfigDialog(helper)
-    QApplication.processEvents()
-    assert not dialog.synth_box.isChecked() and not dialog.synth_panel.isVisibleTo(dialog)
-    assert calls == [] and helper.soundfont_synth is None  # nothing started on open
-    dialog.synth_box.setChecked(True)
-    assert wait_until(lambda: sorted(calls) == ["audio", "sf2"])
-    assert not dialog.fs_start_btn.isEnabled()  # no SoundFont chosen
+def test_only_the_jdxi_ports_no_software_synth(app):
+    """FluidSynth (listening without the JD-Xi) is gone: the dialog is the JD-Xi's ports."""
+    dialog = cd.MIDIConfigDialog(FakeHelper(["JD-Xi"], ["JD-Xi"]))
+    titles = [box.title() for box in dialog.findChildren(cd.QGroupBox)]
+    assert not any("FluidSynth" in title for title in titles)
+    assert not hasattr(dialog, "synth_box")
     dialog.reject()
 
 

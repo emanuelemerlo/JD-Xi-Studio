@@ -50,15 +50,15 @@ dependencies = [
     "decologr",
     # 0.2.0: the first release that ships picomidi's subpackages (core,
     # playback, sysex, ...); 0.1.2 contains the top-level package only
-    "picomidi>=0.2.0",
-    "pyfluidsynth",
+    # <0.3: 0.3.0 changed the playback engine (muting, velocity scale, the
+    # program chase send other messages); tests/test_playback_engine.py fails
+    "picomidi>=0.2.0,<0.3",
     # recipes: the .xlsx template and recipes read from PDF files
     "openpyxl",
     "pypdf",
 ]
 
 [project.optional-dependencies]
-soundfont = ["sf2utils>=1.0.0", "sounddevice>=0.4.0"]
 plots = ["matplotlib"]
 # soundfile/librosa: the audio-evidence tests (tests/test_refine.py and others)
 # and scripts/midi_parts; PyInstaller: building/windows/jdxi_editor.spec

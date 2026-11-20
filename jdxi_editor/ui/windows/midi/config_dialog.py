@@ -2,17 +2,12 @@
 MIDI connection dialog
 ======================
 
-Chooses the MIDI ports of the JD-Xi and, optionally, the FluidSynth software
-synth used to listen without the instrument.
+Chooses the MIDI ports of the JD-Xi and tests the connection.
 
 The dialog never waits on the user interface thread:
 
 - it opens at once with the ports already known, then lists the ports again
   in the background;
-- the audio devices and the SoundFonts are listed only when the FluidSynth
-  section is opened, in the background (PortAudio can take seconds);
-- FluidSynth starts and loads its SoundFont in the background, only when
-  asked (it used to start, and load a 140 MB SoundFont, as the dialog opened);
 - "Test connection" sends an Identity Request and waits for the reply with a
   timer, not a loop.
 
@@ -25,8 +20,6 @@ get_input_port(), get_output_port(), get_settings(), refresh_ports().
 
 from __future__ import annotations
 
-import os
-import sys
 import threading
 from typing import Callable, Optional
 
@@ -34,34 +27,20 @@ import shiboken6
 from decologr import Decologr as log
 from PySide6.QtCore import QObject, Qt, QTimer, Signal, Slot
 from PySide6.QtWidgets import (
-    QCheckBox,
     QComboBox,
     QDialog,
     QDialogButtonBox,
-    QFileDialog,
     QFormLayout,
     QGroupBox,
     QHBoxLayout,
     QLabel,
-    QLineEdit,
-    QMessageBox,
     QPushButton,
     QVBoxLayout,
-    QWidget,
 )
 
 from jdxi_editor.core.jdxi import JDXi
 from jdxi_editor.i18n import tr
 from jdxi_editor.midi.io.helper import MidiIOHelper
-from jdxi_editor.ui.editors.pattern.preset_list_provider import (
-    get_hardware_interface,
-    get_sf2_path,
-    get_use_soundfont_list,
-    set_hardware_interface,
-    set_sf2_path,
-    set_use_soundfont_list,
-    soundfont_list_problem,
-)
 from jdxi_editor.ui.style import JDXiUIDimensions
 from jdxi_editor.ui.windows.jdxi.helpers.port import (
     filter_excluded_ports,
@@ -69,25 +48,11 @@ from jdxi_editor.ui.windows.jdxi.helpers.port import (
     is_excluded_port,
 )
 
-SF2_DIR = os.path.expanduser("~/SoundFonts")
-SF2_PATH = os.path.join(SF2_DIR, "FluidR3_GM.sf2")
 IDENTITY_REQUEST = [0xF0, 0x7E, 0x7F, 0x06, 0x01, 0xF7]  # any device ID
 IDENTITY_TIMEOUT_MS = 1500
 JDXI_FAMILY = (0x0E, 0x03)
 ROLAND = 0x41
 
-from jdxi_editor.midi.fluidsynth_library import (  # noqa: E402
-    import_error_message,
-    prepare_fluidsynth_library,
-)
-
-_fluidsynth_err_msg = ""
-prepare_fluidsynth_library()  # Windows: point the DLL search at FluidSynth
-try:
-    import fluidsynth as _fluidsynth_module
-except Exception as _fluidsynth_err:  # pragma: no cover - depends on the system
-    _fluidsynth_module = None
-    _fluidsynth_err_msg = str(_fluidsynth_err)
 
 
 # --------------------------------------------------------------------- background
@@ -146,35 +111,6 @@ def list_midi_ports(midi_helper) -> tuple[list[str], list[str]]:
     )
 
 
-def list_audio_outputs() -> list[tuple[str, str]]:
-    """(name, device spec) of the audio outputs; sounddevice imported only here."""
-    try:
-        import sounddevice
-    except Exception:
-        return []
-    devices = sounddevice.query_devices()
-    hostapis = sounddevice.query_hostapis()
-    result = []
-    for index, device in enumerate(devices):
-        if device["max_output_channels"] <= 0:
-            continue
-        name = device["name"]
-        if sys.platform == "darwin":
-            result.append((name, name))
-        else:
-            api = hostapis[device.get("hostapi", 0)].get("name", "Unknown")
-            result.append((f"{name} ({api})", f"{index}:{api}:{name}"))
-    return result
-
-
-def find_soundfonts(folder: str = SF2_DIR) -> list[str]:
-    found = []
-    if os.path.isdir(folder):
-        for root, _dirs, files in os.walk(folder):
-            found += [os.path.join(root, f) for f in files if f.lower().endswith((".sf2", ".sf3"))]
-    return sorted(found)
-
-
 def parse_identity_reply(data) -> Optional[dict]:
     """Identity Reply (mido sysex data, without F0/F7) -> details, else None."""
     data = list(data)
@@ -189,7 +125,7 @@ def parse_identity_reply(data) -> Optional[dict]:
 
 
 class MIDIConfigDialog(QDialog):
-    """Ports of the JD-Xi, connection test, and the optional FluidSynth."""
+    """Ports of the JD-Xi and the connection test."""
 
     def __init__(self, midi_helper=MidiIOHelper, parent=None):
         super().__init__(parent)
@@ -201,14 +137,10 @@ class MIDIConfigDialog(QDialog):
         self.current_out = getattr(midi_helper, "current_out", None)
         self.input_ports: list[str] = []
         self.output_ports: list[str] = []
-        self.fs = getattr(midi_helper, "soundfont_synth", None)
-        self.sfid = getattr(midi_helper, "soundfont_sfid", None)
         self._identity_timer = QTimer(self)
         self._identity_timer.setSingleShot(True)
         self._identity_timer.timeout.connect(self._identity_timed_out)
         self._listening = False
-        self._synth_loaded = False
-        self._busy_synth = False
         self.status_kind = "idle"
 
         self._build()
@@ -280,66 +212,6 @@ class MIDIConfigDialog(QDialog):
         jdxi_layout.addWidget(self.help_label)
         layout.addWidget(jdxi_box)
 
-        # --- FluidSynth, closed unless already in use
-        self.synth_box = QGroupBox(tr("Listen without the JD-Xi (FluidSynth)"))
-        self.synth_box.setCheckable(True)
-        self.synth_box.setChecked(self.fs is not None)
-        self.synth_box.toggled.connect(self._on_synth_box_toggled)
-        synth_outer = QVBoxLayout(self.synth_box)
-        self.synth_panel = QWidget()
-        synth_layout = QFormLayout(self.synth_panel)
-        synth_layout.setContentsMargins(0, 0, 0, 0)
-
-        self.hardware_interface_combo = QComboBox()
-        self.hardware_interface_combo.addItem(tr("Default output"), "")
-        self.hardware_interface_combo.setToolTip(
-            tr("Audio output for FluidSynth (needs the sounddevice package)")
-        )
-        synth_layout.addRow(tr("Audio output:"), self.hardware_interface_combo)
-
-        sf_row = QHBoxLayout()
-        self.sf2_combo = QComboBox()
-        self.sf2_combo.setToolTip(tr("SoundFonts found in {folder}").format(folder=SF2_DIR))
-        self.sf2_combo.currentIndexChanged.connect(self._on_sf2_combo_changed)
-        self.browse_button = QPushButton(tr("Choose…"))
-        self.browse_button.clicked.connect(self._browse_sf2)
-        sf_row.addWidget(self.sf2_combo, 1)
-        sf_row.addWidget(self.browse_button)
-        synth_layout.addRow(tr("SoundFont:"), sf_row)
-        self.sf2_edit = QLineEdit()  # the chosen file; shown as the combo's text
-        self.sf2_edit.setVisible(False)
-
-        self.use_soundfont_list = QCheckBox(tr("Show the SoundFont's presets in the preset lists"))
-        self.use_soundfont_list.setToolTip(
-            tr(
-                "List the SoundFont's presets in the Digital, Analog and Drums preset "
-                "lists (and GM percussion names in the Pattern editor) instead of the "
-                "JD-Xi presets. Needs the sf2utils package."
-            )
-        )
-        JDXi.UI.Theme.apply_button_mini_style(self.use_soundfont_list)  # visible tick box
-        self.use_soundfont_list.setChecked(get_use_soundfont_list())
-        self.use_soundfont_list.toggled.connect(self._on_soundfont_list_toggled)
-        synth_layout.addRow("", self.use_soundfont_list)
-
-        synth_buttons = QHBoxLayout()
-        self.fs_start_btn = QPushButton(tr("Start"))
-        self.fs_start_btn.clicked.connect(self._start_fluidsynth)
-        self.fs_stop_btn = QPushButton(tr("Stop"))
-        self.fs_stop_btn.clicked.connect(self._stop_fluidsynth)
-        self.fs_test_btn = QPushButton(tr("Test note"))
-        self.fs_test_btn.clicked.connect(self._test_fluidsynth)
-        for button in (self.fs_start_btn, self.fs_stop_btn, self.fs_test_btn):
-            synth_buttons.addWidget(button)
-        synth_buttons.addStretch()
-        synth_layout.addRow("", synth_buttons)
-        self.fs_status = QLabel("")
-        self.fs_status.setWordWrap(True)
-        synth_layout.addRow("", self.fs_status)
-        synth_outer.addWidget(self.synth_panel)
-        self.synth_panel.setVisible(self.synth_box.isChecked())
-        layout.addWidget(self.synth_box)
-
         # --- OK / Cancel (Qt translates the standard buttons)
         self.button_box = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
@@ -350,9 +222,6 @@ class MIDIConfigDialog(QDialog):
         self.cancel_button = self.button_box.button(QDialogButtonBox.StandardButton.Cancel)
         layout.addWidget(self.button_box)
 
-        self._update_synth_buttons()
-        if self.synth_box.isChecked():
-            QTimer.singleShot(0, self, self._load_synth_choices)
 
     # ------------------------------------------------------------------ status
     def _set_status(self, kind: str, text: str) -> None:
@@ -502,151 +371,6 @@ class MIDIConfigDialog(QDialog):
             ),
         )
 
-    # -------------------------------------------------------------- FluidSynth
-    def _on_synth_box_toggled(self, checked: bool) -> None:
-        self.synth_panel.setVisible(checked)
-        self.adjustSize()
-        if checked and not self._synth_loaded:
-            self._load_synth_choices()
-
-    def _load_synth_choices(self) -> None:
-        """Audio outputs and SoundFonts, listed in the background once."""
-        self._synth_loaded = True
-        self.fs_status.setText(tr("Looking for audio outputs and SoundFonts…"))
-        run_in_background(
-            lambda: (list_audio_outputs(), find_soundfonts()), self._synth_choices_loaded, self
-        )
-
-    def _synth_choices_loaded(self, result, error) -> None:
-        self.fs_status.setText("")
-        if error is not None:
-            self.fs_status.setText(tr("Could not list the audio outputs: {error}").format(error=error))
-            return
-        outputs, soundfonts = result
-        saved = get_hardware_interface()
-        for name, spec in outputs:
-            self.hardware_interface_combo.addItem(name, spec)
-        index = self.hardware_interface_combo.findText(saved) if saved else -1
-        self.hardware_interface_combo.setCurrentIndex(max(index, 0))
-        if not outputs:
-            self.hardware_interface_combo.setToolTip(
-                tr("No audio outputs listed: install sounddevice (pip install sounddevice)")
-            )
-        chosen = get_sf2_path() or (SF2_PATH if os.path.isfile(SF2_PATH) else "")
-        self.sf2_combo.blockSignals(True)
-        for path in soundfonts:
-            self.sf2_combo.addItem(os.path.basename(path), path)
-        if chosen and self.sf2_combo.findData(chosen) < 0:
-            self.sf2_combo.addItem(os.path.basename(chosen), chosen)
-        if not self.sf2_combo.count():
-            self.sf2_combo.addItem(tr("None found: Choose… a .sf2 file"), "")
-        self.sf2_combo.setCurrentIndex(max(self.sf2_combo.findData(chosen), 0))
-        self.sf2_combo.blockSignals(False)
-        self.sf2_edit.setText(self.sf2_combo.currentData() or "")
-        self._update_synth_buttons()
-
-    def _on_sf2_combo_changed(self, _index: int) -> None:
-        path = self.sf2_combo.currentData() or ""
-        self.sf2_edit.setText(path)
-        if path:
-            set_sf2_path(path)
-        self._update_synth_buttons()
-
-    def _browse_sf2(self) -> None:
-        start = SF2_DIR if os.path.isdir(SF2_DIR) else ""
-        path, _ = QFileDialog.getOpenFileName(
-            self, tr("Select SoundFont"), start, tr("SoundFonts (*.sf2 *.sf3)")
-        )
-        if not path:
-            return
-        if self.sf2_combo.findData(path) < 0:
-            self.sf2_combo.addItem(os.path.basename(path), path)
-        self.sf2_combo.setCurrentIndex(self.sf2_combo.findData(path))
-
-    def _update_synth_buttons(self) -> None:
-        running = getattr(self.midi_helper, "soundfont_synth", None) is not None
-        has_file = bool(self.sf2_edit.text().strip())
-        self.fs_start_btn.setEnabled(not self._busy_synth and not running and has_file)
-        self.fs_stop_btn.setEnabled(not self._busy_synth and running)
-        self.fs_test_btn.setEnabled(not self._busy_synth and running)
-
-    def _start_fluidsynth(self) -> None:
-        if _fluidsynth_module is None:
-            self.fs_status.setText(import_error_message(_fluidsynth_err_msg))
-            return
-        sf_path = self.sf2_edit.text().strip()
-        if not sf_path or not os.path.isfile(sf_path):
-            self.fs_status.setText(tr("Please select a SoundFont first."))
-            return
-        device = self.hardware_interface_combo.currentData() or ""
-        self._busy_synth = True
-        self._update_synth_buttons()
-        self.fs_status.setText(tr("Starting FluidSynth and loading the SoundFont…"))
-
-        def start():
-            fs = _fluidsynth_module.Synth()
-            if sys.platform == "darwin":
-                if device:
-                    fs.setting("audio.coreaudio.device", device)
-                fs.start(driver="coreaudio")
-            elif device and ":" in device:
-                fs.setting("audio.portaudio.device", device)
-                fs.start(driver="portaudio")
-            else:
-                fs.start()
-            sfid = fs.sfload(sf_path)
-            fs.program_select(0, sfid, 0, 0)
-            return fs, sfid
-
-        run_in_background(start, self._fluidsynth_started, self)
-
-    def _fluidsynth_started(self, result, error) -> None:
-        self._busy_synth = False
-        if error is not None:
-            log.error(f"FluidSynth error: {error}", scope="MIDIConfigDialog")
-            self.fs_status.setText(tr("FluidSynth error: {ex}").format(ex=error))
-        else:
-            self.fs, self.sfid = result
-            self.midi_helper.soundfont_synth = self.fs
-            self.midi_helper.soundfont_sfid = self.sfid
-            self.fs_status.setText(tr("FluidSynth: started"))
-        self._update_synth_buttons()
-
-    def _stop_fluidsynth(self) -> None:
-        fs = getattr(self.midi_helper, "soundfont_synth", None)
-        try:
-            if fs is not None:
-                fs.delete()
-            self.fs_status.setText(tr("FluidSynth: stopped"))
-        except Exception as ex:
-            self.fs_status.setText(tr("Stop error: {ex}").format(ex=ex))
-        self.midi_helper.soundfont_synth = None
-        self.midi_helper.soundfont_sfid = None
-        self.fs = self.sfid = None
-        self._update_synth_buttons()
-
-    def _test_fluidsynth(self) -> None:
-        fs = getattr(self.midi_helper, "soundfont_synth", None)
-        if fs is None:
-            self.fs_status.setText(tr("Start FluidSynth first."))
-            return
-        fs.noteon(0, 60, 110)
-        QTimer.singleShot(400, self, lambda: fs.noteoff(0, 60))  # a short note, no wait
-        self.fs_status.setText(tr("Test note triggered."))
-
-    def _on_soundfont_list_toggled(self, checked: bool) -> None:
-        set_use_soundfont_list(checked)
-        problem = soundfont_list_problem() if checked else None
-        if problem:
-            log.warning(scope="MIDIConfigDialog", message=f"SoundFont list unavailable: {problem}")
-            QMessageBox.warning(
-                self,
-                tr("SoundFont List"),
-                tr("{problem}\n\nThe preset lists will stay as JD-Xi until this is fixed.").format(
-                    problem=problem
-                ),
-            )
-
     # --------------------------------------------------------------- closing
     def _stop_listening(self) -> None:
         self._identity_timer.stop()
@@ -658,12 +382,6 @@ class MIDIConfigDialog(QDialog):
             self._listening = False
 
     def accept(self) -> None:
-        set_use_soundfont_list(self.use_soundfont_list.isChecked())
-        if self.sf2_edit.text().strip():
-            set_sf2_path(self.sf2_edit.text().strip())
-        if self._synth_loaded:
-            index = self.hardware_interface_combo.currentIndex()
-            set_hardware_interface(self.hardware_interface_combo.currentText() if index > 0 else "")
         self._stop_listening()
         changed = self._ports_changed()
         super().accept()

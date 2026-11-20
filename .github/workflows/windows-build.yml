@@ -55,7 +55,7 @@ jobs:
         run: |
           set -o pipefail; mkdir -p logs
           { python -m pip install --upgrade pip &&
-            python -m pip install ".[soundfont]" pyinstaller pytest; } 2>&1 | tee logs/install.log
+            python -m pip install . pyinstaller pytest; } 2>&1 | tee logs/install.log
 
       - name: Test
         id: test

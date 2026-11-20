@@ -10,7 +10,7 @@
    ```powershell
    py -3 -m venv .venv
    .venv\Scripts\python -m pip install --upgrade pip
-   .venv\Scripts\python -m pip install -e ".[soundfont,dev]" pyinstaller
+   .venv\Scripts\python -m pip install -e ".[dev]" pyinstaller
    ```
 
    In VS Code the same is the task **Setup: create .venv and install** (Terminal → Run Task).

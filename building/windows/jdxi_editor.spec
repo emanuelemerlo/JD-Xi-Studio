@@ -4,13 +4,12 @@ PyInstaller spec for the Windows build (one folder: dist/JD-Xi-Studio/, with JD-
 
 Build from the repository root after installing the package (not editable):
 
-    python -m pip install ".[soundfont]" pyinstaller
+    python -m pip install . pyinstaller
     pyinstaller --noconfirm building/windows/jdxi_editor.spec
 
 The resources come from the installed package (jdxi_editor/_bundle/resources,
 already scaled down by hatch_build.py) and are placed at resources/ next to the
 code, where jdxi_editor.resources looks first in a frozen app (sys._MEIPASS).
-FluidSynth's DLLs go to fluidsynth/bin (see jdxi_editor.midi.fluidsynth_library).
 """
 
 import os
@@ -35,9 +34,7 @@ datas += collect_data_files("qtawesome")
 datas += collect_data_files("qdarktheme")
 datas += collect_data_files("music21", includes=["**/*.json", "**/*.xml", "**/*.txt"])
 
-binaries = [
-    (str(dll), "fluidsynth/bin") for dll in sorted((ROOT / "fluidsynth" / "bin").glob("*.dll"))
-]
+binaries = []
 
 hiddenimports = []
 for package in ("jdxi_editor", "picoui", "picomidi", "decologr", "mido", "rtmidi"):

@@ -20,7 +20,6 @@ Dependencies:
 
 import json
 import logging
-import threading
 import zipfile
 from dataclasses import dataclass
 from typing import Any, Optional
@@ -135,9 +134,6 @@ class MidiIOHelper(MidiInHandler, MidiOutHandler):
         self.midi_messages = []
         self.current_in = None
         self.current_out = None
-        self.soundfont_synth = None
-        self.soundfont_sfid = None
-        self.soundfont_lock = threading.RLock()
         self.initialized = True
         self._selection_expectation: Optional[MidiSelectionExpectation] = None
 

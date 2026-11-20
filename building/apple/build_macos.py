@@ -153,26 +153,18 @@ def check_dependencies():
     # Install py2app and setuptools so py2app has pkg_resources and we avoid Errno 17 duplicate dist-info
     # - setuptools 70.3: has pkg_resources; 71+ causes duplicate dist-info copy; 75+ removes pkg_resources
     # - py2app<0.28.9: 0.28.9 errors when dist has install_requires
-    # - sounddevice: bundled by setup.py, but only in the optional "soundfont" extra
     # (uv sync removes these again; they are reinstalled on every build)
     pip_install = run_command(
         pip_command(
-            "install", "-q", "setuptools==70.3.0", "py2app>=0.28.2,<0.28.9", "sounddevice>=0.4.0"
+            "install", "-q", "setuptools==70.3.0", "py2app>=0.28.2,<0.28.9"
         ),
         check=False,
         capture_output=True,
     )
     if pip_install and pip_install.returncode == 0:
-        print("  ✓ Build tools (setuptools 70.3, py2app, sounddevice) ready")
+        print("  ✓ Build tools (setuptools 70.3, py2app) ready")
     else:
         print("  ⚠ pip install of setuptools/py2app failed; ensure setuptools<75 and py2app<0.28.9 for pkg_resources")
-
-    # fluidsynth 0.2 (package) shadows pyfluidsynth's fluidsynth.py; uninstall it so py2app bundles the correct module
-    run_command(
-        pip_command("uninstall", "-y", "fluidsynth"),
-        check=False,
-        capture_output=True,
-    )
 
     print("  ✓ Dependencies validated")
 

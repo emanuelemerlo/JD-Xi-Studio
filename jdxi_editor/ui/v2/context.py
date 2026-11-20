@@ -64,14 +64,19 @@ class SoundContext(QObject):
             self.changed.emit()
 
     def file_saved(self, path: str, loaded: bool = False) -> None:
-        """Everything is in *path* now (saved, or loaded from it)."""
+        """Everything is in *path* now (saved, or loaded from it): the new
+        reference, so a slot saved before (maybe with another sound) is not
+        shown any more."""
         self.saved_file = str(path)
+        self.saved_slot = ""
         if loaded:
             self.origins = {part: tr("file «{name}»").format(name=Path(path).name) for part in PARTS}
         self.changed.emit()
 
     def slot_saved(self, slot: str) -> None:
+        """The program is in *slot* now: the new reference (the last save wins)."""
         self.saved_slot = slot
+        self.saved_file = ""
         self.program_id = slot
         self.changed.emit()
 

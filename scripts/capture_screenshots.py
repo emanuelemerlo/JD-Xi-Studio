@@ -22,7 +22,9 @@ Images (doc/images/ for the Sphinx docs, resources/ for the READMEs, where
     jdxi-vocal-effects.png   vocal_effects.png   (+ _600)
     jdxi-pattern-sequencer.png  pattern.png      (+ _600)
     jdxi-midi-editor.png     midi_player.png     (+ _600)
+    jdxi-programs.png        programs_page.png   (+ _600)
     midi_config_200.png      midi_config.png     (+ _200)
+    keyboard_window.png      keyboard_window.png (+ _900)
 """
 
 from __future__ import annotations
@@ -40,6 +42,7 @@ MIDI_CONFIG_SIZE = (520, 0)  # width; height from the dialog's content
 
 # editor type -> (doc/images name or None, resources name or None)
 EDITOR_SHOTS = {
+    "program": ("jdxi-programs.png", "programs_page.png"),
     "digital1": ("jdxi-digital-synth1.png", "digital_synth.png"),
     "analog": ("jdxi-analog-synth.png", "analog_synth.png"),
     "drums": ("jdxi-drum-kit.png", "drum_editor.png"),
@@ -50,12 +53,13 @@ EDITOR_SHOTS = {
     "midi_player": ("jdxi-midi-editor.png", "midi_player.png"),
 }
 # README versions that show a different page from the docs' image
-README_TABS = {"analog": ("Amp", "ADSR")}
+README_TABS: dict[str, tuple[str, ...]] = {}
 # README versions cropped to the editor's content (left, right fractions of
 # the width), so it is larger in the 600 px thumbnail
-README_CROP = {"digital1": (0.13, 0.87)}
+README_CROP: dict[str, tuple[float, float]] = {}
 MIDI_CONFIG_SHOT = ("midi_config_200.png", "midi_config.png")
-THUMBNAIL_WIDTHS = {"midi_config.png": 200}  # others: 600
+KEYBOARD_SHOT = "keyboard_window.png"  # doc/images and resources
+THUMBNAIL_WIDTHS = {"midi_config.png": 200, KEYBOARD_SHOT: 900}  # others: 600
 
 
 def _settle(app, ms: int = 400) -> None:
@@ -158,6 +162,14 @@ def capture(out_dir: Path) -> list[Path]:
     print(f"captured {'midi config':12} -> {path}")
     dialog.close()
 
+    # the keyboard window, with the Off-line badge under MIDI IN / OUT
+    window.raise_()
+    _settle(app)
+    path = out_dir / KEYBOARD_SHOT
+    window.grab().save(str(path))
+    written.append(path)
+    print(f"captured {'keyboard':12} -> {path}")
+
     window._wait_for_usb_recording_threads()
     return written
 
@@ -185,6 +197,12 @@ def install(shots: Path) -> None:
         resources / MIDI_CONFIG_SHOT[0], doc_images / MIDI_CONFIG_SHOT[0]
     )
     print(f"updated doc/images/{MIDI_CONFIG_SHOT[0]}")
+    keyboard = shots / KEYBOARD_SHOT
+    if keyboard.exists():
+        _install_readme_image(keyboard, resources, KEYBOARD_SHOT, Image)
+        # the docs show it at 60 %: the 900 px copy is enough
+        shutil.copyfile(resources / "keyboard_window_900.png", doc_images / KEYBOARD_SHOT)
+        print(f"updated doc/images/{KEYBOARD_SHOT}")
 
 
 def _install_readme_image(source: Path, resources: Path, name: str, Image) -> None:
