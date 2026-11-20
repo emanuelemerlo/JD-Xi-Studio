@@ -4,6 +4,21 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+### Changes
+- Programs › Organize: Add to / Remove from playlist over the songs' table (they act on the songs);
+  Play, Stop, Pause and **Mix** (was Shuffle Play) in a compact row of their own, with the
+  now-playing line beside them.
+- picomidi 0.3: a muted track no longer cuts a note another track holds; a program chased from
+  mid-song comes with its bank select; a track's velocity scale at 0 silences it.
+
+### Fixed
+- Changing a track's channel now moves its pitch bend and aftertouch too; the drum detection sees
+  pitch bend; the pattern's tempo and time signature are written again (message types compared
+  as strings).
+- USB recording: a stop arriving before the recording thread starts is no longer lost (it ran its
+  whole 10 s tail).
+- The context line shows the last save: «saved in E14» no longer stays after a later save to file.
+
 ### Removed
 - The FluidSynth software synth (MIDI configuration) and the SoundFont preset lists: they played
   General MIDI sounds, not the JD-Xi's, and only for notes from a MIDI keyboard. pyfluidsynth, the

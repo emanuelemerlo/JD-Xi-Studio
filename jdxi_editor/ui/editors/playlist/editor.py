@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (
     QComboBox,
     QDialog,
     QDialogButtonBox,
+    QFrame,
     QGroupBox,
     QHBoxLayout,
     QHeaderView,
@@ -143,8 +144,11 @@ class PlaylistEditor(QWidget):
         self.playlist_select_layout.addStretch()
         layout.addLayout(self.playlist_select_layout)
 
-        # Add/Delete buttons (round style + icon + label)
-        button_layout = QHBoxLayout()
+        # Add/Remove act on the playlist's songs: just above their list (the table)
+        actions = QWidget()
+        button_layout = QHBoxLayout(actions)
+        button_layout.setContentsMargins(0, 0, 0, 0)
+        button_layout.setSpacing(6)
         self._add_round_action_button(
             JDXi.UI.Icon.PLUS_CIRCLE,
             "Add to Playlist",
@@ -166,17 +170,32 @@ class PlaylistEditor(QWidget):
             False
         )  # Disabled until playlist is selected
         button_layout.addStretch()
-        layout.addLayout(button_layout)
+        self.playlist_actions = actions  # added over the table, below
 
-        # Transport group (Play, Stop, Pause, Shuffle Play)
+        # Playback of the songs: a block of its own, under a line
+        line = QFrame()
+        line.setFrameShape(QFrame.Shape.HLine)
+        line.setObjectName("playlistPlaybackLine")
+        line.setStyleSheet("QFrame#playlistPlaybackLine { color: #2e3036; background: #2e3036;"
+                           " border: 0; max-height: 1px; }")
+        layout.addSpacing(6)
+        layout.addWidget(line)
+        layout.addSpacing(6)
+
         from jdxi_editor.ui.widgets.transport.transport import PlaylistTransportWidget
 
         self.playlist_transport = PlaylistTransportWidget(parent=self)
-        layout.addWidget(self.playlist_transport)
-
         # Now playing: song n of N, its progress and the playlist's
         self.playlist_progress = PlaylistProgressWidget()
         self.playlist_progress.song_clicked.connect(self._play_song)
+        # the transport and the "Stopped · 0 songs — ..." line in one row, the bars under them
+        playback_row = QHBoxLayout()
+        playback_row.setSpacing(12)
+        playback_row.addWidget(self.playlist_transport)
+        display = self.playlist_progress.display
+        self.playlist_progress.layout().removeWidget(display)
+        playback_row.addWidget(display, 1)
+        layout.addLayout(playback_row)
         # plain text and bars under the transport (not a second JD-Xi-style display)
         self.playlist_progress_panel = self.playlist_progress
         layout.addWidget(self.playlist_progress_panel)
@@ -239,6 +258,7 @@ class PlaylistEditor(QWidget):
             self._on_playlist_programs_selection_changed
         )
 
+        layout.addWidget(self.playlist_actions)
         layout.addWidget(self.playlist_programs_table)
 
         # Populate playlist combo box
@@ -449,6 +469,7 @@ class PlaylistEditor(QWidget):
             if label.text() in (search_text, ""):
                 label.hide()
         box, inner = getattr(combo, "search_box", None), getattr(combo, "combo_box", None)
+        combo.setMinimumWidth(300)  # the playlist's name and its number of programs
         if box is not None and inner is not None:  # same width: one column
             box.setMaximumWidth(inner.maximumWidth())
             box.setSizePolicy(inner.sizePolicy())

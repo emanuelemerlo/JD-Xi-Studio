@@ -314,14 +314,16 @@ def test_engine_mute_call_that_changes_nothing_sends_nothing(clock):
 
 
 def test_engine_mute_track_keeps_other_tracks_unison_note(clock):
-    """Muting one of two tracks playing the same note leaves the other's held."""
+    """Muting one of two tracks playing the same note leaves the other's
+    sounding: no note-off while another track holds the key (a note-off would
+    release it for both, picomidi >= 0.3); the last holder's note-off ends it."""
     engine, received = _loaded_engine(_make_two_track_unison_midi())
     engine.start(0)
     engine.process_until_now()
     received.clear()
     engine.mute_track(1, True)
-    assert _summary(received) == [("note_off",)]
-    assert engine._held_notes == {(0, 60): {0}}
+    assert received == []
+    assert engine._held_notes == {(0, 60): {0: 1}}
     engine.stop()
     assert engine._held_notes == {}
 
@@ -338,13 +340,22 @@ def test_engine_track_velocity_scale(clock):
 
 
 def test_engine_velocity_scale_keeps_notes_audible_and_note_offs(clock):
+    """A small scale keeps the notes audible (velocity 1 at least); 0.0
+    silences the track (picomidi >= 0.3), like a mute."""
     engine, received = _loaded_engine()
-    engine.set_track_velocity_scale(0, 0.0)
+    engine.set_track_velocity_scale(0, 0.001)
     engine.start(0)
     clock.now = 1001.0
     engine.process_until_now()
     assert [m.velocity for m in received if m.type == "note_on"] == [1, 1]
     assert [m.velocity for m in received if m.type == "note_off"] == [0, 0]
+
+    engine, received = _loaded_engine()
+    engine.set_track_velocity_scale(0, 0.0)
+    engine.start(0)
+    clock.now = 1001.0
+    engine.process_until_now()
+    assert [m for m in received if m.type == "note_on"] == []
 
     engine.set_track_velocity_scale(0, 1.0)
     assert engine._velocity_scales == {}
@@ -448,7 +459,9 @@ def test_engine_chase_respects_suppression_and_mute(clock):
     engine, received = _loaded_engine(_make_patch_change_midi())
     engine.suppress_control_changes = True
     engine.start(1200)
-    assert _summary(received) == [("pc", 7), ("bend", 2000)]
+    # the bank select belongs to the program change (without it the JD-Xi
+    # would load the program from another bank): it follows the PC filter
+    assert _summary(received) == [("cc", 0, 95), ("cc", 32, 64), ("pc", 7), ("bend", 2000)]
 
     engine, received = _loaded_engine(_make_patch_change_midi())
     engine.mute_channel(0, True)

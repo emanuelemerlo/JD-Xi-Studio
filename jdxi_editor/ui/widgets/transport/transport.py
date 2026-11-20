@@ -200,10 +200,21 @@ class PatternTransportWidget(TransportWidget):
 
 
 class PlaylistTransportWidget(TransportWidget):
-    """Transport for Playlist editor: Play, Stop, Pause, Shuffle Play."""
+    """Transport for Playlist editor: Play, Stop, Pause, Mix (the songs in a
+    random order). Compact: the buttons keep their own width, in one row with
+    no frame, so they do not outweigh the playlist's own commands."""
 
     def __init__(self, parent: "PlaylistEditor"):
         super().__init__(parent=parent, midi_state=None)
+
+    def setup_ui(self):
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(6)
+        self._button_group = QButtonGroup(self)
+        self._button_group.setExclusive(True)
+        for spec in self.specs["transport"].values():
+            self._create_transport_control(spec, layout, self._button_group)
 
     def _build_transport_specs(self) -> dict[str, TransportSpec]:
         return {
@@ -235,12 +246,12 @@ class PlaylistTransportWidget(TransportWidget):
                 text="Pause",
             ),
             "shuffle": TransportSpec(
-                label="Shuffle Play",
+                label="Mix",
                 icon=JDXi.UI.Icon.SHUFFLE,
-                tooltip=tr("Shuffle Play"),
+                tooltip=tr("Mix: plays the playlist's songs in a random order"),
                 slot=self.parent.playlist_shuffle_play,
                 grouped=True,
                 name="shuffle",
-                text="Shuffle Play",
+                text="Mix",
             ),
         }

@@ -244,8 +244,11 @@ def test_play_from_mid_song_restores_program(player):
     player.transport_controller.seek_seconds(8.0)
     player.sent.clear()
     player.midi_playback_start()
-    first = player.sent[0]
+    # the program first: its bank select (CC 0, CC 32), then the program change
+    first = [m for m in player.sent if m.type != "control_change" or m.control not in (0, 32)][0]
     assert first.type == "program_change" and first.program == 0
+    assert all(m.type == "control_change" and m.control in (0, 32)
+               for m in player.sent[:player.sent.index(first)])
     player.midi_playback_stop()
 
 
