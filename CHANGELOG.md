@@ -12,6 +12,9 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   mid-song comes with its bank select; a track's velocity scale at 0 silences it.
 
 ### Fixed
+- USB recording: stereo (it saved only one channel of the JD-Xi); only the devices that can record
+  are listed, and the JD-Xi's input is chosen (it could pick its output, which cannot record); the
+  format is 16 bit (the 32 bit the interface asked for was never used).
 - Changing a track's channel now moves its pitch bend and aftertouch too; the drum detection sees
   pitch bend; the pattern's tempo and time signature are written again (message types compared
   as strings).

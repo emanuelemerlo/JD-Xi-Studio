@@ -43,7 +43,7 @@ class USBFileRecordingWidget(JDXiMidiGroup):
         super().__init__(parent=parent, midi_state=midi_state)
         """constructor"""
         self.group_title: str = "USB Recorder"
-        self.recorder: USBRecorder = USBRecorder(channels=1)
+        self.recorder: USBRecorder = USBRecorder()  # stereo, as the JD-Xi sends it
         self.file_select: QPushButton = QPushButton()
         self.file_output_name: str = ""
         self.file_record_checkbox: QCheckBox = QCheckBox()
@@ -69,6 +69,13 @@ class USBFileRecordingWidget(JDXiMidiGroup):
                 title="No Output File",
                 message=(
                     "Please select a WAV output file or enable auto-generate filename."
+                ),
+                type_attr="Warning",
+            ),
+            "no_input": MessageBoxSpec(
+                title="No Audio Input",
+                message=(
+                    "No audio input to record from: connect the JD-Xi by USB and press Refresh."
                 ),
                 type_attr="Warning",
             ),
@@ -143,13 +150,10 @@ class USBFileRecordingWidget(JDXiMidiGroup):
         :param duration_seconds: How long to record; defaults to the file length
         """
         if self.recorder.file_save_recording:
-            recording_rate = "32bit"  # Default to 32-bit recording
             try:
-                rate = self.recorder.usb_recording_rates.get(
-                    recording_rate, pyaudio.paInt16
-                )
                 self._start_recording(
-                    recording_rate=rate, duration_seconds=duration_seconds
+                    recording_rate=self.recorder.sample_format,
+                    duration_seconds=duration_seconds,
                 )
             except Exception as ex:
                 log.error(f"Error {ex} occurred starting USB recording")
@@ -192,28 +196,38 @@ class USBFileRecordingWidget(JDXiMidiGroup):
 
         :return: list List of USB devices
         """
-        usb_devices = self.recorder.list_devices()
+        devices = self.recorder.input_devices()
         self.port_select_combo.clear()
-        self.port_select_combo.addItems(usb_devices)
-        self.port_jdxi_auto_connect(usb_devices)
-        return usb_devices
+        for index, label in devices:
+            self.port_select_combo.addItem(label, index)  # the PortAudio index as data
+        self.port_jdxi_auto_connect(devices)
+        return [label for _index, label in devices]
 
-    def port_jdxi_auto_connect(self, usb_devices: list) -> None:
+    def port_jdxi_auto_connect(self, devices: list) -> None:
         """
-        usb_port_jdxi_auto_connect
+        Select the JD-Xi's input; with several (one per Windows audio API),
+        the one of the default API (MME on Windows: the most tolerant).
 
-        :param usb_devices: list
-        :return: None
-
-        Auto-select the first matching device
+        :param devices: list of (PortAudio index, label)
         """
         pattern = re.compile(r"jd-?xi", re.IGNORECASE)
-        for i, item in enumerate(usb_devices):
-            if pattern.search(item):
-                self.port_select_combo.setCurrentIndex(i)
-                self.recorder.usb_port_input_device_index = i
-                log.message(f"Auto-selected {item}")
-                break
+        matches = [(row, index) for row, (index, label) in enumerate(devices) if pattern.search(label)]
+        if not matches:
+            return
+        default_api = self.recorder.default_host_api()
+        row, index = matches[0]
+        if default_api is not None:
+            for candidate_row, candidate_index in matches:
+                try:
+                    info = self.recorder.p.get_device_info_by_index(candidate_index)
+                except Exception:
+                    continue
+                if info.get("hostApi") == default_api:
+                    row, index = candidate_row, candidate_index
+                    break
+        self.port_select_combo.setCurrentIndex(row)
+        self.recorder.usb_port_input_device_index = index
+        log.message(f"Auto-selected {devices[row][1]}")
 
     def on_usb_file_output_name_changed(self, state: Qt.CheckState):
         """
@@ -257,7 +271,10 @@ class USBFileRecordingWidget(JDXiMidiGroup):
             log.message(f"🎙️ Starting WAV recording to: {self.file_output_name}")
             log.message(f"🎙️ Recording duration: {duration_seconds} seconds")
 
-            selected_index = self.port_select_combo.currentIndex()
+            selected_index = self.port_select_combo.currentData()
+            if selected_index is None:  # no device that can record
+                show_message_box_from_spec(self.specs["message_box"]["no_input"])
+                return
             log.message(f"🎙️ Using USB input device index: {selected_index}")
 
             start_recording(
