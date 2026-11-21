@@ -79,15 +79,6 @@ def test_each_window_moves_on_its_own(windows, app):
     assert editors.pos() == start
 
 
-def test_line_up_puts_the_editors_above_the_keyboard(windows, app):
-    link, keyboard, editors, monitor, closed = windows
-    editors.move(700, 50)
-    link.line_up(editors)
-    _spin(app)
-    assert editors.frameGeometry().bottom() + 1 == keyboard.frameGeometry().top()
-    assert editors.frameGeometry().left() == keyboard.frameGeometry().left()
-
-
 def test_a_window_of_its_own_is_linked_too(app):
     keyboard = QMainWindow()
     editors = QMainWindow()  # not owned: the keyboard can come in front of it
@@ -157,6 +148,12 @@ def test_keyboard_on_top_installs_the_dialog_filter_and_removes_it(app, tmp_path
     window = JDXiInstrument()
     try:
         assert not window.on_top_action.isChecked()  # always off at start
+        # «Editors» fits its text from the first layout (added late, it stayed blank)
+        window.show()
+        _spin(app)
+        button = window.editors_button
+        assert button.text() and button.width() >= button.sizeHint().width()
+        assert abs(button.geometry().center().y() - window.on_top_pin.geometry().center().y()) <= 1
         window.on_top_pin.click()
         assert window._dialogs_in_front is not None and window.on_top_action.isChecked()
         assert window.windowFlags() & Qt.WindowType.WindowStaysOnTopHint

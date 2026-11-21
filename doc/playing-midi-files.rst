@@ -15,7 +15,7 @@ Overview
 Typical Workflow
 ================
 
-1. **Load a MIDI file** in the MIDI Player (File → Open… or drag-and-drop)
+1. **Load a MIDI file** in the MIDI Player (its Load button, File › MIDI Player › Open…, or drag-and-drop)
 2. **Fit to the JD-Xi** (for a general MIDI file): **Assign tracks to parts…**, check the
    proposal, Apply; or a track's channel in its header. **Starting sounds** gives the parts a sound
    to start from

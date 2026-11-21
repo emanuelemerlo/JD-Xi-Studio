@@ -32,7 +32,6 @@ datas += collect_data_files("jdxi_editor", excludes=["_bundle/**"])
 datas += collect_data_files("picoui")
 datas += collect_data_files("qtawesome")
 datas += collect_data_files("qdarktheme")
-datas += collect_data_files("music21", includes=["**/*.json", "**/*.xml", "**/*.txt"])
 
 binaries = []
 

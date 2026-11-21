@@ -83,7 +83,6 @@ from jdxi_editor.update.checker import (
     UpdateChecker,
     should_auto_check,
 )
-from jdxi_editor.midi.music.pdf_export import export_midi_to_pdf
 from jdxi_editor.midi.program.helper import JDXiProgramHelper
 from jdxi_editor.midi.program.program import JDXiProgram
 from jdxi_editor.midi.sysex.composer import JDXiSysExComposer
@@ -173,6 +172,7 @@ class JDXiInstrument(JDXiWindow):
         self.recent_files_menu = None
         # Add Recent Files menu now that recent_files_manager is initialized
         self._add_recent_files_menu()
+        self._refresh_menu_state()  # nothing in the MIDI Player yet: Save off
         self._load_settings()
         self._toggle_illuminate_sequencer_lightshow(True)
         self._load_saved_favorites()
@@ -229,7 +229,7 @@ class JDXiInstrument(JDXiWindow):
                 icon="ri.sound-module-fill",
             ),
             "program_parts": EditorConfig(
-                title="Program: common and parts",
+                title="Program settings",
                 editor_class=ProgramPartsEditor,  # new interface (1.0)
                 icon="mdi.tune-vertical",
             ),
@@ -530,7 +530,7 @@ class JDXiInstrument(JDXiWindow):
         arpeggio.part_provider = lambda: getattr(self, "current_synth_type", None)
 
     def show_self_test(self) -> None:
-        """Help › Self-test with the JD-Xi…"""
+        """JD-Xi › Self-test with the JD-Xi…"""
         from jdxi_editor.ui.windows.selftest import SelfTestDialog
 
         dialog = getattr(self, "self_test_dialog", None)
@@ -1021,8 +1021,9 @@ class JDXiInstrument(JDXiWindow):
     # --- Tabs: a fixed set always there, the others opened and closed from the editors window
 
     CORE_TABS = (
+        # in the order of the Editor menu: parts, effects, playback
         "program", "digital1", "digital2", "analog", "drums",
-        "arpeggio", "effects", "vocal_fx", "pattern", "midi_player",
+        "effects", "vocal_fx", "arpeggio", "pattern", "midi_player",
     )
     OPTIONAL_TABS = ("program_parts", "recipes", "settings")
     OPEN_TABS_KEY = "editors/optional_tabs"
@@ -1104,7 +1105,7 @@ class JDXiInstrument(JDXiWindow):
     def _fill_tab_menu(self, menu) -> None:
         """The "+" menu: every optional tab, ticked when open; choosing it opens or shows it."""
         names = {
-            "program_parts": tr("Program parts"),
+            "program_parts": tr("Program settings"),
             "recipes": tr("Recipes"),
             "settings": tr("Settings"),
         }
@@ -1150,14 +1151,6 @@ class JDXiInstrument(JDXiWindow):
         )
         self.on_top_action.setCheckable(True)
         menu.addAction(self.on_top_action)
-        menu.addSeparator()
-        menu.addAction(
-            self._menu_action(
-                tr("&Line up the editors with the keyboard"),
-                lambda: self.window_link.line_up(self.main_editor),
-                status_tip=tr("Place the editors window right above the keyboard"),
-            )
-        )
         self.menuBar().insertMenu(self.help_menu.menuAction(), menu)
         self.window_menu = menu
         # The editors where they were left
@@ -1172,6 +1165,21 @@ class JDXiInstrument(JDXiWindow):
         # the pin next to minimise / maximise / close
         self.on_top_pin = self.window_buttons.pin_button
         self.on_top_pin.toggled.connect(self.set_keyboard_on_top)
+        # «Editors», before the pin: the editors window in front, wherever it is
+        self.editors_button = self.window_buttons.editors_button
+        self.editors_button.clicked.connect(self._show_main_editor)
+        self._switch_tips()
+
+    def _switch_tips(self) -> None:
+        """The Editors button's tooltip; with the keyboard always on top it says
+        that the editors come in front of everything but the keyboard."""
+        button = getattr(self, "editors_button", None)
+        if button is None:
+            return
+        tip = tr("Bring the editors window to the front (Ctrl+Shift+W)")
+        if self.windowFlags() & Qt.WindowType.WindowStaysOnTopHint:
+            tip += "\n" + tr("The keyboard is always on top: where they overlap, it stays over the editors")
+        button.setToolTip(tip)
 
     def bring_keyboard_to_front(self) -> None:
         """The keyboard window in front (from an editor window too: Ctrl+Shift+K)."""
@@ -1204,6 +1212,7 @@ class JDXiInstrument(JDXiWindow):
             self._dialogs_in_front.deleteLater()
             self._dialogs_in_front = None
         self.on_top_action.setChecked(on)
+        self._switch_tips()
         pin = getattr(self, "on_top_pin", None)
         if pin is not None and pin.isChecked() != on:
             pin.setChecked(on)
@@ -1287,12 +1296,36 @@ class JDXiInstrument(JDXiWindow):
         )
         return existing_editor
 
-    def _show_editor_tab(self, title: str, editor_class, icon, **kwargs) -> None:
+    def _place_tab(self, editor, index: int) -> int:
+        """Program settings right after Programs (it is opened from there); the
+        other tabs where they were added. :return: the tab's index now"""
+        if not isinstance(editor, ProgramPartsEditor):
+            return index
+        tabs = self.main_editor.editor_tab_widget
+        programs = tabs.indexOf(self.get_existing_editor(ProgramEditor))
+        if programs < 0 or index == programs + 1:
+            return index
+        target = programs + 1 if index > programs else programs
+        tabs.tabBar().moveTab(index, target)
+        return target
+
+    def program_settings_editor(self):
+        """The Program settings editor, made (without opening its tab) if needed:
+        the Programs mixer's Pan / Delay / Reverb are its values."""
+        editor = self.get_existing_editor(ProgramPartsEditor)
+        if editor is None:
+            config = self.editor_registry["program_parts"]
+            self._show_editor_tab(config.title, config.editor_class, config.icon, add_tab=False)
+            editor = self.get_existing_editor(ProgramPartsEditor)
+        return editor
+
+    def _show_editor_tab(self, title: str, editor_class, icon, add_tab: bool = True, **kwargs) -> None:
         """
         _show_editor_tab
 
         :param title: str Title of the tab
         :param editor_class: cls Class of the Editor
+        :param add_tab: False: make the editor only (its tab opens when shown)
         :param kwargs:
         :return: None
         """
@@ -1303,10 +1336,11 @@ class JDXiInstrument(JDXiWindow):
             if existing_editor:
                 index = self.main_editor.editor_tab_widget.indexOf(existing_editor)
                 if index == -1:  # an optional tab closed earlier: back with its values
-                    from jdxi_editor.ui.v2.names import short_name
+                    from jdxi_editor.ui.v2.names import short_name, tab_tip
 
                     index = self.main_editor.editor_tab_widget.addTab(existing_editor, short_name(title))
-                    self.main_editor.editor_tab_widget.setTabToolTip(index, title)
+                    self.main_editor.editor_tab_widget.setTabToolTip(index, tab_tip(title))
+                    index = self._place_tab(existing_editor, index)
                     if getattr(self, "_optional_tabs_ready", False):
                         self._mark_closable_tabs()
                 if index != -1:
@@ -1390,31 +1424,32 @@ class JDXiInstrument(JDXiWindow):
                 )
             )
             editor.setWindowTitle(title)
+            self._follow_modified(editor, title)  # its tab, whenever it opens
+            if add_tab:
+                from jdxi_editor.ui.v2.names import short_name, tab_tip
 
-            from jdxi_editor.ui.v2.names import short_name
+                # Names only, as in the mockups: every editor fits on one row
+                tab_index = self.main_editor.editor_tab_widget.addTab(editor, short_name(title))
+                self.main_editor.editor_tab_widget.setTabToolTip(tab_index, tab_tip(title))
+                tab_index = self._place_tab(editor, tab_index)
 
-            # Names only, as in the mockups: every editor fits on one row
-            tab_index = self.main_editor.editor_tab_widget.addTab(editor, short_name(title))
-            self.main_editor.editor_tab_widget.setTabToolTip(tab_index, title)
-            self._follow_modified(editor, title)
+                # Store the tab index for Analog Synth to enable styling
+                if title == "Analog Synth":
+                    tab_bar = self.main_editor.editor_tab_widget.tabBar()
+                    tab_bar.setTabData(tab_index, "analog")
 
-            # Store the tab index for Analog Synth to enable styling
-            if title == "Analog Synth":
-                tab_bar = self.main_editor.editor_tab_widget.tabBar()
-                tab_bar.setTabData(tab_index, "analog")
+                self.main_editor.editor_tab_widget.setCurrentWidget(editor)
 
-            self.main_editor.editor_tab_widget.setCurrentWidget(editor)
-
-            # Connect to tab change signal to update QTabBar property for styling
-            if not hasattr(self, "_tab_change_connected"):
-                self.main_editor.editor_tab_widget.currentChanged.connect(
-                    self._update_tab_bar_property
+                # Connect to tab change signal to update QTabBar property for styling
+                if not hasattr(self, "_tab_change_connected"):
+                    self.main_editor.editor_tab_widget.currentChanged.connect(
+                        self._update_tab_bar_property
+                    )
+                    self.main_editor.editor_tab_widget.currentChanged.connect(self._sync_panel_with_tab)
+                    self._tab_change_connected = True
+                self._update_tab_bar_property(
+                    self.main_editor.editor_tab_widget.currentIndex()
                 )
-                self.main_editor.editor_tab_widget.currentChanged.connect(self._sync_panel_with_tab)
-                self._tab_change_connected = True
-            self._update_tab_bar_property(
-                self.main_editor.editor_tab_widget.currentIndex()
-            )
 
             setattr(self, instance_attr, editor)
             self.register_editor(editor)
@@ -1612,6 +1647,8 @@ class JDXiInstrument(JDXiWindow):
             ("save_patch_action", tr("Connect the JD-Xi: a patch saved without it would hold values it never had")),
             ("dump_settings_action", tr("Connect the JD-Xi to send it the settings")),
             ("update_user_programs_action", tr("Connect the JD-Xi to read its user programs")),
+            ("save_on_jdxi_action", tr("Connect the JD-Xi to save the program on it")),
+            ("self_test_action", tr("Connect the JD-Xi: the self-test runs on it")),
         ):
             action = getattr(self, name, None)
             if action is not None:
@@ -1796,25 +1833,10 @@ class JDXiInstrument(JDXiWindow):
         ):
             return
 
-        # Get the File menu by finding the action
-        file_menu = None
-        for action in self.menuBar().actions():
-            if action.text().replace("&", "") == "File":
-                file_menu = action.menu()
-                break
-
-        if file_menu:
-            # Find the position after MIDI file load/save actions
-            actions = file_menu.actions()
-            insert_pos = 3  # After Load, Save, and Save As
-
-            # Add separator before Recent Files
-            file_menu.insertSeparator(
-                actions[insert_pos] if insert_pos < len(actions) else None
-            )
-
-            # Create Recent Files submenu
-            self.recent_files_menu = file_menu.addMenu(tr("Recent MIDI Files"))
+        midi_menu = getattr(self, "midi_file_menu", None)
+        if midi_menu:
+            # File › MIDI Player › Recent
+            self.recent_files_menu = midi_menu.addMenu(tr("&Recent"))
             self._update_recent_files_menu()
 
     def _update_recent_files_menu(self) -> None:
@@ -1945,64 +1967,35 @@ class JDXiInstrument(JDXiWindow):
         self.midi_file_editor.midi_save_file_as()
         self.show_editor("midi_player")
 
-    def _open_current_midi_as_pdf(self) -> None:
-        """Export the current MIDI file to PDF and open it with the system default viewer."""
-        midi_editor = self.get_existing_editor(MidiFilePlayer)
-        if not midi_editor or not getattr(midi_editor, "midi_state", None):
-            QMessageBox.warning(
-                self,
-                tr("No MIDI file"),
-                tr("Open the MIDI Player and load a MIDI file first."),
-            )
-            return
-        if not midi_editor.midi_state.file:
-            QMessageBox.warning(
-                self,
-                tr("No MIDI file"),
-                tr("No MIDI file is loaded. Load a MIDI file from the File menu first."),
-            )
-            return
-        midi_file = midi_editor.midi_state.file
-        path = getattr(midi_file, "filename", None)
-        if not path:
-            fd, path = tempfile.mkstemp(suffix=".mid")
-            os.close(fd)
-            try:
-                midi_file.save(path)
-            except Exception as ex:
-                log.error(
-                    scope="JDXiInstrument",
-                    message="Failed to save current MIDI to temp file",
-                    exception=ex,
-                )
-                QMessageBox.warning(
-                    self,
-                    tr("Export failed"),
-                    tr("Could not prepare the current MIDI file for export."),
-                )
-                return
-        try:
-            pdf_path = export_midi_to_pdf(path)
-        except Exception as ex:
-            log.error(
-                scope="JDXiInstrument",
-                message="PDF export failed",
-                exception=ex,
-            )
-            QMessageBox.warning(
-                self,
-                tr("Export failed"),
-                tr("Could not create PDF. Is LilyPond installed? See Help or preferences."),
-            )
-            return
-        if not pdf_path:
-            QMessageBox.warning(
-                self,
-                tr("Export failed"),
-                tr("Could not create PDF. Is LilyPond installed?"),
-            )
-            return
-        QDesktopServices.openUrl(QUrl.fromLocalFile(pdf_path))
+    def _refresh_menu_state(self) -> None:
+        """File › MIDI Player › Save / Save as / Close: only with a file in the player."""
+        player = self.get_existing_editor(MidiFilePlayer)
+        state = getattr(player, "midi_state", None)
+        loaded = getattr(state, "file", None) is not None
+        actions = list(getattr(self, "midi_save_actions", []))
+        close = getattr(self, "midi_close_action", None)
+        if close is not None:
+            actions.append(close)
+        for action, tip in zip(actions, (
+                tr("Save the MIDI file open in the MIDI Player"),
+                tr("Save the MIDI file open in the MIDI Player under another name"),
+                tr("Close the MIDI file open in the MIDI Player (asks first if it has unsaved changes)"))):
+            action.setEnabled(loaded)
+            action.setToolTip(tip if loaded else f"{tip}\n{tr('Open a MIDI file in the MIDI Player first')}")
+
+    def _midi_file_close(self) -> None:
+        """File › MIDI Player › Close."""
+        player = self.get_existing_editor(MidiFilePlayer)
+        if player is not None:
+            player.midi_close_file()
+
+    def _save_on_jdxi(self) -> None:
+        """JD-Xi › Save the program: the Programs tab's guided WRITE."""
+        self.show_editor("program")
+        editor = self.get_existing_editor(ProgramEditor)
+        save = getattr(editor, "save_on_jdxi", None)
+        if callable(save):
+            save()
 
     def _patch_load(self) -> None:
         """Show load patch dialog"""
@@ -2059,6 +2052,22 @@ class JDXiInstrument(JDXiWindow):
                 )
                 return
 
+            # say what goes where before sending (it replaces the JD-Xi's
+            # current program, not a slot: nothing is written in its memory)
+            names = sorted({
+                getattr(editor, "windowTitle", lambda: "")() or type(editor).__name__
+                for editor in self.editors if hasattr(editor, "export_dt1s")
+            })
+            if names and not getattr(self, "_dump_without_asking", False):
+                answer = QMessageBox.question(
+                    self,
+                    tr("Send all to the JD-Xi"),
+                    tr("Send every value of these editors to the JD-Xi's current program?\n\n{editors}\n\n"
+                       "It replaces the sound the JD-Xi is playing; its memory is not written "
+                       "(that is JD-Xi › Save on the JD-Xi…).").format(editors=", ".join(names)),
+                )
+                if answer != QMessageBox.StandardButton.Yes:
+                    return
             log.message(
                 scope="JDXiInstrument",
                 message="Starting to dump all settings to synthesizer...",

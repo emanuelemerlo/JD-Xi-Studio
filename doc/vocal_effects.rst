@@ -48,7 +48,7 @@ Getting Started
 1. **Open the Vocal Effects Editor**: Select the Vocal Effects tab in the Program Editor
 2. **Choose effect type**: Select OFF, VOCODER, or AUTO-PITCH from the effect type combo
 3. **Adjust parameters**: Use the Common, Vocoder & Auto Pitch, and Mixer tabs
-4. **Save**: Use File → Save Patch to save your program (Vocal Effects are included in patch save)
+4. **Save**: Use File › Patch › Save… to save your program (Vocal Effects are included in patch save)
 
 .. figure:: images/jdxi-vocal-effects.png
    :alt: Vocal Effects Editor - OFF/VOCODER/AUTO-PITCH

@@ -90,3 +90,13 @@ def test_programs_compact_puts_the_library_in_the_tabs(app, compact):
         assert horizontal <= 0 and vertical <= 40
     finally:
         editor.close()
+
+
+def test_compact_graphs_keep_room_to_drag(app, compact):
+    """At 62 % of their height an envelope was ~68 px high on a 1080p screen:
+    too little room to drag its points."""
+    from jdxi_editor.ui.v2.widgets import _Graph
+
+    graph = _Graph("#3f8cff", None, 110)
+    assert graph.minimumHeight() >= 88
+    assert _Graph("#3f8cff", None, 60).minimumHeight() >= 84

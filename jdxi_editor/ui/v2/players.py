@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
     QLayout,
     QSizePolicy,
     QAbstractButton,
+    QPushButton,
     QApplication,
     QVBoxLayout,
     QWidget,
@@ -102,8 +103,20 @@ class PatternSequenceEditor(_pattern.PatternSequenceEditor):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._pattern_style()
+        QTimer.singleShot(0, self, self._pattern_style)  # after the base class's own pass
+
+    def _pattern_style(self) -> None:
         restyle(self, PATTERN_ACCENT)
-        QTimer.singleShot(0, self, lambda: restyle(self, PATTERN_ACCENT))  # after the base class's own pass
+        # Play, Stop, Pause, Shuffle at one width (they stretched with the
+        # window while Tap and the rest kept theirs); after restyle, which
+        # sizes every button to its own text
+        buttons = [b for b in (getattr(self, name, None) for name in
+                               ("play_button", "stop_button", "pause_button", "shuffle_button")) if b]
+        if buttons:
+            width = max([b.sizeHint().width() for b in buttons] + [96])
+            for button in buttons:
+                button.setFixedWidth(width)
 
     def _setup_ui(self) -> None:
         """
@@ -167,6 +180,7 @@ class PatternSequenceEditor(_pattern.PatternSequenceEditor):
         buttons.setSpacing(6)
         for i, button in enumerate((self.play_button, self.stop_button, self.pause_button, self.shuffle_button)):
             buttons.addWidget(button, i // 2, i % 2)
+        buttons.setColumnStretch(2, 1)  # the room left goes after them
         self.pattern_transport.hide()  # its buttons are in the card; it keeps their state
         controls = QVBoxLayout()
         controls.setSpacing(8)
@@ -350,11 +364,30 @@ class MidiFilePlayer(_player.MidiFilePlayer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        restyle(self, PLAYER_ACCENT)
-        QTimer.singleShot(0, self, lambda: restyle(self, PLAYER_ACCENT))
+        self._apply_midi_player_style()
+        QTimer.singleShot(0, self, self._apply_midi_player_style)
 
     def _apply_midi_player_style(self) -> None:
         restyle(self, PLAYER_ACCENT)
+        self._equal_player_buttons()  # after restyle, which sizes each button to its text
+
+    def _equal_player_buttons(self) -> None:
+        """Play, Stop, Pause, Panic, Load, Save: one width, the widest text's."""
+        buttons = [b for holder in (getattr(self, "transport", None), getattr(self, "midi_file_group", None))
+                   if holder is not None for b in holder.findChildren(QPushButton) if b.text().strip()]
+        if not buttons:
+            return
+        width = max([b.sizeHint().width() for b in buttons] + [96])
+        for button in buttons:
+            button.setFixedWidth(width)
+        # one spacing for both rows, so Load / Save / Close sit under Play / Stop / Pause
+        # (the transport's row had 10 px, the file's 5: the columns drifted apart)
+        from PySide6.QtWidgets import QHBoxLayout
+
+        for holder in (getattr(self, "transport", None), getattr(self, "midi_file_group", None)):
+            if holder is not None:
+                for row in holder.findChildren(QHBoxLayout):
+                    row.setSpacing(10)
 
     def ui_init(self) -> None:
         """
@@ -389,8 +422,11 @@ class MidiFilePlayer(_player.MidiFilePlayer):
 
         controls = QVBoxLayout()
         controls.setSpacing(8)
-        controls.addWidget(self.transport)
-        controls.addWidget(self.midi_file_group)
+        # Play … Panic and Load / Save at one width, left-aligned (see
+        # _equal_player_buttons): the transport stretched with the window
+        # while Load and Save stayed small
+        controls.addWidget(self.transport, 0, Qt.AlignmentFlag.AlignLeft)
+        controls.addWidget(self.midi_file_group, 0, Qt.AlignmentFlag.AlignLeft)
         controls.addStretch()
         top = QHBoxLayout()
         top.setSpacing(12)

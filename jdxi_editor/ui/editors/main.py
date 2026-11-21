@@ -91,12 +91,12 @@ class MainEditor(QMainWindow):
         self.program_chip.setToolTip(tr("The program and the tone last received from the JD-Xi"))
         self.connection_label = QLabel()
         self.connection_label.setStyleSheet("color: #a3a6ad; font-size: 12px;")
-        # "+": the tabs that open and close (Recipes, Program parts, Settings), from this window
+        # "+": the tabs that open and close (Program settings, Recipes, Settings), from this window
         from PySide6.QtWidgets import QMenu, QToolButton
 
         self.tab_menu_button = QToolButton()
         self.tab_menu_button.setText("+")
-        self.tab_menu_button.setToolTip(tr("Open a tab: Program parts, Recipes, Settings"))
+        self.tab_menu_button.setToolTip(tr("Open a tab: Program settings, Recipes, Settings"))
         self.tab_menu_button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         self.tab_menu_button.setStyleSheet(
             "QToolButton { color: #ffffff; font-size: 16px; font-weight: 700; padding: 0 8px;"
@@ -110,6 +110,22 @@ class MainEditor(QMainWindow):
         row.addWidget(self.tab_menu_button)
         row.addWidget(self.program_chip)
         row.addWidget(self.connection_label)
+        # «Keyboard»: the keyboard window in front, wherever it is (no Alt+Tab)
+        from jdxi_editor.ui.windows.jdxi.window_buttons import switch_button
+
+        self.keyboard_button = switch_button(tr("Keyboard"))
+        self.keyboard_button.setToolTip(tr("Bring the keyboard window to the front (Ctrl+Shift+K)"))
+        self.keyboard_button.setStyleSheet(  # as tall as the chips beside it
+            "QToolButton { color: #e6e6e6; background: #1b1c1f; border: 1px solid #2a2d33;"
+            " border-radius: 6px; padding: 4px 10px; font-size: 12px; }"
+            "QToolButton:hover { border-color: #ff2a1a; }"
+        )
+        bring = getattr(self.jdxi_main_window, "bring_keyboard_to_front", None)
+        if callable(bring):
+            self.keyboard_button.clicked.connect(bring)
+        else:
+            self.keyboard_button.setVisible(False)
+        row.addWidget(self.keyboard_button)
         self.editor_tab_widget.setCornerWidget(right, Qt.Corner.TopRightCorner)
 
         self._program_name = ""

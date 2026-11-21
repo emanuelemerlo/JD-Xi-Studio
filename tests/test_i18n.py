@@ -35,14 +35,14 @@ def test_every_string_is_translated_and_the_qm_is_current():
 
 def test_tr_finds_strings_in_the_sources():
     found = catalogue.extract()
-    assert ("&Edit", None) in found
+    assert ("&Tools", None) in found
     assert ("Interface language:", None) in found
     assert len(found) > 300
 
 
 def test_italian_texts(italian):
     assert i18n.current_language() == "it"
-    assert i18n.tr("&Edit") == "&Modifica"
+    assert i18n.tr("&Tools") == "&Strumenti"
     assert i18n.tr("MIDI connection") == "Collegamento MIDI"
     text = i18n.tr("Song {n} of {count} · {state}")
     assert text.format(n=6, count=37, state="▶") == "Brano 6 di 37 · ▶"
@@ -52,7 +52,7 @@ def test_italian_texts(italian):
 
 def test_english_is_the_source_language():
     i18n.set_language("en")
-    assert i18n.tr("&Edit") == "&Edit"
+    assert i18n.tr("&Tools") == "&Tools"
 
 
 @pytest.mark.parametrize(

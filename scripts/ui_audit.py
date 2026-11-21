@@ -102,6 +102,8 @@ def audit_navigation(app, window, problems: list[str], timings: dict[str, list[f
         if menu is None:
             continue
         for action in menu.actions():
+            if action.menu() is not None:  # a submenu (File > MIDI Player), not the tab
+                continue
             label = action.text().replace("&", "").replace("…", "").replace("...", "").strip().lower()
             key = titles.get(label)
             if key and action.isEnabled():

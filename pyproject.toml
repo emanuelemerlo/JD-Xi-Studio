@@ -42,7 +42,6 @@ dependencies = [
     "qtawesome",
     "Pillow",
     "numpy",
-    "music21",
     "PyAudio",
     "pyqtdarktheme",
     "darkdetect",
@@ -64,7 +63,9 @@ plots = ["matplotlib"]
 # soundfile/librosa: the audio-evidence tests (tests/test_refine.py and others)
 # and scripts/midi_parts; PyInstaller: building/windows/jdxi_editor.spec
 audio = ["soundfile", "librosa"]
-dev = ["pytest>=8", "mypy", "black", "isort", "flake8", "soundfile", "librosa"]
+# matplotlib: the plots of scripts/midi_parts and scripts/midi_musicality (and their tests);
+# it came with music21 before that was removed
+dev = ["pytest>=8", "mypy", "black", "isort", "flake8", "soundfile", "librosa", "matplotlib"]
 build-windows = ["pyinstaller>=6"]
 
 [project.urls]

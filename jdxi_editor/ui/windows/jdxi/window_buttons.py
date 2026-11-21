@@ -21,7 +21,25 @@ MENU_BAR_STYLE = (
     "QMenuBar::item:selected { background: #333333; }"
     "QMenu { background: #111111; color: #e6e6e6; border: 1px solid #333333; }"
     "QMenu::item:selected { background: #333333; }"
+    # what cannot be done now looks so (dim, no highlight); its tooltip says why
+    "QMenu::item:disabled { color: #5c5f66; }"
+    "QMenu::item:disabled:selected { background: transparent; }"
 )
+
+
+def switch_button(text: str) -> QToolButton:
+    """A text button that brings the other window (editors / keyboard) to the
+    front: no Alt+Tab, also with the windows on two screens."""
+    button = QToolButton()
+    button.setText(text)
+    button.setCursor(Qt.CursorShape.PointingHandCursor)
+    button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+    button.setStyleSheet(
+        "QToolButton { color: #e6e6e6; background: transparent; border: 1px solid #3a3c42;"
+        " border-radius: 4px; padding: 0 8px; }"
+        "QToolButton:hover { border-color: #ff2a1a; background: #333333; }"
+    )
+    return button
 
 
 class _WindowButton(QToolButton):
@@ -83,6 +101,13 @@ class WindowButtons(QWidget):
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
+        # «Editors»: built here, with the others, so the menu bar's corner is
+        # sized for its text from the start (added later it stayed squeezed,
+        # blank, until the window was laid out again)
+        self.editors_button = switch_button(tr("Editors"))
+        self.editors_button.setFixedHeight(18)  # centred in the 20 px of the window buttons
+        layout.addWidget(self.editors_button, 0, Qt.AlignmentFlag.AlignVCenter)
+        layout.addSpacing(8)
         # keep the window in front of the others: not saved, off at every start
         self.pin_button = _WindowButton(
             "pin", tr("Keep the keyboard in front of the other windows (until the next start)")

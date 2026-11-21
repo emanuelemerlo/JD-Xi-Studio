@@ -109,8 +109,13 @@ Programs
 * The library searches number, name, genre and the four tones, sorts by number, name or genre,
   marks the program loaded on the JD-Xi apart from the one selected, and shows the tones in their
   parts' colours; right click: Load, Rename, Genre, Add to playlist, Export.
-* The parts are inside the mixer: under each fader the part's tone (click: choose another), its
-  MIDI channel and Edit; parts in their tabs' colours, the Master neutral, a box to type a level.
+* The parts are inside the mixer: above each fader the part's Pan and its Delay and Reverb sends,
+  under it the part's tone (click: choose another), its MIDI channel and Edit; parts in their tabs'
+  colours, the Master neutral, a box to type a level. The sends are off where the part's output
+  skips that effect.
+* **Program settings** (the button beside Rename, or Editor › Program settings), right after
+  Programs: what the program keeps besides its tones, part by part — level, pan, effects, pitch,
+  offsets, zones, scale and MIDI. The mixer's Pan and sends are the same values.
 * Organize: the playlists (factory programs too) and the selected one's programs.
 
 A/B compare and recipes

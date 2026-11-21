@@ -206,6 +206,14 @@ class TransportController(QObject):
         self._after_command()
         self.loop_changed.emit()
 
+    def unload(self) -> None:
+        """No file any more (MIDI Player › Close): stop, silence, and Play does nothing."""
+        self.stop()
+        self._loaded = False
+        self._last_tempo = None
+        self._after_command()
+        self.loop_changed.emit()
+
     def play(self) -> bool:
         """
         Play from the current position, or resume if paused.

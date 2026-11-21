@@ -1,4 +1,4 @@
-"""Core tabs always there; Program parts, Recipes and Settings open and close from the editors window."""
+"""Core tabs always there; Program settings, Recipes and Settings open and close from the editors window."""
 
 from __future__ import annotations
 
@@ -67,3 +67,44 @@ def test_open_tabs_are_remembered(window):
     tabs = window.main_editor.editor_tab_widget
     window.close_tab(tabs.indexOf(window._tab_editor("program_parts")))
     assert "program_parts" not in window._saved_optional_tabs()
+
+
+def test_program_settings_opens_after_programs(window):
+    tabs = window.main_editor.editor_tab_widget
+    window.open_tab("program_parts")
+    settings = window._tab_editor("program_parts")
+    assert tabs.indexOf(settings) == tabs.indexOf(window._tab_editor("program")) + 1
+    assert tabs.tabText(tabs.indexOf(settings)) == "Program settings"
+    window.close_tab(tabs.indexOf(settings))
+    window.open_tab("recipes")  # another tab added at the end meanwhile
+    window.open_tab("program_parts")  # back: again right after Programs
+    assert tabs.indexOf(settings) == tabs.indexOf(window._tab_editor("program")) + 1
+    window.close_tab(tabs.indexOf(settings))
+
+
+def test_the_programs_mixer_has_pan_and_sends_of_program_settings(window):
+    from jdxi_editor.core.synth.type import JDXiSynth
+
+    app = QApplication.instance()
+    for _ in range(5):
+        app.processEvents()
+    programs = window._tab_editor("program")
+    settings = window.program_settings_editor()
+    tabs = window.main_editor.editor_tab_widget
+    assert settings is window._tab_editor("program_parts")  # one editor, made without its tab
+    pan, delay, reverb = programs.part_sends[JDXiSynth.ANALOG_SYNTH]
+    assert [k.name.text() for k in (pan, delay, reverb)] == ["Pan", "Delay", "Reverb"]
+    assert pan.pv is settings.part("PART_PAN", 2)  # Analog is the settings' third part
+    pan.pv.setValue(-20)
+    assert settings.part("PART_PAN", 2).value() == -20  # the same value
+    output = settings.part("PART_OUTPUT_ASSIGN", 2)
+    output.setValue(4)  # DIR: no effect, no sends
+    assert not delay.isEnabled() and not reverb.isEnabled()
+    output.setValue(3)  # REV: the reverb only
+    assert not delay.isEnabled() and reverb.isEnabled()
+    output.setValue(0)
+    # the mixer's read of the program asks for the parts too
+    assert len(programs._part_requests()) == 4
+    # the faders keep their length: the strips grew by the knobs
+    master, analog = programs.mixer_widget.tracks[0].slider, programs.mixer_widget.tracks[4].slider
+    assert master.height() == analog.height() > 180

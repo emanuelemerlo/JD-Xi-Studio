@@ -292,258 +292,141 @@ class JDXiWindow(QMainWindow):
         action.triggered.connect(slot)
         return action
 
+    def _menu(self, title: str):
+        """A menu of the main window; its items' explanations show as tooltips
+        too, so what an item loads or sends, and where, is said before choosing."""
+        menu = self.menuBar().addMenu(title)
+        menu.setToolTipsVisible(True)
+        return menu
+
+    def _section(self, menu, title: str) -> None:
+        """A small grey heading in a menu (addSection shows its text only in
+        some styles: on Windows it was a bare line)."""
+        from PySide6.QtWidgets import QLabel, QWidgetAction
+
+        menu.addSeparator()
+        label = QLabel(title.upper())
+        label.setStyleSheet("color: #8b8e96; font-size: 10px; font-weight: 700; letter-spacing: 1px;"
+                            " padding: 4px 12px 2px 12px; background: transparent;")
+        heading = QWidgetAction(menu)
+        heading.setDefaultWidget(label)
+        heading.setEnabled(False)
+        menu.addAction(heading)
+
+    def _item(self, menu, text: str, slot, shortcut=None, tip: str = "", icon=None):
+        action = self._menu_action(text, slot, shortcut, icon, tip or None)
+        if tip:
+            action.setToolTip(tip)
+        menu.addAction(action)
+        return action
+
     def _create_menu_bar(self) -> None:
-        menubar = self.menuBar()
-
-        # --- File menu
-        file_menu = menubar.addMenu(tr("&File"))
-
-        file_menu.addAction(
-            self._menu_action(
-                tr("&Load MIDI file"),
-                self._midi_file_load,
-                QKeySequence.StandardKey.Open,
-            )
-        )
-        file_menu.addAction(
-            self._menu_action(
-                tr("&Save MIDI file"),
-                self._midi_file_save,
-                QKeySequence.StandardKey.Save,
-            )
-        )
-        file_menu.addAction(
-            self._menu_action(
-                tr("Save MIDI file &As..."),
-                self._midi_file_save_as,
-                QKeySequence.StandardKey.SaveAs,
-            )
-        )
-        file_menu.addAction(
-            self._menu_action(
-                tr("Open current MIDI as &PDF"),
-                self._open_current_midi_as_pdf,
-                "Ctrl+P",
-            )
-        )
-
+        """
+        File: the files (patches, the MIDI Player's file). Editor: the tabs of
+        the editors window, by section. JD-Xi: what is done on the instrument.
+        An item that opens a dialog ends in «…»; a tooltip says what it does.
+        """
+        # --- File
+        self.file_menu = file_menu = self._menu(tr("&File"))
+        patch = file_menu.addMenu(tr("&Patch"))
+        patch.setToolTipsVisible(True)
+        self._item(patch, tr("&Open…"), self._patch_load, QKeySequence.StandardKey.Open,
+                   tr("Load a program and its tones from a .jsz / .msz file and send them to the JD-Xi"))
+        self.save_patch_action = self._item(
+            patch, tr("&Save…"), self._patch_save, QKeySequence.StandardKey.Save,
+            tr("Save the program and the tones in the editors to a .jsz / .msz file"))
+        self.midi_file_menu = midi = file_menu.addMenu(tr("&MIDI Player"))
+        midi.setToolTipsVisible(True)
+        self._item(midi, tr("&Open…"), self._midi_file_load, "Ctrl+Alt+O",
+                   tr("Open a .mid file in the MIDI Player"))
+        self.midi_save_actions = [
+            self._item(midi, tr("&Save"), self._midi_file_save, "Ctrl+Alt+S",
+                       tr("Save the MIDI file open in the MIDI Player")),
+            self._item(midi, tr("Save &as…"), self._midi_file_save_as, "Ctrl+Alt+Shift+S",
+                       tr("Save the MIDI file open in the MIDI Player under another name")),
+        ]
+        self.midi_close_action = self._item(
+            midi, tr("&Close"), self._midi_file_close, "Ctrl+Alt+W",
+            tr("Close the MIDI file open in the MIDI Player (asks first if it has unsaved changes)"))
+        midi.addSeparator()  # Recent MIDI Files go here
+        # Save / Save as only with a file in the player: checked when the menu
+        # opens and when the window comes in front (where the shortcuts work)
+        midi.aboutToShow.connect(self._refresh_menu_state)
+        file_menu.aboutToShow.connect(self._refresh_menu_state)
         file_menu.addSeparator()
-
-        file_menu.addAction(
-            self._menu_action(
-                tr("Load P&rogram..."),
-                lambda: self.show_editor("program"),
-                "Ctrl+Shift+O",
-                JDXi.UI.Icon.get_icon(JDXi.UI.Icon.FOLDER_OPENED),
-            )
-        )
-
-        load_preset_action = QAction(tr("Load Preset..."), self)
-        load_preset_action.triggered.connect(lambda: self.show_editor("preset"))
-        # file_menu.addAction(load_preset_action)
-
-        file_menu.addAction(
-            self._menu_action(tr("Load &Patch..."), self._patch_load, "Ctrl+Alt+O")
-        )
-        self.save_patch_action = self._menu_action(tr("Save Patc&h..."), self._patch_save, "Ctrl+Alt+S")
-        file_menu.addAction(self.save_patch_action)
-
+        self._item(file_menu, tr("&Preferences…"), self.on_preferences, "Ctrl+,",
+                   tr("Language, startup and the editor's options"))
         file_menu.addSeparator()
+        self._quit_action = self._item(file_menu, tr("&Quit"), self.close, "Ctrl+Q")
 
-        self.dump_settings_action = self._menu_action(
-            tr("&Dump Settings to Synth"),
-            self._dump_settings_to_synth,
-            "Ctrl+Shift+D",
-        )
-        file_menu.addAction(self.dump_settings_action)
+        # --- Editor: the tabs of the editors window
+        editor = self._menu(tr("&Editor"))
+        self._item(editor, tr("Pro&grams"), lambda: self.show_editor("program"), "Ctrl+0",
+                   tr("The library of the JD-Xi's programs and the playlists"))
+        self._item(editor, tr("Program se&ttings"), lambda: self.show_editor("program_parts"), "Ctrl+Shift+P",
+                   tr("What the program keeps besides its tones: each part's level, pan, effects, "
+                      "pitch, offsets, zones, scale and MIDI"))
+        self._section(editor, tr("Parts"))
+        for text, name, key in ((tr("Digital &1"), "digital1", "Ctrl+1"),
+                                (tr("Digital &2"), "digital2", "Ctrl+2"),
+                                (tr("&Analog"), "analog", "Ctrl+3"),
+                                (tr("&Drums"), "drums", "Ctrl+4")):
+            self._item(editor, text, lambda _=False, e=name: self.show_editor(e), key)
+        self._section(editor, tr("Effects"))
+        self._item(editor, tr("&Effects"), lambda: self.show_editor("effects"), "Ctrl+5")
+        self._item(editor, tr("&Vocal FX"), lambda: self.show_editor("vocal_fx"), "Ctrl+6")
+        self._section(editor, tr("Playback"))
+        self._item(editor, tr("A&rpeggio"), lambda: self.show_editor("arpeggio"), "Ctrl+7")
+        self._item(editor, tr("&Pattern"), lambda: self.show_editor("pattern"), "Ctrl+8")
+        self._item(editor, tr("&MIDI Player"), lambda: self.show_editor("midi_player"), "Ctrl+9")
+        editor.addSeparator()
+        self._item(editor, tr("Rec&ipes"), lambda: self.show_editor("recipes"), "Ctrl+Shift+R")
+        self._item(editor, tr("&Settings"), lambda: self.show_editor("settings"), "Ctrl+Shift+E",
+                   tr("The JD-Xi's system settings and the editor's settings, files and tools"))
 
-        file_menu.addSeparator()
-
-        file_menu.addAction(self._menu_action(tr("&Quit"), self.close, "Ctrl+Q"))
-
-        # --- Edit menu
-        edit_menu = menubar.addMenu(tr("&Edit"))
-
-        edit_menu.addAction(
-            self._menu_action(
-                tr("&Settings…"),
-                lambda: self.show_editor("settings"),
-                "Ctrl+Shift+E",
-                status_tip=tr("The JD-Xi's system settings and the editor's settings, files and tools"),
-            )
-        )
-        edit_menu.addAction(
-            self._menu_action(
-                tr("&MIDI Configuration..."),
-                self._show_midi_config,
-                "Ctrl+Shift+M",
-            )
-        )
-
-        edit_menu.addSeparator()
-
-        self.update_user_programs_action = self._menu_action(
-            tr("&Update User Program Database"),
-            self._update_user_program_database,
+        # --- JD-Xi: what is done on the instrument
+        jdxi_menu = self._menu(tr("&JD-Xi"))
+        self.save_on_jdxi_action = self._item(jdxi_menu, tr("&Save the program…"), self._save_on_jdxi, "Ctrl+Shift+J",
+                   tr("Keep the current program in a user slot (E–H), with the JD-Xi's WRITE"))
+        self.dump_settings_action = self._item(
+            jdxi_menu, tr("Send &all…"), self._dump_settings_to_synth, "Ctrl+Shift+D",
+            tr("Send every value of the open editors to the current program (asks first)"))
+        self.update_user_programs_action = self._item(
+            jdxi_menu, tr("&Read the user programs (E–H)…"), self._update_user_program_database,
             "Ctrl+Shift+U",
-        )
-        edit_menu.addAction(self.update_user_programs_action)
+            tr("Load the 256 user slots one by one and keep their names in the library (asks first)"))
+        jdxi_menu.addSeparator()
+        self._item(jdxi_menu, tr("&MIDI Configuration…"), self._show_midi_config, "Ctrl+Shift+M",
+                   tr("The MIDI ports the JD-Xi is on"))
+        self.self_test_action = self._item(jdxi_menu, tr("Self-&test…"), self.show_self_test,
+                   tip=tr("The app runs typical operations on the JD-Xi and checks the results"))
 
     def _create_parts_menu(self) -> None:
-        """Create editors menu"""
-        self.parts_menu = self.menuBar().addMenu(tr("&Parts"))
-
-        self.parts_menu.addAction(
-            self._menu_action(
-                tr("Digital Synth &1"), lambda: self.show_editor("digital1"), "Ctrl+1"
-            )
-        )
-        self.parts_menu.addAction(
-            self._menu_action(
-                tr("Digital Synth &2"), lambda: self.show_editor("digital2"), "Ctrl+2"
-            )
-        )
-        self.parts_menu.addAction(
-            self._menu_action(
-                tr("Digital Synth &3"), lambda: self.show_editor("digital3"), "Ctrl+3"
-            )
-        )
-        self.parts_menu.addAction(
-            self._menu_action(tr("&Drums"), lambda: self.show_editor("drums"), "Ctrl+4")
-        )
-        self.parts_menu.addAction(
-            self._menu_action(
-                tr("&Analog Synth"), lambda: self.show_editor("analog"), "Ctrl+5"
-            )
-        )
-        self.parts_menu.addSeparator()
-        self.parts_menu.addAction(
-            self._menu_action(tr("&Recipes…"), lambda: self.show_editor("recipes"), "Ctrl+Shift+R")
-        )
-        self.parts_menu.addAction(
-            self._menu_action(
-                tr("Program: &common and parts"),
-                lambda: self.show_editor("program_parts"),
-                "Ctrl+Shift+P",
-            )
-        )
+        """The parts are in the Editor menu."""
 
     def _create_effects_menu(self) -> None:
-        """Create editors menu"""
-        self.effects_menu = self.menuBar().addMenu(tr("Effe&cts"))
-
-        self.effects_menu.addAction(
-            self._menu_action(tr("&Effects"), lambda: self.show_editor("effects"), "Ctrl+6")
-        )
-        self.effects_menu.addAction(
-            self._menu_action(
-                tr("&Vocal FX"), lambda: self.show_editor("vocal_fx"), "Ctrl+7"
-            )
-        )
+        """The effects are in the Editor menu."""
 
     def _create_playback_menu(self) -> None:
-        # --- Create editors menu
-        playback_menu = self.menuBar().addMenu(tr("P&layback"))
-
-        playback_menu.addAction(
-            self._menu_action(
-                tr("&MIDI Player"), lambda: self.show_editor("midi_player"), "Ctrl+8"
-            )
-        )
-        playback_menu.addAction(
-            self._menu_action(
-                tr("&Arpeggiator"), lambda: self.show_editor("arpeggio"), "Ctrl+9"
-            )
-        )
-        playback_menu.addAction(
-            self._menu_action(
-                tr("&Pattern Sequencer"), lambda: self.show_editor("pattern"), "Ctrl+0"
-            )
-        )
-
-    def _create_debug_menu(self) -> None:
-        # --- Add debug menu
-        self.debug_menu = self.menuBar().addMenu(tr("Debug"))
-
-        # --- Add MIDI debugger action (SysEx decoder)
-        midi_debugger_action = QAction(tr("MIDI SysEx Debugger"), self)
-        midi_debugger_action.triggered.connect(self._show_midi_debugger)
-        self.debug_menu.addAction(midi_debugger_action)
-
-        # --- Add MIDI message monitor action
-        midi_monitor_action = QAction(tr("MIDI Monitor"), self)
-        midi_monitor_action.triggered.connect(self._show_midi_message_monitor)
-        self.debug_menu.addAction(midi_monitor_action)
-
-        # --- Add log viewer action
-        log_viewer_action = QAction(tr("Log Viewer"), self)
-        log_viewer_action.triggered.connect(self._show_log_viewer)
-        self.debug_menu.addAction(log_viewer_action)
-
-        # --- Add About window action
-        about_help_action = QAction(tr("About"), self)
-        about_help_action.triggered.connect(self._show_about_help)
-        self.debug_menu.addAction(about_help_action)
+        """Arpeggio, Pattern and MIDI Player are in the Editor menu."""
 
     def _create_help_menu(self) -> None:
-        menubar = self.menuBar()
+        # --- Tools: settings and what shows the traffic with the JD-Xi
+        tools = self._menu(tr("&Tools"))
+        self._item(tools, tr("MIDI &Monitor"), self._show_midi_message_monitor, "Ctrl+Alt+M",
+                   tr("Every MIDI message in and out"))
+        self._item(tools, tr("MIDI &SysEx Debugger"), self._show_midi_debugger, "Ctrl+Shift+Y",
+                   tr("Decode and send SysEx messages"))
+        self._item(tools, tr("&Log Viewer"), self._show_log_viewer, "Ctrl+Shift+L", tr("The editor's log"))
 
-        # --- Help menu
-        self.help_menu = menubar.addMenu(tr("&Help"))
-        self.help_menu.addAction(
-            self._menu_action(tr("&Log Viewer"), self._show_log_viewer, "Ctrl+Shift+L")
-        )
-        self.help_menu.addAction(
-            self._menu_action(
-                tr("MIDI &SysEx Debugger"), self._show_midi_debugger, "Ctrl+Shift+Y"
-            )
-        )
-        self.help_menu.addAction(
-            self._menu_action(
-                tr("MIDI &Monitor"), self._show_midi_message_monitor, "Ctrl+Alt+M"
-            )
-        )
-        self.help_menu.addAction(
-            self._menu_action(
-                tr("&Self-test with the JD-Xi…"),
-                self.show_self_test,
-                status_tip=tr("The app runs typical operations on the JD-Xi and checks the results"),
-            )
-        )
-        self.help_menu.addAction(
-            self._menu_action(tr("&About"), self._show_about_help, "Ctrl+Shift+A")
-        )
-        self.help_menu.addAction(
-            self._menu_action(
-                tr("&Preferences"),
-                self.on_preferences,
-                "Ctrl+,",
-                JDXi.UI.Icon.get_icon(JDXi.UI.Icon.SETTINGS),
-                tr("Show the Preferences window"),
-            )
-        )
-        self.help_menu.addAction(
-            self._menu_action(
-                tr("Check for &Updates…"),
-                self.on_check_for_updates,
-                "Ctrl+Alt+U",
-                status_tip=tr("Look for a newer release on GitHub"),
-            )
-        )
-        self.help_menu.addAction(
-            self._menu_action(
-                tr("&Documentation"),
-                self.on_documentation,
-                QKeySequence.StandardKey.HelpContents,
-                JDXi.UI.Icon.get_icon(JDXi.UI.Icon.HELP_RHOMBUS),
-                tr('Show {program} documentation').format(program=__display_name__),
-            )
-        )
-
-        # --- Add Main Editor window action
-        main_editor_action = QAction(tr("Main Editor"), self)
-        main_editor_action.triggered.connect(self._show_main_editor)
-        # self.help_menu.addAction(main_editor_action)
+        # --- Help
+        self.help_menu = self._menu(tr("&Help"))
+        self._item(self.help_menu, tr("&Documentation"), self.on_documentation,
+                   QKeySequence.StandardKey.HelpContents,
+                   tr('Show {program} documentation').format(program=__display_name__))
+        self._item(self.help_menu, tr("Check for &Updates…"), self.on_check_for_updates, "Ctrl+Alt+U",
+                   tr("Look for a newer release on GitHub"))
+        self._item(self.help_menu, tr("&About"), self._show_about_help, "Ctrl+Shift+A")
 
     def _create_status_bar(self):
         """Create status bar with MIDI indicators"""
@@ -826,10 +709,16 @@ class JDXiWindow(QMainWindow):
     def _midi_file_save(self):
         raise NotImplementedError("to be implemented in subclass")
 
+    def _midi_file_close(self):
+        raise NotImplementedError("to be implemented in subclass")
+
     def _midi_file_save_as(self):
         raise NotImplementedError("to be implemented in subclass")
 
-    def _open_current_midi_as_pdf(self):
+    def _refresh_menu_state(self) -> None:
+        """Enable the menu items whose condition is not the connection (see subclass)."""
+
+    def _save_on_jdxi(self):
         raise NotImplementedError("to be implemented in subclass")
 
     def _patch_load(self):

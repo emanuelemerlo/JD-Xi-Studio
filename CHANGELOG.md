@@ -5,6 +5,33 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- The main window's menus follow the app: **File** (Patch › Open / Save, MIDI Player › Open / Save
+  / Save as / Recent), **Editor** (the editors window's tabs, by section: Programs, Parts, Effects,
+  Playback, Recipes, Settings; Ctrl+0–9 in tab order), **JD-Xi** (Save the program, Send all — now
+  asking first, naming the editors —, Read the user programs, MIDI Configuration, Self-test),
+  Preferences, Quit), **Tools** (monitor, debugger, log), **Window**, **Help**. «…» only on what
+  opens a dialog; every File and JD-Xi item's tooltip says what it loads or sends, and where. What
+  cannot be done is off, its tooltip saying why: MIDI Player › Save / Save as without a file in the
+  player, Save the program, Send all, Read the user programs and Self-test with the JD-Xi offline.
+- Ctrl+O / Ctrl+S open and save the **patch** (they were the MIDI Player's file's, wherever you
+  were); the MIDI Player's file: Ctrl+Alt+O / Ctrl+Alt+S. Menu items that are off are greyed out.
+- MIDI Player: **Close** (Player card and File › MIDI Player › Close, Ctrl+Alt+W) empties the
+  player; with unsaved changes it asks first (Save… / Close without saving / Cancel). Save and Close
+  are off without a file.
+- **Program settings** (was *Program parts* on its tab, *Program: common and parts* in the menu,
+  *Parts and advanced settings…* on its button): one name everywhere; its tab opens right after
+  Programs, its menu item right after Programs; its sections in the app's language.
+- Programs mixer: **Pan**, **Delay** and **Reverb** sends above each part's fader — the Program
+  settings' own values (in step, undo included), off where the part's output skips the effect, read
+  with the program.
+- Effects: a line says the effects are the program's, and how each part goes through them.
+- Tabs in the order of the Editor menu: Arpeggio after Vocal FX (with Pattern and the MIDI Player);
+  Ctrl+5…9 follow it (Effects, Vocal FX, Arpeggio, Pattern, MIDI Player).
+- The tabs' tooltips say what each editor is, translated (they showed internal English titles).
+- **Editors** (keyboard window, menu bar) and **Keyboard** (editors window, tabs bar) bring the
+  other window to the front, on any screen, without Alt+Tab.
+- Removed Window › *Line up the editors with the keyboard*: the editors window opens where it was
+  left, and the buttons above bring it in front.
 - The «MIDI file» tab is the **MIDI Player**.
 - A track without a name shows, in grey, the instrument it plays (the file's instrument name or
   its General MIDI program; channel 10: drums).
@@ -31,6 +58,16 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   mid-song comes with its bank select; a track's velocity scale at 0 silences it.
 
 ### Fixed
+- Programs › Library: a user bank (E–H) shows all its 64 slots; those JD-Xi Studio has not read
+  yet appear as «(not read yet)» (G and H looked empty: only programs read once are known).
+- Message boxes: buttons wide enough for their text («Scarta le modifiche» was cut).
+- Pattern: Play, Stop, Pause, Shuffle at one width (they stretched with the window).
+- Spin boxes (BPM, Vel, Steps…): wider up / down buttons with visible arrows.
+- MIDI Player › Automation: the label stays next to its controls.
+- On 1080p screens the envelopes, filter curves and LFO views were squashed (an envelope ~68 px
+  high): about 90 px now, room to drag their points.
+- MIDI Player: Play, Stop, Pause, Panic, Load and Save at one width (the first four stretched with
+  the window, Load and Save stayed small).
 - A typed name (program, tones, drum kit) is an edit: one Undo step, «Modified» (it was taken for
   a value from the JD-Xi: no Undo, and it became the original).
 - Save on the JD-Xi: a slot whose content is not known asks before writing and is no longer
@@ -51,6 +88,9 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - The context line shows the last save: «saved in E14» no longer stays after a later save to file.
 
 ### Removed
+- «Open current MIDI as PDF» (sheet music through LilyPond, not installed with the app) and the
+  music21 dependency; «Digital Synth 3» (Ctrl+3), which opened nothing (the JD-Xi has two Digital
+  parts).
 - The FluidSynth software synth (MIDI configuration) and the SoundFont preset lists: they played
   General MIDI sounds, not the JD-Xi's, and only for notes from a MIDI keyboard. pyfluidsynth, the
   `soundfont` extra (sf2utils, sounddevice) and the bundled FluidSynth DLLs are gone with them.

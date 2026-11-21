@@ -236,3 +236,97 @@ def _dispose(window) -> None:
     window.deleteLater()
     QApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
     QApplication.processEvents()
+
+
+def test_the_main_menus_match_the_app(window, monkeypatch):
+    """The menus as the app is now: no Digital 3 (the JD-Xi has two Digital
+    parts) nor sheet music; the parts named as their tabs; what talks to the
+    JD-Xi in a JD-Xi menu; every shortcut once; every item says what it does."""
+    from PySide6.QtWidgets import QMessageBox
+
+    bar = {a.text().replace("&", ""): a for a in window.menuBar().actions() if a.menu() is not None}
+    assert list(bar) == ["File", "Editor", "JD-Xi", "Tools", "Window", "Help"]
+
+    def items(title):
+        return bar[title].menu().actions()
+
+    texts, shortcuts = [], []
+
+    def walk(actions):
+        for action in actions:
+            if action.isSeparator() or not action.text():  # separators, section headings
+                continue
+            if action.menu() is not None:
+                walk(action.menu().actions())
+                continue
+            texts.append(action.text().replace("&", ""))
+            if action.shortcut().toString():
+                shortcuts.append(action.shortcut().toString())
+
+    for title in bar:
+        walk(items(title))
+    assert not [t for t in texts if "Synth 3" in t or "PDF" in t]
+    assert len(shortcuts) == len(set(shortcuts)), sorted(shortcuts)
+    editor = [a.text().replace("&", "") for a in items("Editor") if a.text()]
+    assert editor[:6] == ["Programs", "Program settings", "Digital 1", "Digital 2", "Analog", "Drums"]
+    # the tabs in the menu's order (the optional ones only when open)
+    tabs = window.main_editor.editor_tab_widget
+    shown = [tabs.tabText(i) for i in range(tabs.count())]
+    assert shown == [t for t in editor if t in shown], (shown, editor)
+    # what opens a tab has no «…» nor icon; what opens a dialog ends in «…»
+    assert not [a.text() for a in items("Editor") if a.text().endswith("…") or not a.icon().isNull()]
+    assert all(a.text().endswith("…") for a in items("JD-Xi") if a.text())
+    assert not [a.text() for a in items("JD-Xi") if "JD-Xi" in a.text()]  # the menu says it
+    file_menu = {a.text().replace("&", ""): a for a in items("File") if a.text()}
+    assert list(file_menu) == ["Patch", "MIDI Player", "Preferences…", "Quit"]
+    # Ctrl+O / Ctrl+S are the patch's (the sound), not the MIDI Player's file
+    from PySide6.QtGui import QKeySequence
+
+    assert window.save_patch_action.shortcut() == QKeySequence(QKeySequence.StandardKey.Save)
+    assert [a.shortcut().toString() for a in window.midi_save_actions] == ["Ctrl+Alt+S", "Ctrl+Alt+Shift+S"]
+    assert not window.midi_close_action.isEnabled()  # nothing to close
+    # an item that is off looks off
+    assert "QMenu::item:disabled" in window.menuBar().styleSheet()
+    assert not [a.text() for a in items("Tools") if "Preferences" in a.text()]
+    # Save / Save as only with a file in the MIDI Player (none here)
+    assert window.midi_save_actions and not [a for a in window.midi_save_actions if a.isEnabled()]
+    assert all("Open a MIDI file" in a.toolTip() for a in window.midi_save_actions)
+    from types import SimpleNamespace
+
+    monkeypatch.setattr(window, "midifileplayer_instance",
+                        SimpleNamespace(midi_state=SimpleNamespace(file=object())), raising=False)
+    window._refresh_menu_state()  # what the player calls once a file is loaded
+    assert all(a.isEnabled() and "Open a MIDI file" not in a.toolTip() for a in window.midi_save_actions)
+    assert window.midi_close_action.isEnabled()
+    # what needs the JD-Xi is off offline, the tooltip saying why
+    if not window.connection.can_talk():
+        for action in (window.save_on_jdxi_action, window.dump_settings_action,
+                       window.update_user_programs_action, window.self_test_action,
+                       window.save_patch_action):
+            assert not action.isEnabled() and "Connect the JD-Xi" in action.toolTip(), action.text()
+    window_menu = [a.text().replace("&", "") for a in items("Window") if a.text()]
+    assert not [t for t in window_menu if "Line up" in t]
+    # a button on each window brings the other one in front
+    assert window.editors_button.text() == "Editors"
+    window._show_main_editor()
+    assert window.main_editor.keyboard_button.text() == "Keyboard"
+    window.main_editor.keyboard_button.click()
+    window.set_keyboard_on_top(True)
+    assert "always on top" in window.editors_button.toolTip()
+    window.set_keyboard_on_top(False)
+    assert "always on top" not in window.editors_button.toolTip()
+    for sub in ("Patch", "MIDI Player"):
+        for action in file_menu[sub].menu().actions():
+            if action.text() and action.menu() is None:
+                assert action.toolTip() and action.toolTip() != action.text().replace("&", ""), action.text()
+    midi = [a.text().replace("&", "") for a in file_menu["MIDI Player"].menu().actions() if a.text()]
+    assert midi[-1] == "Recent"
+    # Send all asks first, naming the editors, and does nothing on No
+    asked = []
+    monkeypatch.setattr(QMessageBox, "question", lambda *a, **k: asked.append(a[2]) or QMessageBox.StandardButton.No)
+    monkeypatch.setattr(window.midi_helper, "midi_out",
+                        type("Out", (), {"is_port_open": lambda self: True, "close_port": lambda self: None})())
+    sent = []
+    monkeypatch.setattr(window.midi_helper, "send_raw_message", lambda m: sent.append(m) or True)
+    window._dump_settings_to_synth()
+    assert asked and "current program" in asked[0] and sent == []

@@ -69,6 +69,24 @@ def test_player_keeps_its_controls(app):
     editor.close()
 
 
+def test_player_buttons_in_columns(app):
+    """Load / Save / Close right under Play / Stop / Pause (one width, one spacing)."""
+    editor = players.MidiFilePlayer(midi_helper=_helper())
+    editor.resize(1600, 900)
+    editor.show()
+    for _ in range(30):
+        app.processEvents()
+
+    def xs(holder):
+        found = [b for b in holder.findChildren(QPushButton) if b.text().strip() and b.isVisible()]
+        return [b.mapTo(editor, b.rect().topLeft()).x() for b in found]
+
+    top, bottom = xs(editor.transport), xs(editor.midi_file_group)
+    assert len(bottom) == 3 and top[: len(bottom)] == bottom
+    editor.transport_controller.shutdown()
+    editor.close()
+
+
 def test_pattern_cards_as_in_the_mockup(app):
     editor = players.PatternSequenceEditor(midi_helper=_helper(), preset_helper=Mock())
     editor.resize(1500, 950)
@@ -147,4 +165,21 @@ def test_pattern_fills_the_width_with_the_side_panel(app):
     step = editor.pattern_widget.findChildren(SequencerButton)[0]
     editor.explain(step)
     assert editor.info_panel.name.text() == "Step"
+    editor.close()
+
+
+def test_player_buttons_one_width_not_stretched(app):
+    """Play … Panic stretched with the window while Load and Save stayed small:
+    all at one width now, whatever the window."""
+    from PySide6.QtWidgets import QPushButton
+
+    editor = players.MidiFilePlayer(midi_helper=_helper())
+    buttons = [b for holder in (editor.transport, editor.midi_file_group)
+               for b in holder.findChildren(QPushButton) if b.text().strip()]
+    assert len(buttons) >= 6
+    for width in (1300, 2400):
+        editor.resize(width, 950)
+        editor.show()
+        app.processEvents()
+        assert len({b.width() for b in buttons}) == 1, [(b.text(), b.width()) for b in buttons]
     editor.close()

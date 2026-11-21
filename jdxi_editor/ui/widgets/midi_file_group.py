@@ -1,5 +1,5 @@
 """
-MIDI File group widget - Load and Save buttons.
+MIDI File group widget - Load, Save and Close buttons.
 """
 
 from __future__ import annotations
@@ -35,7 +35,11 @@ class MidiFileGroup(JDXiMidiGroup):
         super().__init__(parent=parent, midi_state=midi_state)
         self.load_button: QPushButton | None = None
         self.save_button: QPushButton | None = None
+        self.close_button: QPushButton | None = None
         self.setup_ui()
+        for button in (self.save_button, self.close_button):  # no file yet
+            if button is not None:
+                button.setEnabled(False)
 
     def _build_group(self) -> QGroupBox:
         """Build the MIDI File group with Load and Save buttons."""
@@ -45,12 +49,17 @@ class MidiFileGroup(JDXiMidiGroup):
         save_label_row, self.save_button = create_jdxi_button_with_label_from_spec(
             self.specs["buttons"]["save_midi_file"], checkable=False
         )
+        close_label_row, self.close_button = create_jdxi_button_with_label_from_spec(
+            self.specs["buttons"]["close_midi_file"], checkable=False
+        )
         layout = create_layout_with_items(
             items=[
                 load_label_row,
                 self.load_button,
                 save_label_row,
                 self.save_button,
+                close_label_row,
+                self.close_button,
             ],
             vertical=False,
             start_stretch=True,
@@ -75,5 +84,11 @@ class MidiFileGroup(JDXiMidiGroup):
                 tooltip=tr("Save MIDI file"),
                 icon=JDXi.UI.Icon.FLOPPY_DISK,
                 slot=self.parent.midi_save_file,
+            ),
+            "close_midi_file": ButtonSpec(
+                label="Close",
+                tooltip=tr("Close the MIDI file (asks first if it has unsaved changes)"),
+                icon=JDXi.UI.Icon.CLOSE_FILE,
+                slot=self.parent.midi_close_file,
             ),
         }
