@@ -330,7 +330,13 @@ class ProgramPartsEditor(V2Editor):
 
     ACCENT = ACCENT
 
-    def __init__(self, midi_helper=None, preset_helper=None, parent=None):
+    def __init__(self, midi_helper=None, preset_helper=None, parent=None, build_when_shown: bool = False):
+        """
+        :param build_when_shown: only the values now, the cards the first time
+            the tab is shown (~1 s of widgets: made at startup for the Programs
+            mixer's Pan and sends, it held the window up)
+        """
+        self._panels_pending = build_when_shown
         blocks = [common_block()] + [part_block(i) for i in range(4)] + [zone_block(i) for i in range(4)]
         super().__init__(blocks, midi_helper=midi_helper, parent=parent, title=tr("Program settings"))
         self.preset_helper = preset_helper
@@ -346,7 +352,22 @@ class ProgramPartsEditor(V2Editor):
         raise KeyError(name)
 
     # --- layout
+    @property
+    def panels_built(self) -> bool:
+        return not self._panels_pending
+
     def build_panels(self) -> None:
+        if self._panels_pending:
+            return  # the first time it is shown (see __init__)
+        self._build_panels()
+
+    def showEvent(self, event) -> None:
+        if self._panels_pending:
+            self._panels_pending = False
+            self._build_panels()
+        super().showEvent(event)
+
+    def _build_panels(self) -> None:
         self.panels_layout.addWidget(self._common_card())
         tabs = QHBoxLayout()
         tabs.setSpacing(4)
