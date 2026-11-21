@@ -35,6 +35,9 @@ ALL_PARTS = TONE_PARTS + (PROGRAM,)
 CHANNEL_PARTS = {0: (DIGITAL_1,), 1: (DIGITAL_2,), 2: (ANALOG,), 9: (DRUMS,), 15: ALL_PARTS}
 
 _histories: "weakref.WeakSet[EditHistory]" = weakref.WeakSet()
+# the steps taken back, in order (history, step id): the whole-program Redo brings back
+# the last one still there (the stacks keep older steps a new change did not clear)
+_undone: list = []
 _last_edited: Optional[weakref.ref] = None
 _ids = itertools.count(1)
 _paused = 0
@@ -216,6 +219,8 @@ class EditHistory(QObject):
             return False  # nothing changed: the step stays where it was
         self._undo.pop()
         self._redo.append(edit)
+        _undone.append((weakref.ref(self), edit.id))  # for the whole-program Redo
+        del _undone[:-MAX_STEPS * 4]
         self._sealed = True
         self._update()
         if _linked and edit.tx is not None:  # the same action in the other editors
@@ -385,9 +390,14 @@ class ProgramHistory(QObject):
 
     @staticmethod
     def _next_redo() -> Optional[EditHistory]:
-        # steps are taken back newest first: the last one taken back is the oldest on top
-        found = [h for h in histories() if h._redo]
-        return min(found, key=lambda h: h._redo[-1].id) if found else None
+        """The editor of the last step taken back that can still come back."""
+        while _undone:
+            ref, step = _undone[-1]
+            history = ref()
+            if _alive(history) and history._redo and history._redo[-1].id == step:
+                return history
+            _undone.pop()  # gone, redone, or cleared by a new change
+        return None
 
     def can_undo(self) -> bool:
         return self._next_undo() is not None

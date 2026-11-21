@@ -747,7 +747,7 @@ class ProgramEditor(_program.ProgramEditor):
 
     # --- parts
 
-    STRIP_WIDTH = 150
+    STRIP_WIDTH = 130  # two knobs side by side; 150 ran out of the 1496 px compact page
 
     def _dress_strips(self) -> None:
         """

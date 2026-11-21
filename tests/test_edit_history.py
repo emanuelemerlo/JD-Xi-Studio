@@ -346,3 +346,23 @@ def test_a_transaction_over_two_editors_is_one_undo(app):
     assert digital.undo() and analog.undo()  # the step, then Analog's own edit
     assert a_pv.value() == 20 and not analog.can_undo() and not digital.can_undo()
 
+
+
+def test_programs_undo_and_redo_the_last_change_of_any_tab(app):
+    from jdxi_editor.ui.v2.params import ParamInfo, ParamValue
+
+    def value(name):
+        return ParamValue(type("P", (), {"name": name})(), ParamInfo("G", name), 0, 127)
+
+    one, two = h.EditHistory(h.DIGITAL_1, "Digital 1"), h.EditHistory(h.ANALOG, "Analog")
+    a, b = value("Cutoff"), value("Level")
+    one.watch([a])
+    two.watch([b])
+    a.setValue(5)
+    one.undo()  # a step taken back long ago, still on Digital 1's redo
+    whole = h.ProgramHistory()
+    b.setValue(7)
+    assert "Level (Analog)" == whole.undo_text()
+    assert whole.undo() and b.value() == 0  # the last change, in Analog
+    assert whole.redo() and b.value() == 7  # Analog's again, not Digital 1's old step
+    assert whole.modified
