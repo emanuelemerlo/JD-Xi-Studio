@@ -4,9 +4,9 @@ would look like another editor):
 
 - a grip under the Tracks card: drag it to make the card taller or shorter;
   the height is remembered;
-- an Expand button in the card: hides the cards not needed while listening
-  (Fit to the JD-Xi, Automation, USB recorder, Event filter) so the tracks
-  take the room; Player and Playback stay. Again: everything back.
+- an Expand button in the card: hides the cards under the tracks not needed
+  while listening (Automation, USB recorder, Event filter) so the tracks take
+  the room; Player, Fit to the JD-Xi and Playback stay. Again: everything back.
 """
 
 from __future__ import annotations
@@ -103,8 +103,8 @@ class ExpandButton(QPushButton):
             self.setToolTip(tr("Show the other cards again"))
         else:
             self.setText("⤢ " + tr("Expand"))
-            self.setToolTip(tr("More room for the tracks: hide Fit to the JD-Xi, Automation, "
-                               "USB recorder and Event filter (Player and Playback stay)"))
+            self.setToolTip(tr("More room for the tracks: hide Automation, USB recorder and Event filter "
+                               "(Player, Fit to the JD-Xi and Playback stay)"))
 
     def _apply(self, expanded: bool) -> None:
         for widget in self._others():

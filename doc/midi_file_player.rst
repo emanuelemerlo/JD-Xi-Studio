@@ -34,8 +34,8 @@ Tracks
 
 * One row per track: name (when the file has none, the instrument it plays, in grey), channel,
   part, mute, solo, velocity scale, and its notes on the time line.
-* **Expand** hides the cards not needed while listening (Fit to the JD-Xi, Automation,
-  USB recorder, Event filter) so the tracks take the room; Player and Playback stay.
+* **Expand** hides the cards under the tracks not needed while listening (Automation, USB
+  recorder, Event filter) so the tracks take the room; Player, Fit to the JD-Xi and Playback stay.
   **Restore** brings them back.
 * The grip under the Tracks card sets its height (remembered; double click: the usual height).
 * Loading a big file shows its progress on the player's display (*Loading: track 12 of 45*).

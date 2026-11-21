@@ -15,6 +15,10 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   player, Save the program, Send all, Read the user programs and Self-test with the JD-Xi offline.
 - Ctrl+O / Ctrl+S open and save the **patch** (they were the MIDI Player's file's, wherever you
   were); the MIDI Player's file: Ctrl+Alt+O / Ctrl+Alt+S. Menu items that are off are greyed out.
+- MIDI Player tracks: the channel («Ch 10») readable again (the spin arrows covered it); no
+  file (at start, after Close): a line saying how to open one instead of an empty ruler in the
+  middle of the card; **Expand** keeps Fit to the JD-Xi (beside the Player, it gave the tracks
+  no room).
 - MIDI Player: **Close** (Player card and File › MIDI Player › Close, Ctrl+Alt+W) empties the
   player; with unsaved changes it asks first (Save… / Close without saving / Cancel). Save and Close
   are off without a file.

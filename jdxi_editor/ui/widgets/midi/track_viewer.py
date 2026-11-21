@@ -105,6 +105,13 @@ class MidiTrackViewer(QWidget):
         self._ruler_layout.addWidget(self.ruler, stretch=1)
 
         scroll_layout.addWidget(ruler_container)
+        self._ruler_container = ruler_container
+        # no file: a line saying how to open one, instead of an empty ruler
+        # (200 px tall in the middle of the card, 4000 px wide)
+        self._empty_note = QLabel(tr("No MIDI file: open one with Load or File › MIDI Player › Open…"))
+        self._empty_note.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._empty_note.setStyleSheet("color: #8a8d94; font-size: 13px; background: transparent;")
+        scroll_layout.addWidget(self._empty_note, 1)
 
         # Add Mute Buttons for channels 1-16
         self.mute_buttons = {}
@@ -147,6 +154,7 @@ class MidiTrackViewer(QWidget):
         self.track_zoom_slider.setValue(50)
         self.track_zoom_slider.valueChanged.connect(self.update_track_zoom)
         self.update_track_zoom(self.track_zoom_slider.value())
+        self._show_empty(True)
 
         # Add zoom slider to layout
         main_layout.addWidget(QLabel(tr("Track Zoom")))
@@ -199,9 +207,18 @@ class MidiTrackViewer(QWidget):
 
         # Reset zoom slider to default
         self.track_zoom_slider.setValue(50)
+        self._show_empty(True)
 
         # Optional: force a redraw
         self.update()
+
+    def _show_empty(self, empty: bool) -> None:
+        """No file: the note instead of the ruler, the content as wide as the view."""
+        self._ruler_container.setVisible(not empty)
+        self._empty_note.setVisible(empty)
+        if empty and self.scroll_area is not None:
+            width = self.scroll_area.viewport().width()
+            self.scroll_content.setFixedWidth(max(1, width))
 
     def _clear_layout(self, layout: QLayout):
         """
@@ -293,7 +310,7 @@ class MidiTrackViewer(QWidget):
         if self.midi_file is not None:
             self.fit_tracks_to_view()
         else:
-            self.update_track_zoom(self.track_zoom_slider.value())
+            self._show_empty(True)
 
     def update_track_zoom(self, width: int):
         """
@@ -302,6 +319,9 @@ class MidiTrackViewer(QWidget):
         :param width: int slider value (1–100) used to set content width
         :return: None
         """
+        if self.midi_file is None and getattr(self, "_empty_note", None) is not None:
+            self._show_empty(True)  # nothing to zoom
+            return
         min_content_width = self.get_track_controls_width() + 200
         content_width = max(min_content_width, width * 80)
         if self.scroll_area is not None:
@@ -773,6 +793,7 @@ class MidiTrackViewer(QWidget):
             unmuted at 100 %
         :return: None
         """
+        self._show_empty(False)
         track_count = len(midi_file.tracks)
         kept_muted = (
             {t for t in self.muted_tracks if t < track_count} if keep_track_state else set()
