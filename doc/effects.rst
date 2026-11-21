@@ -12,6 +12,15 @@ The Effects Editor is a specialized interface that provides deep, granular contr
 
 The editor represents a dedicated workspace optimized for effects processing, from basic time-based effects to complex multi-effects chains. The editor automatically synchronizes with your JD-Xi hardware, ensuring that every change is instantly reflected in your synthesizer's sound.
 
+Whose effects
+=============
+
+The effects are the **program's**: one set (EFX1, EFX2, Delay, Reverb) for its four parts, kept
+with the program. Each part goes through them according to its **Part Output** (EFX1: EFX1, EFX2,
+Delay and Reverb; EFX2: EFX2, Delay and Reverb; DLY: Delay and Reverb; REV: Reverb; DIR: none) and
+its own **Delay** and **Reverb** sends: in the mixer of Programs, or in Program settings. A line at
+the top of the Effects tab says so.
+
 JD-Xi Implementation
 =====================
 

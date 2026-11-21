@@ -34,7 +34,8 @@ computer screen instead of the JD-Xi's menus.
   Auto Pitch).
 - **Arpeggio** with its timing drawn and the parts it plays.
 - **Programs on one page**: a library that searches number, name, genre and tones, sorts, and marks
-  the program loaded; the parts inside the mixer (tone, channel, Edit) in their tabs' colours;
+  the program loaded; the parts inside the mixer (pan, delay and reverb sends, tone, channel, Edit) in
+  their tabs' colours; **Program settings** for everything else the program keeps, part by part;
   playlists; **Save on the JD-Xi**, guided (name, slot, WRITE) and checked by reading the slot back.
 - **New sound** in the Digital and Analog editors: from scratch (Init, one Undo), from a preset or
   from a recipe; a **«?»** on each section says what it changes, how the sound changes, an example.

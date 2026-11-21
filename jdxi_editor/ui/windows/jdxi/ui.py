@@ -363,12 +363,14 @@ class JDXiWindow(QMainWindow):
         editor = self._menu(tr("&Editor"))
         self._item(editor, tr("Pro&grams"), lambda: self.show_editor("program"), "Ctrl+0",
                    tr("The library of the JD-Xi's programs and the playlists"))
+        self._item(editor, tr("Program se&ttings"), lambda: self.show_editor("program_parts"), "Ctrl+Shift+P",
+                   tr("What the program keeps besides its tones: each part's level, pan, effects, "
+                      "pitch, offsets, zones, scale and MIDI"))
         self._section(editor, tr("Parts"))
         for text, name, key in ((tr("Digital &1"), "digital1", "Ctrl+1"),
                                 (tr("Digital &2"), "digital2", "Ctrl+2"),
                                 (tr("&Analog"), "analog", "Ctrl+3"),
-                                (tr("&Drums"), "drums", "Ctrl+4"),
-                                (tr("Program: &common and parts"), "program_parts", "Ctrl+Shift+P")):
+                                (tr("&Drums"), "drums", "Ctrl+4")):
             self._item(editor, text, lambda _=False, e=name: self.show_editor(e), key)
         self._section(editor, tr("Effects"))
         self._item(editor, tr("&Effects"), lambda: self.show_editor("effects"), "Ctrl+6")

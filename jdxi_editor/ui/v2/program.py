@@ -332,7 +332,7 @@ class ProgramPartsEditor(V2Editor):
 
     def __init__(self, midi_helper=None, preset_helper=None, parent=None):
         blocks = [common_block()] + [part_block(i) for i in range(4)] + [zone_block(i) for i in range(4)]
-        super().__init__(blocks, midi_helper=midi_helper, parent=parent, title=tr("Program: common and parts"))
+        super().__init__(blocks, midi_helper=midi_helper, parent=parent, title=tr("Program settings"))
         self.preset_helper = preset_helper
         self._link_dependencies()
 
@@ -356,8 +356,12 @@ class ProgramPartsEditor(V2Editor):
             "MAIN": self._main_column, "PITCH": self._pitch_column, "OFFSET": self._offset_column,
             "KEYBOARD": self._keyboard_column, "SCALE": self._scale_column, "MIDI": self._midi_column,
         }
+        names = {  # the JD-Xi's words, in the language of the app
+            "MAIN": tr("MAIN"), "PITCH": tr("PITCH"), "OFFSET": tr("OFFSET"),
+            "KEYBOARD": tr("KEYBOARD"), "SCALE": tr("SCALE"), "MIDI": "MIDI",
+        }
         for index, section in enumerate(SECTIONS):
-            button = QPushButton(section)
+            button = QPushButton(names[section])
             button.setCheckable(True)
             button.setStyleSheet(
                 "QPushButton { background: #1b1c1f; color: #c9cbd1; border: 1px solid #3a3d44; border-radius: 6px;"
@@ -412,7 +416,7 @@ class ProgramPartsEditor(V2Editor):
         return tr("MIDI Implementation")
 
     def _common_card(self):
-        card = self.card("PROGRAM: COMMON", tr("Parameter Guide, p. 10"))
+        card = self.card(tr("PROGRAM: COMMON"), tr("Parameter Guide, p. 10"))
         row = QHBoxLayout()
         names = [self.values[s] for s in self.blocks[0].params[:NAME_LENGTH]]
         name_box = QVBoxLayout()

@@ -91,12 +91,12 @@ class MainEditor(QMainWindow):
         self.program_chip.setToolTip(tr("The program and the tone last received from the JD-Xi"))
         self.connection_label = QLabel()
         self.connection_label.setStyleSheet("color: #a3a6ad; font-size: 12px;")
-        # "+": the tabs that open and close (Recipes, Program parts, Settings), from this window
+        # "+": the tabs that open and close (Program settings, Recipes, Settings), from this window
         from PySide6.QtWidgets import QMenu, QToolButton
 
         self.tab_menu_button = QToolButton()
         self.tab_menu_button.setText("+")
-        self.tab_menu_button.setToolTip(tr("Open a tab: Program parts, Recipes, Settings"))
+        self.tab_menu_button.setToolTip(tr("Open a tab: Program settings, Recipes, Settings"))
         self.tab_menu_button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         self.tab_menu_button.setStyleSheet(
             "QToolButton { color: #ffffff; font-size: 16px; font-weight: 700; padding: 0 8px;"

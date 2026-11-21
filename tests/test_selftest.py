@@ -268,7 +268,7 @@ def test_the_main_menus_match_the_app(window, monkeypatch):
     assert not [t for t in texts if "Synth 3" in t or "PDF" in t]
     assert len(shortcuts) == len(set(shortcuts)), sorted(shortcuts)
     editor = [a.text().replace("&", "") for a in items("Editor") if a.text()]
-    assert editor[:5] == ["Programs", "Digital 1", "Digital 2", "Analog", "Drums"]
+    assert editor[:6] == ["Programs", "Program settings", "Digital 1", "Digital 2", "Analog", "Drums"]
     # what opens a tab has no «…» nor icon; what opens a dialog ends in «…»
     assert not [a.text() for a in items("Editor") if a.text().endswith("…") or not a.icon().isNull()]
     assert all(a.text().endswith("…") for a in items("JD-Xi") if a.text())

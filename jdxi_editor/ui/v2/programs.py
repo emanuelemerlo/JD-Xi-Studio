@@ -3,7 +3,7 @@ Programs in the new look: one page with the library, the parts of the
 program, the mixer and, below, presets, user programs, playlists and system
 settings (same editor and engine: the original widgets, laid out anew).
 
-    [ display | load · rename · parts and advanced settings ]
+    [ display | load · rename · program settings ]
     LIBRARY (search, genre, banks A–H, table)  | PARTS OF THE PROGRAM
                                                | MIXER
     PRESETS | USER PROGRAMS | PLAYLIST | PLAYLIST EDITOR | SYSTEM
@@ -27,6 +27,7 @@ from PySide6.QtWidgets import (
     QStyledItemDelegate,
     QButtonGroup,
     QComboBox,
+    QGridLayout,
     QGroupBox,
     QHBoxLayout,
     QHeaderView,
@@ -58,6 +59,14 @@ PARTS = (
     (JDXiSynth.DRUM_KIT, "Drums", "drums", "drums", 10),
     (JDXiSynth.ANALOG_SYNTH, "Analog", "analog", "analog", 3),
 )
+
+
+def small(knob) -> None:
+    """A mixer knob: two side by side in a strip as wide as its tone's name."""
+    knob.SIZE = 34
+    knob.dial.setFixedSize(34, 34)
+    knob.field.setFixedWidth(44)
+    knob.setMinimumWidth(48)
 
 
 def _note(text: str) -> QLabel:
@@ -490,9 +499,9 @@ class ProgramEditor(_program.ProgramEditor):
         self.rename_button = QPushButton(tr("Rename…"))
         self.rename_button.setToolTip(tr("Edit the name of the current program"))
         self.rename_button.clicked.connect(group.edit_program_name)
-        self.advanced_button = QPushButton(tr("Parts and advanced settings…"))
+        self.advanced_button = QPushButton(tr("Program settings"))
         self.advanced_button.setToolTip(
-            tr("Every part's level, pan, offsets, scale, receive switches and zones (Program: common and parts)")
+            tr("Every part's level, pan, effects, pitch, offsets, zones, scale and MIDI (the Program settings tab)")
         )
         self.advanced_button.clicked.connect(self.open_advanced)
         actions = QVBoxLayout()
@@ -542,6 +551,12 @@ class ProgramEditor(_program.ProgramEditor):
         mixer_layout.addWidget(_note(tr("Click a tone to choose another for that part; Edit opens the part's editor.")))
         self.part_tones: dict[str, QPushButton] = {}
         self._add_part_controls()
+        # Pan, Delay, Reverb above each fader: the values of Program settings
+        # (made when the instrument is there, once its editors are)
+        self.part_sends: dict = {}
+        from PySide6.QtCore import QTimer
+
+        QTimer.singleShot(0, self._add_part_sends)
 
         right = QVBoxLayout()
         right.setSpacing(12)
@@ -737,6 +752,95 @@ class ProgramEditor(_program.ProgramEditor):
         master = self.mixer_widget.tracks[0].slider.parentWidget()
         if master is not None and master.layout() is not None:
             master.layout().addStretch()  # the Master has no tone: its strip ends with the mute
+
+    # the part's number in the Program settings (Digital 1, Digital 2, Analog, Drums)
+    SETTINGS_PART = {
+        JDXiSynth.DIGITAL_SYNTH_1: 0, JDXiSynth.DIGITAL_SYNTH_2: 1,
+        JDXiSynth.ANALOG_SYNTH: 2, JDXiSynth.DRUM_KIT: 3,
+    }
+
+    def _add_part_sends(self) -> None:
+        """
+        Above each part's fader: Pan, Delay send and Reverb send, so the mixer is
+        the program's console. They are the Program settings' own values (one
+        set: what changes here changes there, with its undo, and the sends are off
+        where the part's output skips that effect).
+        """
+        instrument = self._instrument()
+        make = getattr(instrument, "program_settings_editor", None)
+        if self.part_sends or not callable(make):
+            return
+        settings = make()
+        if settings is None or not hasattr(settings, "part"):
+            return
+        from jdxi_editor.ui.v2.widgets import Knob
+
+        self.program_settings = settings
+        tallest = 0
+        for (synth, label, *_rest), track, colour in zip(PARTS, self.mixer_widget.tracks[1:], _part_colours()):
+            part = self.SETTINGS_PART[synth]
+            box = QWidget()
+            box.setStyleSheet("background: transparent;")
+            grid = QGridLayout(box)
+            grid.setContentsMargins(0, 0, 0, 6)
+            grid.setHorizontalSpacing(0)
+            grid.setVerticalSpacing(4)
+            knobs = []
+            for name, text, row, column, span in (
+                ("PART_PAN", tr("Pan"), 0, 0, 2),
+                ("PART_DELAY_SEND_LEVEL", tr("Delay"), 1, 0, 1),
+                ("PART_REVERB_SEND_LEVEL", tr("Reverb"), 1, 1, 1),
+            ):
+                knob = Knob(settings.part(name, part), colour, settings.info_hub)
+                knob.name.setText(text)
+                small(knob)
+                grid.addWidget(knob, row, column, 1, span, Qt.AlignmentFlag.AlignHCenter)
+                knobs.append(knob)
+            self._above_level(track, box)
+            self.part_sends[synth] = knobs
+            tallest = max(tallest, box.sizeHint().height())
+        spacer = QWidget()  # the Master has no pan or sends: its fader level with the others
+        spacer.setFixedHeight(tallest)
+        self._above_level(self.mixer_widget.tracks[0], spacer)
+        self._read_parts()  # the current program's pan and sends
+
+    def _part_requests(self) -> list:
+        settings = getattr(self, "program_settings", None)
+        return [b.request for b in getattr(settings, "blocks", []) if b.key.startswith("PART_") and b.request]
+
+    def _read_parts(self) -> None:
+        helper = getattr(self, "_midi_helper", None)
+        requests = self._part_requests()
+        if helper is None or not requests or not hasattr(helper, "send_raw_message"):
+            return
+        import threading
+
+        from jdxi_editor.midi.io.delay import send_with_delay
+
+        threading.Thread(target=send_with_delay, args=(helper, requests), daemon=True).start()
+
+    @staticmethod
+    def _above_level(track, widget: QWidget) -> None:
+        """*widget* between the strip's name and its level box."""
+        layout = track.slider.layout()
+        box = getattr(track.slider, "level_box", None)
+        index = layout.indexOf(box) if box is not None else 1
+        layout.insertWidget(max(index, 0), widget, 0, Qt.AlignmentFlag.AlignHCenter)
+        # the fader keeps its length: the strip (a fixed height) grows by the widget
+        height = widget.minimumHeight() or widget.sizeHint().height()
+        track.slider.setFixedHeight(track.slider.maximumHeight() + height + layout.spacing())
+
+    def data_request(self, channel=None, program=None):
+        """The program's values; with the mixer's Pan and sends, its parts too."""
+        extra = self._part_requests()
+        if not extra:
+            return super().data_request(channel, program)
+        requests = self.midi_requests
+        self.midi_requests = list(requests) + extra
+        try:
+            return super().data_request(channel, program)
+        finally:
+            self.midi_requests = requests
 
     def _set_part_tone(self, synth_type, tone_name: str) -> None:
         button = getattr(self, "part_tones", {}).get(synth_type)

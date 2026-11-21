@@ -229,7 +229,7 @@ class JDXiInstrument(JDXiWindow):
                 icon="ri.sound-module-fill",
             ),
             "program_parts": EditorConfig(
-                title="Program: common and parts",
+                title="Program settings",
                 editor_class=ProgramPartsEditor,  # new interface (1.0)
                 icon="mdi.tune-vertical",
             ),
@@ -1104,7 +1104,7 @@ class JDXiInstrument(JDXiWindow):
     def _fill_tab_menu(self, menu) -> None:
         """The "+" menu: every optional tab, ticked when open; choosing it opens or shows it."""
         names = {
-            "program_parts": tr("Program parts"),
+            "program_parts": tr("Program settings"),
             "recipes": tr("Recipes"),
             "settings": tr("Settings"),
         }
@@ -1295,12 +1295,36 @@ class JDXiInstrument(JDXiWindow):
         )
         return existing_editor
 
-    def _show_editor_tab(self, title: str, editor_class, icon, **kwargs) -> None:
+    def _place_tab(self, editor, index: int) -> int:
+        """Program settings right after Programs (it is opened from there); the
+        other tabs where they were added. :return: the tab's index now"""
+        if not isinstance(editor, ProgramPartsEditor):
+            return index
+        tabs = self.main_editor.editor_tab_widget
+        programs = tabs.indexOf(self.get_existing_editor(ProgramEditor))
+        if programs < 0 or index == programs + 1:
+            return index
+        target = programs + 1 if index > programs else programs
+        tabs.tabBar().moveTab(index, target)
+        return target
+
+    def program_settings_editor(self):
+        """The Program settings editor, made (without opening its tab) if needed:
+        the Programs mixer's Pan / Delay / Reverb are its values."""
+        editor = self.get_existing_editor(ProgramPartsEditor)
+        if editor is None:
+            config = self.editor_registry["program_parts"]
+            self._show_editor_tab(config.title, config.editor_class, config.icon, add_tab=False)
+            editor = self.get_existing_editor(ProgramPartsEditor)
+        return editor
+
+    def _show_editor_tab(self, title: str, editor_class, icon, add_tab: bool = True, **kwargs) -> None:
         """
         _show_editor_tab
 
         :param title: str Title of the tab
         :param editor_class: cls Class of the Editor
+        :param add_tab: False: make the editor only (its tab opens when shown)
         :param kwargs:
         :return: None
         """
@@ -1311,10 +1335,11 @@ class JDXiInstrument(JDXiWindow):
             if existing_editor:
                 index = self.main_editor.editor_tab_widget.indexOf(existing_editor)
                 if index == -1:  # an optional tab closed earlier: back with its values
-                    from jdxi_editor.ui.v2.names import short_name
+                    from jdxi_editor.ui.v2.names import short_name, tab_tip
 
                     index = self.main_editor.editor_tab_widget.addTab(existing_editor, short_name(title))
-                    self.main_editor.editor_tab_widget.setTabToolTip(index, title)
+                    self.main_editor.editor_tab_widget.setTabToolTip(index, tab_tip(title))
+                    index = self._place_tab(existing_editor, index)
                     if getattr(self, "_optional_tabs_ready", False):
                         self._mark_closable_tabs()
                 if index != -1:
@@ -1398,31 +1423,32 @@ class JDXiInstrument(JDXiWindow):
                 )
             )
             editor.setWindowTitle(title)
+            self._follow_modified(editor, title)  # its tab, whenever it opens
+            if add_tab:
+                from jdxi_editor.ui.v2.names import short_name, tab_tip
 
-            from jdxi_editor.ui.v2.names import short_name
+                # Names only, as in the mockups: every editor fits on one row
+                tab_index = self.main_editor.editor_tab_widget.addTab(editor, short_name(title))
+                self.main_editor.editor_tab_widget.setTabToolTip(tab_index, tab_tip(title))
+                tab_index = self._place_tab(editor, tab_index)
 
-            # Names only, as in the mockups: every editor fits on one row
-            tab_index = self.main_editor.editor_tab_widget.addTab(editor, short_name(title))
-            self.main_editor.editor_tab_widget.setTabToolTip(tab_index, title)
-            self._follow_modified(editor, title)
+                # Store the tab index for Analog Synth to enable styling
+                if title == "Analog Synth":
+                    tab_bar = self.main_editor.editor_tab_widget.tabBar()
+                    tab_bar.setTabData(tab_index, "analog")
 
-            # Store the tab index for Analog Synth to enable styling
-            if title == "Analog Synth":
-                tab_bar = self.main_editor.editor_tab_widget.tabBar()
-                tab_bar.setTabData(tab_index, "analog")
+                self.main_editor.editor_tab_widget.setCurrentWidget(editor)
 
-            self.main_editor.editor_tab_widget.setCurrentWidget(editor)
-
-            # Connect to tab change signal to update QTabBar property for styling
-            if not hasattr(self, "_tab_change_connected"):
-                self.main_editor.editor_tab_widget.currentChanged.connect(
-                    self._update_tab_bar_property
+                # Connect to tab change signal to update QTabBar property for styling
+                if not hasattr(self, "_tab_change_connected"):
+                    self.main_editor.editor_tab_widget.currentChanged.connect(
+                        self._update_tab_bar_property
+                    )
+                    self.main_editor.editor_tab_widget.currentChanged.connect(self._sync_panel_with_tab)
+                    self._tab_change_connected = True
+                self._update_tab_bar_property(
+                    self.main_editor.editor_tab_widget.currentIndex()
                 )
-                self.main_editor.editor_tab_widget.currentChanged.connect(self._sync_panel_with_tab)
-                self._tab_change_connected = True
-            self._update_tab_bar_property(
-                self.main_editor.editor_tab_widget.currentIndex()
-            )
 
             setattr(self, instance_attr, editor)
             self.register_editor(editor)

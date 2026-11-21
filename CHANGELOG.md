@@ -18,6 +18,14 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - MIDI Player: **Close** (Player card and File › MIDI Player › Close, Ctrl+Alt+W) empties the
   player; with unsaved changes it asks first (Save… / Close without saving / Cancel). Save and Close
   are off without a file.
+- **Program settings** (was *Program parts* on its tab, *Program: common and parts* in the menu,
+  *Parts and advanced settings…* on its button): one name everywhere; its tab opens right after
+  Programs, its menu item right after Programs; its sections in the app's language.
+- Programs mixer: **Pan**, **Delay** and **Reverb** sends above each part's fader — the Program
+  settings' own values (in step, undo included), off where the part's output skips the effect, read
+  with the program.
+- Effects: a line says the effects are the program's, and how each part goes through them.
+- The tabs' tooltips say what each editor is, translated (they showed internal English titles).
 - **Editors** (keyboard window, menu bar) and **Keyboard** (editors window, tabs bar) bring the
   other window to the front, on any screen, without Alt+Tab.
 - Removed Window › *Line up the editors with the keyboard*: the editors window opens where it was

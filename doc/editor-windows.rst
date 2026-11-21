@@ -22,8 +22,9 @@ ending in «…» opens a dialog.
   ``.msz`` file; Open sends them to the JD-Xi); **MIDI Player** › Open… (Ctrl+Alt+O) / Save
   (Ctrl+Alt+S) / Save as… / Close (Ctrl+Alt+W) / Recent (the MIDI Player's file; Save, Save as
   and Close only with a file in the player); Preferences… (Ctrl+,); Quit.
-* **Editor** — the tabs of the editors window: Programs (Ctrl+0); *Parts*: Digital 1, Digital 2,
-  Analog, Drums (Ctrl+1–4), Program: common and parts; *Effects*: Effects, Vocal FX (Ctrl+6, 7);
+* **Editor** — the tabs of the editors window: Programs (Ctrl+0), Program settings (Ctrl+Shift+P);
+  *Parts*: Digital 1, Digital 2,
+  Analog, Drums (Ctrl+1–4); *Effects*: Effects, Vocal FX (Ctrl+6, 7);
   *Playback*: Arpeggio (Ctrl+5), Pattern (Ctrl+8), MIDI Player (Ctrl+9); Recipes; Settings.
 * **JD-Xi** — done on the instrument: **Save the program…** (the guided WRITE into a user slot),
   **Send all…** (every value of the open editors into its current program; asks first, writes

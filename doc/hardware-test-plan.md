@@ -194,7 +194,7 @@ TC-xx della proposta; gli stessi casi girano in automatico con un JD-Xi simulato
 | | Fai | Deve succedere |
 |---|---|---|
 | 6.1 ★ | Libreria: cerca un nome, filtra per genere, banco B | La lista si filtra; doppio clic carica il programma sul JD-Xi; display aggiornato |
-| 6.2 | Parti del programma | I quattro toni corrispondono a quelli mostrati dal JD-Xi |
+| 6.2 | Le quattro parti nel mixer | I quattro toni corrispondono a quelli mostrati dal JD-Xi |
 | 6.3 | Mixer: abbassa Digital 1, muta Drums | Lo senti; il JD-Xi segue |
 | 6.4 | Libreria: cerca il nome di un **tono** (es. «Saw»), ordina per nome, allarga la colonna Nome | Trova i programmi che lo usano; i toni colorati come le parti; la barra orizzontale se non entrano |
 | 6.5 | Carica un programma, poi selezionane un altro | Il caricato resta marcato ▶ in grassetto; il pulsante dice «Carica» + quello selezionato; la riga di contesto dice «Programma A11 «…» · originale» |
@@ -203,6 +203,8 @@ TC-xx della proposta; gli stessi casi girano in automatico con un JD-Xi simulato
 | 6.8 ★ | **Salva sul JD-Xi…**: nome, posto proposto («probabilmente libero»), Avanti; fai sul JD-Xi i passi indicati (Shift + Menu/Write, scegli il posto, Enter, Enter), poi **Fatto** | «Salvato in E.. ✓»; il JD-Xi resta su quel posto; la riga di contesto dice «salvato in E..» |
 | 6.9 ★ | Come 6.8, ma **non** premere WRITE sul JD-Xi prima di Fatto | Nessuna conferma: «Non risulta salvato…», con le parti diverse |
 | 6.10 | Come 6.8 scegliendo un posto con un programma tuo | Prima la domanda «Sostituire E.. «…»?», con Annulla predefinito |
+| 6.11 ★ | Carica un programma; nel mixer guarda Pan, Delay e Reverb di ogni parte, poi gira il Pan di Digital 1 e il Reverb di Drums | All'avvio i valori sono quelli del JD-Xi; lo senti spostarsi e cambiare; **Impostazioni programma** (subito dopo Programmi) mostra gli stessi valori |
+| 6.12 | In **Impostazioni programma › Principale** metti il Part Output di Analog su REV, poi DIR | Nel mixer, con REV il Delay di Analog si spegne; con DIR anche il Reverb |
 
 ## 6b. Nuovo suono e aiuti (5 minuti)
 

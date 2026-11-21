@@ -474,6 +474,12 @@ class EffectsEditor(V2Editor):
         self.pages: dict[str, QStackedWidget] = {}
         self.chain = ChainView(self)
         self.panels_layout.addWidget(self.chain)
+        # whose effects these are: the program's, shared by its four parts
+        self.panels_layout.addWidget(self.note(
+            tr("These effects are the program's, one set for its four parts. Each part goes through them "
+               "according to its Part Output (EFX1, EFX2, DLY, REV or none), with its own Delay and Reverb "
+               "sends: in the mixer of Programs, or in Program settings.")
+        ))
         row = QHBoxLayout()
         row.setSpacing(12)
         top = Qt.AlignmentFlag.AlignTop
