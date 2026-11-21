@@ -444,6 +444,10 @@ class JDXiInstrument(JDXiWindow):
         found = getattr(editor, "history", None)
         if isinstance(found, history.EditHistory) and editor.isVisible():
             return found
+        # Programs: the whole program (the last change in any tab)
+        found = getattr(editor, "program_history", None)
+        if isinstance(found, history.ProgramHistory) and editor.isVisible():
+            return found
         return None
 
     def edit_history_step(self, action: str) -> bool:

@@ -108,3 +108,39 @@ def test_the_programs_mixer_has_pan_and_sends_of_program_settings(window):
     # the faders keep their length: the strips grew by the knobs
     master, analog = programs.mixer_widget.tracks[0].slider, programs.mixer_widget.tracks[4].slider
     assert master.height() == analog.height() > 180
+
+
+def test_the_faders_are_the_editors_levels_and_programs_undoes_them(window):
+    from jdxi_editor.ui.v2 import history
+
+    app = QApplication.instance()
+    for _ in range(5):
+        app.processEvents()
+    programs = window._tab_editor("program")
+    digital1 = window._tab_editor("digital1")
+    settings = window.program_settings_editor()
+    level = next(pv for spec, pv in digital1.values.items() if spec.name == "TONE_LEVEL")
+    master = next(pv for spec, pv in settings.values.items() if spec.name == "PROGRAM_LEVEL")
+    assert programs.level_links[1] is level and programs.level_links[0] is master
+    fader = programs.mixer_widget.tracks[1].slider
+    start = level.value()
+    fader.setValue(start - 10 if start >= 10 else start + 10)  # as the user does
+    moved = fader.value()
+    assert level.value() == moved  # the tone's level: an edit of Digital 1
+    assert digital1.history.can_undo() and programs.program_history.can_undo()
+    assert "Digital 1" in programs.program_history.undo_text()
+    level.setValue(start)  # from the Digital 1 tab: the fader follows
+    assert fader.value() == start
+    level.setValue(moved)
+    # Programs' Undo: the last change of the program, whatever the tab
+    tabs = window.main_editor.editor_tab_widget
+    tabs.setCurrentWidget(programs)
+    programs.show()
+    assert window.active_history() is programs.program_history
+    assert programs.program_history.undo()
+    assert level.value() == start and fader.value() == start
+    assert programs.program_history.redo()
+    assert fader.value() == moved
+    # back as it was, nothing left modified for the next tests
+    for h in history.histories():
+        h.reset()

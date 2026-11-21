@@ -110,9 +110,11 @@ class ParamValue(QObject):
             value = int(round(value / step) * step)
         return max(self.minimum, min(self.maximum, value))
 
-    def watch(self, callback: Callable[[int], None]) -> None:
+    def watch(self, callback: Callable[[int], None], now: bool = True) -> None:
+        """*callback* on every change (from the user or the JD-Xi); *now*: also at once."""
         self._watchers.append(callback)
-        callback(self._value)
+        if now:
+            callback(self._value)
 
     def text(self, value: Optional[int] = None) -> str:
         return self.info.format(self._value if value is None else value)

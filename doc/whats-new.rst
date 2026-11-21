@@ -110,9 +110,12 @@ Programs
   marks the program loaded on the JD-Xi apart from the one selected, and shows the tones in their
   parts' colours; right click: Load, Rename, Genre, Add to playlist, Export.
 * The parts are inside the mixer: above each fader the part's Pan and its Delay and Reverb sends,
-  under it the part's tone (click: choose another), its MIDI channel and Edit; parts in their tabs'
-  colours, the Master neutral, a box to type a level. The sends are off where the part's output
-  skips that effect.
+  under it the part's name, its tone (click: choose another), its MIDI channel and Edit; parts in
+  their tabs' colours, a light line between them, the Master neutral, a box to type a level. The
+  sends are off where the part's output skips that effect.
+* The faders are the parts' levels (and the Master the Program Level): moving one is an edit like
+  any other, the part's tab follows. **Undo / Redo** on the Programs page take back the last change
+  to the program, in any tab; the tooltip says which.
 * **Program settings** (the button beside Rename, or Editor › Program settings), right after
   Programs: what the program keeps besides its tones, part by part — level, pan, effects, pitch,
   offsets, zones, scale and MIDI. The mixer's Pan and sends are the same values.
