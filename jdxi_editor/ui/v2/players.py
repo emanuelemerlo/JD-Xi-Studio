@@ -380,6 +380,14 @@ class MidiFilePlayer(_player.MidiFilePlayer):
         width = max([b.sizeHint().width() for b in buttons] + [96])
         for button in buttons:
             button.setFixedWidth(width)
+        # one spacing for both rows, so Load / Save / Close sit under Play / Stop / Pause
+        # (the transport's row had 10 px, the file's 5: the columns drifted apart)
+        from PySide6.QtWidgets import QHBoxLayout
+
+        for holder in (getattr(self, "transport", None), getattr(self, "midi_file_group", None)):
+            if holder is not None:
+                for row in holder.findChildren(QHBoxLayout):
+                    row.setSpacing(10)
 
     def ui_init(self) -> None:
         """
