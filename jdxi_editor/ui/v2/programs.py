@@ -747,8 +747,6 @@ class ProgramEditor(_program.ProgramEditor):
 
     # --- parts
 
-    STRIP_WIDTH = 130  # two knobs side by side; 150 ran out of the 1496 px compact page
-
     def _dress_strips(self) -> None:
         """
         Each strip a column of its own: a light line between the parts (the knobs
@@ -782,7 +780,18 @@ class ProgramEditor(_program.ProgramEditor):
             strip.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
             line = "border-left: 1px solid #2e3138;" if index else "border: 0;"
             strip.setStyleSheet(f"QWidget#mixerStrip {{ {line} background: transparent; }}")
-            strip.setMinimumWidth(self.STRIP_WIDTH)
+        self._equal_strips()
+
+    def _equal_strips(self) -> None:
+        """Every strip as wide as the widest (its content, not a set number: 130 px each made
+        the compact page too wide with Windows' fonts), so the lines between them are even."""
+        strips = [t.slider.parentWidget() for t in self.mixer_widget.tracks]
+        strips = [s for s in strips if s is not None]
+        for strip in strips:
+            strip.setMinimumWidth(0)
+        width = max((s.sizeHint().width() for s in strips), default=0)
+        for strip in strips:
+            strip.setMinimumWidth(width)
 
     def _program_undo_buttons(self) -> list:
         from jdxi_editor.ui.v2.history import ProgramHistory
@@ -885,6 +894,7 @@ class ProgramEditor(_program.ProgramEditor):
         spacer = QWidget()  # the Master has no pan or sends: its fader level with the others
         spacer.setFixedHeight(tallest)
         self._above_level(self.mixer_widget.tracks[0], spacer)
+        self._equal_strips()  # the knobs made the parts' strips wider than the Master's
         self._read_parts()  # the current program's pan and sends
         self._link_levels()
 
