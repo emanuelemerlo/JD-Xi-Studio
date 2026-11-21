@@ -269,6 +269,10 @@ def test_the_main_menus_match_the_app(window, monkeypatch):
     assert len(shortcuts) == len(set(shortcuts)), sorted(shortcuts)
     editor = [a.text().replace("&", "") for a in items("Editor") if a.text()]
     assert editor[:6] == ["Programs", "Program settings", "Digital 1", "Digital 2", "Analog", "Drums"]
+    # the tabs in the menu's order (the optional ones only when open)
+    tabs = window.main_editor.editor_tab_widget
+    shown = [tabs.tabText(i) for i in range(tabs.count())]
+    assert shown == [t for t in editor if t in shown], (shown, editor)
     # what opens a tab has no «…» nor icon; what opens a dialog ends in «…»
     assert not [a.text() for a in items("Editor") if a.text().endswith("…") or not a.icon().isNull()]
     assert all(a.text().endswith("…") for a in items("JD-Xi") if a.text())

@@ -1021,8 +1021,9 @@ class JDXiInstrument(JDXiWindow):
     # --- Tabs: a fixed set always there, the others opened and closed from the editors window
 
     CORE_TABS = (
+        # in the order of the Editor menu: parts, effects, playback
         "program", "digital1", "digital2", "analog", "drums",
-        "arpeggio", "effects", "vocal_fx", "pattern", "midi_player",
+        "effects", "vocal_fx", "arpeggio", "pattern", "midi_player",
     )
     OPTIONAL_TABS = ("program_parts", "recipes", "settings")
     OPEN_TABS_KEY = "editors/optional_tabs"

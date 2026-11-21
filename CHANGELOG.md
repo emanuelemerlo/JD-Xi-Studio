@@ -25,6 +25,8 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   settings' own values (in step, undo included), off where the part's output skips the effect, read
   with the program.
 - Effects: a line says the effects are the program's, and how each part goes through them.
+- Tabs in the order of the Editor menu: Arpeggio after Vocal FX (with Pattern and the MIDI Player);
+  Ctrl+5…9 follow it (Effects, Vocal FX, Arpeggio, Pattern, MIDI Player).
 - The tabs' tooltips say what each editor is, translated (they showed internal English titles).
 - **Editors** (keyboard window, menu bar) and **Keyboard** (editors window, tabs bar) bring the
   other window to the front, on any screen, without Alt+Tab.

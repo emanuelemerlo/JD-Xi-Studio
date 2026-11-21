@@ -373,10 +373,10 @@ class JDXiWindow(QMainWindow):
                                 (tr("&Drums"), "drums", "Ctrl+4")):
             self._item(editor, text, lambda _=False, e=name: self.show_editor(e), key)
         self._section(editor, tr("Effects"))
-        self._item(editor, tr("&Effects"), lambda: self.show_editor("effects"), "Ctrl+6")
-        self._item(editor, tr("&Vocal FX"), lambda: self.show_editor("vocal_fx"), "Ctrl+7")
+        self._item(editor, tr("&Effects"), lambda: self.show_editor("effects"), "Ctrl+5")
+        self._item(editor, tr("&Vocal FX"), lambda: self.show_editor("vocal_fx"), "Ctrl+6")
         self._section(editor, tr("Playback"))
-        self._item(editor, tr("A&rpeggio"), lambda: self.show_editor("arpeggio"), "Ctrl+5")
+        self._item(editor, tr("A&rpeggio"), lambda: self.show_editor("arpeggio"), "Ctrl+7")
         self._item(editor, tr("&Pattern"), lambda: self.show_editor("pattern"), "Ctrl+8")
         self._item(editor, tr("&MIDI Player"), lambda: self.show_editor("midi_player"), "Ctrl+9")
         editor.addSeparator()
