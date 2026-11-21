@@ -15,6 +15,10 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   player, Save the program, Send all, Read the user programs and Self-test with the JD-Xi offline.
 - Ctrl+O / Ctrl+S open and save the **patch** (they were the MIDI Player's file's, wherever you
   were); the MIDI Player's file: Ctrl+Alt+O / Ctrl+Alt+S. Menu items that are off are greyed out.
+- MIDI Player tracks: the channel («Ch 10») readable again (the spin arrows covered it); no
+  file (at start, after Close): a line saying how to open one instead of an empty ruler in the
+  middle of the card; **Expand** keeps Fit to the JD-Xi (beside the Player, it gave the tracks
+  no room).
 - MIDI Player: **Close** (Player card and File › MIDI Player › Close, Ctrl+Alt+W) empties the
   player; with unsaved changes it asks first (Save… / Close without saving / Cancel). Save and Close
   are off without a file.
@@ -24,6 +28,12 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - Programs mixer: **Pan**, **Delay** and **Reverb** sends above each part's fader — the Program
   settings' own values (in step, undo included), off where the part's output skips the effect, read
   with the program.
+- Programs mixer: each fader is its editor's level (Digital 1's Tone Level…, the Master: Program
+  Level), so moving it is an edit — Undo, «modified», the part's knob follows. They sent the level
+  on their own before: nothing knew. A light line between the strips; the part's name at the
+  bottom, over its tone.
+- Programs: **Undo / Redo** of the whole program — the last change in any tab (tooltip: what);
+  Ctrl+Z / Ctrl+Y on the Programs tab do the same.
 - Effects: a line says the effects are the program's, and how each part goes through them.
 - Tabs in the order of the Editor menu: Arpeggio after Vocal FX (with Pattern and the MIDI Player);
   Ctrl+5…9 follow it (Effects, Vocal FX, Arpeggio, Pattern, MIDI Player).

@@ -135,7 +135,8 @@ def test_more_room_for_the_tracks(app, monkeypatch):
     assert button.text().endswith("Expand")
     button.click()
     assert not editor.automation.isVisibleTo(editor) and not editor.usb_recorder.isVisibleTo(editor)
-    assert not editor.classification_group.isVisibleTo(editor)
+    # Fit to the JD-Xi is beside the Player, above the tracks: hiding it gives them no room
+    assert editor.classification_group.isVisibleTo(editor)
     assert editor.playback_options.isVisibleTo(editor) and editor.transport.isVisibleTo(editor)
     assert editor.midi_file.midi_track_viewer.isVisibleTo(editor)
     assert button.text().endswith("Restore")
@@ -182,4 +183,71 @@ def test_player_buttons_one_width_not_stretched(app):
         editor.show()
         app.processEvents()
         assert len({b.width() for b in buttons}) == 1, [(b.text(), b.width()) for b in buttons]
+    editor.close()
+
+
+def test_track_channel_readable(app, tmp_path):
+    """«Ch 16» fits beside the arrows (the arrows covered «Ch 10»)."""
+    from unittest.mock import patch
+
+    from mido import Message, MetaMessage, MidiFile, MidiTrack
+
+    mid = MidiFile(type=1, ticks_per_beat=480)
+    track = MidiTrack()
+    track.append(MetaMessage("track_name", name="Strings", time=0))
+    track.append(Message("note_on", note=60, velocity=90, channel=15, time=0))
+    track.append(Message("note_off", note=60, velocity=0, channel=15, time=480))
+    mid.tracks.append(track)
+    path = tmp_path / "ch16.mid"
+    mid.save(path)
+    editor = players.MidiFilePlayer(midi_helper=_helper())
+    editor.resize(1600, 900)
+    editor.show()
+    with patch.object(editor, "_notify_pattern_sequencer_file_loaded"):
+        assert editor.midi_load_file_from_path(str(path), update_recent_files=False)
+    for _ in range(20):
+        app.processEvents()
+    spin = next(iter(editor.midi_file.midi_track_viewer.track_channel_spins.values()))
+    assert spin.text() == "Ch 16"
+    room = spin.lineEdit().width()
+    assert room >= spin.lineEdit().fontMetrics().horizontalAdvance("Ch 16") + 2, room
+    editor.transport_controller.shutdown()
+    editor.close()
+
+
+def test_no_file_no_empty_ruler(app, tmp_path):
+    """Before a file and after Close: a line saying how to open one, not a ruler 200 px tall
+    in the middle of the card and 4000 px wide."""
+    from unittest.mock import patch
+
+    from mido import Message, MidiFile, MidiTrack
+
+    editor = players.MidiFilePlayer(midi_helper=_helper())
+    editor.resize(1600, 1000)
+    editor.show()
+    for _ in range(10):
+        app.processEvents()
+    viewer = editor.midi_file.midi_track_viewer
+
+    def empty() -> bool:
+        return (viewer._empty_note.isVisibleTo(editor) and not viewer.ruler.isVisibleTo(editor)
+                and viewer.scroll_content.width() <= viewer.scroll_area.viewport().width())
+
+    assert empty()
+    mid = MidiFile(type=1, ticks_per_beat=480)
+    track = MidiTrack()
+    track.append(Message("note_on", note=60, velocity=90, channel=0, time=0))
+    track.append(Message("note_off", note=60, velocity=0, channel=0, time=1920))
+    mid.tracks.append(track)
+    mid.save(tmp_path / "one.mid")
+    with patch.object(editor, "_notify_pattern_sequencer_file_loaded"):
+        assert editor.midi_load_file_from_path(str(tmp_path / "one.mid"), update_recent_files=False)
+    for _ in range(10):
+        app.processEvents()
+    assert viewer.ruler.isVisibleTo(editor) and not viewer._empty_note.isVisibleTo(editor)
+    assert editor.midi_close_file()
+    for _ in range(10):
+        app.processEvents()
+    assert empty()
+    editor.transport_controller.shutdown()
     editor.close()

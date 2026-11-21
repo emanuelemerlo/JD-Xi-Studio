@@ -203,6 +203,7 @@ TC-xx della proposta; gli stessi casi girano in automatico con un JD-Xi simulato
 | 6.8 ★ | **Salva sul JD-Xi…**: nome, posto proposto («probabilmente libero»), Avanti; fai sul JD-Xi i passi indicati (Shift + Menu/Write, scegli il posto, Enter, Enter), poi **Fatto** | «Salvato in E.. ✓»; il JD-Xi resta su quel posto; la riga di contesto dice «salvato in E..» |
 | 6.9 ★ | Come 6.8, ma **non** premere WRITE sul JD-Xi prima di Fatto | Nessuna conferma: «Non risulta salvato…», con le parti diverse |
 | 6.10 | Come 6.8 scegliendo un posto con un programma tuo | Prima la domanda «Sostituire E.. «…»?», con Annulla predefinito |
+| 6.13 | Nel mixer sposta il fader di Digital 1, poi apri la scheda Digital 1; torna in Programmi e premi **Annulla** | Il Tone Level di Digital 1 segue il fader e la scheda ha la matita; Annulla (suggerimento «Annulla: Tone Level (Digital 1)») riporta fader, manopola e suono com'erano |
 | 6.11 ★ | Carica un programma; nel mixer guarda Pan, Delay e Reverb di ogni parte, poi gira il Pan di Digital 1 e il Reverb di Drums | All'avvio i valori sono quelli del JD-Xi; lo senti spostarsi e cambiare; **Impostazioni programma** (subito dopo Programmi) mostra gli stessi valori |
 | 6.12 | In **Impostazioni programma › Principale** metti il Part Output di Analog su REV, poi DIR | Nel mixer, con REV il Delay di Analog si spegne; con DIR anche il Reverb |
 

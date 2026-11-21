@@ -444,6 +444,10 @@ class JDXiInstrument(JDXiWindow):
         found = getattr(editor, "history", None)
         if isinstance(found, history.EditHistory) and editor.isVisible():
             return found
+        # Programs: the whole program (the last change in any tab)
+        found = getattr(editor, "program_history", None)
+        if isinstance(found, history.ProgramHistory) and editor.isVisible():
+            return found
         return None
 
     def edit_history_step(self, action: str) -> bool:
@@ -1315,7 +1319,8 @@ class JDXiInstrument(JDXiWindow):
         editor = self.get_existing_editor(ProgramPartsEditor)
         if editor is None:
             config = self.editor_registry["program_parts"]
-            self._show_editor_tab(config.title, config.editor_class, config.icon, add_tab=False)
+            self._show_editor_tab(config.title, config.editor_class, config.icon, add_tab=False,
+                                  build_when_shown=True)  # its cards when its tab is shown
             editor = self.get_existing_editor(ProgramPartsEditor)
         return editor
 
@@ -1425,6 +1430,10 @@ class JDXiInstrument(JDXiWindow):
             )
             editor.setWindowTitle(title)
             self._follow_modified(editor, title)  # its tab, whenever it opens
+            if not add_tab:
+                # hidden on purpose: a child not hidden would show up inside the
+                # keyboard window when that is shown
+                editor.hide()
             if add_tab:
                 from jdxi_editor.ui.v2.names import short_name, tab_tip
 

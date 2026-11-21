@@ -347,11 +347,15 @@ def _dispose(window) -> None:
     QApplication.processEvents()
 
 
-def test_a_reading_on_its_way_does_not_undo_an_edit(window):
+def test_a_reading_on_its_way_does_not_undo_an_edit(window, monkeypatch):
     """The window reads the Analog tone, the user moves Cutoff, then the reply (with the old
     Cutoff) arrives: the editor keeps the new value and its Undo step (seen on the JD-Xi)."""
     from jdxi_editor.midi.data.parameter.analog.address import AnalogParam
+    from jdxi_editor.midi.io.device import device_for
 
+    # the reply comes «at once», as from the JD-Xi: a slow test machine (CI) took more
+    # than the 2 s a request waits for its reply between the request and the reply
+    monkeypatch.setattr(device_for(window.midi_helper), "clock", lambda: 1000.0)
     editor = window._tab_editor("analog")
     pv = editor.values[AnalogParam.FILTER_CUTOFF]
     pv.blockSignals(True)
@@ -362,6 +366,7 @@ def test_a_reading_on_its_way_does_not_undo_an_edit(window):
     steps = len(editor.history._undo)
     pv.setValue(110)
     settle()
+    editor._flush_pending()  # the edit has left (it waits up to 25 ms behind an earlier one)
     values = [0] * 0x40
     for param in AnalogParam:
         if param.address < 0x40 and param in editor.values:

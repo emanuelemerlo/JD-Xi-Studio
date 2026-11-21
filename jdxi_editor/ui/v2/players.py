@@ -489,7 +489,9 @@ class MidiFilePlayer(_player.MidiFilePlayer):
         main.addWidget(self.tracks_grip)
         main.addWidget(playback)
         main.addLayout(last)
-        self._hidden_while_expanded = [classification, automation, recorder, events]
+        # only the cards under the tracks: the room goes downwards (Fit to the JD-Xi,
+        # beside the Player above, gave none and was gone for nothing)
+        self._hidden_while_expanded = [automation, recorder, events]
 
         self.base_widget = EditorBaseWidget(parent=self, analog=False)
         self.base_widget.setup_scrollable_content(center_horizontally=False)

@@ -22,7 +22,7 @@ class MidiPlayerStyle(AppEditorStyle):
     TRACK_LABEL_WIDTH = 110
     TRACK_NUMBER_WIDTH = 18
     TRACK_ICON_SIZE = 18
-    TRACK_CHANNEL_WIDTH = 52
+    TRACK_CHANNEL_WIDTH = 68  # «Ch 10» and the arrows
 
     # Muted timeline channel colours (RGBA)
     CHANNEL_COLORS = {
@@ -79,17 +79,22 @@ class MidiPlayerStyle(AppEditorStyle):
 
     @classmethod
     def spin_box_stylesheet(cls) -> str:
-        """Channel spin: grey idle top border; accent when focused."""
+        """Channel spin: grey idle top border; accent when focused.
+
+        Its arrows narrower than the app's (22 px) and the text kept clear of
+        them: «padding: 1px» here undid the app's room for the arrows, which
+        then covered «Ch 10»."""
         return f"""
         QSpinBox {{
             background-color: {cls.SURFACE_ALT};
             border: none;
             border-top: 2px solid {cls.BORDER};
             border-radius: 0;
-            padding: 1px;
+            padding: 1px 16px 1px 2px;
             color: {cls.TEXT};
             font-size: {cls.FONT_CONTROL};
         }}
+        QSpinBox::up-button, QSpinBox::down-button {{ width: 14px; }}
         QSpinBox:focus {{
             border-top: 2px solid {cls.ACCENT};
         }}

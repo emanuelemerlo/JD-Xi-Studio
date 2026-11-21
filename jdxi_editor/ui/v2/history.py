@@ -35,6 +35,9 @@ ALL_PARTS = TONE_PARTS + (PROGRAM,)
 CHANNEL_PARTS = {0: (DIGITAL_1,), 1: (DIGITAL_2,), 2: (ANALOG,), 9: (DRUMS,), 15: ALL_PARTS}
 
 _histories: "weakref.WeakSet[EditHistory]" = weakref.WeakSet()
+# the steps taken back, in order (history, step id): the whole-program Redo brings back
+# the last one still there (the stacks keep older steps a new change did not clear)
+_undone: list = []
 _last_edited: Optional[weakref.ref] = None
 _ids = itertools.count(1)
 _paused = 0
@@ -216,6 +219,8 @@ class EditHistory(QObject):
             return False  # nothing changed: the step stays where it was
         self._undo.pop()
         self._redo.append(edit)
+        _undone.append((weakref.ref(self), edit.id))  # for the whole-program Redo
+        del _undone[:-MAX_STEPS * 4]
         self._sealed = True
         self._update()
         if _linked and edit.tx is not None:  # the same action in the other editors
@@ -330,6 +335,104 @@ class EditHistory(QObject):
             self._modified = modified
             self.modifiedChanged.emit(modified)
         self.stateChanged.emit()
+        _hub().changed.emit()
+
+
+class _Hub(QObject):
+    """Any history changed (for the whole-program Undo of the Programs page)."""
+
+    changed = Signal()
+
+
+_the_hub: Optional[_Hub] = None
+
+
+def _hub() -> _Hub:
+    global _the_hub
+    if _the_hub is None or not _alive(_the_hub):
+        _the_hub = _Hub()
+    return _the_hub
+
+
+class ProgramHistory(QObject):
+    """
+    The whole program's changes, for the Programs page: Undo takes back the
+    last change made in any tab (the mixer's Pan in Program settings, a fader
+    in Digital 1…), Redo brings back the last one taken back. Each step stays
+    in its own editor's history: this only finds which one.
+    """
+
+    modifiedChanged = Signal(bool)
+    stateChanged = Signal()
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.part = ""  # not one part: the context line speaks of the whole program
+        self.label = tr("Program")
+        self._modified = False
+        _hub().changed.connect(self._changed)
+
+    def _changed(self) -> None:
+        modified = self.modified
+        if modified != self._modified:
+            self._modified = modified
+            self.modifiedChanged.emit(modified)
+        self.stateChanged.emit()
+
+    @property
+    def modified(self) -> bool:
+        return any(h.modified for h in histories())
+
+    @staticmethod
+    def _next_undo() -> Optional[EditHistory]:
+        found = [h for h in histories() if h._undo]
+        return max(found, key=lambda h: h._undo[-1].id) if found else None
+
+    @staticmethod
+    def _next_redo() -> Optional[EditHistory]:
+        """The editor of the last step taken back that can still come back."""
+        while _undone:
+            ref, step = _undone[-1]
+            history = ref()
+            if _alive(history) and history._redo and history._redo[-1].id == step:
+                return history
+            _undone.pop()  # gone, redone, or cleared by a new change
+        return None
+
+    def can_undo(self) -> bool:
+        return self._next_undo() is not None
+
+    def can_redo(self) -> bool:
+        return self._next_redo() is not None
+
+    def undo(self) -> bool:
+        target = self._next_undo()
+        return target.undo() if target is not None else False
+
+    def redo(self) -> bool:
+        target = self._next_redo()
+        return target.redo() if target is not None else False
+
+    @staticmethod
+    def _describe(history: Optional[EditHistory], edit) -> str:
+        if history is None or edit is None:
+            return ""
+        names = []
+        for pv in edit.changes:
+            info = getattr(pv, "info", None)
+            name = getattr(info, "label", "") or getattr(getattr(pv, "param", None), "name", "")
+            if name and name not in names:
+                names.append(name)
+        what = ", ".join(names[:2]) + ("…" if len(names) > 2 else "")
+        return f"{what} ({history.label})" if what else history.label
+
+    def undo_text(self) -> str:
+        target = self._next_undo()
+        return self._describe(target, target._undo[-1] if target is not None else None)
+
+    def redo_text(self) -> str:
+        target = self._next_redo()
+        return self._describe(target, target._redo[-1] if target is not None else None)
 
 
 # ---------------------------------------------------------------- all editors

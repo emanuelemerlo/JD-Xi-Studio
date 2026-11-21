@@ -61,6 +61,17 @@ PARTS = (
 )
 
 
+def _value_named(editor, name: str):
+    """The ParamValue called *name* in *editor* (None: no editor yet, or no such value)."""
+    values = getattr(editor, "values", None)
+    if not values:
+        return None
+    for spec, pv in values.items():
+        if getattr(spec, "name", None) == name:
+            return pv
+    return None
+
+
 def small(knob) -> None:
     """A mixer knob: two side by side in a strip as wide as its tone's name."""
     knob.SIZE = 34
@@ -513,6 +524,11 @@ class ProgramEditor(_program.ProgramEditor):
         first.addWidget(self.write_button)
         first.addWidget(self.rename_button)
         first.addStretch()
+        # Undo / Redo of the whole program: the last change in any tab (the mixer's
+        # Pan, sends and faders are values of Program settings and of the parts)
+        self.edit_buttons = self._program_undo_buttons()
+        for button in self.edit_buttons:
+            first.addWidget(button)
         actions.addLayout(first)
         second = QHBoxLayout()
         second.addWidget(self.advanced_button)
@@ -551,6 +567,7 @@ class ProgramEditor(_program.ProgramEditor):
         mixer_layout.addWidget(_note(tr("Click a tone to choose another for that part; Edit opens the part's editor.")))
         self.part_tones: dict[str, QPushButton] = {}
         self._add_part_controls()
+        self._dress_strips()
         # Pan, Delay, Reverb above each fader: the values of Program settings
         # (made when the instrument is there, once its editors are)
         self.part_sends: dict = {}
@@ -559,9 +576,15 @@ class ProgramEditor(_program.ProgramEditor):
         QTimer.singleShot(0, self._add_part_sends)
 
         right = QVBoxLayout()
-        right.setSpacing(12)
+        right.setSpacing(0)
+        # its top level with the library card's (on a low screen the library sits in a
+        # tab, under the tab bar): set from the cards' places, see _align_mixer
+        self._mixer_top = QWidget()
+        self._mixer_top.setFixedHeight(0)
+        right.addWidget(self._mixer_top)
         right.addWidget(mixer_card)
         right.addStretch()
+        self._library_card, self._mixer_card = library_card, mixer_card
 
         top = QHBoxLayout()
         top.setSpacing(12)
@@ -724,6 +747,75 @@ class ProgramEditor(_program.ProgramEditor):
 
     # --- parts
 
+    def _dress_strips(self) -> None:
+        """
+        Each strip a column of its own: a light line between the parts (the knobs
+        above the faders ran into one another), the same width for all, and the
+        part's name at the bottom, over its tone, instead of at the top.
+        """
+        tracks = self.mixer_widget.tracks
+        self.strip_names = []
+        for index, track in enumerate(tracks):
+            strip = track.slider.parentWidget()
+            layout = strip.layout() if strip is not None else None
+            if layout is None:
+                continue
+            label = getattr(track.slider, "label", None)
+            text, colour = (label.text(), "#e6e8eb") if label is not None else ("", "#e6e8eb")
+            if label is not None:
+                colour = track.slider.property("strip_colour") or colour
+                taken = label.sizeHint().height() + track.slider.layout().spacing()
+                label.setVisible(False)
+                track.slider.setFixedHeight(track.slider.maximumHeight() - taken)
+            name = QLabel(text)
+            name.setObjectName("mixerStripName")
+            name.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            name.setStyleSheet(f"QLabel#mixerStripName {{ color: {colour}; font-size: 13px; font-weight: 700;"
+                               " background: transparent; }")
+            mute = getattr(strip, "mute", None)
+            at = layout.indexOf(mute) + 1 if mute is not None else layout.count()
+            layout.insertWidget(at, name, 0, Qt.AlignmentFlag.AlignHCenter)
+            self.strip_names.append(name)
+            strip.setObjectName("mixerStrip")
+            strip.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+            line = "border-left: 1px solid #2e3138;" if index else "border: 0;"
+            strip.setStyleSheet(f"QWidget#mixerStrip {{ {line} background: transparent; }}")
+        self._equal_strips()
+
+    def _equal_strips(self) -> None:
+        """Every strip as wide as the widest (its content, not a set number: 130 px each made
+        the compact page too wide with Windows' fonts), so the lines between them are even."""
+        strips = [t.slider.parentWidget() for t in self.mixer_widget.tracks]
+        strips = [s for s in strips if s is not None]
+        for strip in strips:
+            strip.setMinimumWidth(0)
+        width = max((s.sizeHint().width() for s in strips), default=0)
+        for strip in strips:
+            strip.setMinimumWidth(width)
+
+    def _program_undo_buttons(self) -> list:
+        from jdxi_editor.ui.v2.history import ProgramHistory
+
+        self.program_history = history = ProgramHistory(self)
+        holder = QWidget()  # edit_controls reads editor.history
+        holder.history = history
+        from jdxi_editor.ui.v2.restyle import edit_controls
+
+        _mark, buttons = edit_controls(holder)  # the context line already says «modified»
+        undo, redo = buttons
+
+        def tips() -> None:
+            what = history.undo_text()
+            undo.setToolTip(tr("Undo: {what} (Ctrl+Z)").format(what=what) if what
+                            else tr("Undo the last change to the program, in any tab (Ctrl+Z)"))
+            what = history.redo_text()
+            redo.setToolTip(tr("Redo: {what} (Ctrl+Y)").format(what=what) if what
+                            else tr("Redo the last change taken back (Ctrl+Y)"))
+
+        history.stateChanged.connect(tips)
+        tips()
+        return buttons
+
     def _add_part_controls(self) -> None:
         """Under each part's strip: its tone (click: choose another), channel and Edit."""
         colours = _part_colours()
@@ -802,7 +894,54 @@ class ProgramEditor(_program.ProgramEditor):
         spacer = QWidget()  # the Master has no pan or sends: its fader level with the others
         spacer.setFixedHeight(tallest)
         self._above_level(self.mixer_widget.tracks[0], spacer)
+        self._equal_strips()  # the knobs made the parts' strips wider than the Master's
         self._read_parts()  # the current program's pan and sends
+        self._link_levels()
+
+    # the faders, Master first: whose value each one is
+    LEVELS = ((None, "PROGRAM_LEVEL"), ("digital1", "TONE_LEVEL"), ("digital2", "TONE_LEVEL"),
+              ("drums", "KIT_LEVEL"), ("analog", "AMP_LEVEL"))
+
+    def _link_levels(self, tries: int = 0) -> None:
+        """
+        Each fader is the level of its editor (Digital 1's Tone Level…; the Master:
+        Program settings' Program Level): moving it changes that value, so it is
+        an edit with its Undo and «modified», and the knob in the part's tab
+        moves with it. (The faders sent the level on their own: nothing knew.)
+        """
+        instrument = self._instrument()
+        if instrument is None:
+            return
+        links = self.__dict__.setdefault("level_links", {})
+        missing = False
+        for index, (key, name) in enumerate(self.LEVELS):
+            if index in links or index >= len(self.mixer_widget.tracks):
+                continue
+            editor = getattr(self, "program_settings", None) if key is None else instrument._tab_editor(key)
+            pv = _value_named(editor, name)
+            if pv is None:
+                missing = True  # its editor is still being made at startup
+                continue
+            slider = self.mixer_widget.tracks[index].slider
+            inner = getattr(slider, "slider", None)
+            if inner is not None and (inner.minimum(), inner.maximum()) != (pv.minimum, pv.maximum):
+                from decologr import Decologr as log
+
+                log.warning(f"mixer: {name} range differs from the fader's, not linked", scope="Programs")
+                links[index] = None
+                continue
+            try:
+                slider.valueChanged.disconnect()  # it sent the level by itself
+            except (RuntimeError, TypeError):
+                pass
+            slider.valueChanged.connect(pv.setValue)
+            pv.watch(lambda value, slider=slider: slider.value() != value and slider.setValueSilently(value),
+                     now=False)
+            links[index] = pv
+        if missing and tries < 20:
+            from PySide6.QtCore import QTimer
+
+            QTimer.singleShot(500, lambda: self._link_levels(tries + 1))
 
     def _part_requests(self) -> list:
         settings = getattr(self, "program_settings", None)
@@ -943,6 +1082,32 @@ class ProgramEditor(_program.ProgramEditor):
         instrument = self._instrument()
         if instrument is not None and 0 <= row < len(PARTS):
             instrument.show_editor(PARTS[row][2])
+
+    def _align_mixer(self) -> None:
+        """The mixer card's top level with the library card's."""
+        library, mixer = getattr(self, "_library_card", None), getattr(self, "_mixer_card", None)
+        spacer = getattr(self, "_mixer_top", None)
+        if library is None or mixer is None or spacer is None or not library.isVisible():
+            return
+        try:
+            delta = library.mapTo(self, library.rect().topLeft()).y() - mixer.mapTo(self, mixer.rect().topLeft()).y()
+        except RuntimeError:
+            return
+        height = max(0, spacer.height() + delta)
+        if height != spacer.height():
+            spacer.setFixedHeight(height)
+
+    def showEvent(self, event) -> None:
+        super().showEvent(event)
+        from PySide6.QtCore import QTimer
+
+        QTimer.singleShot(0, self._align_mixer)
+
+    def resizeEvent(self, event) -> None:
+        super().resizeEvent(event)
+        from PySide6.QtCore import QTimer
+
+        QTimer.singleShot(0, self._align_mixer)
 
     def open_advanced(self) -> None:
         instrument = self._instrument()

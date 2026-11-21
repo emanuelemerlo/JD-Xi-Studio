@@ -225,3 +225,19 @@ def test_scale_view_drag_retunes_a_note(editor):
         QApplication.sendEvent(view, QMouseEvent(kind, pos, pos, Qt.MouseButton.LeftButton,
                                                  Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier))
     assert view.notes[4].value() == 63
+
+
+def test_built_when_shown_only_values_first(app):
+    """Made for the Programs mixer (no tab): values and dependencies at once, the cards
+    (~1 s of widgets) the first time it is shown."""
+    editor = pg.ProgramPartsEditor(FakeHelper(), Mock(), build_when_shown=True)
+    assert not editor.panels_built and not hasattr(editor, "section_buttons")
+    output = editor.part("PART_OUTPUT_ASSIGN", 0)
+    output.setValue(4)  # DIR: the sends off, also with no cards yet
+    assert not editor.part("PART_DELAY_SEND_LEVEL", 0).is_enabled()
+    editor.show()
+    QApplication.processEvents()
+    assert editor.panels_built and editor.section_buttons.button(0).isChecked()
+    editor.close()
+    editor.deleteLater()
+    QApplication.processEvents()
