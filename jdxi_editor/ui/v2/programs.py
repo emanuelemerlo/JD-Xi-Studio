@@ -576,9 +576,15 @@ class ProgramEditor(_program.ProgramEditor):
         QTimer.singleShot(0, self._add_part_sends)
 
         right = QVBoxLayout()
-        right.setSpacing(12)
+        right.setSpacing(0)
+        # its top level with the library card's (on a low screen the library sits in a
+        # tab, under the tab bar): set from the cards' places, see _align_mixer
+        self._mixer_top = QWidget()
+        self._mixer_top.setFixedHeight(0)
+        right.addWidget(self._mixer_top)
         right.addWidget(mixer_card)
         right.addStretch()
+        self._library_card, self._mixer_card = library_card, mixer_card
 
         top = QHBoxLayout()
         top.setSpacing(12)
@@ -1066,6 +1072,32 @@ class ProgramEditor(_program.ProgramEditor):
         instrument = self._instrument()
         if instrument is not None and 0 <= row < len(PARTS):
             instrument.show_editor(PARTS[row][2])
+
+    def _align_mixer(self) -> None:
+        """The mixer card's top level with the library card's."""
+        library, mixer = getattr(self, "_library_card", None), getattr(self, "_mixer_card", None)
+        spacer = getattr(self, "_mixer_top", None)
+        if library is None or mixer is None or spacer is None or not library.isVisible():
+            return
+        try:
+            delta = library.mapTo(self, library.rect().topLeft()).y() - mixer.mapTo(self, mixer.rect().topLeft()).y()
+        except RuntimeError:
+            return
+        height = max(0, spacer.height() + delta)
+        if height != spacer.height():
+            spacer.setFixedHeight(height)
+
+    def showEvent(self, event) -> None:
+        super().showEvent(event)
+        from PySide6.QtCore import QTimer
+
+        QTimer.singleShot(0, self._align_mixer)
+
+    def resizeEvent(self, event) -> None:
+        super().resizeEvent(event)
+        from PySide6.QtCore import QTimer
+
+        QTimer.singleShot(0, self._align_mixer)
 
     def open_advanced(self) -> None:
         instrument = self._instrument()

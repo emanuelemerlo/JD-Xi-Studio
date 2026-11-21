@@ -144,3 +144,15 @@ def test_the_faders_are_the_editors_levels_and_programs_undoes_them(window):
     # back as it was, nothing left modified for the next tests
     for h in history.histories():
         h.reset()
+
+
+def test_the_mixer_card_is_level_with_the_library(window):
+    app = QApplication.instance()
+    programs = window._tab_editor("program")
+    window._show_main_editor()
+    window.main_editor.editor_tab_widget.setCurrentWidget(programs)
+    for _ in range(10):
+        app.processEvents()
+    library, mixer = programs._library_card, programs._mixer_card
+    top = lambda w: w.mapTo(programs, w.rect().topLeft()).y()  # noqa: E731
+    assert top(library) == top(mixer)
