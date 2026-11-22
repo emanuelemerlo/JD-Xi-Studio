@@ -5324,7 +5324,7 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
             <translation>Collega il JD-Xi per scegliere un tono</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="829" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="838" />
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="251" />
             <source>Edit</source>
             <translation>Modifica</translation>
@@ -5352,32 +5352,32 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
             <translation>Carica {program}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="801" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="810" />
             <source>Undo the last change to the program, in any tab (Ctrl+Z)</source>
             <translation>Annulla l'ultima modifica al programma, in qualunque scheda (Ctrl+Z)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="804" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="813" />
             <source>Redo the last change taken back (Ctrl+Y)</source>
             <translation>Ripeti l'ultima modifica annullata (Ctrl+Y)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="873" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="882" />
             <source>Pan</source>
             <translation>Pan</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="874" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="883" />
             <source>Delay</source>
             <translation>Delay</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="875" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="884" />
             <source>Reverb</source>
             <translation>Reverb</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="992" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="1002" />
             <source>Tone of {part}</source>
             <translation>Tono di {part}</translation>
         </message>
@@ -5407,17 +5407,17 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
             <translation>Genere di {program}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="823" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="832" />
             <source>Choose another tone for {part}</source>
             <translation>Scegli un altro tono per {part}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="827" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="836" />
             <source>Ch. {n}</source>
             <translation>Can. {n}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="830" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="839" />
             <source>Open the {part} editor</source>
             <translation>Apri l'editor di {part}</translation>
         </message>
@@ -5427,12 +5427,12 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
             <translation>utente</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="800" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="809" />
             <source>Undo: {what} (Ctrl+Z)</source>
             <translation>Annulla: {what} (Ctrl+Z)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/programs.py" line="803" />
+            <location filename="../../jdxi_editor/ui/v2/programs.py" line="812" />
             <source>Redo: {what} (Ctrl+Y)</source>
             <translation>Ripeti: {what} (Ctrl+Y)</translation>
         </message>
@@ -7403,51 +7403,51 @@ Posizione prevista: {path}</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="136" />
-            <source>Amp Envelope: Sets the amplifier envelope depth for all MIDI channels</source>
-            <translation>Amp Envelope: profondità dell'inviluppo d'ampiezza su tutti i canali MIDI</translation>
+            <source>Amp Envelope: shorter or longer than the program's envelope, for all MIDI channels (in the middle: the program as saved; back there with every program)</source>
+            <translation>Inviluppo dell'amplificatore: più corto o più lungo di quello del programma, per tutti i canali MIDI (al centro: il programma come è salvato; ci torna a ogni cambio di programma)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="141" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="142" />
             <source>LFO Rate: Sets the LFO rate (speed) for all MIDI channels</source>
             <translation>LFO Rate: velocità dell'LFO su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="146" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="147" />
             <source>LFO Pitch Depth: Sets the LFO pitch modulation depth for all MIDI channels</source>
             <translation>LFO Pitch Depth: modulazione d'intonazione dell'LFO su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="151" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="152" />
             <source>LFO Filter Depth: Sets the LFO filter modulation depth for all MIDI channels</source>
             <translation>LFO Filter Depth: modulazione del filtro dell'LFO su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="156" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="157" />
             <source>LFO Amp Depth: Sets the LFO amplitude modulation depth for all MIDI channels</source>
             <translation>LFO Amp Depth: modulazione d'ampiezza dell'LFO su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="161" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="162" />
             <source>Effect 1: Sets the Effect 1 send level for all MIDI channels</source>
             <translation>Effect 1: mandata all'Effect 1 su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="166" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="167" />
             <source>Effect 2: Sets the Effect 2 send level for all MIDI channels</source>
             <translation>Effect 2: mandata all'Effect 2 su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="171" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="172" />
             <source>LFO Shape: Sets the LFO waveform shape for all MIDI channels</source>
             <translation>LFO Shape: forma d'onda dell'LFO su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="175" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="176" />
             <source>Delay: Sets the delay send level for all MIDI channels</source>
             <translation>Delay: mandata al delay su tutti i canali MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="178" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/containers/sliders.py" line="179" />
             <source>Reverb: Sets the reverb send level for all MIDI channels</source>
             <translation>Reverb: mandata al reverb su tutti i canali MIDI</translation>
         </message>
@@ -7462,7 +7462,7 @@ Posizione prevista: {path}</translation>
             <translation>Tono giù: passa al preset/tono precedente</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/windows/jdxi/follow.py" line="318" />
+            <location filename="../../jdxi_editor/ui/windows/jdxi/follow.py" line="321" />
             <source>The JD-Xi does not take program changes ({problem}): on the JD-Xi, MENU › SYSTEM › MIDI</source>
             <translation>Il JD-Xi non accetta i cambi di programma ({problem}): sul JD-Xi, MENU › SYSTEM › MIDI</translation>
         </message>
@@ -8702,6 +8702,10 @@ Il suono sul JD-Xi viene sostituito: se vuoi tenerlo, salvalo prima sul JD-Xi (W
             <location filename="../../jdxi_editor/ui/windows/selftest.py" line="865" />
             <source>report not saved: {error}</source>
             <translation>resoconto non salvato: {error}</translation>
+        </message>
+        <message>
+            <source>Amp Envelope: Sets the amplifier envelope depth for all MIDI channels</source>
+            <translation type="vanished">Amp Envelope: profondità dell'inviluppo d'ampiezza su tutti i canali MIDI</translation>
         </message>
         <message>
             <source>More room for the tracks: hide Fit to the JD-Xi, Automation, USB recorder and Event filter (Player and Playback stay)</source>

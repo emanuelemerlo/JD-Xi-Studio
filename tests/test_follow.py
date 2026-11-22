@@ -482,3 +482,14 @@ def test_middle_c_is_marked_where_it_sounds(window):
     window.current_octave = 0
     window._ui_update_octave()
     assert marked() == [60]
+
+
+def test_env_slider_back_to_the_middle_with_every_program(window):
+    """The JD-Xi loads a program as saved, its ENV knob counting only once turned."""
+    env = window.panel_sliders["envelope"]
+    env.setValueSilently(10)  # turned in the app
+    receive(window, mido.Message("program_change", channel=15, program=3))  # chosen on the JD-Xi
+    assert env.value() == 64
+    env.setValueSilently(120)
+    window.follower.on_outgoing(mido.Message("program_change", channel=15, program=4))  # chosen in the app
+    assert env.value() == 64

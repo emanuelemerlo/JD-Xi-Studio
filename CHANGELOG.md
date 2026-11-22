@@ -80,6 +80,10 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - Keyboard window › LFO **Rate** slider: it sent NRPN 21–23, the LFO Amp Depth (a copied map
   entry), so it moved the Amp depth — which the Amp slider then showed — and never the LFO rate.
   It now sends Control Change 16–18, as the JD-Xi's knob.
+- Keyboard window › **Env** slider: it started at 0, the shortest envelope — the JD-Xi's ENV knob
+  acts relative to the program, the middle leaving it as saved — so moved there and back the
+  sound was gone. It starts in the middle and goes back there with every program, chosen in the
+  app or on the JD-Xi (which loads a program as saved, its knob counting only once turned).
 - MIDI Player › Automation: each type offers its own presets — Analog offered the drum kits (and
   Digital too, once changed), so the program change went to a bank the JD-Xi part ignores. The
   type now follows the channel: 3 Analog, 10 Drums, the others Digital (it can still be changed).

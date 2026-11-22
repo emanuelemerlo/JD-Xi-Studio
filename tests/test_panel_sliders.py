@@ -48,3 +48,13 @@ def test_rate_and_amp_depth_are_different_controls():
     assert "LFO_Rate" not in nrpn  # a copy of LFO_Amp's numbers
     assert DigitalControlChange.get_cc_map("LFO_Rate") == {1: 16, 2: 17, 3: 18}
     assert nrpn["LFO_Amp"] == {1: 21, 2: 22, 3: 23}
+
+
+def test_env_starts_in_the_middle_and_sends_nothing(app):
+    """ENV acts relative to the program: the middle is the program as saved (0 silenced it)."""
+    from jdxi_editor.ui.widgets.midi.slider.amp.envelope import AmpEnvelopeSlider
+
+    helper = _Helper()
+    slider = AmpEnvelopeSlider(helper)
+    assert slider.value() == 64
+    assert helper.nrpn == [] and helper.cc == []
