@@ -168,6 +168,13 @@ jobs:
           set -euo pipefail
           if gh release view "$TAG" --json isDraft --jq .isDraft > state.txt 2>/dev/null; then
             if [ "$(cat state.txt)" != "true" ]; then
+              # The Release workflow pushes the tag and publishes the release with
+              # these files itself: this tag-push run has nothing left to do.
+              installer=$(basename dist/installer/*.exe)
+              if gh release view "$TAG" --json assets --jq '.assets[].name' | grep -qxF "$installer"; then
+                echo "::notice::Release $TAG is already published with the Windows files (by the Release workflow): nothing to attach."
+                exit 0
+              fi
               echo "::error::Release $TAG already exists and is published, so files cannot be added. Delete it on GitHub (keep the tag) and re-run this workflow; it will create the release with the files."
               exit 1
             fi
