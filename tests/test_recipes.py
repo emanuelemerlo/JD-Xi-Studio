@@ -344,3 +344,25 @@ def test_an_empty_editor_takes_a_whole_part(app, monkeypatch):
     filled = sum(1 for r in range(w.ed_table.rowCount()) if w.ed_table.item(r, 7) and w.ed_table.item(r, 7).text())
     assert filled >= count - 2
     w.close()
+
+
+def test_rows_a_recipe_writes_the_way_the_jdxi_shows_them():
+    """«Jungle Gardenia lead»: three rows to fix or confirm blocked «Import the recipe»."""
+    from jdxi_editor.recipes import check as rcheck
+    from jdxi_editor.recipes.model import Recipe, Row
+
+    def one(param, value, group="COMMON", su=""):
+        row = Row(1, "Step", "D1", group, su, param, "valore", value)
+        [c] = rcheck.check(Recipe(title="t", rows=[row]))
+        return c
+
+    mono = one("Mono/Poly", "MONO")  # one parameter with a slash in its name, not two
+    assert mono.status == "ok" and mono.parsed.value == 1
+    bend = one("Bend Range D", "-2")  # two semitones down, as the JD-Xi stores it
+    assert bend.status == "ok" and bend.parsed.value == 2
+    for text, value in (("C", 0), ("L40", -40), ("40R", 40), ("R12", 12), ("12L", -12)):
+        pan = one("Pan", text, group="AMP", su="P3")
+        assert pan.status == "ok" and pan.parsed.value == value, text
+    # «Attack / Decay» is still two rows
+    split = rcheck.check(Recipe(title="t", rows=[Row(1, "S", "D1", "AMP", "P1", "Attack / Decay", "valore", "0 / 40")]))
+    assert [c.parsed.value for c in split] == [0, 40]

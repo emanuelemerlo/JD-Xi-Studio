@@ -62,9 +62,15 @@ def pan_text(value: int) -> str:
 
 def pan_parse(text: str) -> Optional[int]:
     t = text.strip().upper().replace(" ", "")
+    if t in ("C", "CENTER", "CENTRE", "CENTRO", "CTR", "MID"):
+        return 0
     try:
         if t.startswith("L"):
             return -int(t[1:])
+        if t.endswith("L"):  # «20L»
+            return -int(t[:-1])
+        if t.startswith("R"):  # «R20»
+            return int(t[1:])
         if t.endswith("R"):
             return int(t[:-1])
         return int(t)
