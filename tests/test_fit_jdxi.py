@@ -78,3 +78,53 @@ def test_the_dialog_returns_only_the_moves():
     dialog.combos[2].setCurrentIndex(dialog.combos[2].findData(fit.NOT_PLAYED))
     assert dialog.changes() == {3: fit.OFF_CHANNEL}  # left on 5: nothing to move
     assert "stays on channel 5" in dialog.combos[2].currentText()
+
+
+def test_the_dialog_can_show_the_parts_as_they_are_now():
+    song = _song([1, 5, 2])
+    tracks = fit.note_tracks(song)  # 1: ch 1, 2: ch 5, 3: ch 2
+    proposal = {1: 10, 2: 3, 3: fit.NOT_PLAYED}
+    dialog = fit.FitDialog(tracks, proposal, start_as_now=True)
+    assert dialog.changes() == {}  # as now: nothing to move
+    assert dialog.combos[2].currentData() == fit.NOT_PLAYED  # channel 5: on no part
+    dialog.proposal_button.click()
+    assert dialog.changes() == {1: 10, 2: 3, 3: fit.OFF_CHANNEL}
+    dialog.as_now_button.click()
+    assert dialog.changes() == {}
+
+
+def test_after_apply_the_dialog_shows_what_was_applied(tmp_path, monkeypatch):
+    """It showed the proposal again, as if nothing had been applied."""
+    from unittest.mock import Mock
+
+    from PySide6.QtWidgets import QDialog
+
+    from jdxi_editor.midi.io.helper import MidiIOHelper
+    from jdxi_editor.ui.editors.midi_player.editor import MidiFilePlayer
+
+    path = tmp_path / "song.mid"
+    _song([5, 6]).save(path)
+    helper = Mock(spec=MidiIOHelper)
+    helper.midi_out = Mock()
+    editor = MidiFilePlayer(midi_helper=helper)
+    shown = []
+
+    def run(dialog):
+        shown.append({i: c.currentData() for i, c in dialog.combos.items()})
+        if len(shown) == 1:  # the first time: Digital 2 for the first track
+            dialog.combos[1].setCurrentIndex(dialog.combos[1].findData(2))
+            dialog.combos[2].setCurrentIndex(dialog.combos[2].findData(fit.NOT_PLAYED))
+        return QDialog.DialogCode.Accepted
+
+    monkeypatch.setattr(fit.FitDialog, "exec", run)
+    try:
+        editor.midi_load_file_from_path(str(path), update_recent_files=False)
+        editor.fit_tracks_to_jdxi()
+        editor.fit_tracks_to_jdxi()
+        assert shown[1] == {1: 2, 2: fit.NOT_PLAYED}
+        # another file: its proposal again
+        editor.midi_load_file_from_path(str(path), update_recent_files=False)
+        assert editor._fit_applied is False
+    finally:
+        editor.transport_controller.shutdown()
+        editor.close()

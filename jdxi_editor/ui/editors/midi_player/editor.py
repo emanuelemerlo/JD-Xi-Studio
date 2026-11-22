@@ -176,6 +176,7 @@ class MidiFilePlayer(SynthEditor):
         self._loop_points: tuple[Optional[float], Optional[float]] = (None, None)
         self._loading_file = False
         self._edited = False  # changed since loaded or saved (Close asks first)
+        self._fit_applied = False  # Fit to the JD-Xi applied to this file
         self._preset_names: dict[tuple[int, int, int], str] | None = None
         self.midi_file_group: MidiFileGroup = MidiFileGroup(
             parent=self, midi_state=self.midi_state
@@ -381,12 +382,16 @@ class MidiFilePlayer(SynthEditor):
         """Propose a JD-Xi part for every track with notes, to check and apply."""
         if not self._validate_midi_loaded():
             return
-        from jdxi_editor.ui.editors.midi_player.fit_jdxi import FitDialog, note_tracks, propose
+        from jdxi_editor.ui.editors.midi_player.fit_jdxi import FitDialog, note_tracks, propose, summary
 
         tracks = note_tracks(self.midi_state.file)
         drums = self._detect_drum_tracks()
         proposal = propose(tracks, drums, self._classify_tracks(drums))
-        dialog = FitDialog(tracks, proposal, parent=self)
+        # once applied (or a file already on the JD-Xi's parts) the dialog
+        # shows the parts as they are: it showed the proposal again, as if
+        # nothing had been applied
+        as_now = self._fit_applied or summary(self.midi_state.file)[1]
+        dialog = FitDialog(tracks, proposal, parent=self, start_as_now=as_now)
         if dialog.exec() != QDialog.DialogCode.Accepted:
             return
         spins = self.midi_file.midi_track_viewer.track_channel_spins
@@ -395,6 +400,7 @@ class MidiFilePlayer(SynthEditor):
             if spin is not None:
                 spin.setValue(channel)  # applied like an edit by hand
         self.midi_file.midi_track_viewer.flush_pending_edits()
+        self._fit_applied = True
         self._refresh_fit_summary()
 
     def _refresh_fit_summary(self) -> None:
@@ -1303,6 +1309,7 @@ class MidiFilePlayer(SynthEditor):
         self.midi_state.events = []
         self._midi_file_path = None
         self._edited = False
+        self._fit_applied = False
         viewer = self.midi_file.midi_track_viewer
         viewer.clear()
         self._loop_points = (None, None)
@@ -1476,6 +1483,7 @@ class MidiFilePlayer(SynthEditor):
         if notify_pattern_sequencer:
             self._notify_pattern_sequencer_file_loaded()
         self._edited = False
+        self._fit_applied = False
         self._file_state_changed()
 
         # Add to recent files if parent has recent_files_manager

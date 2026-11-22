@@ -80,6 +80,13 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   mid-song comes with its bank select; a track's velocity scale at 0 silences it.
 
 ### Fixed
+- MIDI Player › Assign the tracks to the parts: opened again after Apply it showed its proposal
+  again, as if nothing had been applied. Once applied (or with a file already on the JD-Xi's
+  parts) it shows each track on the part it is on now; **As now** and **Proposal** switch between
+  the two.
+- The program the JD-Xi reports was written to the program database at every re-read of the shown
+  part — three writes every 2 seconds while the JD-Xi was quiet, and as many renames in the log.
+  Now only when it changes.
 - MIDI Player: notes left hanging until Panic when two tracks on one channel played the same note
   (a doubled part, the left and right copies of a lead put on the same part). Each note-on started
   a voice on the JD-Xi but only one note-off came, when the last copy ended. A note-on for a key

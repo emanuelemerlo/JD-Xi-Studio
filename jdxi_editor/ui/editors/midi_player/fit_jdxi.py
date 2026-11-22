@@ -125,14 +125,26 @@ def propose(tracks: list[TrackInfo], drum_indices: list[int], classifications: d
     return proposal
 
 
+def current(tracks: list[TrackInfo]) -> dict[int, int]:
+    """Track index -> the part it is on now (1-based channel; NOT_PLAYED: on no part)."""
+    return {t.index: t.channel if t.channel in JDXI_PARTS else NOT_PLAYED for t in tracks}
+
+
 class FitDialog(QDialog):
     """One row per track with notes: where it is, and the part proposed for it."""
 
     CHOICES = [(1, "Digital 1 (channel 1)"), (2, "Digital 2 (channel 2)"),
                (3, "Analog (channel 3)"), (10, "Drums (channel 10)")]
 
-    def __init__(self, tracks: list[TrackInfo], proposal: dict[int, int], parent: Optional[QWidget] = None):
+    def __init__(self, tracks: list[TrackInfo], proposal: dict[int, int], parent: Optional[QWidget] = None,
+                 start_as_now: bool = False):
+        """
+        :param proposal: the part proposed for each track
+        :param start_as_now: show the parts the tracks are on now (after an Apply,
+            or a file already fitted), not the proposal; both a button away
+        """
         super().__init__(parent)
+        self.proposal = proposal
         self.setWindowTitle(tr("Fit to the JD-Xi"))
         self.resize(720, 520)
         self.tracks = tracks
@@ -162,16 +174,26 @@ class FitDialog(QDialog):
             stay = (tr("Not played (stays on channel {ch})").format(ch=track.channel)
                     if track.channel not in JDXI_PARTS else tr("Not played (to channel {ch})").format(ch=OFF_CHANNEL))
             combo.addItem(stay, NOT_PLAYED)
-            wanted = proposal.get(track.index, NOT_PLAYED)
-            combo.setCurrentIndex(max(0, combo.findData(wanted)))
             self.table.setCellWidget(row, 3, combo)
             self.combos[track.index] = combo
+        self.select(current(tracks) if start_as_now else proposal)
         layout.addWidget(self.table, 1)
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Apply | QDialogButtonBox.StandardButton.Cancel)
+        self.as_now_button = buttons.addButton(tr("As now"), QDialogButtonBox.ButtonRole.ResetRole)
+        self.as_now_button.setToolTip(tr("Each track on the part it is on now"))
+        self.as_now_button.clicked.connect(lambda: self.select(current(self.tracks)))
+        self.proposal_button = buttons.addButton(tr("Proposal"), QDialogButtonBox.ButtonRole.ResetRole)
+        self.proposal_button.setToolTip(tr("Each track on the part proposed for it, by what it plays"))
+        self.proposal_button.clicked.connect(lambda: self.select(self.proposal))
         buttons.button(QDialogButtonBox.StandardButton.Apply).setText(tr("Apply"))
         buttons.button(QDialogButtonBox.StandardButton.Apply).clicked.connect(self.accept)
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
+
+    def select(self, parts: dict[int, int]) -> None:
+        """Choose *parts* (track index -> 1-based channel or NOT_PLAYED) in the Part column."""
+        for index, combo in self.combos.items():
+            combo.setCurrentIndex(max(0, combo.findData(parts.get(index, NOT_PLAYED))))
 
     def _item(self, row: int, column: int, text: str, align=None) -> None:
         item = QTableWidgetItem(text)
