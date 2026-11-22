@@ -64,10 +64,26 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - Programs › Organize: Add to / Remove from playlist over the songs' table (they act on the songs);
   Play, Stop, Pause and **Mix** (was Shuffle Play) in a compact row of their own, with the
   now-playing line beside them.
+- MIDI Player: playback driven by picomidi's deadline scheduler — it sleeps until the next note,
+  clock pulse or loop end instead of looking every 5 ms (on Linux: notes ~0.1 ms late on average
+  instead of ~2.6, at most a few ms instead of 5–6). On Windows a wait on an event ends on the
+  15.6 ms timer tick, and picomidi's engine read time.monotonic(), which before Python 3.13 moves
+  in 15.6 ms steps there (measured, Windows 11 / Python 3.12: notes ~8 ms late on average, up to
+  14–19 ms, with both schedulers). The engine now reads time.perf_counter(); the last 20 ms of
+  each wait are 1 ms sleeps, and the timer resolution is raised to 1 ms while playing. `JDXI_PLAYBACK_SCHEDULER=timer` brings back the earlier one;
+  `scripts/playback_timing.py` measures both on any machine. (After the original project's
+  2a7ff96.)
 - picomidi 0.3: a muted track no longer cuts a note another track holds; a program chased from
   mid-song comes with its bank select; a track's velocity scale at 0 silences it.
 
 ### Fixed
+- MIDI Player › Automation: each type offers its own presets — Analog offered the drum kits (and
+  Digital too, once changed), so the program change went to a bank the JD-Xi part ignores. The
+  type now follows the channel: 3 Analog, 10 Drums, the others Digital (it can still be changed).
+  Found in the original project's fixes (markxbrooks/JDXI-Editor).
+- Linux packages (.deb, .rpm, AppImage names): a pre-release is versioned «1.0.0~rc1», «1.0.0~b2»;
+  dpkg and rpm put «1.0.0rc1» after «1.0.0», so a candidate installed from a package would never
+  have been offered the finished release.
 - Programs › Library: a user bank (E–H) shows all its 64 slots; those JD-Xi Studio has not read
   yet appear as «(not read yet)» (G and H looked empty: only programs read once are known).
 - Message boxes: buttons wide enough for their text («Scarta le modifiche» was cut).

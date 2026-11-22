@@ -3,7 +3,9 @@ MIDI File Transport Controller
 
 Single owner of MIDI file playback state. Wraps a PlaybackEngine and handles:
 - Play / pause / stop / seek, with the engine as the only clock
-- Driving the engine from a dedicated thread with a precise timer
+- Driving the engine from a scheduler thread: by default one that sleeps until
+  the next event is due (picomidi's PlaybackScheduler); JDXI_PLAYBACK_SCHEDULER=timer
+  brings back the earlier one, which looked every 5 ms (to compare by ear)
 - Publishing state, position, tempo and end-of-song as Qt signals
 
 UI code calls the transport methods and listens to the signals; it never
@@ -16,7 +18,10 @@ Example:
     >>> transport.play()
 """
 
+import os
+import sys
 import threading
+import time
 from typing import Callable, Optional
 
 import mido
@@ -25,9 +30,138 @@ from PySide6.QtCore import QCoreApplication, QObject, Qt, QThread, QTimer, Signa
 
 from jdxi_editor.midi.playback.activity import playback_activity
 from picomidi.playback.engine import PlaybackEngine, TransportState
+from picomidi.playback.scheduler import PlaybackScheduler
 
-SCHEDULER_INTERVAL_MS = 5
+SCHEDULER_INTERVAL_MS = 5  # the «timer» scheduler only
 POSITION_INTERVAL_MS = 50
+
+
+class PreciseClockEngine(PlaybackEngine):
+    """
+    PlaybackEngine on time.perf_counter().
+
+    picomidi's engine reads time.monotonic(), which on Windows before Python
+    3.13 moves in 15.6 ms steps: woken on time, the engine saw an older time,
+    thought the note not due yet and sent it later — measured on Windows 11 /
+    Python 3.12: ~8 ms late on average, up to 14–19 ms, whatever the
+    scheduler. perf_counter() is precise to the microsecond everywhere.
+    """
+
+    @staticmethod
+    def _now() -> float:  # picomidi 0.3 (pinned < 0.4)
+        return time.perf_counter()
+
+
+def scheduler_kind() -> str:
+    """«deadline» (default): sleep until the next event; «timer»: look every 5 ms."""
+    kind = os.environ.get("JDXI_PLAYBACK_SCHEDULER", "deadline").strip().lower()
+    return "timer" if kind == "timer" else "deadline"
+
+
+class _WindowsTimerResolution:
+    """
+    1 ms timer resolution on Windows while playing.
+
+    A thread's timed wait on Windows ends on the system timer's tick, about
+    15.6 ms by default: the deadline scheduler would wake up to 15 ms late
+    (smeared drums). Qt's precise QTimer raised the resolution by itself; the
+    deadline scheduler asks for it (timeBeginPeriod) only while playing.
+    Elsewhere: nothing to do.
+    """
+
+    def __init__(self) -> None:
+        self._on = False
+
+    def set(self, on: bool) -> None:
+        if on == self._on or sys.platform != "win32":
+            return
+        try:
+            import ctypes
+
+            winmm = ctypes.WinDLL("winmm")
+            result = (winmm.timeBeginPeriod if on else winmm.timeEndPeriod)(1)
+            if result != 0:  # TIMERR_NOERROR
+                log.warning(f"timer resolution request returned {result}", scope="TransportController")
+            self._on = on
+        except (OSError, AttributeError) as ex:
+            log.warning(f"Timer resolution not set: {ex}", scope="TransportController")
+
+
+# the last part of a wait, done in short sleeps (Windows): a timed wait on an
+# event ends on the system timer's tick (15.6 ms), a short sleep does not
+# (Python 3.11+: a high-resolution timer; before, with timeBeginPeriod(1))
+FINE_WAIT_S = 0.020
+FINE_STEP_S = 0.001
+
+
+class _PreciseWaitScheduler(PlaybackScheduler):
+    """
+    PlaybackScheduler whose waits end on time on Windows too.
+
+    Measured on Windows 11 with the plain one: notes ~8 ms late on average,
+    up to 14 ms (an Event.wait() ends on the 15.6 ms timer tick). Here the
+    wait is an Event.wait() for all but its last 20 ms, then 1 ms sleeps that
+    still look for a wake (pause, seek…) between them. Other systems: as is.
+    """
+
+    def _wait_for_wake(self, timeout):  # picomidi 0.3 (pinned < 0.4)
+        if timeout is None or sys.platform != "win32" or timeout <= 0:
+            return super()._wait_for_wake(timeout)
+        deadline = time.perf_counter() + timeout
+        coarse = timeout - FINE_WAIT_S
+        if coarse > 0 and self._wake.wait(coarse):
+            self._wake.clear()
+            return
+        while not self._wake.is_set() and not self._stop.is_set():
+            remaining = deadline - time.perf_counter()
+            if remaining <= 0:
+                break
+            time.sleep(min(remaining, FINE_STEP_S))
+        self._wake.clear()
+
+
+class _DeadlineScheduler:
+    """picomidi's PlaybackScheduler: sleeps until the next event, clock pulse or
+    loop end; woken by every transport command. End of file: *ended* is called
+    on the scheduler thread."""
+
+    def __init__(self, engine, lock, ended: Callable[[], None]):
+        self._scheduler = _PreciseWaitScheduler(engine, lock=lock, on_ended=ended, max_sleep_s=0.25)
+
+    @property
+    def is_running(self) -> bool:
+        return self._scheduler.is_running
+
+    def start(self) -> None:
+        self._scheduler.start()
+
+    def wake(self) -> None:
+        self._scheduler.wake()
+
+    def stop(self) -> None:
+        self._scheduler.stop()
+
+
+class _TimerScheduler:
+    """The earlier scheduler: a thread with a precise QTimer every few ms."""
+
+    def __init__(self, engine, lock, ended: Callable[[], None], interval_ms: int):
+        self._thread = _SchedulerThread(engine, lock, interval_ms)
+        self._thread.ended.connect(ended, Qt.ConnectionType.DirectConnection)
+
+    @property
+    def is_running(self) -> bool:
+        return self._thread.isRunning()
+
+    def start(self) -> None:
+        self._thread.start()
+
+    def wake(self) -> None:
+        pass  # it looks every few ms anyway
+
+    def stop(self) -> None:
+        self._thread.quit()
+        self._thread.wait()
 
 
 class _SchedulerThread(QThread):
@@ -85,6 +219,7 @@ class TransportController(QObject):
     tempo_changed = Signal(int)
     finished = Signal()
     loop_changed = Signal()
+    _scheduler_ended = Signal()  # from the scheduler thread, delivered on the UI thread
 
     def __init__(
         self,
@@ -104,7 +239,7 @@ class TransportController(QObject):
         :param position_interval_ms: How often position_changed is emitted while playing
         """
         super().__init__(parent)
-        self.engine = engine or PlaybackEngine()
+        self.engine = engine or PreciseClockEngine()
         self.send = send
         self.engine.on_event = self._on_engine_event
         # Engine calls (and so MIDI sends) are serialised across both threads
@@ -112,8 +247,11 @@ class TransportController(QObject):
         self._loaded = False
         self._last_state = self.engine.state
         self._last_tempo: Optional[int] = None
-        self._scheduler: Optional[_SchedulerThread] = None
+        self._scheduler = None  # _DeadlineScheduler or _TimerScheduler, made at the first Play
         self._scheduler_interval_ms = scheduler_interval_ms
+        self.scheduler_kind = scheduler_kind()
+        self._timer_resolution = _WindowsTimerResolution()
+        self._scheduler_ended.connect(self._on_scheduler_ended)
         self._loop_range_ticks: Optional[tuple[int, int]] = None
 
         self._position_timer = QTimer(self)
@@ -283,6 +421,7 @@ class TransportController(QObject):
                 )
             self.engine.set_loop(enabled, loop_range)
             self._loop_range_ticks = self.engine.loop_range
+        self._wake_scheduler()  # the loop end may now come sooner
         self.loop_changed.emit()
 
     def clear_loop_range(self) -> None:
@@ -290,12 +429,14 @@ class TransportController(QObject):
         with self._lock:
             self.engine.set_loop(self.engine.loop_enabled, None)
             self._loop_range_ticks = None
+        self._wake_scheduler()
         self.loop_changed.emit()
 
     def set_speed(self, speed: float) -> None:
         """Set playback speed (1.0 = file tempo; 0.25–2.0)."""
         with self._lock:
             self.engine.set_speed(speed)
+        self._wake_scheduler()  # the next event's wall time changed
         self._last_tempo = None  # Re-announce the tempo for the new speed
         self._emit_position()
 
@@ -303,6 +444,7 @@ class TransportController(QObject):
         """Send MIDI clock, Start/Stop/Continue and Song Position Pointer."""
         with self._lock:
             self.engine.set_send_clock(enabled)
+        self._wake_scheduler()  # clock pulses are deadlines too
 
     def panic(self) -> None:
         """Send note-offs and All Sound Off / All Notes Off on every channel."""
@@ -349,9 +491,9 @@ class TransportController(QObject):
         self._position_timer.stop()
         playback_activity().set_playing(self, False)
         if self._scheduler is not None:
-            self._scheduler.quit()
-            self._scheduler.wait()
+            self._scheduler.stop()
             self._scheduler = None
+        self._timer_resolution.set(False)
 
     # --- Internals ----------------------------------------------------------
 
@@ -360,13 +502,21 @@ class TransportController(QObject):
             self.send(msg)
 
     def _ensure_scheduler(self) -> None:
-        if self._scheduler is not None and self._scheduler.isRunning():
+        if self._scheduler is not None and self._scheduler.is_running:
+            self._scheduler.wake()
             return
-        self._scheduler = _SchedulerThread(
-            self.engine, self._lock, self._scheduler_interval_ms
-        )
-        self._scheduler.ended.connect(self._on_scheduler_ended)
+        if self.scheduler_kind == "timer":
+            self._scheduler = _TimerScheduler(
+                self.engine, self._lock, self._scheduler_ended.emit, self._scheduler_interval_ms
+            )
+        else:
+            self._scheduler = _DeadlineScheduler(self.engine, self._lock, self._scheduler_ended.emit)
         self._scheduler.start()
+
+    def _wake_scheduler(self) -> None:
+        """A command changed what is due next (play, seek, speed, loop…)."""
+        if self._scheduler is not None:
+            self._scheduler.wake()
 
     def _on_scheduler_ended(self) -> None:
         """End of file reached (queued from the scheduler thread)."""
@@ -379,7 +529,10 @@ class TransportController(QObject):
 
     def _after_command(self) -> None:
         """Publish state and position, and run the position timer only while playing."""
+        self._wake_scheduler()
         playing = self.engine.state == TransportState.PLAYING
+        if self.scheduler_kind == "deadline":
+            self._timer_resolution.set(playing)
         if playing and not self._position_timer.isActive():
             self._position_timer.start()
         elif not playing:

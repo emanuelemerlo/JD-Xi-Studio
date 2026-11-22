@@ -41,7 +41,10 @@ from jdxi_editor.project import __version__, __package_name__, __program__, __au
 # Build configuration
 APP_NAME = "jdxi-editor"
 APP_DISPLAY_NAME = __program__
-VERSION = __version__
+# «1.0.0~rc1», not «1.0.0rc1»: dpkg and rpm put the latter after 1.0.0
+from jdxi_editor.project import package_version
+
+VERSION = package_version(__version__)
 DESCRIPTION = "A MIDI editor and toolkit for the Roland JD-Xi synthesizer"
 MAINTAINER = "Mark Brooks <mark.x.brooks@gmail.com>"
 HOMEPAGE = "https://github.com/markxbrooks/JDXI-Editor"
