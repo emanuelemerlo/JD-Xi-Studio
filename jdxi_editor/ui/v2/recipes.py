@@ -1,8 +1,13 @@
 """
 Recipes: step-by-step instructions to make a sound on the JD-Xi.
 
-Pages:
-  RECIPES   the saved recipes; new recipe: template, import a file or text, or the editor
+One workspace in three areas: the library on the left (always there: search,
+new, open, edit, duplicate, export, delete), the work in the middle, and on the
+right the panel that explains what is chosen (it can be closed).
+
+The middle shows one of:
+  LIBRARY   the recipe chosen on the left (or, with none, how to start)
+  NEW       name, description, category; from scratch, from a document or a text
   CHECK     what the checker understood of each row, and what to fix
   GUIDE     step by step: the recipe's value next to the JD-Xi's, set one or all
   EDITOR    write or change a recipe with menus that only offer valid names
@@ -31,9 +36,11 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QListWidget,
     QListWidgetItem,
+    QMenu,
     QMessageBox,
     QPlainTextEdit,
     QPushButton,
+    QSplitter,
     QStackedWidget,
     QTableWidget,
     QTableWidgetItem,
@@ -98,6 +105,16 @@ def _label(text: str, size: int = 12, color: str = "#c9cbd1", bold: bool = False
     return lab
 
 
+def _date(iso: str) -> str:
+    """«2026-11-23T00:15:00» -> «23/11/2026» (empty if not a date)."""
+    from datetime import datetime
+
+    try:
+        return datetime.fromisoformat(iso).strftime("%d/%m/%Y")
+    except (TypeError, ValueError):
+        return ""
+
+
 def recipe_value_text(row: Row) -> str:
     if row.kind == EAR:
         return tr("by ear")
@@ -125,13 +142,24 @@ class RecipesEditor(QWidget):
         self.setMinimumSize(1000, 640)
         outer = QHBoxLayout(self)
         outer.setContentsMargins(14, 12, 14, 12)
-        outer.setSpacing(14)
-        root = QVBoxLayout()
-        root.setSpacing(10)
-        outer.addLayout(root, 1)
+        outer.setSpacing(0)
         from jdxi_editor.ui.v2 import density
         from jdxi_editor.ui.v2.restyle import title_badge
         from jdxi_editor.ui.v2.widgets import InfoPanel
+
+        # library | work | explanation: one workspace, the sides can be resized or closed
+        self.splitter = QSplitter(Qt.Orientation.Horizontal)
+        self.splitter.setChildrenCollapsible(False)
+        self.splitter.setHandleWidth(10)
+        self.splitter.setStyleSheet("QSplitter::handle { background: transparent; }")
+        outer.addWidget(self.splitter)
+        self.sidebar = self._library_sidebar()
+        self.splitter.addWidget(self.sidebar)
+        center = QWidget()
+        root = QVBoxLayout(center)
+        root.setContentsMargins(0, 0, 0, 0)
+        root.setSpacing(10)
+        self.splitter.addWidget(center)
 
         self.title = title_badge(tr("Recipes"), ACCENT)  # as at the top of the other editors
         bar = QHBoxLayout()
@@ -145,8 +173,12 @@ class RecipesEditor(QWidget):
         self.where = _label("", 13, "#a3a6ad")
         bar.addSpacing(10)
         bar.addWidget(self.back_button)
-        bar.addWidget(self.where)
-        bar.addStretch()
+        bar.addWidget(self.where, 1)
+        self.panel_button = _button(tr("Details"))
+        self.panel_button.setCheckable(True)
+        self.panel_button.setToolTip(tr("Show or hide the panel on the right, that explains what is chosen"))
+        self.panel_button.toggled.connect(self._panel_toggled)
+        bar.addWidget(self.panel_button)
         root.addLayout(bar)
         from PySide6.QtGui import QKeySequence, QShortcut
 
@@ -157,19 +189,51 @@ class RecipesEditor(QWidget):
         root.addWidget(self.pages, 1)
         # the side panel of the other editors: what the row under the cursor is and says
         self.info_panel = InfoPanel(ACCENT)
-        self.info_panel.setFixedWidth(density.side_width(320))
+        self.info_panel.setMinimumWidth(density.side_width(240))
+        self.info_panel.setMaximumWidth(density.side_width(420))
         self.info_panel.head.setText(tr("RECIPE"))
-        outer.addWidget(self.info_panel)
+        self.splitter.addWidget(self.info_panel)
+        self.splitter.setStretchFactor(0, 0)
+        self.splitter.setStretchFactor(1, 1)
+        self.splitter.setStretchFactor(2, 0)
+        self.splitter.setSizes([density.side_width(260), 900, density.side_width(300)])
+        self._panel_choice: dict[QWidget, bool] = {}  # the user's choice, per page
         self.pages.currentChanged.connect(lambda _i: self._explain_page())
         self.pages.currentChanged.connect(lambda _i: self._show_where())
+        self.pages.currentChanged.connect(lambda _i: self._panel_for_page())
         self.home = self._home_page()
+        self.create_page = self._create_page()
         self.check_page = self._check_page()
         self.guide_page = self._guide_page()
         self.editor_page = self._editor_page()
-        for page in (self.home, self.check_page, self.guide_page, self.editor_page):
+        for page in (self.home, self.create_page, self.check_page, self.guide_page, self.editor_page):
             self.pages.addWidget(page)
         self.refresh_library()
         self._explain_page()
+        self._panel_for_page()
+
+    # ------------------------------------------------------------ right panel
+    # Open on the library and the guide; closed on a new recipe, the check and
+    # the editor, which need the width (it opens when a row is chosen).
+    PANEL_CLOSED_ON = ("create_page", "check_page", "editor_page")
+
+    def _panel_default(self, page: QWidget) -> bool:
+        return not any(page is getattr(self, name, None) for name in self.PANEL_CLOSED_ON)
+
+    def _panel_for_page(self) -> None:
+        page = self.pages.currentWidget()
+        self._set_panel(self._panel_choice.get(page, self._panel_default(page)), remember=False)
+
+    def _set_panel(self, visible: bool, remember: bool = True) -> None:
+        self.panel_button.blockSignals(True)
+        self.panel_button.setChecked(visible)
+        self.panel_button.blockSignals(False)
+        self.info_panel.setVisible(visible)
+        if remember:
+            self._panel_choice[self.pages.currentWidget()] = visible
+
+    def _panel_toggled(self, visible: bool) -> None:
+        self._set_panel(visible)
 
     # ------------------------------------------------------------ side panel
     def _explain_page(self) -> None:
@@ -186,6 +250,13 @@ class RecipesEditor(QWidget):
                 tr("Guide"), tr("Step by step"),
                 tr("Set the values of each step (one by one or all the missing ones), listen, then go "
                    "to the next step. Choose a row to see the recipe's note for it."))
+        elif page is getattr(self, "create_page", None):
+            self.info_panel.show_text(
+                tr("New recipe"), tr("Three ways to start"),
+                tr("From scratch: the editor, with menus that offer only what exists. From a document: a "
+                   "filled-in template, a .csv, a text or a PDF. From a text: a table copied from a page. "
+                   "Whichever you choose, every row is checked before the recipe is kept; the name can wait "
+                   "until it is saved."))
         elif page is self.editor_page:
             self.info_panel.show_text(
                 tr("Editor"), tr("Write or correct a recipe"),
@@ -199,6 +270,8 @@ class RecipesEditor(QWidget):
                    "row by row, and nothing goes to the JD-Xi until you decide."))
 
     def _explain_row(self, c: "check.Checked", current: str = "", state: str = "") -> None:
+        if not self.info_panel.isVisible():
+            self._set_panel(True)  # a row chosen: its explanation
         t = c.target
         group = f"{t.part}: {t.group}" if t is not None else (c.row.group or tr("Not understood"))
         name = (t.label if t is not None else c.row.param) or c.row.source or "—"
@@ -234,102 +307,339 @@ class RecipesEditor(QWidget):
         return editor
 
     # --------------------------------------------------------------- home
-    def _home_page(self) -> QWidget:
-        page = QWidget()
-        row = QHBoxLayout(page)
-        row.setSpacing(14)
-        lib = Card(tr("MY RECIPES"), ACCENT)
+    # ------------------------------------------------------------ library
+    def _library_sidebar(self) -> QWidget:
+        """On the left, always: the saved recipes, a search, and what can be done with the chosen one."""
+        from jdxi_editor.ui.v2 import density
+
+        side = QFrame()
+        side.setObjectName("recipeLibrary")
+        side.setStyleSheet("#recipeLibrary { background: #17181b; border: 1px solid #2a2d33; border-radius: 8px; }")
+        side.setMinimumWidth(density.side_width(220))
+        side.setMaximumWidth(density.side_width(420))
+        col = QVBoxLayout(side)
+        col.setContentsMargins(12, 12, 12, 12)
+        col.setSpacing(8)
+        col.addWidget(_label(tr("MY RECIPES"), 12, ACCENT, True))
+        self.new_button = _button("+  " + tr("New recipe"), True)
+        self.new_button.setToolTip(tr("From scratch, from a document or from a pasted text"))
+        self.new_button.clicked.connect(self.show_create_page)
+        col.addWidget(self.new_button)
+        self.search = QLineEdit()
+        self.search.setPlaceholderText(tr("Search…"))
+        self.search.setClearButtonEnabled(True)
+        self.search.setStyleSheet("QLineEdit { background: #121214; color: #e6e6e6; border: 1px solid #3a3d44; "
+                                  "border-radius: 5px; padding: 4px 6px; }")
+        self.search.textChanged.connect(lambda _t: self.refresh_library())
+        col.addWidget(self.search)
         self.library_list = QListWidget()
         self.library_list.setStyleSheet("QListWidget { background: #121214; color: #e6e6e6; border: 1px solid #2a2d33; }"
-                                        "QListWidget::item { padding: 6px; } QListWidget::item:selected { background: #2a3a30; }")
+                                        "QListWidget::item { padding: 6px; border-bottom: 1px solid #1f2125; }"
+                                        "QListWidget::item:selected { background: #2a3a30; }")
+        self.library_list.setWordWrap(True)
+        self.library_list.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.library_list.setResizeMode(QListWidget.ResizeMode.Adjust)
         self.library_list.itemDoubleClicked.connect(lambda _i: self.open_selected())
-        self.library_list.setMinimumHeight(260)
-        lib.body.addWidget(self.library_list, 1)
+        self.library_list.currentItemChanged.connect(lambda _c, _p: self._library_selection_changed())
+        self.library_list.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.library_list.customContextMenuRequested.connect(
+            lambda pos: self._recipe_menu().exec(self.library_list.viewport().mapToGlobal(pos)))
+        col.addWidget(self.library_list, 1)
         buttons = QHBoxLayout()
-        open_b = _button(tr("Open"), True)
-        open_b.clicked.connect(self.open_selected)
-        edit_b = _button(tr("Edit"))
-        edit_b.clicked.connect(lambda: self.open_selected(edit=True))
-        del_b = _button(tr("Delete"))
-        del_b.clicked.connect(self.delete_selected)
-        for b in (open_b, edit_b, del_b):
+        self.open_button = _button(tr("Open"), True)
+        self.open_button.setToolTip(tr("The guide: step by step on the JD-Xi"))
+        self.open_button.clicked.connect(self.open_selected)
+        self.edit_button = _button(tr("Edit"))
+        self.edit_button.clicked.connect(lambda: self.open_selected(edit=True))
+        self.more_button = _button("⋯")
+        self.more_button.setToolTip(tr("Duplicate, export, delete"))
+        self.more_button.clicked.connect(
+            lambda: self._recipe_menu().exec(self.more_button.mapToGlobal(self.more_button.rect().bottomLeft())))
+        for b in (self.open_button, self.edit_button, self.more_button):
             buttons.addWidget(b)
         buttons.addStretch()
-        lib.body.addLayout(buttons)
-        lib.body.addWidget(_label(tr("Saved recipes stay in the library and can be used again on another program."), 11, "#8a8d94"))
-        row.addWidget(lib, 2, Qt.AlignmentFlag.AlignTop)
+        col.addLayout(buttons)
+        return side
 
-        new = Card(tr("NEW RECIPE"), ACCENT)
-        new.body.addWidget(_label(tr("A recipe is a list of steps: for each step, which parameters to set and to what value. "
-                                     "Before using it the editor checks it row by row and shows what it understood: "
-                                     "nothing is sent to the JD-Xi until you decide."), 12))
-        new.body.addWidget(_label(tr("1 · Fill in the template"), 13, "#ffffff", True))
-        new.body.addWidget(_label(tr("A ready sheet: Part, Group and Parameter have menus with the valid names only; a second sheet lists "
-                                     "every parameter with its allowed values. It contains the Jungle Gardenia lead as an example."), 11, "#a3a6ad"))
+    def _recipe_menu(self) -> QMenu:
+        """Duplicate, Export…, Delete: for the recipe chosen in the library."""
+        menu = QMenu(self)
+        chosen = self._selected_path() is not None
+        for text, slot in ((tr("Open"), self.open_selected), (tr("Edit"), lambda: self.open_selected(edit=True)),
+                           (None, None), (tr("Duplicate"), self.duplicate_selected),
+                           (tr("Export…"), self.export_selected), (None, None), (tr("Delete…"), self.delete_selected)):
+            if text is None:
+                menu.addSeparator()
+                continue
+            action = menu.addAction(text)
+            action.setEnabled(chosen)
+            action.triggered.connect(lambda _c=False, slot=slot: slot())
+        return menu
+
+    def _home_page(self) -> QWidget:
+        """The middle with the library shown: the chosen recipe, or how to start."""
+        page = QWidget()
+        col = QVBoxLayout(page)
+        col.setContentsMargins(0, 0, 0, 0)
+        self.home_stack = QStackedWidget()
+        col.addWidget(self.home_stack, 1)
+
+        # nothing chosen (or nothing saved yet): how to start
+        start = QWidget()
+        sc = QVBoxLayout(start)
+        sc.addStretch(1)
+        self.start_title = _label("", 20, "#ffffff", True)
+        self.start_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.start_text = _label("", 13, "#a3a6ad")
+        self.start_text.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        sc.addWidget(self.start_title)
+        sc.addWidget(self.start_text)
         line = QHBoxLayout()
-        xlsx = _button(tr("Save template .xlsx…"))
+        line.addStretch()
+        create = _button(tr("Create a new recipe"), True)
+        create.clicked.connect(self.show_create_page)
+        imp = _button(tr("Import a recipe…"))
+        imp.clicked.connect(lambda: self.import_file())
+        line.addWidget(create)
+        line.addWidget(imp)
+        line.addStretch()
+        sc.addSpacing(12)
+        sc.addLayout(line)
+        sc.addStretch(2)
+        self.home_stack.addWidget(start)
+        self.start_page = start
+
+        # a recipe chosen: what it is, its steps, what to do with it
+        detail = Card(tr("RECIPE"), ACCENT)
+        self.detail_title = _label("", 20, "#ffffff", True)
+        self.detail_meta = _label("", 12, "#8a8d94")
+        self.detail_description = _label("", 13)
+        self.detail_counts = _label("", 12, ACCENT, True)
+        for w in (self.detail_title, self.detail_meta, self.detail_description, self.detail_counts):
+            detail.body.addWidget(w)
+        self.detail_steps = QListWidget()
+        self.detail_steps.setStyleSheet("QListWidget { background: #121214; color: #c9cbd1; border: 1px solid #2a2d33; }"
+                                        "QListWidget::item { padding: 5px; }")
+        self.detail_steps.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
+        detail.body.addWidget(self.detail_steps, 1)
+        line = QHBoxLayout()
+        use = _button(tr("Open the guide"), True)
+        use.setToolTip(tr("Step by step: the recipe's values next to the JD-Xi's; nothing is sent until you set it"))
+        use.clicked.connect(self.open_selected)
+        edit = _button(tr("Edit"))
+        edit.clicked.connect(lambda: self.open_selected(edit=True))
+        dup = _button(tr("Duplicate"))
+        dup.clicked.connect(self.duplicate_selected)
+        exp = _button(tr("Export…"))
+        exp.clicked.connect(self.export_selected)
+        delete = _button(tr("Delete…"))
+        delete.clicked.connect(self.delete_selected)
+        for b in (use, edit, dup, exp):
+            line.addWidget(b)
+        line.addStretch()
+        line.addWidget(delete)
+        detail.body.addLayout(line)
+        self.home_stack.addWidget(detail)
+        self.detail_card = detail
+        return page
+
+    def _create_page(self) -> QWidget:
+        """New recipe: its name (needed only to save it), and three ways to start."""
+        page = QWidget()
+        col = QVBoxLayout(page)
+        col.setContentsMargins(0, 0, 0, 0)
+        col.setSpacing(12)
+        field_style = ("QLineEdit, QComboBox { background: #121214; color: #e6e6e6; border: 1px solid #3a3d44; "
+                       "border-radius: 5px; padding: 4px 6px; }")
+        info = Card(tr("NEW RECIPE"), ACCENT)
+        grid = QHBoxLayout()
+        self.new_title = QLineEdit()
+        self.new_title.setPlaceholderText(tr("Needed to save it; an imported file brings its own"))
+        self.new_category = QComboBox()
+        self.new_category.setEditable(True)
+        self.new_description = QLineEdit()
+        for w in (self.new_title, self.new_category, self.new_description):
+            w.setStyleSheet(field_style)
+        for label, widget, stretch in ((tr("Name"), self.new_title, 3), (tr("Category"), self.new_category, 1)):
+            grid.addWidget(_label(label, 12))
+            grid.addWidget(widget, stretch)
+        info.body.addLayout(grid)
+        line = QHBoxLayout()
+        line.addWidget(_label(tr("Description"), 12))
+        line.addWidget(self.new_description, 1)
+        info.body.addLayout(line)
+        col.addWidget(info)
+
+        ways = QHBoxLayout()
+        ways.setSpacing(12)
+        scratch = Card(tr("FROM SCRATCH"), ACCENT)
+        scratch.body.addWidget(_label(tr("The editor: Part, Group and Parameter have menus with only the names "
+                                         "that exist, and every row is checked while you write."), 12))
+        write = _button(tr("Continue in the editor"), True)
+        write.clicked.connect(self.new_in_editor)
+        scratch.body.addWidget(write, 0, Qt.AlignmentFlag.AlignLeft)
+        scratch.body.addStretch()
+        ways.addWidget(scratch, 1)
+
+        document = Card(tr("FROM A DOCUMENT"), ACCENT)
+        document.body.addWidget(_label(tr("A filled-in template, a .csv, a Markdown or text file, a PDF: "
+                                          "each row is read and checked before it becomes the recipe."), 12))
+        choose = _button(tr("Choose a file…"), True)
+        choose.clicked.connect(lambda: self.import_file())
+        document.body.addWidget(choose, 0, Qt.AlignmentFlag.AlignLeft)
+        document.body.addWidget(_label(".xlsx · .csv · .md · .txt · .pdf", 11, "#8a8d94"))
+        document.body.addSpacing(6)
+        document.body.addWidget(_label(tr("No document yet? The template: menus with the valid names, a sheet "
+                                          "with every parameter and the Jungle Gardenia lead as an example."),
+                                       11, "#a3a6ad"))
+        line = QVBoxLayout()  # one under the other: the three cards share the width
+        xlsx = _button(tr("Template .xlsx…"))
         xlsx.clicked.connect(lambda: self.save_template(template_name("xlsx")))
         csv_b = _button(tr("Template .csv…"))
         csv_b.clicked.connect(lambda: self.save_template(template_name("csv")))
         params = _button(tr("Parameter list .csv…"))
         params.clicked.connect(lambda: self.save_template(template_name("parameters")))
         for b in (xlsx, csv_b, params):
-            line.addWidget(b)
-        line.addStretch()
-        new.body.addLayout(line)
-        new.body.addWidget(_label(tr("2 · Import a file or a text"), 13, "#ffffff", True))
-        line = QHBoxLayout()
-        choose = _button(tr("Choose a file…"), True)
-        choose.clicked.connect(self.import_file)
-        line.addWidget(choose)
-        line.addWidget(_label(".xlsx · .csv · .md · .txt · .pdf", 11, "#8a8d94"))
-        line.addStretch()
-        new.body.addLayout(line)
+            line.addWidget(b, 0, Qt.AlignmentFlag.AlignLeft)
+        document.body.addLayout(line)
+        document.body.addStretch()
+        ways.addWidget(document, 1)
+
+        text = Card(tr("FROM A TEXT"), ACCENT)
         self.paste = QPlainTextEdit()
         self.paste.setPlaceholderText(tr("…or paste a table copied from a document or a web page, e.g.\nTONE: FILTER\tCutoff\t55–65\nTONE: FILTER\tCutoff KF\t+50"))
         self.paste.setStyleSheet("QPlainTextEdit { background: #121214; color: #e6e6e6; border: 1px solid #2a2d33; font-family: monospace; }")
-        self.paste.setFixedHeight(110)
-        new.body.addWidget(self.paste)
-        line = QHBoxLayout()
-        read = _button(tr("Read the text"))
+        text.body.addWidget(self.paste, 1)
+        read = _button(tr("Read the text"), True)
         read.clicked.connect(self.import_text)
-        line.addWidget(read)
-        line.addWidget(_label(tr("From PDFs and texts only the lines that look like Group · Parameter · Value are taken; the rest is kept as notes."), 11, "#8a8d94"))
-        new.body.addLayout(line)
-        new.body.addWidget(_label(tr("3 · Write it in the editor"), 13, "#ffffff", True))
-        line = QHBoxLayout()
-        write = _button(tr("Open the recipe editor"))
-        write.clicked.connect(self.new_in_editor)
-        line.addWidget(write)
-        line.addStretch()
-        new.body.addLayout(line)
-        new.body.addStretch()
-        row.addWidget(new, 3, Qt.AlignmentFlag.AlignTop)
+        text.body.addWidget(read, 0, Qt.AlignmentFlag.AlignLeft)
+        text.body.addWidget(_label(tr("From PDFs and texts only the lines that look like Group · Parameter · Value are taken; the rest is kept as notes."), 11, "#8a8d94"))
+        ways.addWidget(text, 1)
+        from PySide6.QtWidgets import QSizePolicy
+
+        for card in (scratch, document, text):  # side by side, as wide and as tall as each other
+            card.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Expanding)
+            card.setMinimumWidth(200)
+        col.addLayout(ways, 1)
+
+        bottom = QHBoxLayout()
+        cancel = _button(tr("Cancel"))
+        cancel.clicked.connect(self.show_home)
+        bottom.addWidget(cancel)
+        bottom.addStretch()
+        col.addLayout(bottom)
         return page
 
-    def refresh_library(self) -> None:
-        self._refresh_library()
+    def show_create_page(self) -> None:
+        """+ New recipe: the fields empty, the categories already used offered."""
+        if not self._may_leave():
+            return
+        for w in (self.new_title, self.new_description):
+            w.clear()
+        self.new_category.clear()
+        used = sorted({r.category for _p, r in library.entries() if r.category}, key=str.lower)
+        self.new_category.addItems([""] + used)
+        self.paste.clear()
+        self.pages.setCurrentWidget(self.create_page)
+        self.new_title.setFocus()
+
+    def _new_metadata(self, recipe: Recipe) -> Recipe:
+        """What was typed on the New recipe page goes into *recipe* (the name only if typed)."""
+        if self.pages.currentWidget() is not self.create_page:
+            return recipe
+        title = self.new_title.text().strip()
+        if title:
+            recipe.title = title
+        if self.new_description.text().strip():
+            recipe.description = self.new_description.text().strip()
+        if self.new_category.currentText().strip():
+            recipe.category = self.new_category.currentText().strip()
+        return recipe
+
+    def refresh_library(self, select: Optional[Path] = None) -> None:
+        """The library again (after a save, a delete, a search), *select* chosen if given."""
+        chosen = select or self._selected_path()
+        self._refresh_library(chosen)
         empty = self.library_list.count() == 0
         if empty:  # say what goes here, not an empty box
-            item = QListWidgetItem(tr("No recipes yet: import one or fill in the template (on the right)."))
+            text = (tr("No recipe matches «{text}».").format(text=self.search.text().strip())
+                    if self.search.text().strip() else
+                    tr("No recipes yet: import one or fill in the template (on the right)."))
+            item = QListWidgetItem(text)
             item.setFlags(Qt.ItemFlag.NoItemFlags)
             self.library_list.addItem(item)
+        self._library_selection_changed()
 
-    def _refresh_library(self) -> None:
+    def _refresh_library(self, chosen: Optional[Path] = None) -> None:
+        self.library_list.blockSignals(True)
         self.library_list.clear()
-        for title, path in library.saved():
-            item = QListWidgetItem(title)
+        self._entries = library.entries()
+        wanted = self.search.text().strip().lower() if hasattr(self, "search") else ""
+        for path, recipe in self._entries:
+            title = recipe.title or path.stem
+            if wanted and wanted not in " ".join((title, recipe.category, recipe.description)).lower():
+                continue
+            second = " · ".join(x for x in (recipe.category, _date(recipe.modified)) if x)
+            item = QListWidgetItem(title + (f"\n{second}" if second else ""))
             item.setData(Qt.ItemDataRole.UserRole, str(path))
+            item.setToolTip(recipe.description or title)
             self.library_list.addItem(item)
+            if chosen is not None and path == chosen:
+                self.library_list.setCurrentItem(item)
+        self.library_list.blockSignals(False)
 
     def _selected_path(self) -> Optional[Path]:
-        item = self.library_list.currentItem()
+        item = self.library_list.currentItem() if hasattr(self, "library_list") else None
         data = item.data(Qt.ItemDataRole.UserRole) if item else None
         return Path(data) if data else None  # not the "no recipes yet" line
 
+    def _selected_recipe(self) -> Optional[Recipe]:
+        path = self._selected_path()
+        for p, recipe in getattr(self, "_entries", []):
+            if p == path:
+                return recipe
+        return None
+
+    def _library_selection_changed(self) -> None:
+        """The middle shows the recipe chosen in the library (when the library is what it shows)."""
+        if not hasattr(self, "home_stack"):
+            return
+        chosen = self._selected_path() is not None
+        for b in (self.open_button, self.edit_button):
+            b.setEnabled(chosen)
+        recipe = self._selected_recipe()
+        if recipe is None:
+            nothing_saved = not getattr(self, "_entries", [])
+            self.start_title.setText(tr("No recipes yet") if nothing_saved else tr("Choose a recipe"))
+            self.start_text.setText(
+                tr("A recipe says, step by step, which parameters to set and to what value. Create one from "
+                   "scratch, from a document or from a pasted text.") if nothing_saved else
+                tr("The recipes are on the left: choose one to see it here, or create a new one."))
+            self.home_stack.setCurrentWidget(self.start_page)
+            return
+        self.detail_title.setText(recipe.title or self._selected_path().stem)
+        meta = [recipe.category] if recipe.category else []
+        if recipe.created:
+            meta.append(tr("created {date}").format(date=_date(recipe.created)))
+        if recipe.modified:
+            meta.append(tr("changed {date}").format(date=_date(recipe.modified)))
+        if recipe.base_tone:
+            meta.append(tr("from {tone}").format(tone=recipe.base_tone))
+        self.detail_meta.setText(" · ".join(meta))
+        self.detail_description.setText(recipe.description)
+        self.detail_description.setVisible(bool(recipe.description))
+        steps = recipe.steps()
+        self.detail_counts.setText(tr("{steps} steps · {rows} parameters").format(steps=len(steps), rows=len(recipe.rows)))
+        self.detail_steps.clear()
+        for number, name, rows in steps:
+            groups = ", ".join(dict.fromkeys(f"{r.part} {r.group}".strip() for r in rows))
+            self.detail_steps.addItem(f"{number} · {name or tr('Step {n}').format(n=number)}   —   "
+                                      + tr("{n} parameters").format(n=len(rows)) + (f"   ({groups})" if groups else ""))
+        self.home_stack.setCurrentWidget(self.detail_card)
+
     def open_selected(self, edit: bool = False) -> None:
         path = self._selected_path()
-        if path is None:
+        if path is None or not self._may_leave():
             return
         self.recipe_path = path
         self.set_recipe(library.load(path))
@@ -342,10 +652,32 @@ class RecipesEditor(QWidget):
         path = self._selected_path()
         if path is None:
             return
-        if QMessageBox.question(self, tr("Delete recipe"), tr("Delete \"{name}\"?").format(name=self.library_list.currentItem().text())) \
+        recipe = self._selected_recipe()
+        name = (recipe.title if recipe else "") or path.stem
+        if QMessageBox.question(self, tr("Delete recipe"), tr("Delete \"{name}\"?").format(name=name)) \
                 == QMessageBox.StandardButton.Yes:
             library.delete(path)
+            if self.recipe_path == path:
+                self.recipe_path = None
+            self.library_list.setCurrentItem(None)
             self.refresh_library()
+
+    def duplicate_selected(self) -> Optional[Path]:
+        """A copy of the chosen recipe, a recipe of its own, chosen in the library."""
+        path = self._selected_path()
+        if path is None:
+            return None
+        recipe = self._selected_recipe()
+        copy = library.duplicate(path, tr("{title} (copy)").format(title=(recipe.title if recipe else "") or path.stem))
+        self._refresh_library(copy)
+        self.refresh_library()
+        return copy
+
+    def export_selected(self, target: Optional[str] = None) -> Optional[Path]:
+        path = self._selected_path()
+        if path is None:
+            return None
+        return self.export_recipe(target, recipe=library.load(path))
 
     def save_template(self, name: str, target: Optional[str] = None) -> Optional[Path]:
         source = Path(resource_path(TEMPLATE_DIR / name))
@@ -360,7 +692,7 @@ class RecipesEditor(QWidget):
         if not path:
             path, _ = QFileDialog.getOpenFileName(self, tr("Import a recipe"), str(Path.home()),
                                                   tr("Recipes (*.xlsx *.csv *.md *.txt *.pdf *.json)"))
-        if not path:
+        if not path or not self._may_leave():
             return
         try:
             recipe = reader.read_file(path)
@@ -369,6 +701,7 @@ class RecipesEditor(QWidget):
             QMessageBox.warning(self, tr("Import a recipe"), tr("Could not read the file: {error}").format(error=ex))
             return
         log.message(f"Recipes: read {path}: {len(recipe.rows)} rows", scope="RecipesEditor")
+        self._new_metadata(recipe)
         if not recipe.title:
             recipe.title = Path(path).stem
         self.recipe_path = None
@@ -380,14 +713,19 @@ class RecipesEditor(QWidget):
         if not text:
             return
         recipe = reader.read_text(text)
+        self._new_metadata(recipe)
         recipe.title = recipe.title or tr("Pasted recipe")
         self.recipe_path = None
         self.set_recipe(recipe, source=tr("pasted text"))
         self.show_check()
 
     def new_in_editor(self) -> None:
+        if not self._may_leave():
+            return
         self.recipe_path = None
-        self.set_recipe(Recipe(title=tr("New recipe"), rows=[Row(1, tr("Step 1"), "AN", "FILTER", "", "Cutoff", VALUE, "64")]))
+        recipe = self._new_metadata(Recipe(rows=[Row(1, tr("Step 1"), "AN", "FILTER", "", "Cutoff", VALUE, "64")]))
+        recipe.title = recipe.title or tr("New recipe")
+        self.set_recipe(recipe)
         self.show_editor_page()
 
     def set_recipe(self, recipe: Recipe, source: str = "") -> None:
@@ -576,7 +914,7 @@ class RecipesEditor(QWidget):
             QMessageBox.warning(self, tr("Recipes"), tr("Could not save the recipe: {error}").format(error=ex))
             return
         log.message(f"Recipes: «{self.recipe.title}» saved in {self.recipe_path}", scope="RecipesEditor")
-        self.refresh_library()
+        self.refresh_library(self.recipe_path)
         self.show_guide()
 
     # -------------------------------------------------------------- guide
@@ -816,7 +1154,12 @@ class RecipesEditor(QWidget):
         line = QHBoxLayout()
         line.addWidget(_label(tr("Description"), 12))
         self.ed_description.setStyleSheet(self.ed_title.styleSheet())
-        line.addWidget(self.ed_description, 1)
+        line.addWidget(self.ed_description, 3)
+        self.ed_category = QLineEdit()
+        self.ed_category.setStyleSheet(self.ed_title.styleSheet())
+        self.ed_category.setPlaceholderText(tr("Lead, Pad, Bass…"))
+        line.addWidget(_label(tr("Category"), 12))
+        line.addWidget(self.ed_category, 1)
         col.addLayout(line)
         self.ed_table = QTableWidget(0, len(COLUMNS) + 1)
         self.ed_table.setHorizontalHeaderLabels(COLUMNS + [tr("Check")])
@@ -856,6 +1199,7 @@ class RecipesEditor(QWidget):
         self.ed_base.setText(r.base_tone)
         self.ed_program.setText(r.user_program)
         self.ed_description.setText(r.description)
+        self.ed_category.setText(r.category)
         table = self.ed_table
         table.blockSignals(True)
         table.setRowCount(0)
@@ -872,7 +1216,8 @@ class RecipesEditor(QWidget):
 
     def _editor_state(self) -> tuple:
         """What the editor holds (to tell unsaved changes)."""
-        fields = tuple(f.text() for f in (self.ed_title, self.ed_base, self.ed_program, self.ed_description))
+        fields = tuple(f.text() for f in (self.ed_title, self.ed_base, self.ed_program, self.ed_description,
+                                          self.ed_category))
         return fields, tuple(repr(row) for row in self._editor_rows())
 
     def editor_has_changes(self) -> bool:
@@ -946,6 +1291,7 @@ class RecipesEditor(QWidget):
         r = self.recipe or Recipe()
         r.title, r.base_tone = self.ed_title.text().strip(), self.ed_base.text().strip()
         r.user_program, r.description = self.ed_program.text().strip(), self.ed_description.text().strip()
+        r.category = self.ed_category.text().strip()
         r.rows = self._editor_rows()
         self.recipe = r
         self.checked = check.check(r)
@@ -1081,14 +1427,19 @@ class RecipesEditor(QWidget):
         self.ed_status.setText(tr("Values taken from the JD-Xi: {n}").format(n=filled))
 
     def save_from_editor(self) -> None:
+        if not self.ed_title.text().strip():  # the name is needed now, to find it in the library
+            self.ed_status.setText(tr("A name is needed to save the recipe."))
+            self.ed_title.setFocus()
+            return
         recipe = self._editor_to_recipe()
         self.recipe_path = library.save(recipe, self.recipe_path)
-        self.refresh_library()
+        self.refresh_library(self.recipe_path)
         self._editor_snapshot = self._editor_state()
         self.ed_status.setText(tr("Saved in the library: {path}").format(path=self.recipe_path.name))
 
-    def export_recipe(self, path: Optional[str] = None) -> Optional[Path]:
-        recipe = self._editor_to_recipe() if self.pages.currentWidget() is self.editor_page else self.recipe
+    def export_recipe(self, path: Optional[str] = None, recipe: Optional[Recipe] = None) -> Optional[Path]:
+        if recipe is None:
+            recipe = self._editor_to_recipe() if self.pages.currentWidget() is self.editor_page else self.recipe
         if recipe is None:
             return None
         if not path:
@@ -1109,11 +1460,13 @@ class RecipesEditor(QWidget):
     def show_home(self) -> None:
         self.refresh_library()
         self.pages.setCurrentWidget(self.home)
+        self._library_selection_changed()
 
     def _show_where(self) -> None:
-        """The breadcrumb: Recipes › Check / Guide / Editor › the recipe's title."""
+        """The breadcrumb: › the recipe's title › New / Check / Guide / Editor."""
         page = self.pages.currentWidget()
         names = {
+            self.create_page: tr("New recipe"),
             self.check_page: tr("Check before importing"),
             self.guide_page: tr("Guide"),
             self.editor_page: tr("Editor"),
@@ -1122,28 +1475,32 @@ class RecipesEditor(QWidget):
             self.back_button.hide()
             self.where.setText("")
             return
-        title = (self.recipe.title if self.recipe is not None else "") or ""
+        title = (self.recipe.title if self.recipe is not None and page is not self.create_page else "") or ""
         self.back_button.show()
-        self.where.setText(f"›  {names[page]}" + (f"  ›  {title}" if title else ""))
+        self.where.setText((f"›  {title}  " if title else "") + f"›  {names[page]}")
+
+    def _may_leave(self) -> bool:
+        """Leaving the editor with changes not saved: Save, Discard or stay (Cancel)."""
+        if self.pages.currentWidget() is not self.editor_page or not self.editor_has_changes():
+            return True
+        answer = QMessageBox.question(
+            self,
+            tr("Recipe not saved"),
+            tr("The changes to this recipe are not saved. Leave the editor anyway?"),
+            QMessageBox.StandardButton.Save
+            | QMessageBox.StandardButton.Discard
+            | QMessageBox.StandardButton.Cancel,
+            QMessageBox.StandardButton.Cancel,
+        )
+        if answer == QMessageBox.StandardButton.Cancel:
+            return False
+        if answer == QMessageBox.StandardButton.Save:
+            self.save_from_editor()
+        self._editor_snapshot = self._editor_state()  # left: not asked again
+        return True
 
     def go_back(self) -> None:
         """‹ All recipes (or Esc): the library, after asking if the editor has unsaved rows."""
-        if self.pages.currentWidget() is self.home:
+        if self.pages.currentWidget() is self.home or not self._may_leave():
             return
-        if self.pages.currentWidget() is self.editor_page and self.editor_has_changes():
-            from PySide6.QtWidgets import QMessageBox
-
-            answer = QMessageBox.question(
-                self,
-                tr("Recipe not saved"),
-                tr("The changes to this recipe are not saved. Leave the editor anyway?"),
-                QMessageBox.StandardButton.Save
-                | QMessageBox.StandardButton.Discard
-                | QMessageBox.StandardButton.Cancel,
-                QMessageBox.StandardButton.Cancel,
-            )
-            if answer == QMessageBox.StandardButton.Cancel:
-                return
-            if answer == QMessageBox.StandardButton.Save:
-                self.save_from_editor()
         self.show_home()

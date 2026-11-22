@@ -4,6 +4,18 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+### Changes
+- **Recipes** is one workspace in three areas. On the left, always, the library: **+ New recipe**,
+  a search, each recipe with its category and the day it was last changed; Open, Edit and, under
+  ⋯ (or a right click), Duplicate, Export… and Delete… (asked first). In the middle the work: the
+  chosen recipe (its steps, how many parameters, created / changed) with Open the guide, Edit,
+  Duplicate, Export, Delete; **New recipe** with name, category and description and three ways to
+  start side by side — from scratch, from a document (with the templates), from a text; then the
+  check, the guide and the editor as before. On the right the explanation, open on the library and
+  the guide, closed where the tables need the width (**Details** opens it; it opens by itself when a
+  row is chosen). A recipe keeps a **category** and the dates it was created and changed; its name
+  is needed only to save it.
+
 ### Fixed
 - Recipes in Italian: importing a recipe that sets an LFO depth (Pitch / Filter / Amp / Pan Depth)
   or the Mode of D1 / D2 stopped with an error and did nothing — the editors' long names are
