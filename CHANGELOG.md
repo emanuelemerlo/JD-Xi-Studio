@@ -5,9 +5,10 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
-- MIDI Player › Fit to the JD-Xi: **Solo** under each channel's Mute. With one or more channels
-  soloed only those play; the channels' own mutes are kept, given back as they were when the solos
-  go off. A channel a solo silences shows it on its Mute (a red outline).
+- MIDI Player › Fit to the JD-Xi › Channels: each channel a narrow column, as on a mixer — its
+  number, **M** (mute, red) and **S** (solo, green). With one or more channels soloed only those
+  play; the channels' own mutes are kept, given back as they were when the solos go off. The
+  channels a solo silences are dimmed. The tracks' Solo is green too (amber was Digital 2's colour).
 - The main window's menus follow the app: **File** (Patch › Open / Save, MIDI Player › Open / Save
   / Save as / Recent), **Editor** (the editors window's tabs, by section: Programs, Parts, Effects,
   Playback, Recipes, Settings; Ctrl+0–9 in tab order), **JD-Xi** (Save the program, Send all — now

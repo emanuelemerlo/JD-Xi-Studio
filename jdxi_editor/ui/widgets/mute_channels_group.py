@@ -2,9 +2,10 @@
 Mute Channels group - 16 channel mute buttons and, under them, 16 solo buttons.
 
 Solo is the other way round from mute: with one or more channels soloed only
-those play. A channel silenced by someone else's solo shows it on its mute
-button (red outline) without being muted itself, so un-soloing restores the
-mutes as they were.
+those play. A channel silenced by another one's solo is dimmed without being
+muted itself, so un-soloing restores the mutes as they were.
+
+Each channel is a narrow column, as on a mixer: its number, M, S.
 """
 
 from __future__ import annotations
@@ -43,23 +44,27 @@ class MuteChannelsGroup(JDXiMidiGroup):
         self.setup_ui()
 
     def _build_group(self) -> QGroupBox:
-        """Build the group: a row of mute buttons, a row of solo buttons under it."""
+        """Build the group: per channel a column with its number, Mute (M) and Solo (S)."""
         grid = QGridLayout()
         grid.setContentsMargins(0, 0, 0, 0)
-        grid.setHorizontalSpacing(6)
-        grid.setVerticalSpacing(6)
+        grid.setHorizontalSpacing(4)
+        grid.setVerticalSpacing(4)
         mute_style = JDXi.UI.MidiPlayer.channel_mute_stylesheet()
         solo_style = JDXi.UI.MidiPlayer.channel_solo_stylesheet()
-        for row, text in enumerate((tr("Mute"), tr("Solo"))):
-            label = QLabel(text)
-            label.setStyleSheet("color: #c9cbd1;")
-            grid.addWidget(label, row, 0)
+        number_style = JDXi.UI.MidiPlayer.channel_number_stylesheet()
+        self.channel_labels: dict[int, QLabel] = {}
         for ch in range(1, 17):
+            part = ch in JDXI_PART_CHANNELS  # the channels the JD-Xi plays
+            label = QLabel(str(ch))
+            label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            label.setProperty("part", part)
+            label.setStyleSheet(number_style)
             mute = create_small_sequencer_square_for_channel(ch)
+            mute.setText("M")
             mute.setCheckable(True)
             mute.setChecked(False)
             mute.setToolTip(self._tooltip(ch, unused=False))
-            mute.setProperty("part", ch in JDXI_PART_CHANNELS)  # the channels the JD-Xi plays
+            mute.setProperty("part", part)
             mute.setProperty("silenced", False)
             mute.setStyleSheet(mute_style)
             mute.toggled.connect(
@@ -70,14 +75,18 @@ class MuteChannelsGroup(JDXiMidiGroup):
             solo.setCheckable(True)
             solo.setChecked(False)
             solo.setToolTip(self._solo_tooltip(ch))
-            solo.setProperty("part", ch in JDXI_PART_CHANNELS)
+            solo.setProperty("part", part)
             solo.setStyleSheet(solo_style)
             solo.toggled.connect(lambda checked, c=ch: self._on_solo_toggled(c, checked))
+            label.setToolTip(self._tooltip(ch, unused=False).split(":", 1)[-1].strip())
+            self.channel_labels[ch] = label
             self.mute_channel_buttons[ch] = mute
             self.solo_channel_buttons[ch] = solo
-            grid.addWidget(mute, 0, ch, Qt.AlignmentFlag.AlignCenter)
-            grid.addWidget(solo, 1, ch, Qt.AlignmentFlag.AlignCenter)
-            grid.setColumnStretch(ch, 1)
+            column = ch - 1
+            grid.addWidget(label, 0, column, Qt.AlignmentFlag.AlignCenter)
+            grid.addWidget(mute, 1, column, Qt.AlignmentFlag.AlignCenter)
+            grid.addWidget(solo, 2, column, Qt.AlignmentFlag.AlignCenter)
+        grid.setColumnStretch(16, 1)  # the columns side by side, on the left
         group, _ = create_group_with_layout(label="Mute Channels", layout=grid)
         return group
 
@@ -102,14 +111,15 @@ class MuteChannelsGroup(JDXiMidiGroup):
         self.show_silenced()
 
     def show_silenced(self) -> None:
-        """Outline in red the mute buttons of channels another channel's solo silences."""
+        """Dim the channels another channel's solo silences (their own mute stays as it was)."""
         soloed = self.soloed_channels()
         for ch, btn in self.mute_channel_buttons.items():
             silenced = bool(soloed) and ch not in soloed and not btn.isChecked()
-            if btn.property("silenced") != silenced:
-                btn.setProperty("silenced", silenced)
-                btn.style().unpolish(btn)
-                btn.style().polish(btn)
+            for widget in (btn, self.channel_labels[ch]):
+                if widget.property("silenced") != silenced:
+                    widget.setProperty("silenced", silenced)
+                    widget.style().unpolish(widget)
+                    widget.style().polish(widget)
 
     def set_used_channels(self, channels: set[int]) -> None:
         """
@@ -123,6 +133,10 @@ class MuteChannelsGroup(JDXiMidiGroup):
             btn.setToolTip(self._tooltip(ch, unused))
             btn.style().unpolish(btn)
             btn.style().polish(btn)
+            label = self.channel_labels[ch]
+            label.setProperty("unused", unused)
+            label.style().unpolish(label)
+            label.style().polish(label)
             solo = self.solo_channel_buttons[ch]
             solo.setProperty("unused", unused)
             solo.setToolTip(self._solo_tooltip(ch) + (" " + tr("(not used in this file)") if unused else ""))
