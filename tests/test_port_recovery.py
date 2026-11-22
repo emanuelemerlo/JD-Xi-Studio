@@ -46,6 +46,9 @@ def test_reconnecting_opens_new_ports():
     the next one opened the broken port again: nothing received.
     """
     helper = MidiIOHelper()
+    # the helper is shared: earlier tests may have left Mocks as its ports
+    helper._replace_port("midi_in")
+    helper._replace_port("midi_out")
     old_in, old_out = helper.midi_in, helper.midi_out
     in_name = next(p for p in helper.get_input_ports() if "JD-Xi" in p)
     out_name = next(p for p in helper.get_output_ports() if "JD-Xi" in p)
