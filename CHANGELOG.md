@@ -96,6 +96,10 @@ Tried on the JD-Xi (the checks of `doc/hardware-test-plan.md`, the fixes from th
   mid-song comes with its bank select; a track's velocity scale at 0 silences it.
 
 ### Fixed
+- JD-Xi unplugged or switched off, then back: the MIDI input that refused to close (Windows:
+  «error closing Windows MM MIDI input port») opened again but received nothing — the badge stayed
+  «Verifying the JD-Xi…» — and opening MIDI Configuration again crashed the app. A port that does
+  not close is replaced by a new one; the dialog lists the ports through ports of its own.
 - The «JD-Xi connected» badge stayed on after the JD-Xi was switched off (its USB MIDI ports stay
   open on some systems). A JD-Xi silent for 3 seconds is asked who it is; without an answer within
   8 seconds it is Off-line, and connected again as soon as it answers.
