@@ -21,6 +21,7 @@ Identity Request as a Roland JD-Xi (manufacturer 41h, family 0Eh).
 
 from __future__ import annotations
 
+import os
 import weakref
 from typing import Optional, Sequence
 
@@ -40,6 +41,9 @@ VERIFY_RETRY_MS = 3000  # a device that does not answer is asked again this ofte
 UNSTABLE_AFTER = 2  # unanswered requests in a row
 SILENT_ASK_S = 3.0  # an ONLINE JD-Xi heard nothing from for this long is asked who it is
 LOST_AFTER_S = 8.0  # ... and after this long without an answer it is OFFLINE
+# off in the tests (env JDXI_SILENCE_CHECK=0): their simulated JD-Xis come and go between tests
+# on the one shared helper, and a «JD-Xi back» re-reading everything would cut into the next test
+SILENCE_CHECK = os.environ.get("JDXI_SILENCE_CHECK", "1") != "0"
 
 
 def ports_open(helper) -> bool:
@@ -111,6 +115,7 @@ class Connection(QObject):
         self.state = state
         if state == ONLINE:
             self.ever_online = True
+            self.heard()  # it just answered: silence counts from now
         self.changed.emit(state)
 
     def poll(self) -> None:
@@ -126,6 +131,8 @@ class Connection(QObject):
             self._ask_identity()
             return
         if self.state in (ONLINE, UNSTABLE):
+            if not SILENCE_CHECK:
+                return
             now = time.monotonic()
             if self._last_heard is None:
                 self._last_heard = now

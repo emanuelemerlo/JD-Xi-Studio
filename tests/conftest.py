@@ -35,6 +35,9 @@ os.environ.setdefault("JDXI_NARROW", "0")
 # ports nobody answers, and the requests queued in the shared device delayed the other tests'
 # requests (tests/test_follow.py drives the follower by hand)
 os.environ.setdefault("JDXI_FOLLOW", "0")
+# a JD-Xi silent for seconds is not taken for switched off: the simulated JD-Xis come and go
+# between tests on the one shared helper (tests/test_connection.py turns the check on)
+os.environ.setdefault("JDXI_SILENCE_CHECK", "0")
 
 import rtmidi
 

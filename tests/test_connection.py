@@ -137,6 +137,7 @@ def test_the_identity_reply_through_the_midi_input_reaches_the_connection(app):
 
 def test_a_jdxi_switched_off_goes_offline_and_comes_back(app, monkeypatch):
     """Switched off, the JD-Xi's ports stayed open: the badge said «JD-Xi connected»."""
+    monkeypatch.setattr(conn, "SILENCE_CHECK", True)
     helper = Helper()
     c = _connection(helper)
     now = [100.0]
