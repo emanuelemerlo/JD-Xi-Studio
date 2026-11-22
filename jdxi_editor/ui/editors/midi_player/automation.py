@@ -62,11 +62,12 @@ class AutomationWidget(JDXiMidiGroup):
         for ch in range(1, 17):
             self.automation_channel_combo.addItem(f"Ch {ch}", ch)
         self.automation_channel_combo.currentIndexChanged.connect(
-            self._update_automation_midi_info
+            self.on_automation_channel_changed
         )
         grid.addWidget(self.automation_channel_combo, row, 1)
         self.automation_type_combo = QComboBox()
-        self.automation_type_combo.addItems(["Digital", "Analog", "Drums"])
+        # in PresetSource's order: the index says which list (not the text)
+        self.automation_type_combo.addItems([source.value for source in PresetSource])
         self.automation_type_combo.currentIndexChanged.connect(
             self.on_automation_type_changed
         )
@@ -124,10 +125,38 @@ class AutomationWidget(JDXiMidiGroup):
             pc = int(item.get("pc"))
             self.automation_program_combo.addItem(label, (msb, lsb, pc))
 
-    def on_automation_type_changed(self, _: int) -> None:
-        """Handle automation type selection change."""
-        source = self.automation_type_combo.currentText()
-        self.populate_automation_programs(source)
+    def on_automation_type_changed(self, index: int) -> None:
+        """
+        Show the presets of the chosen type.
+
+        The lists are keyed by :class:`PresetSource`; the combo's text was
+        passed as it was, found nothing and fell back to the drum kits:
+        Analog (and Digital, once changed) offered drum kits, and a program
+        change in the wrong bank, which the JD-Xi ignores.
+
+        :param index: int combo index, in PresetSource's order
+        :return: None
+        """
+        sources = list(PresetSource)
+        self.populate_automation_programs(sources[max(0, min(index, len(sources) - 1))])
+
+    def on_automation_channel_changed(self, _: int) -> None:
+        """
+        The type follows the channel: each JD-Xi part takes only its own banks
+        (Digital 95, Analog 94, drum kits 86), so channel 3 (Analog) gets the
+        Analog tones, 10 the drum kits, the others the Digital tones. It can
+        still be changed afterwards, for another channel setup.
+
+        :return: None
+        """
+        from jdxi_editor.ui.dialogs.program_change import DEFAULT_SOURCE_FOR_CHANNEL
+
+        channel = int(self.automation_channel_combo.currentData()) - 1
+        source = DEFAULT_SOURCE_FOR_CHANNEL.get(channel, PresetSource.DIGITAL)
+        index = list(PresetSource).index(source)
+        if index != self.automation_type_combo.currentIndex():
+            self.automation_type_combo.setCurrentIndex(index)  # its list too
+        self._update_automation_midi_info()
 
     def _update_automation_midi_info(self, *_args) -> None:
         """Refresh MIDI wire readout for automation program + channel selection."""

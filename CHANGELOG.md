@@ -68,6 +68,13 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   mid-song comes with its bank select; a track's velocity scale at 0 silences it.
 
 ### Fixed
+- MIDI Player › Automation: each type offers its own presets — Analog offered the drum kits (and
+  Digital too, once changed), so the program change went to a bank the JD-Xi part ignores. The
+  type now follows the channel: 3 Analog, 10 Drums, the others Digital (it can still be changed).
+  Found in the original project's fixes (markxbrooks/JDXI-Editor).
+- Linux packages (.deb, .rpm, AppImage names): a pre-release is versioned «1.0.0~rc1», «1.0.0~b2»;
+  dpkg and rpm put «1.0.0rc1» after «1.0.0», so a candidate installed from a package would never
+  have been offered the finished release.
 - Programs › Library: a user bank (E–H) shows all its 64 slots; those JD-Xi Studio has not read
   yet appear as «(not read yet)» (G and H looked empty: only programs read once are known).
 - Message boxes: buttons wide enough for their text («Scarta le modifiche» was cut).
