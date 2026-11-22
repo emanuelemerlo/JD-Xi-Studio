@@ -5,6 +5,10 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Fixed
+- Recipes in Italian: importing a recipe that sets an LFO depth (Pitch / Filter / Amp / Pan Depth)
+  or the Mode of D1 / D2 stopped with an error and did nothing — the editors' long names are
+  translated, and the template's English names matched none of them. The names are matched in
+  English; the explanations stay in Italian.
 - JD-Xi switched off and on again: the reconnection could still use the old MIDI ports — one
   refused to close (Windows: «error closing Windows MM MIDI input port») and the next attempt
   opened the broken input again, which received nothing: the badge stayed «Verifying the

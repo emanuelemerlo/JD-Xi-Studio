@@ -94,6 +94,25 @@ def _slots_from_blocks(blocks, strip: Callable[[str], str]) -> list[_Slot]:
 
 @functools.lru_cache(maxsize=None)
 def _editor_slots() -> dict[str, list[_Slot]]:
+    """
+    The editors' parameters, named in English as the template is: in another
+    language their long names are translated and some matched nothing — in
+    Italian checking a recipe that set an LFO depth stopped with an error, and
+    the import did nothing. The descriptions shown stay in the interface's language.
+    """
+    from jdxi_editor.i18n import untranslated
+
+    slots = _editor_slots_as_shown()
+    with untranslated():
+        english = _editor_slots_as_shown()
+    for part, shown in slots.items():
+        for slot, name in zip(shown, english.get(part, [])):
+            if slot.name == name.name:
+                slot.label, slot.long = name.label, name.long
+    return slots
+
+
+def _editor_slots_as_shown() -> dict[str, list[_Slot]]:
     from jdxi_editor.ui.v2 import arpeggio, digital, drums, effects, program, vocal
     from jdxi_editor.ui.v2.params import analog_info
 

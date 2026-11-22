@@ -283,6 +283,8 @@ def check_row(row: Row, default_part: str = "") -> Checked:
             return Checked(row, FIX, msg, suggestions=suggestions)
     elif norm_differs(target, group):
         status, message = CONFIRM, tr("Found in group {group}.").format(group=target.group)
+    if not target.protos:  # a template name no editor parameter answers to: said, not an error
+        return Checked(row, FIX, tr("\"{name}\" cannot be set from here.").format(name=row.param), target)
     indexes, waves, su_status, su_message = parse_su(target, su)
     if su_status == FIX:
         return Checked(row, FIX, su_message, target)

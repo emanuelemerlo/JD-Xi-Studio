@@ -466,12 +466,12 @@
             <translation>Manca la parte.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/recipes/check.py" line="303" />
+            <location filename="../../jdxi_editor/recipes/check.py" line="305" />
             <source>To be set by ear.</source>
             <translation>Da regolare a orecchio.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/recipes/check.py" line="321" />
+            <location filename="../../jdxi_editor/recipes/check.py" line="323" />
             <location filename="../../jdxi_editor/recipes/check.py" line="122" />
             <source>"{text}" is not a value of this parameter</source>
             <translation>"{text}" non è un valore di questo parametro</translation>
@@ -490,6 +490,11 @@
             <location filename="../../jdxi_editor/recipes/check.py" line="280" />
             <source>"{name}" is not a parameter of {part} {group}.</source>
             <translation>"{name}" non è un parametro di {part} {group}.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/recipes/check.py" line="287" />
+            <source>"{name}" cannot be set from here.</source>
+            <translation>«{name}» non si può impostare da qui.</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/recipes/check.py" line="121" />
@@ -517,7 +522,7 @@
             <translation>Trovato nel gruppo {group}.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/recipes/check.py" line="340" />
+            <location filename="../../jdxi_editor/recipes/check.py" line="342" />
             <source>A row with {n} parameters was split: check that each value went to the right place.</source>
             <translation>Una riga con {n} parametri è stata divisa: controlla che i valori siano andati al posto giusto.</translation>
         </message>
