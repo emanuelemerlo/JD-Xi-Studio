@@ -365,8 +365,10 @@ class RecipesEditor(QWidget):
         try:
             recipe = reader.read_file(path)
         except Exception as ex:  # a damaged or unreadable file
+            log.warning(f"Recipes: could not read {path}: {ex}", scope="RecipesEditor")
             QMessageBox.warning(self, tr("Import a recipe"), tr("Could not read the file: {error}").format(error=ex))
             return
+        log.message(f"Recipes: read {path}: {len(recipe.rows)} rows", scope="RecipesEditor")
         if not recipe.title:
             recipe.title = Path(path).stem
         self.recipe_path = None
@@ -393,6 +395,14 @@ class RecipesEditor(QWidget):
         self.source = source
         self.checked = check.check(recipe)
         self.step_index = 0
+        from collections import Counter
+
+        counts = Counter(c.status for c in self.checked)
+        log.message(f"Recipes: «{recipe.title}» checked: {dict(counts)}", scope="RecipesEditor")
+        for c in self.checked:
+            if c.status in (check.FIX, check.CONFIRM):
+                log.message(f"Recipes: {c.row.source} {c.row.part} {c.row.group} {c.row.param} = "
+                            f"{c.row.value}: {c.status} — {c.message}", scope="RecipesEditor")
 
     # -------------------------------------------------------------- check
     def _check_page(self) -> QWidget:
@@ -559,7 +569,13 @@ class RecipesEditor(QWidget):
             rows.append(c.row)
         self.recipe.rows = rows
         self.checked = [c for c in self.checked if not c.excluded]
-        self.recipe_path = library.save(self.recipe, self.recipe_path)
+        try:
+            self.recipe_path = library.save(self.recipe, self.recipe_path)
+        except OSError as ex:  # the folder cannot be written
+            log.warning(f"Recipes: saving «{self.recipe.title}» failed: {ex}", scope="RecipesEditor")
+            QMessageBox.warning(self, tr("Recipes"), tr("Could not save the recipe: {error}").format(error=ex))
+            return
+        log.message(f"Recipes: «{self.recipe.title}» saved in {self.recipe_path}", scope="RecipesEditor")
         self.refresh_library()
         self.show_guide()
 
