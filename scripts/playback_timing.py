@@ -102,6 +102,35 @@ def report(kind: str, late: list[float]) -> None:
           f"95% within {p95 - base:6.2f} ms   worst {ordered[-1] - base:6.2f} ms")
 
 
+def _late_ms(wait, seconds: float, times: int = 100) -> float:
+    total = 0.0
+    for _ in range(times):
+        start = time.perf_counter()
+        wait(seconds)
+        total += time.perf_counter() - start - seconds
+    return total / times * 1000.0
+
+
+def diagnose() -> None:
+    """How late the system's own waits end (a 2 ms wait, 100 times): what the schedulers stand on."""
+    import threading
+
+    event = threading.Event()
+    rows = [("Event.wait 2 ms", event.wait), ("time.sleep 2 ms", time.sleep)]
+    print(f"\nPython {sys.version.split()[0]}: how late a 2 ms wait ends (average)")
+    for name, wait in rows:
+        print(f"  {name:18s} {_late_ms(wait, 0.002):6.2f} ms")
+    if sys.platform == "win32":
+        import ctypes
+
+        winmm = ctypes.WinDLL("winmm")
+        result = winmm.timeBeginPeriod(1)
+        print(f"  with timeBeginPeriod(1) (returned {result}):")
+        for name, wait in rows:
+            print(f"  {name:18s} {_late_ms(wait, 0.002):6.2f} ms")
+        winmm.timeEndPeriod(1)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("file", nargs="?", help="a MIDI file (default: a busy test song)")
@@ -114,9 +143,10 @@ def main() -> None:
         limit = args.seconds or 20.0
         mid = busy_song(limit)
         print(f"Test song: {limit:.0f} s, 140 BPM, 16ths + 8ths + bass + 32nd hi-hats")
-    print(f"Platform: {sys.platform}\n")
+    print(f"Platform: {sys.platform}, Python {sys.version.split()[0]}\n")
     for kind in ("deadline", "timer"):
         report(kind, measure(mid, kind, limit))
+    diagnose()
 
 
 if __name__ == "__main__":

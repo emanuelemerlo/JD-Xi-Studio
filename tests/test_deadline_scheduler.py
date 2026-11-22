@@ -87,3 +87,24 @@ def test_windows_timer_resolution_is_harmless_elsewhere():
     resolution = tp._WindowsTimerResolution()
     resolution.set(True)
     resolution.set(False)  # on Linux / macOS nothing to do, no error
+
+
+def test_windows_wait_ends_on_time_and_wakes(monkeypatch):
+    """The Windows wait (event for most of it, then 1 ms sleeps) ends on time and still wakes."""
+    import threading
+    import time
+
+    from picomidi.playback.engine import PlaybackEngine
+
+    monkeypatch.setattr(tp.sys, "platform", "win32")
+    scheduler = tp._PreciseWaitScheduler(PlaybackEngine(), lock=threading.RLock())
+    start = time.perf_counter()
+    scheduler._wait_for_wake(0.05)
+    elapsed = time.perf_counter() - start
+    assert 0.049 <= elapsed < 0.06
+    # a wake in the last 20 ms (pause, seek…) ends the wait at once
+    threading.Timer(0.035, scheduler.wake).start()
+    start = time.perf_counter()
+    scheduler._wait_for_wake(0.5)
+    assert time.perf_counter() - start < 0.06
+    assert not scheduler._wake.is_set()  # cleared for the next wait

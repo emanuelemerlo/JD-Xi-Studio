@@ -66,8 +66,9 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   now-playing line beside them.
 - MIDI Player: playback driven by picomidi's deadline scheduler — it sleeps until the next note,
   clock pulse or loop end instead of looking every 5 ms (on Linux: notes ~0.1 ms late on average
-  instead of ~2.6, at most a few ms instead of 5–6); on Windows the timer resolution is raised to
-  1 ms while playing. `JDXI_PLAYBACK_SCHEDULER=timer` brings back the earlier one;
+  instead of ~2.6, at most a few ms instead of 5–6). On Windows a wait on an event ends on the
+  15.6 ms timer tick (measured: notes ~8 ms late on average with both schedulers): the last 20 ms
+  of each wait are 1 ms sleeps, and the timer resolution is raised to 1 ms while playing. `JDXI_PLAYBACK_SCHEDULER=timer` brings back the earlier one;
   `scripts/playback_timing.py` measures both on any machine. (After the original project's
   2a7ff96.)
 - picomidi 0.3: a muted track no longer cuts a note another track holds; a program chased from

@@ -21,6 +21,7 @@ Example:
 import os
 import sys
 import threading
+import time
 from typing import Callable, Optional
 
 import mido
@@ -62,10 +63,45 @@ class _WindowsTimerResolution:
             import ctypes
 
             winmm = ctypes.WinDLL("winmm")
-            (winmm.timeBeginPeriod if on else winmm.timeEndPeriod)(1)
+            result = (winmm.timeBeginPeriod if on else winmm.timeEndPeriod)(1)
+            if result != 0:  # TIMERR_NOERROR
+                log.warning(f"timer resolution request returned {result}", scope="TransportController")
             self._on = on
         except (OSError, AttributeError) as ex:
             log.warning(f"Timer resolution not set: {ex}", scope="TransportController")
+
+
+# the last part of a wait, done in short sleeps (Windows): a timed wait on an
+# event ends on the system timer's tick (15.6 ms), a short sleep does not
+# (Python 3.11+: a high-resolution timer; before, with timeBeginPeriod(1))
+FINE_WAIT_S = 0.020
+FINE_STEP_S = 0.001
+
+
+class _PreciseWaitScheduler(PlaybackScheduler):
+    """
+    PlaybackScheduler whose waits end on time on Windows too.
+
+    Measured on Windows 11 with the plain one: notes ~8 ms late on average,
+    up to 14 ms (an Event.wait() ends on the 15.6 ms timer tick). Here the
+    wait is an Event.wait() for all but its last 20 ms, then 1 ms sleeps that
+    still look for a wake (pause, seek…) between them. Other systems: as is.
+    """
+
+    def _wait_for_wake(self, timeout):  # picomidi 0.3 (pinned < 0.4)
+        if timeout is None or sys.platform != "win32" or timeout <= 0:
+            return super()._wait_for_wake(timeout)
+        deadline = time.perf_counter() + timeout
+        coarse = timeout - FINE_WAIT_S
+        if coarse > 0 and self._wake.wait(coarse):
+            self._wake.clear()
+            return
+        while not self._wake.is_set() and not self._stop.is_set():
+            remaining = deadline - time.perf_counter()
+            if remaining <= 0:
+                break
+            time.sleep(min(remaining, FINE_STEP_S))
+        self._wake.clear()
 
 
 class _DeadlineScheduler:
@@ -74,7 +110,7 @@ class _DeadlineScheduler:
     on the scheduler thread."""
 
     def __init__(self, engine, lock, ended: Callable[[], None]):
-        self._scheduler = PlaybackScheduler(engine, lock=lock, on_ended=ended, max_sleep_s=0.25)
+        self._scheduler = _PreciseWaitScheduler(engine, lock=lock, on_ended=ended, max_sleep_s=0.25)
 
     @property
     def is_running(self) -> bool:
