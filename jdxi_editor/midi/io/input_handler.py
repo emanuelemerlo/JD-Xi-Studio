@@ -185,6 +185,9 @@ class MidiInHandler(MidiIOController):
         :param message: list[Any]
         :param data: Any
         """
+        connection = getattr(self, "_jdxi_connection", None)
+        if connection is not None:
+            connection.heard()  # the JD-Xi is still there
         try:
             message_content, data = message
             p = mido.Parser()

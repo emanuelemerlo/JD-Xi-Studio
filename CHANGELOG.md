@@ -5,6 +5,14 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- MIDI Player › Assign the tracks to the parts: **Sounds of the parts**. For each part the JD-Xi
+  preset closest to the General MIDI instrument of its main track (the one with the most notes): a
+  Digital tone for Digital 1 and 2, an Analog tone for the Analog part (basses and leads; a lead
+  played low is a bass line), a drum kit for the Drums. On Apply it takes the place of the file's
+  program changes on that part and is sent to the JD-Xi: a GM file sounds close to the original the
+  first time it is played. Each can be changed, or left «Unchanged». **None played** sets every
+  track «Not played», to choose only the ones wanted; the Part column takes the part's colour,
+  grey when not played.
 - MIDI Player › Fit to the JD-Xi › Channels: each channel a narrow column, as on a mixer — its
   number, **M** (mute, red) and **S** (solo, green). With one or more channels soloed only those
   play; the channels' own mutes are kept, given back as they were when the solos go off. The
@@ -81,6 +89,9 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   mid-song comes with its bank select; a track's velocity scale at 0 silences it.
 
 ### Fixed
+- The «JD-Xi connected» badge stayed on after the JD-Xi was switched off (its USB MIDI ports stay
+  open on some systems). A JD-Xi silent for 3 seconds is asked who it is; without an answer within
+  8 seconds it is Off-line, and connected again as soon as it answers.
 - MIDI Player: playing a General MIDI file changed the parts' sounds — its program changes, with
   no JD-Xi Bank Select, picked a sound of whatever bank each part was in, and the edits not saved
   were lost. Event filter › **GM** (on by default) does not send the program changes that do not

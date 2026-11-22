@@ -391,7 +391,8 @@ class MidiFilePlayer(SynthEditor):
         # shows the parts as they are: it showed the proposal again, as if
         # nothing had been applied
         as_now = self._fit_applied or summary(self.midi_state.file)[1]
-        dialog = FitDialog(tracks, proposal, parent=self, start_as_now=as_now)
+        dialog = FitDialog(tracks, proposal, parent=self, start_as_now=as_now,
+                           midi_file=self.midi_state.file)
         if dialog.exec() != QDialog.DialogCode.Accepted:
             return
         spins = self.midi_file.midi_track_viewer.track_channel_spins
@@ -400,8 +401,44 @@ class MidiFilePlayer(SynthEditor):
             if spin is not None:
                 spin.setValue(channel)  # applied like an edit by hand
         self.midi_file.midi_track_viewer.flush_pending_edits()
+        self._apply_part_sounds(dialog.sounds())
         self._fit_applied = True
         self._refresh_fit_summary()
+
+    def _apply_part_sounds(self, sounds: dict[int, tuple[int, int]]) -> None:
+        """
+        Give the parts their sounds (Fit to the JD-Xi): on each part's channel
+        the file's program changes and bank selects go, and the part's main
+        track starts with the chosen JD-Xi preset; sent to the JD-Xi too.
+
+        :param sounds: part channel (1-based) -> (preset number, main track index)
+        """
+        if not sounds:
+            return
+        from jdxi_editor.midi.track import gm_map
+        from jdxi_editor.ui.editors.midi_player.fit_jdxi import part_presets, preset_wire
+        from jdxi_editor.ui.v2.history import paused
+
+        viewer = self.midi_file.midi_track_viewer
+        tracks = dict(enumerate(viewer.midi_file.tracks))
+        changed: dict[int, mido.MidiTrack] = {}
+        for channel, (number, main) in sounds.items():
+            ch = channel + Midi.channel.DISPLAY_TO_BINARY
+            msb, lsb, program = preset_wire(part_presets(channel)[number - 1])
+            for index, track in tracks.items():
+                if any(getattr(msg, "channel", None) == ch and (
+                        msg.type == "program_change"
+                        or (msg.type == "control_change" and msg.control in (0, 32)))
+                       for msg in track):
+                    tracks[index] = changed[index] = gm_map.strip_program_changes(track, ch)
+            if main in tracks:
+                tracks[main] = changed[main] = gm_map.with_sound(tracks[main], ch, msb, lsb, program)
+            if self.midi_helper is not None:
+                with paused():  # the file's sounds: played, not asked
+                    self.midi_helper.send_bank_select_and_program_change(
+                        channel=ch, bank_msb=msb, bank_lsb=lsb, program=program)
+        if changed:
+            viewer._update_tracks_in_place(changed)
 
     def _refresh_fit_summary(self) -> None:
         """What the JD-Xi plays of the file, in the Fit to the JD-Xi group."""

@@ -824,142 +824,187 @@
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/midi_player/automation.py" line="47" />
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="2225" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="2262" />
             <source>Insert Program Change at current position</source>
             <translation>Inserisci un Program Change nella posizione attuale</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1297" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1334" />
             <source>Close the MIDI file</source>
             <translation>Chiudi il file MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1298" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1335" />
             <source>The MIDI file has changes that are not saved.</source>
             <translation>Il file MIDI ha modifiche non salvate.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1299" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1336" />
             <source>Save…</source>
             <translation>Salva…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1300" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1337" />
             <source>Close without saving</source>
             <translation>Chiudi senza salvare</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1390" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1427" />
             <source>Loading: track {track} of {tracks}</source>
             <translation>Caricamento: traccia {track} di {tracks}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1362" />
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1364" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1399" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1401" />
             <source>Loading {name}…</source>
             <translation>Caricamento di {name}…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1374" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1411" />
             <source>{name}: {tracks} tracks, loaded in {seconds:.1f} s</source>
             <translation>{name}: {tracks} tracce, caricato in {seconds:.1f} s</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="76" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="97" />
             <location filename="../../jdxi_editor/ui/widgets/classification_group.py" line="44" />
             <source>Load a MIDI file: this says which of its tracks the JD-Xi plays.</source>
             <translation>Carica un file MIDI: qui vedi quali tracce suona il JD-Xi.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="80" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="101" />
             <source>No notes in this file.</source>
             <translation>Nessuna nota in questo file.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="148" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="175" />
             <location filename="../../jdxi_editor/ui/v2/players.py" line="440" />
             <source>Fit to the JD-Xi</source>
             <translation>Adatta al JD-Xi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="152" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="179" />
             <source>The JD-Xi plays four parts: Digital 1, Digital 2, Analog, Drums. Choose the part for each track; «Not played» leaves it on its channel, silent on the JD-Xi. Several tracks can share a part. Nothing changes until Apply; the file on disk changes only when you save.</source>
             <translation>Il JD-Xi suona quattro parti: Digital 1, Digital 2, Analog, Drums. Scegli la parte per ogni traccia; «Non suonata» la lascia sul suo canale, muta sul JD-Xi. Più tracce possono condividere una parte. Non cambia nulla fino ad Applica; il file su disco cambia solo quando salvi.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="182" />
-            <source>As now</source>
-            <translation>Come ora</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="183" />
-            <source>Each track on the part it is on now</source>
-            <translation>Ogni traccia sulla parte in cui è ora</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="185" />
-            <source>Proposal</source>
-            <translation>Proposta</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="186" />
-            <source>Each track on the part proposed for it, by what it plays</source>
-            <translation>Ogni traccia sulla parte proposta per lei, in base a cosa suona</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="188" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="219" />
             <source>Apply</source>
             <translation>Applica</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="42" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="220" />
+            <source>As now</source>
+            <translation>Come ora</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="221" />
+            <source>Each track on the part it is on now</source>
+            <translation>Ogni traccia sulla parte in cui è ora</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="223" />
+            <source>Proposal</source>
+            <translation>Proposta</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="224" />
+            <source>Each track on the part proposed for it, by what it plays</source>
+            <translation>Ogni traccia sulla parte proposta per lei, in base a cosa suona</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="226" />
+            <source>None played</source>
+            <translation>Nessuna suonata</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="227" />
+            <source>Every track «Not played»: then choose the part of only the ones you want</source>
+            <translation>Tutte le tracce «Non suonata»: poi scegli la parte solo di quelle che ti servono</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="264" />
+            <source>Sounds of the parts</source>
+            <translation>Suoni delle parti</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="267" />
+            <source>From the General MIDI instrument of each part's main track (the one with the most notes): the closest JD-Xi preset. It takes the place of the file's program changes on that part and is sent to the JD-Xi on Apply. «Unchanged» leaves the part's sound as it is.</source>
+            <translation>Dallo strumento General MIDI della traccia principale di ogni parte (quella con più note): il preset del JD-Xi più vicino. Prende il posto dei program change del file su quella parte e viene mandato al JD-Xi con Applica. «Invariato» lascia il suono della parte com'è.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="63" />
             <source>channel {ch}</source>
             <translation>canale {ch}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="83" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="104" />
             <source>{off} of {tracks} tracks are on channels no JD-Xi part plays: they are not heard.</source>
             <translation>{off} tracce su {tracks} sono su canali che nessuna parte del JD-Xi suona: non si sentono.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="160" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="187" />
             <source>Track</source>
             <translation>Traccia</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="160" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="187" />
             <source>Notes</source>
             <translation>Note</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="160" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="187" />
             <source>Now</source>
             <translation>Ora</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="160" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="187" />
             <source>Part on the JD-Xi</source>
             <translation>Parte sul JD-Xi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="82" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="279" />
+            <source>Unchanged</source>
+            <translation>Invariato</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="103" />
             <source>Ready for the JD-Xi: its {n} tracks are on the JD-Xi's parts.</source>
             <translation>Pronto per il JD-Xi: le sue {n} tracce sono sulle parti del JD-Xi.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="65" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="86" />
             <source>Track {n}</source>
             <translation>Traccia {n}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="174" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="202" />
             <source>Not played (stays on channel {ch})</source>
             <translation>Non suonata (resta sul canale {ch})</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="175" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="203" />
             <source>Not played (to channel {ch})</source>
             <translation>Non suonata (sul canale {ch})</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="316" />
+            <source>no track on this part</source>
+            <translation>nessuna traccia su questa parte</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="322" />
+            <source>«{track}»: no General MIDI instrument</source>
+            <translation>«{track}»: nessuno strumento General MIDI</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="324" />
+            <source>«{track}»: GM drum kit {program}</source>
+            <translation>«{track}»: kit di batteria GM {program}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/midi_player/fit_jdxi.py" line="327" />
+            <source>«{track}»: GM {program} {name}</source>
+            <translation>«{track}»: GM {program} {name}</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/pattern/pattern.py" line="1478" />
