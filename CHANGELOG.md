@@ -4,6 +4,12 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+### Fixed
+- JD-Xi switched off and on again: the reconnection could still use the old MIDI ports — one
+  refused to close (Windows: «error closing Windows MM MIDI input port») and the next attempt
+  opened the broken input again, which received nothing: the badge stayed «Verifying the
+  JD-Xi…». Every reconnection now opens new ports.
+
 # [1.0.0-rc.1] - 2026-11-22
 
 The release candidate. The MIDI Player fits a General MIDI file to the JD-Xi — its tracks on the

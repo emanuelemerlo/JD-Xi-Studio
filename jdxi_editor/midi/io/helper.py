@@ -841,6 +841,12 @@ class MidiIOHelper(MidiInHandler, MidiOutHandler):
         """
         try:
             self.close_ports()
+            # new rtmidi ports every time: one whose device went away (JD-Xi
+            # switched off or unplugged) may fail to close or open — Windows
+            # «error closing Windows MM MIDI input port» — or open and receive
+            # nothing (the badge stayed «Verifying the JD-Xi…»)
+            self._replace_port("midi_in")
+            self._replace_port("midi_out")
             # connect_port_names opens both ports (and checks them); opening them
             # again here reported success whatever had happened
             if not self.connect_port_names(in_port, out_port):
