@@ -22,9 +22,9 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
           cache: pip
@@ -139,14 +139,14 @@ jobs:
       # one is the app folder itself (GitHub zips it on download: no zip in a
       # zip); the installer is already compressed, so it is stored as is.
       - name: Upload portable
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: JD-Xi-Studio-${{ steps.version.outputs.label }}-win64-portable
           path: dist/JD-Xi-Studio/
           if-no-files-found: error
 
       - name: Upload installer
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: JD-Xi-Studio-${{ steps.version.outputs.label }}-win64-setup
           path: dist/installer/*.exe

@@ -39,9 +39,9 @@ jobs:
         # oldest and newest supported Pythons.
         include: ${{ fromJSON(inputs.macos == 'only' && '[{"os":"macos-latest","python":"3.11"}]' || (inputs.macos == 'yes' && '[{"os":"ubuntu-latest","python":"3.11"},{"os":"windows-latest","python":"3.11"},{"os":"macos-latest","python":"3.11"},{"os":"ubuntu-latest","python":"3.10"},{"os":"ubuntu-latest","python":"3.12"}]' || '[{"os":"ubuntu-latest","python":"3.11"},{"os":"windows-latest","python":"3.11"},{"os":"ubuntu-latest","python":"3.10"},{"os":"ubuntu-latest","python":"3.12"}]')) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python }}
           cache: pip
@@ -74,9 +74,9 @@ jobs:
     if: inputs.macos != 'only'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
@@ -115,7 +115,7 @@ jobs:
           cp scripts/check_installed.py /tmp/
           cd /tmp && /tmp/wheel-env/bin/python check_installed.py
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: dist
           path: dist/
