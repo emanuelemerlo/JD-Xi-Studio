@@ -77,6 +77,9 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   mid-song comes with its bank select; a track's velocity scale at 0 silences it.
 
 ### Fixed
+- Keyboard window › LFO **Rate** slider: it sent NRPN 21–23, the LFO Amp Depth (a copied map
+  entry), so it moved the Amp depth — which the Amp slider then showed — and never the LFO rate.
+  It now sends Control Change 16–18, as the JD-Xi's knob.
 - MIDI Player › Automation: each type offers its own presets — Analog offered the drum kits (and
   Digital too, once changed), so the program change went to a bank the JD-Xi part ignores. The
   type now follows the channel: 3 Analog, 10 Drums, the others Digital (it can still be changed).
