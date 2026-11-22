@@ -433,7 +433,7 @@ class MidiFilePlayer(_player.MidiFilePlayer):
         top.addWidget(self.ui.digital_title_file_name, 0, Qt.AlignmentFlag.AlignTop)
         top.addLayout(controls, 1)
         player = _card(tr("Player"), top)
-        mute_label = QLabel(tr("Mute channels"))
+        mute_label = QLabel(tr("Channels"))
         mute_label.setStyleSheet("color: #c9cbd1;")
         # what of the file the JD-Xi plays (the group's own summary line)
         classification = _card(

@@ -242,6 +242,8 @@ class TransportController(QObject):
         self.engine = engine or PreciseClockEngine()
         self.send = send
         self.engine.on_event = self._on_engine_event
+        # (channel, note) keys sounding on the instrument: one voice per key
+        self._sounding: set[tuple[int, int]] = set()
         # Engine calls (and so MIDI sends) are serialised across both threads
         self._lock = threading.RLock()
         self._loaded = False
@@ -498,8 +500,34 @@ class TransportController(QObject):
     # --- Internals ----------------------------------------------------------
 
     def _on_engine_event(self, msg: mido.Message) -> None:
-        if self.send is not None:
-            self.send(msg)
+        if self.send is None:
+            return
+        for out in self._one_voice_per_key(msg):
+            self.send(out)
+
+    def _one_voice_per_key(self, msg: mido.Message) -> list[mido.Message]:
+        """
+        Never start a second voice on a key that is already sounding.
+
+        Two tracks on the same channel playing the same note (a doubled part
+        moved onto one channel, the left/right copies of a lead…) send two
+        note-ons and, by design of the engine, a single note-off when the last
+        one ends. The JD-Xi starts a voice per note-on and a note-off may end
+        only one of them: the other one hangs until Panic. So a note-on for a
+        key already sounding is preceded by its note-off (the note is
+        retriggered), and the instrument never holds more voices than the
+        single note-off the engine will send can end.
+        """
+        if msg.type == "note_on" and msg.velocity > 0:
+            key = (msg.channel, msg.note)
+            if key in self._sounding:
+                return [mido.Message("note_off", channel=msg.channel, note=msg.note, velocity=0), msg]
+            self._sounding.add(key)
+        elif msg.type == "note_off" or msg.type == "note_on":
+            self._sounding.discard((msg.channel, msg.note))
+        elif msg.type == "control_change" and msg.control in (120, 123):  # All Sound / Notes Off
+            self._sounding = {key for key in self._sounding if key[0] != msg.channel}
+        return [msg]
 
     def _ensure_scheduler(self) -> None:
         if self._scheduler is not None and self._scheduler.is_running:

@@ -5,6 +5,9 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- MIDI Player › Fit to the JD-Xi: **Solo** under each channel's Mute. With one or more channels
+  soloed only those play; the channels' own mutes are kept, given back as they were when the solos
+  go off. A channel a solo silences shows it on its Mute (a red outline).
 - The main window's menus follow the app: **File** (Patch › Open / Save, MIDI Player › Open / Save
   / Save as / Recent), **Editor** (the editors window's tabs, by section: Programs, Parts, Effects,
   Playback, Recipes, Settings; Ctrl+0–9 in tab order), **JD-Xi** (Save the program, Send all — now
@@ -77,6 +80,10 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   mid-song comes with its bank select; a track's velocity scale at 0 silences it.
 
 ### Fixed
+- MIDI Player: notes left hanging until Panic when two tracks on one channel played the same note
+  (a doubled part, the left and right copies of a lead put on the same part). Each note-on started
+  a voice on the JD-Xi but only one note-off came, when the last copy ended. A note-on for a key
+  already sounding is now preceded by its note-off: the note is retriggered, never doubled.
 - Keyboard window › LFO **Rate** slider: it sent NRPN 21–23, the LFO Amp Depth (a copied map
   entry), so it moved the Amp depth — which the Amp slider then showed — and never the LFO rate.
   It now sends Control Change 16–18, as the JD-Xi's knob.
