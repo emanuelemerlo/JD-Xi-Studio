@@ -64,6 +64,12 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - Programs › Organize: Add to / Remove from playlist over the songs' table (they act on the songs);
   Play, Stop, Pause and **Mix** (was Shuffle Play) in a compact row of their own, with the
   now-playing line beside them.
+- MIDI Player: playback driven by picomidi's deadline scheduler — it sleeps until the next note,
+  clock pulse or loop end instead of looking every 5 ms (on Linux: notes ~0.1 ms late on average
+  instead of ~2.6, at most a few ms instead of 5–6); on Windows the timer resolution is raised to
+  1 ms while playing. `JDXI_PLAYBACK_SCHEDULER=timer` brings back the earlier one;
+  `scripts/playback_timing.py` measures both on any machine. (After the original project's
+  2a7ff96.)
 - picomidi 0.3: a muted track no longer cuts a note another track holds; a program chased from
   mid-song comes with its bank select; a track's velocity scale at 0 silences it.
 
