@@ -117,7 +117,11 @@ def diagnose() -> None:
 
     event = threading.Event()
     rows = [("Event.wait 2 ms", event.wait), ("time.sleep 2 ms", time.sleep)]
-    print(f"\nPython {sys.version.split()[0]}: how late a 2 ms wait ends (average)")
+    print(f"\nPython {sys.version.split()[0]}: clocks' resolution")
+    for name in ("monotonic", "perf_counter"):
+        info = time.get_clock_info(name)
+        print(f"  time.{name:13s} {info.resolution * 1000:8.4f} ms  ({info.implementation})")
+    print("How late a 2 ms wait ends (average)")
     for name, wait in rows:
         print(f"  {name:18s} {_late_ms(wait, 0.002):6.2f} ms")
     if sys.platform == "win32":

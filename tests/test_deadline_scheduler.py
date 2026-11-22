@@ -108,3 +108,15 @@ def test_windows_wait_ends_on_time_and_wakes(monkeypatch):
     scheduler._wait_for_wake(0.5)
     assert time.perf_counter() - start < 0.06
     assert not scheduler._wake.is_set()  # cleared for the next wait
+
+
+def test_the_engine_reads_a_precise_clock():
+    """picomidi's engine read time.monotonic(): 15.6 ms steps on Windows before Python 3.13."""
+    import time
+
+    transport = tp.TransportController()
+    assert isinstance(transport.engine, tp.PreciseClockEngine)
+    before = time.perf_counter()
+    now = transport.engine._now()
+    assert before <= now <= time.perf_counter()  # the same clock as perf_counter
+    transport.shutdown()

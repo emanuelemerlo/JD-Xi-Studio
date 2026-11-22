@@ -36,6 +36,22 @@ SCHEDULER_INTERVAL_MS = 5  # the «timer» scheduler only
 POSITION_INTERVAL_MS = 50
 
 
+class PreciseClockEngine(PlaybackEngine):
+    """
+    PlaybackEngine on time.perf_counter().
+
+    picomidi's engine reads time.monotonic(), which on Windows before Python
+    3.13 moves in 15.6 ms steps: woken on time, the engine saw an older time,
+    thought the note not due yet and sent it later — measured on Windows 11 /
+    Python 3.12: ~8 ms late on average, up to 14–19 ms, whatever the
+    scheduler. perf_counter() is precise to the microsecond everywhere.
+    """
+
+    @staticmethod
+    def _now() -> float:  # picomidi 0.3 (pinned < 0.4)
+        return time.perf_counter()
+
+
 def scheduler_kind() -> str:
     """«deadline» (default): sleep until the next event; «timer»: look every 5 ms."""
     kind = os.environ.get("JDXI_PLAYBACK_SCHEDULER", "deadline").strip().lower()
@@ -223,7 +239,7 @@ class TransportController(QObject):
         :param position_interval_ms: How often position_changed is emitted while playing
         """
         super().__init__(parent)
-        self.engine = engine or PlaybackEngine()
+        self.engine = engine or PreciseClockEngine()
         self.send = send
         self.engine.on_event = self._on_engine_event
         # Engine calls (and so MIDI sends) are serialised across both threads
