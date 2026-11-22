@@ -1,16 +1,27 @@
 What's New in 1.0.0 rc 1
 ========================
 
-The release candidate: the MIDI Player fits a file to the JD-Xi, the state shown is closer to what
-the JD-Xi really holds, and FluidSynth is gone.
+The release candidate: the MIDI Player fits a General MIDI file to the JD-Xi — its tracks and its
+sounds — and plays it on time, the Programs page is a mixer, the menus follow the app. Tried on the
+JD-Xi: the fixes from those checks are in this version.
 
 MIDI Player
 -----------
 
-* The «MIDI file» tab is the **MIDI Player**.
-* **Fit to the JD-Xi** says which of the file's tracks the JD-Xi plays; **Assign tracks to
-  parts…** proposes a part for each (drums, then one track each for Digital 1, Digital 2, Analog),
-  to check and apply. **Starting sounds** gives the parts a sound to start from.
+* The «MIDI file» tab is the **MIDI Player**; **Close** empties it (asking first when the file has
+  changes not saved).
+* **Fit to the JD-Xi** says which of the file's tracks the JD-Xi plays. **Assign tracks to parts…**
+  proposes a part for each (drums, then one track each for Digital 1, Digital 2, Analog), in the
+  parts' colours; **None played** to choose only the tracks you want; opened again, it shows what
+  was applied.
+* **Sounds of the parts**: the JD-Xi presets closest to the file's General MIDI instruments (a
+  Digital tone, an Analog bass or lead, a drum kit), written into the file and sent on Apply — a
+  GM file sounds close to its original the first time it is played.
+* Event filter › **GM** (on by default): a General MIDI file's program changes no longer change
+  the parts' sounds (and lose the edits not saved); the JD-Xi's own still go.
+* **Channels**: Mute and **Solo** per channel, as on a mixer.
+* On time on Windows: notes leave on average 0.6 ms after when the file says (it was about 8 ms);
+  two tracks on the same note no longer leave it hanging.
 * Big files load in seconds, with their progress on the display; the Pattern imports the file when
   shown, its first 64 bars.
 * Tracks: **Expand** for more room, a grip for their height; a track without a name shows the
@@ -20,8 +31,23 @@ MIDI Player
 Programs
 --------
 
+* The mixer: above each fader the part's **Pan**, **Delay** and **Reverb**; the faders are the
+  editors' levels. **Undo / Redo** of the whole program, in any tab.
+* **Program settings** (was *Program parts*), right after Programs: what the program keeps besides
+  its tones, part by part.
 * Playlist: Add / Remove over the songs, Play, Stop, Pause and **Mix** in a compact row; the
   **Extra sound** column (a Digital preset on the Analog part) readable.
+
+Windows and menus
+-----------------
+
+* The menus follow the app: **File** (Patch, MIDI Player, Preferences), **Editor** (the tabs, in
+  their order, Ctrl+0–9), **JD-Xi**, **Tools**, **Window**, **Help**; what cannot be done is greyed
+  out, its tooltip saying why. Ctrl+O / Ctrl+S are the patch's.
+* **Editors** in the keyboard window and **Keyboard** in the editors window bring the other one up.
+* Keyboard window: the LFO **Rate** slider moves the LFO rate (it moved the Amp depth); **Env**
+  starts in the middle, where the program is as saved.
+* The «JD-Xi connected» badge goes Off-line when the JD-Xi is switched off.
 
 What the JD-Xi holds
 --------------------

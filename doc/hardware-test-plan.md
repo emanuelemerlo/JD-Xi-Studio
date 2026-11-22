@@ -92,7 +92,7 @@ al tuo resoconto.
 
 | | Fai | Deve succedere |
 |---|---|---|
-| 2.1 | Avvia JD-Xi Studio | Splash con il logo, «Versione 1.0.0-beta.N» uguale a quella installata; nessun messaggio d'errore |
+| 2.1 | Avvia JD-Xi Studio | Splash con il logo, «Versione 1.0.0-rc.N» uguale a quella installata; nessun messaggio d'errore |
 | 2.2 | Finestra MIDI all'avvio (o JD-Xi › Configurazione MIDI) | Ingresso e uscita **JD-Xi** già scelti; la finestra è davanti alle altre, anche con la tastiera fissata in primo piano |
 | 2.3 | Guarda la barra in alto a destra dell'editor | «JD-Xi collegato» in verde; il nome del programma corrente del JD-Xi nel display |
 | 2.4 | Strumenti › Visualizzatore log | Il log di questa sessione (con data e ora nel nome); scheda *Avvisi ed errori* vuota o quasi; **nessuna** riga «MIDI output port is not open» o «No reply to RQ1» |
@@ -290,7 +290,7 @@ Ripeti 4.1, 4.5, 4.7, 6.1 e 8.1 su ogni schermo che usi (es. 1080p al 125%, 2496
 Copia e compila (una riga per passo eseguito):
 
 ```
-Versione: 1.0.0-beta.N    Data:            Schermo: 1920x1080 125%   Firmware JD-Xi:
+Versione: 1.0.0-rc.N    Data:            Schermo: 1920x1080 125%   Firmware JD-Xi:
 Script: OK __ / KO __ / saltati __        (allega il file .md)
 
 | Passo | Esito | Note |

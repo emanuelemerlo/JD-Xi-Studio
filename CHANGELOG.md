@@ -4,6 +4,13 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+# [1.0.0-rc.1] - 2026-11-22
+
+The release candidate. The MIDI Player fits a General MIDI file to the JD-Xi — its tracks on the
+four parts, and the JD-Xi sounds closest to its instruments — and plays it on time on Windows too;
+the Programs page is a mixer with Pan, Delay and Reverb and its own Undo; the menus follow the app.
+Tried on the JD-Xi (the checks of `doc/hardware-test-plan.md`, the fixes from them below).
+
 ### Changes
 - MIDI Player › Assign the tracks to the parts: **Sounds of the parts**. For each part the JD-Xi
   preset closest to the General MIDI instrument of its main track (the one with the most notes): a
