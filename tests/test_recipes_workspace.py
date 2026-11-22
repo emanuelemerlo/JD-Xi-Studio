@@ -155,3 +155,9 @@ def test_opening_another_recipe_from_the_editor_asks_about_unsaved_changes(edito
     monkeypatch.setattr(QMessageBox, "question", lambda *a, **k: QMessageBox.StandardButton.Discard)
     editor.open_selected()
     assert editor.pages.currentWidget() is editor.guide_page and editor.recipe.title == "Warm pad"
+
+
+def test_the_title_is_at_the_top_left_as_in_the_other_editors(editor):
+    title = editor.title.mapTo(editor, editor.title.rect().topLeft())
+    library = editor.sidebar.mapTo(editor, editor.sidebar.rect().topLeft())
+    assert title.x() <= library.x() + 2 and title.y() < library.y()

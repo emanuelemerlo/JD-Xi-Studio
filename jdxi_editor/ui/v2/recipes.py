@@ -140,28 +140,15 @@ class RecipesEditor(QWidget):
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self.setStyleSheet("RecipesEditor { background: #121214; } QLabel { color: #c9cbd1; }")
         self.setMinimumSize(1000, 640)
-        outer = QHBoxLayout(self)
+        outer = QVBoxLayout(self)
         outer.setContentsMargins(14, 12, 14, 12)
-        outer.setSpacing(0)
+        outer.setSpacing(10)
         from jdxi_editor.ui.v2 import density
         from jdxi_editor.ui.v2.restyle import title_badge
         from jdxi_editor.ui.v2.widgets import InfoPanel
 
-        # library | work | explanation: one workspace, the sides can be resized or closed
-        self.splitter = QSplitter(Qt.Orientation.Horizontal)
-        self.splitter.setChildrenCollapsible(False)
-        self.splitter.setHandleWidth(10)
-        self.splitter.setStyleSheet("QSplitter::handle { background: transparent; }")
-        outer.addWidget(self.splitter)
-        self.sidebar = self._library_sidebar()
-        self.splitter.addWidget(self.sidebar)
-        center = QWidget()
-        root = QVBoxLayout(center)
-        root.setContentsMargins(0, 0, 0, 0)
-        root.setSpacing(10)
-        self.splitter.addWidget(center)
-
-        self.title = title_badge(tr("Recipes"), ACCENT)  # as at the top of the other editors
+        # the title at the top left, as in the other editors; under it the workspace
+        self.title = title_badge(tr("Recipes"), ACCENT)
         bar = QHBoxLayout()
         bar.addWidget(self.title)
         # Where you are and the way back, always in the same place (the way
@@ -179,7 +166,20 @@ class RecipesEditor(QWidget):
         self.panel_button.setToolTip(tr("Show or hide the panel on the right, that explains what is chosen"))
         self.panel_button.toggled.connect(self._panel_toggled)
         bar.addWidget(self.panel_button)
-        root.addLayout(bar)
+        outer.addLayout(bar)
+        # library | work | explanation: one workspace, the sides can be resized or closed
+        self.splitter = QSplitter(Qt.Orientation.Horizontal)
+        self.splitter.setChildrenCollapsible(False)
+        self.splitter.setHandleWidth(10)
+        self.splitter.setStyleSheet("QSplitter::handle { background: transparent; }")
+        outer.addWidget(self.splitter, 1)
+        self.sidebar = self._library_sidebar()
+        self.splitter.addWidget(self.sidebar)
+        center = QWidget()
+        root = QVBoxLayout(center)
+        root.setContentsMargins(0, 0, 0, 0)
+        root.setSpacing(10)
+        self.splitter.addWidget(center)
         from PySide6.QtGui import QKeySequence, QShortcut
 
         self.back_shortcut = QShortcut(QKeySequence(Qt.Key.Key_Escape), self)
