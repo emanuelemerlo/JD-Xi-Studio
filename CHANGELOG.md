@@ -9,6 +9,10 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   refused to close (Windows: «error closing Windows MM MIDI input port») and the next attempt
   opened the broken input again, which received nothing: the badge stayed «Verifying the
   JD-Xi…». Every reconnection now opens new ports.
+- MIDI Player: a part played by two identical tracks (the left/right copies of a bass on the Analog
+  part) had every note cut and started again — the guard against hanging notes sent a note-off
+  before the copy's note-on. The copy's note-on arriving at the same moment (within 30 ms) is
+  dropped: the note is played once. A later note on a key still held is retriggered as before.
 
 # [1.0.0-rc.1] - 2026-11-22
 
