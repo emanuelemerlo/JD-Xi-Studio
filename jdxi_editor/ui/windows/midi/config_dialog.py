@@ -105,10 +105,29 @@ def run_in_background(fn: Callable, callback: Callable, parent: QObject) -> None
 
 # ------------------------------------------------------------------- slow lookups
 def list_midi_ports(midi_helper) -> tuple[list[str], list[str]]:
-    return (
-        filter_excluded_ports(midi_helper.get_input_ports()),
-        filter_excluded_ports(midi_helper.get_output_ports()),
-    )
+    """
+    The MIDI ports, listed through ports of its own: this runs in the background,
+    and the helper's ports are used by the app meanwhile (rtmidi is not
+    thread-safe; with a device gone, Windows crashed listing through them).
+    """
+    import rtmidi
+
+    from jdxi_editor.midi.io.null_port import NullMidiPort, open_rtmidi_port
+
+    inputs, outputs = [], []
+    for port_class, names, fallback in ((rtmidi.MidiIn, inputs, midi_helper.get_input_ports),
+                                        (rtmidi.MidiOut, outputs, midi_helper.get_output_ports)):
+        port, _error = open_rtmidi_port(port_class)
+        try:
+            names.extend(fallback() if isinstance(port, NullMidiPort) else port.get_ports())
+        finally:
+            delete = getattr(port, "delete", None)
+            if callable(delete):
+                try:
+                    delete()
+                except Exception:
+                    pass
+    return filter_excluded_ports(inputs), filter_excluded_ports(outputs)
 
 
 def parse_identity_reply(data) -> Optional[dict]:

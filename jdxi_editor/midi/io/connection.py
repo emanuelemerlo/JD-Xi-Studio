@@ -11,12 +11,17 @@ of looking at the MIDI ports on its own:
     UNSTABLE   ONLINE, but requests went unanswered: writes still go out,
                nothing is shown as verified until a whole reading succeeds
 
+A JD-Xi switched off leaves its USB MIDI ports open on some systems: while
+ONLINE, a JD-Xi silent for SILENT_ASK_S is asked who it is; silent for
+LOST_AFTER_S it is OFFLINE (and asked again, quietly, until it answers).
+
 A port merely named "JD-Xi" is not enough: the device has to answer the
 Identity Request as a Roland JD-Xi (manufacturer 41h, family 0Eh).
 """
 
 from __future__ import annotations
 
+import os
 import weakref
 from typing import Optional, Sequence
 
@@ -34,6 +39,11 @@ JDXI_FAMILY = 0x0E
 POLL_MS = 1000
 VERIFY_RETRY_MS = 3000  # a device that does not answer is asked again this often
 UNSTABLE_AFTER = 2  # unanswered requests in a row
+SILENT_ASK_S = 3.0  # an ONLINE JD-Xi heard nothing from for this long is asked who it is
+LOST_AFTER_S = 8.0  # ... and after this long without an answer it is OFFLINE
+# off in the tests (env JDXI_SILENCE_CHECK=0): their simulated JD-Xis come and go between tests
+# on the one shared helper, and a «JD-Xi back» re-reading everything would cut into the next test
+SILENCE_CHECK = os.environ.get("JDXI_SILENCE_CHECK", "1") != "0"
 
 
 def ports_open(helper) -> bool:
@@ -76,6 +86,8 @@ class Connection(QObject):
         self.ever_online = False  # this session: the start-up warning is shown once
         self._unanswered = 0
         self._last_ask = None
+        self._last_heard: Optional[float] = None  # time.monotonic() of the last MIDI from the JD-Xi
+        self._lost = False  # went silent: OFFLINE while its ports are still open
         self._timer = QTimer(self)
         self._timer.setInterval(poll_ms)
         self._timer.timeout.connect(self.poll)
@@ -103,24 +115,51 @@ class Connection(QObject):
         self.state = state
         if state == ONLINE:
             self.ever_online = True
+            self.heard()  # it just answered: silence counts from now
         self.changed.emit(state)
 
     def poll(self) -> None:
-        """Follow the ports; ask a newly found device who it is."""
+        """Follow the ports; ask a newly found device who it is; notice a JD-Xi gone silent."""
+        import time
+
         if not ports_open(self.helper):
             self._unanswered = 0
+            self._lost = False
             self._set(OFFLINE)
+            return
+        if self._lost:  # switched off: asked now and then, OFFLINE until it answers
+            self._ask_identity()
+            return
+        if self.state in (ONLINE, UNSTABLE):
+            if not SILENCE_CHECK:
+                return
+            now = time.monotonic()
+            if self._last_heard is None:
+                self._last_heard = now
+            silent = now - self._last_heard
+            if silent >= LOST_AFTER_S:
+                self._lost = True
+                self._set(OFFLINE)
+            elif silent >= SILENT_ASK_S:
+                self._ask_identity()
             return
         if self.state == OFFLINE:
             self._set(DETECTED)
         if self.state in (DETECTED, VERIFYING):
             self._ask_identity()
 
+    def heard(self) -> None:
+        """Any MIDI from the device (from the MIDI input thread): it is still there."""
+        import time
+
+        self._last_heard = time.monotonic()
+
     def _ask_identity(self) -> None:
         import time
 
         now = time.monotonic()
-        if self.state == VERIFYING and self._last_ask is not None \
+        quiet = self.state != DETECTED  # asked recently: not again before the retry time
+        if quiet and self._last_ask is not None \
                 and (now - self._last_ask) * 1000 < VERIFY_RETRY_MS:
             return
         self._last_ask = now
@@ -135,9 +174,12 @@ class Connection(QObject):
 
     def identity_reply(self, data: Sequence[int]) -> None:
         """An Identity Reply came in: a JD-Xi makes the connection ONLINE."""
-        if is_jdxi_identity(data) and self.state in (DETECTED, VERIFYING, OFFLINE) \
-                and ports_open(self.helper):
+        if not is_jdxi_identity(data):
+            return
+        self.heard()
+        if self.state in (DETECTED, VERIFYING, OFFLINE) and ports_open(self.helper):
             self._unanswered = 0
+            self._lost = False
             self._set(ONLINE)
 
     def request_unanswered(self) -> None:

@@ -433,7 +433,7 @@ class MidiFilePlayer(_player.MidiFilePlayer):
         top.addWidget(self.ui.digital_title_file_name, 0, Qt.AlignmentFlag.AlignTop)
         top.addLayout(controls, 1)
         player = _card(tr("Player"), top)
-        mute_label = QLabel(tr("Mute channels"))
+        mute_label = QLabel(tr("Channels"))
         mute_label.setStyleSheet("color: #c9cbd1;")
         # what of the file the JD-Xi plays (the group's own summary line)
         classification = _card(
@@ -465,7 +465,9 @@ class MidiFilePlayer(_player.MidiFilePlayer):
         events = _card(
             tr("Event filter"),
             self.event_suppression_group,
-            note=tr("Program changes (PC) and controllers (CC) of the file not sent to the JD-Xi."),
+            note=tr("What of the file is not sent to the JD-Xi: GM, the program changes that do not "
+                    "choose a JD-Xi sound (they would change the parts' sounds); PC, all program "
+                    "changes; CC, the controllers."),
         )
 
         first = QHBoxLayout()

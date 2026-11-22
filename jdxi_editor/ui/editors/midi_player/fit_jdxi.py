@@ -15,10 +15,12 @@ from typing import Optional
 
 import mido
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QComboBox,
     QDialog,
     QDialogButtonBox,
+    QGridLayout,
     QHeaderView,
     QLabel,
     QTableWidget,
@@ -34,6 +36,25 @@ from jdxi_editor.ui.editors.midi_player.track.category import CATEGORY_META, Tra
 JDXI_PARTS: dict[int, str] = {1: "Digital 1", 2: "Digital 2", 3: "Analog", 10: "Drums"}
 NOT_PLAYED = 0  # in a proposal: leave the track where it is (not heard)
 OFF_CHANNEL = 4  # where «not played» puts a track that was on a part (no JD-Xi part listens to 4)
+# the parts' colours, as on the track rows
+PART_COLORS: dict[int, str] = {1: "#B44646", 2: "#C88C3C", 3: "#00A0E9", 10: "#7850A0"}
+NOT_PLAYED_COLOR = "#6b6e75"
+
+
+def part_presets(channel: int) -> list[dict]:
+    """The JD-Xi presets a part can take: Digital tones (1, 2), Analog tones (3), drum kits (10)."""
+    from jdxi_editor.core.jdxi import JDXi
+    from jdxi_editor.ui.preset.utils import convert_preset_dict_to_list
+
+    source = {3: JDXi.UI.Preset.Analog, 10: JDXi.UI.Preset.Drum}.get(channel, JDXi.UI.Preset.Digital)
+    return convert_preset_dict_to_list(source.PROGRAM_CHANGE)
+
+
+def preset_wire(preset: dict) -> tuple[int, int, int]:
+    """(bank MSB, bank LSB, program 0-127) to send for *preset*."""
+    from jdxi_editor.ui.editors.helpers.preset import preset_to_jdxi_bank_pc
+
+    return preset_to_jdxi_bank_pc(int(preset["msb"]), int(preset["lsb"]), int(preset["pc"]))
 
 
 def part_name(channel: int) -> str:
@@ -125,16 +146,34 @@ def propose(tracks: list[TrackInfo], drum_indices: list[int], classifications: d
     return proposal
 
 
+def current(tracks: list[TrackInfo]) -> dict[int, int]:
+    """Track index -> the part it is on now (1-based channel; NOT_PLAYED: on no part)."""
+    return {t.index: t.channel if t.channel in JDXI_PARTS else NOT_PLAYED for t in tracks}
+
+
 class FitDialog(QDialog):
-    """One row per track with notes: where it is, and the part proposed for it."""
+    """
+    One row per track with notes: where it is, and the part proposed for it;
+    under the table, the sound of each part (with a file: the JD-Xi preset
+    closest to the General MIDI instrument of the part's main track).
+    """
 
     CHOICES = [(1, "Digital 1 (channel 1)"), (2, "Digital 2 (channel 2)"),
                (3, "Analog (channel 3)"), (10, "Drums (channel 10)")]
 
-    def __init__(self, tracks: list[TrackInfo], proposal: dict[int, int], parent: Optional[QWidget] = None):
+    def __init__(self, tracks: list[TrackInfo], proposal: dict[int, int], parent: Optional[QWidget] = None,
+                 start_as_now: bool = False, midi_file: Optional[mido.MidiFile] = None):
+        """
+        :param proposal: the part proposed for each track
+        :param start_as_now: show the parts the tracks are on now (after an Apply,
+            or a file already fitted), not the proposal; both a button away
+        :param midi_file: the file the tracks are of: with it, the parts' sounds
+        """
         super().__init__(parent)
+        self.proposal = proposal
+        self.midi_file = midi_file
         self.setWindowTitle(tr("Fit to the JD-Xi"))
-        self.resize(720, 520)
+        self.resize(760, 640 if midi_file is not None else 520)
         self.tracks = tracks
         layout = QVBoxLayout(self)
         intro = QLabel(tr(
@@ -155,30 +194,160 @@ class FitDialog(QDialog):
         for row, track in enumerate(tracks):
             self._item(row, 0, f"{track.index + 1}  {track.name}")
             self._item(row, 1, str(track.notes), Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
-            self._item(row, 2, part_name(track.channel))
+            now = self._item(row, 2, part_name(track.channel))
+            now.setForeground(QColor(PART_COLORS.get(track.channel, NOT_PLAYED_COLOR)))
             combo = QComboBox()
             for channel, label in self.CHOICES:
                 combo.addItem(tr(label), channel)
             stay = (tr("Not played (stays on channel {ch})").format(ch=track.channel)
                     if track.channel not in JDXI_PARTS else tr("Not played (to channel {ch})").format(ch=OFF_CHANNEL))
             combo.addItem(stay, NOT_PLAYED)
-            wanted = proposal.get(track.index, NOT_PLAYED)
-            combo.setCurrentIndex(max(0, combo.findData(wanted)))
+            combo.currentIndexChanged.connect(lambda _i, c=combo: self._on_part_changed(c))
             self.table.setCellWidget(row, 3, combo)
             self.combos[track.index] = combo
         layout.addWidget(self.table, 1)
+
+        self.sound_combos: dict[int, QComboBox] = {}
+        self.sound_sources: dict[int, QLabel] = {}
+        self._sound_touched: set[int] = set()
+        self._setting_sounds = False
+        if midi_file is not None:
+            layout.addWidget(self._build_sounds())
+        self.select(current(tracks) if start_as_now else proposal)
+
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Apply | QDialogButtonBox.StandardButton.Cancel)
         buttons.button(QDialogButtonBox.StandardButton.Apply).setText(tr("Apply"))
+        self.as_now_button = buttons.addButton(tr("As now"), QDialogButtonBox.ButtonRole.ResetRole)
+        self.as_now_button.setToolTip(tr("Each track on the part it is on now"))
+        self.as_now_button.clicked.connect(lambda: self.select(current(self.tracks)))
+        self.proposal_button = buttons.addButton(tr("Proposal"), QDialogButtonBox.ButtonRole.ResetRole)
+        self.proposal_button.setToolTip(tr("Each track on the part proposed for it, by what it plays"))
+        self.proposal_button.clicked.connect(lambda: self.select(self.proposal))
+        self.none_button = buttons.addButton(tr("None played"), QDialogButtonBox.ButtonRole.ResetRole)
+        self.none_button.setToolTip(tr("Every track «Not played»: then choose the part of only the ones you want"))
+        self.none_button.clicked.connect(lambda: self.select({}))
         buttons.button(QDialogButtonBox.StandardButton.Apply).clicked.connect(self.accept)
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
 
-    def _item(self, row: int, column: int, text: str, align=None) -> None:
+    # --- parts --------------------------------------------------------------
+
+    def select(self, parts: dict[int, int]) -> None:
+        """Choose *parts* (track index -> 1-based channel or NOT_PLAYED) in the Part column."""
+        for index, combo in self.combos.items():
+            combo.blockSignals(True)
+            combo.setCurrentIndex(max(0, combo.findData(parts.get(index, NOT_PLAYED))))
+            combo.blockSignals(False)
+            self._colour(combo)
+        self._propose_sounds()
+
+    def _on_part_changed(self, combo: QComboBox) -> None:
+        self._colour(combo)
+        self._propose_sounds()
+
+    @staticmethod
+    def _colour(combo: QComboBox) -> None:
+        """The part's colour; grey when not played."""
+        color = PART_COLORS.get(combo.currentData(), NOT_PLAYED_COLOR)
+        combo.setStyleSheet(f"QComboBox {{ color: {color}; border: 1px solid {color}; }}")
+
+    def parts(self) -> dict[int, int]:
+        """Track index -> chosen part (1-based channel or NOT_PLAYED)."""
+        return {index: combo.currentData() for index, combo in self.combos.items()}
+
+    # --- sounds -------------------------------------------------------------
+
+    def _build_sounds(self) -> QWidget:
+        box = QWidget()
+        grid = QGridLayout(box)
+        grid.setContentsMargins(0, 6, 0, 0)
+        title = QLabel(tr("Sounds of the parts"))
+        title.setStyleSheet("font-weight: bold;")
+        grid.addWidget(title, 0, 0, 1, 3)
+        note = QLabel(tr(
+            "From the General MIDI instrument of each part's main track (the one with the most "
+            "notes): the closest JD-Xi preset. It takes the place of the file's program changes "
+            "on that part and is sent to the JD-Xi on Apply. «Unchanged» leaves the part's sound "
+            "as it is."))
+        note.setWordWrap(True)
+        note.setStyleSheet(f"color: {NOT_PLAYED_COLOR};")
+        grid.addWidget(note, 1, 0, 1, 3)
+        for row, (channel, _label) in enumerate(self.CHOICES, start=2):
+            name = QLabel(part_name(channel))
+            name.setStyleSheet(f"color: {PART_COLORS[channel]}; font-weight: bold;")
+            combo = QComboBox()
+            combo.addItem(tr("Unchanged"), None)
+            for number, preset in enumerate(part_presets(channel), start=1):
+                combo.addItem(f"{number:03d}  {preset['name']}", number)
+            combo.setMaxVisibleItems(20)
+            combo.currentIndexChanged.connect(lambda _i, c=channel: self._on_sound_touched(c))
+            source = QLabel()
+            source.setStyleSheet(f"color: {NOT_PLAYED_COLOR};")
+            grid.addWidget(name, row, 0)
+            grid.addWidget(combo, row, 1)
+            grid.addWidget(source, row, 2)
+            self.sound_combos[channel] = combo
+            self.sound_sources[channel] = source
+        grid.setColumnStretch(2, 1)
+        return box
+
+    def _on_sound_touched(self, channel: int) -> None:
+        if not self._setting_sounds:
+            self._sound_touched.add(channel)  # chosen by hand: kept when the parts change
+
+    def main_track(self, channel: int) -> Optional[TrackInfo]:
+        """The track with the most notes among those chosen for the part on *channel*."""
+        chosen = [t for t in self.tracks if self.combos[t.index].currentData() == channel]
+        return max(chosen, key=lambda t: t.notes) if chosen else None
+
+    def _propose_sounds(self) -> None:
+        """Each part's sound from its main track's GM instrument (not the ones chosen by hand)."""
+        if self.midi_file is None or not self.sound_combos:
+            return
+        from jdxi_editor.midi.track import gm_map
+
+        self._setting_sounds = True
+        try:
+            for channel, combo in self.sound_combos.items():
+                track = self.main_track(channel)
+                source = self.sound_sources[channel]
+                preset = None
+                if track is None:
+                    source.setText(tr("no track on this part"))
+                else:
+                    midi_track = self.midi_file.tracks[track.index]
+                    preset = gm_map.preset_for_part(channel, midi_track)
+                    program = gm_map.gm_program(midi_track)
+                    if preset is None:
+                        source.setText(tr("«{track}»: no General MIDI instrument").format(track=track.name))
+                    elif channel == 10:
+                        source.setText(tr("«{track}»: GM drum kit {program}").format(
+                            track=track.name, program=program + 1))
+                    else:
+                        source.setText(tr("«{track}»: GM {program} {name}").format(
+                            track=track.name, program=program + 1, name=gm_map.gm_name(program)))
+                if channel not in self._sound_touched:
+                    combo.setCurrentIndex(max(0, combo.findData(preset)))
+        finally:
+            self._setting_sounds = False
+
+    def sounds(self) -> dict[int, tuple[int, int]]:
+        """Part channel (1-based) -> (preset number, main track index), for the parts to set."""
+        chosen = {}
+        for channel, combo in self.sound_combos.items():
+            number = combo.currentData()
+            track = self.main_track(channel)
+            if number is not None and track is not None:
+                chosen[channel] = (number, track.index)
+        return chosen
+
+    def _item(self, row: int, column: int, text: str, align=None) -> QTableWidgetItem:
         item = QTableWidgetItem(text)
         item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
         if align is not None:
             item.setTextAlignment(align)
         self.table.setItem(row, column, item)
+        return item
 
     def changes(self) -> dict[int, int]:
         """Track index -> new 1-based channel, only for the tracks that move."""

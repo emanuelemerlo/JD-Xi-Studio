@@ -249,14 +249,40 @@ class MidiIOController(QObject):
         """
         Close MIDI ports
 
+        A port whose device went away (a JD-Xi unplugged or switched off) may
+        refuse to close (Windows: «error closing Windows MM MIDI input port»):
+        it is replaced by a new one, as one that failed to close no longer
+        works — it opened again but received nothing, and listing the ports
+        through it crashed the app.
+
         :return: None
         """
-        for port in (self.midi_in, self.midi_out):  # either may be missing
-            if port is not None and port.is_port_open():
-                port.close_port()
-                time.sleep(0.1)
+        for name in ("midi_in", "midi_out"):  # either may be missing
+            port = getattr(self, name, None)
+            try:
+                if port is not None and port.is_port_open():
+                    port.close_port()
+                    time.sleep(0.1)
+            except Exception as ex:
+                log.warning(f"Closing {name} failed ({ex}): a new port replaces it",
+                            scope="MidiIOController")
+                self._replace_port(name)
         self.input_port_number = None
         self.output_port_number = None
+
+    def _replace_port(self, name: str) -> None:
+        """A new rtmidi port in place of *name* (midi_in / midi_out), set up as the first one."""
+        port_class = rtmidi.MidiIn if name == "midi_in" else rtmidi.MidiOut
+        port, _error = open_rtmidi_port(port_class)
+        setattr(self, name, port)
+        if name == "midi_in":
+            try:
+                port.ignore_types(sysex=False, timing=True, active_sense=True)
+                callback = getattr(self, "midi_callback", None)
+                if callback is not None:
+                    port.set_callback(callback)
+            except Exception as ex:
+                log.warning(f"Setting up the new MIDI input: {ex}", scope="MidiIOController")
 
     @property
     def is_input_open(self) -> bool:

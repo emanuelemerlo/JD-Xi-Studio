@@ -19,11 +19,23 @@ Fit to the JD-Xi
 * **Assign tracks to parts…** proposes a part for each track that plays notes, in a table you
   can change before **Apply**: the drum tracks to Drums; for each melodic part the one track
   recognised best for it — the bass to Digital 1, keys or guitars to Digital 2, strings to Analog
-  (the Analog part plays one note at a time); the other tracks are not played. A track's channel
-  can also be set by hand in its header.
+  (the Analog part plays one note at a time); the other tracks are not played. The Part column
+  shows each part in its colour, grey when not played. **None played** sets every track «Not
+  played», to choose only the ones you want; **Proposal** and **As now** switch between the
+  proposal and the parts the tracks are on (opened again after Apply, it shows what was applied).
+  A track's channel can also be set by hand in its header.
+* **Sounds of the parts**, under the table: for each part the JD-Xi preset closest to the General
+  MIDI instrument of its main track (the one with the most notes) — a Digital tone for Digital 1
+  and 2, an Analog tone for the Analog part (basses and leads: a lead played low is a bass line),
+  a drum kit for the Drums. On Apply it takes the place of the file's program changes on that part
+  and is sent to the JD-Xi, so a General MIDI file sounds close to its original the first time.
+  Each can be changed, or left **Unchanged**.
 * **Starting sounds** gives the parts a sound to start from, also written into the file:
   Digital 1 Picked Bass, Digital 2 Piano, Analog JP8 Strings.
-* The mute buttons of channels 1, 2, 3 and 10 stand out; their tooltip says which part plays them.
+* **Channels**: per channel its number, **M** (mute, red) and **S** (solo, green). With one or
+  more channels soloed only those play; the mutes are kept, back as they were when the solos go
+  off; the channels a solo silences are dimmed. Channels 1, 2, 3 and 10 stand out; the tooltips
+  say which part plays them.
 
 The file on disk changes only when you save it. **Close** (in the Player card, or File › MIDI
 Player › Close) empties the player as at start; when the file has changes not saved yet it asks
@@ -47,8 +59,12 @@ Playback
 * **Loop** repeats the A–B range, or the whole song when none is set. **A** and **B** take the
   playback position (snapped to bars if chosen); A shows on the ruler at once, the range when B
   is set. **Trim** keeps only a part of the file.
-* **Event filter**: the file's program changes (PC) and controllers (CC) can be kept from the
-  JD-Xi.
+* **Event filter**: what of the file is not sent to the JD-Xi. **GM** (on by default): the program
+  changes that do not choose a JD-Xi sound — a General MIDI file's, which would change the parts'
+  sounds and lose the edits not saved; those after a JD-Xi bank select (a file made for the
+  JD-Xi, the Automation's) still go. **PC**: all program changes. **CC**: the controllers.
+* Two tracks playing the same note on one part retrigger it instead of doubling it (no note left
+  hanging until Panic).
 
 USB recorder
 ============

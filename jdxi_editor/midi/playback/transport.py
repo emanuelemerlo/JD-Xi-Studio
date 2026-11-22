@@ -202,6 +202,10 @@ class _SchedulerThread(QThread):
             self.ended.emit()
 
 
+# Bank Select MSBs that choose JD-Xi sounds: programs, drum kits, analog and digital tones
+JDXI_BANK_MSB = frozenset({85, 86, 94, 95})
+
+
 class TransportController(QObject):
     """
     Transport for MIDI file playback.
@@ -242,6 +246,12 @@ class TransportController(QObject):
         self.engine = engine or PreciseClockEngine()
         self.send = send
         self.engine.on_event = self._on_engine_event
+        # (channel, note) keys sounding on the instrument: one voice per key
+        self._sounding: set[tuple[int, int]] = set()
+        # program changes that do not choose a JD-Xi sound are not sent (see
+        # _jdxi_program_change); the last Bank Select MSB sent on each channel
+        self.block_foreign_program_changes = True
+        self._bank_msb: dict[int, int] = {}
         # Engine calls (and so MIDI sends) are serialised across both threads
         self._lock = threading.RLock()
         self._loaded = False
@@ -328,6 +338,7 @@ class TransportController(QObject):
             state = self.engine.state if keep_position else TransportState.STOPPED
             position = self.engine.position_tick if keep_position else 0
             self.engine.stop()
+            self._bank_msb.clear()  # the new file's banks: its chase sends them again
             self.engine.load_file(midi_file)
             if not keep_position:
                 self._loop_range_ticks = None
@@ -478,9 +489,17 @@ class TransportController(QObject):
                     track_index, scales.get(track_index, 1.0)
                 )
 
-    def set_suppression(self, program_changes: bool, control_changes: bool) -> None:
-        """Choose whether program changes / control changes in the file are sent."""
+    def set_suppression(self, program_changes: bool, control_changes: bool,
+                        foreign_program_changes: Optional[bool] = None) -> None:
+        """
+        Choose whether program changes / control changes in the file are sent.
+
+        :param foreign_program_changes: block the program changes that do not
+            choose a JD-Xi sound (None: leave as it is)
+        """
         with self._lock:
+            if foreign_program_changes is not None:
+                self.block_foreign_program_changes = foreign_program_changes
             self.engine.suppress_program_changes = program_changes
             self.engine.suppress_control_changes = control_changes
 
@@ -498,8 +517,53 @@ class TransportController(QObject):
     # --- Internals ----------------------------------------------------------
 
     def _on_engine_event(self, msg: mido.Message) -> None:
-        if self.send is not None:
-            self.send(msg)
+        if self.send is None:
+            return
+        if not self._jdxi_program_change(msg):
+            return
+        for out in self._one_voice_per_key(msg):
+            self.send(out)
+
+    def _jdxi_program_change(self, msg: mido.Message) -> bool:
+        """
+        Whether *msg* may go to the JD-Xi as far as program changes go.
+
+        A program change chooses a JD-Xi sound only after a JD-Xi Bank Select
+        (MSB 85 programs, 86 drum kits, 94 analog tones, 95 digital tones). The
+        General MIDI ones of a file made for another instrument (no bank, or
+        MSB 0 / 120 / 121) pick a sound of whatever bank the part is in —
+        another sound than the one set in the editors, unsaved edits lost.
+        With block_foreign_program_changes they are not sent.
+        """
+        if msg.type == "control_change" and msg.control == 0:
+            self._bank_msb[msg.channel] = msg.value
+        elif msg.type == "program_change" and self.block_foreign_program_changes:
+            return self._bank_msb.get(msg.channel) in JDXI_BANK_MSB
+        return True
+
+    def _one_voice_per_key(self, msg: mido.Message) -> list[mido.Message]:
+        """
+        Never start a second voice on a key that is already sounding.
+
+        Two tracks on the same channel playing the same note (a doubled part
+        moved onto one channel, the left/right copies of a lead…) send two
+        note-ons and, by design of the engine, a single note-off when the last
+        one ends. The JD-Xi starts a voice per note-on and a note-off may end
+        only one of them: the other one hangs until Panic. So a note-on for a
+        key already sounding is preceded by its note-off (the note is
+        retriggered), and the instrument never holds more voices than the
+        single note-off the engine will send can end.
+        """
+        if msg.type == "note_on" and msg.velocity > 0:
+            key = (msg.channel, msg.note)
+            if key in self._sounding:
+                return [mido.Message("note_off", channel=msg.channel, note=msg.note, velocity=0), msg]
+            self._sounding.add(key)
+        elif msg.type == "note_off" or msg.type == "note_on":
+            self._sounding.discard((msg.channel, msg.note))
+        elif msg.type == "control_change" and msg.control in (120, 123):  # All Sound / Notes Off
+            self._sounding = {key for key in self._sounding if key[0] != msg.channel}
+        return [msg]
 
     def _ensure_scheduler(self) -> None:
         if self._scheduler is not None and self._scheduler.is_running:

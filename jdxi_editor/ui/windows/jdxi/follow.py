@@ -260,6 +260,8 @@ class InstrumentFollower(QObject):
         if data[0] == 0xF0 and len(data) > 7 and data[7] == 0x11:
             return  # a request (ours or an editor's)
         self._last_input = time.monotonic()
+        if 0xC0 <= data[0] <= 0xCF:
+            self._new_program()  # a program or tone chosen in the app
 
     def on_incoming(self, message) -> None:
         kind = getattr(message, "type", None)
@@ -275,6 +277,7 @@ class InstrumentFollower(QObject):
         elif kind == "control_change":
             self.knob_moved(message.channel, message.control, message.value)
         elif kind == "program_change":
+            self._new_program()  # chosen on the JD-Xi
             channel = getattr(message, "channel", None)
             if channel == program_channel.channel():
                 return  # a program (the window reads it again)
@@ -398,6 +401,13 @@ class InstrumentFollower(QObject):
             slider.setValueSilently(value)
             if hasattr(slider, "update_style"):
                 slider.update_style(value)
+
+    def _new_program(self) -> None:
+        """A program loads as saved: the ENV slider (relative to it) back to the middle."""
+        slider = (getattr(self.window, "panel_sliders", None) or {}).get("envelope")
+        reset = getattr(slider, "reset_to_neutral", None)
+        if callable(reset) and not getattr(slider.slider, "isSliderDown", lambda: False)():
+            reset()
 
     def knob_moved(self, channel: int, control: int, value: int) -> None:
         """A knob turned on the JD-Xi (CC or NRPN): the window's slider follows it

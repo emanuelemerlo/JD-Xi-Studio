@@ -112,7 +112,7 @@ class MidiPlayerStyle(AppEditorStyle):
         }}
         """
 
-    SOLO = "#C88C3C"  # amber: soloed track
+    SOLO = "#3E9B5C"  # green: soloed track or channel (amber was Digital 2's colour)
 
     @classmethod
     def channel_mute_stylesheet(cls) -> str:
@@ -144,6 +144,24 @@ class MidiPlayerStyle(AppEditorStyle):
             border-color: {cls.ACCENT};
             color: {cls.TEXT};
         }}
+        QPushButton[silenced="true"] {{
+            background-color: {cls.BACKGROUND};
+            color: {cls.BORDER_HOVER};
+        }}
+        """
+
+    @classmethod
+    def channel_solo_stylesheet(cls) -> str:
+        """Channel solo squares: like the mute ones, green (SOLO) when on."""
+        return cls.channel_mute_stylesheet().replace(cls.ACCENT, cls.SOLO)
+
+    @classmethod
+    def channel_number_stylesheet(cls) -> str:
+        """The channel numbers over the Mute / Solo squares: dim when not heard or not used."""
+        return f"""
+        QLabel {{ color: {cls.TEXT_SECONDARY}; background: transparent; }}
+        QLabel[part="true"] {{ color: {cls.TEXT}; font-weight: bold; }}
+        QLabel[unused="true"], QLabel[silenced="true"] {{ color: {cls.BORDER_HOVER}; }}
         """
 
     @classmethod

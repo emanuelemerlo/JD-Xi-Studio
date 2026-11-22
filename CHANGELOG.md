@@ -4,7 +4,26 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+# [1.0.0-rc.1] - 2026-11-22
+
+The release candidate. The MIDI Player fits a General MIDI file to the JD-Xi — its tracks on the
+four parts, and the JD-Xi sounds closest to its instruments — and plays it on time on Windows too;
+the Programs page is a mixer with Pan, Delay and Reverb and its own Undo; the menus follow the app.
+Tried on the JD-Xi (the checks of `doc/hardware-test-plan.md`, the fixes from them below).
+
 ### Changes
+- MIDI Player › Assign the tracks to the parts: **Sounds of the parts**. For each part the JD-Xi
+  preset closest to the General MIDI instrument of its main track (the one with the most notes): a
+  Digital tone for Digital 1 and 2, an Analog tone for the Analog part (basses and leads; a lead
+  played low is a bass line), a drum kit for the Drums. On Apply it takes the place of the file's
+  program changes on that part and is sent to the JD-Xi: a GM file sounds close to the original the
+  first time it is played. Each can be changed, or left «Unchanged». **None played** sets every
+  track «Not played», to choose only the ones wanted; the Part column takes the part's colour,
+  grey when not played.
+- MIDI Player › Fit to the JD-Xi › Channels: each channel a narrow column, as on a mixer — its
+  number, **M** (mute, red) and **S** (solo, green). With one or more channels soloed only those
+  play; the channels' own mutes are kept, given back as they were when the solos go off. The
+  channels a solo silences are dimmed. The tracks' Solo is green too (amber was Digital 2's colour).
 - The main window's menus follow the app: **File** (Patch › Open / Save, MIDI Player › Open / Save
   / Save as / Recent), **Editor** (the editors window's tabs, by section: Programs, Parts, Effects,
   Playback, Recipes, Settings; Ctrl+0–9 in tab order), **JD-Xi** (Save the program, Send all — now
@@ -77,6 +96,36 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   mid-song comes with its bank select; a track's velocity scale at 0 silences it.
 
 ### Fixed
+- JD-Xi unplugged or switched off, then back: the MIDI input that refused to close (Windows:
+  «error closing Windows MM MIDI input port») opened again but received nothing — the badge stayed
+  «Verifying the JD-Xi…» — and opening MIDI Configuration again crashed the app. A port that does
+  not close is replaced by a new one; the dialog lists the ports through ports of its own.
+- The «JD-Xi connected» badge stayed on after the JD-Xi was switched off (its USB MIDI ports stay
+  open on some systems). A JD-Xi silent for 3 seconds is asked who it is; without an answer within
+  8 seconds it is Off-line, and connected again as soon as it answers.
+- MIDI Player: playing a General MIDI file changed the parts' sounds — its program changes, with
+  no JD-Xi Bank Select, picked a sound of whatever bank each part was in, and the edits not saved
+  were lost. Event filter › **GM** (on by default) does not send the program changes that do not
+  choose a JD-Xi sound; those after a JD-Xi bank (a file made for the JD-Xi, the Automation's)
+  still go. **PC** still blocks them all.
+- MIDI Player › Assign the tracks to the parts: opened again after Apply it showed its proposal
+  again, as if nothing had been applied. Once applied (or with a file already on the JD-Xi's
+  parts) it shows each track on the part it is on now; **As now** and **Proposal** switch between
+  the two.
+- The program the JD-Xi reports was written to the program database at every re-read of the shown
+  part — three writes every 2 seconds while the JD-Xi was quiet, and as many renames in the log.
+  Now only when it changes.
+- MIDI Player: notes left hanging until Panic when two tracks on one channel played the same note
+  (a doubled part, the left and right copies of a lead put on the same part). Each note-on started
+  a voice on the JD-Xi but only one note-off came, when the last copy ended. A note-on for a key
+  already sounding is now preceded by its note-off: the note is retriggered, never doubled.
+- Keyboard window › LFO **Rate** slider: it sent NRPN 21–23, the LFO Amp Depth (a copied map
+  entry), so it moved the Amp depth — which the Amp slider then showed — and never the LFO rate.
+  It now sends Control Change 16–18, as the JD-Xi's knob.
+- Keyboard window › **Env** slider: it started at 0, the shortest envelope — the JD-Xi's ENV knob
+  acts relative to the program, the middle leaving it as saved — so moved there and back the
+  sound was gone. It starts in the middle and goes back there with every program, chosen in the
+  app or on the JD-Xi (which loads a program as saved, its knob counting only once turned).
 - MIDI Player › Automation: each type offers its own presets — Analog offered the drum kits (and
   Digital too, once changed), so the program change went to a bank the JD-Xi part ignores. The
   type now follows the channel: 3 Analog, 10 Drums, the others Digital (it can still be changed).

@@ -176,6 +176,7 @@ class MidiFilePlayer(SynthEditor):
         self._loop_points: tuple[Optional[float], Optional[float]] = (None, None)
         self._loading_file = False
         self._edited = False  # changed since loaded or saved (Close asks first)
+        self._fit_applied = False  # Fit to the JD-Xi applied to this file
         self._preset_names: dict[tuple[int, int, int], str] | None = None
         self.midi_file_group: MidiFileGroup = MidiFileGroup(
             parent=self, midi_state=self.midi_state
@@ -381,12 +382,17 @@ class MidiFilePlayer(SynthEditor):
         """Propose a JD-Xi part for every track with notes, to check and apply."""
         if not self._validate_midi_loaded():
             return
-        from jdxi_editor.ui.editors.midi_player.fit_jdxi import FitDialog, note_tracks, propose
+        from jdxi_editor.ui.editors.midi_player.fit_jdxi import FitDialog, note_tracks, propose, summary
 
         tracks = note_tracks(self.midi_state.file)
         drums = self._detect_drum_tracks()
         proposal = propose(tracks, drums, self._classify_tracks(drums))
-        dialog = FitDialog(tracks, proposal, parent=self)
+        # once applied (or a file already on the JD-Xi's parts) the dialog
+        # shows the parts as they are: it showed the proposal again, as if
+        # nothing had been applied
+        as_now = self._fit_applied or summary(self.midi_state.file)[1]
+        dialog = FitDialog(tracks, proposal, parent=self, start_as_now=as_now,
+                           midi_file=self.midi_state.file)
         if dialog.exec() != QDialog.DialogCode.Accepted:
             return
         spins = self.midi_file.midi_track_viewer.track_channel_spins
@@ -395,7 +401,44 @@ class MidiFilePlayer(SynthEditor):
             if spin is not None:
                 spin.setValue(channel)  # applied like an edit by hand
         self.midi_file.midi_track_viewer.flush_pending_edits()
+        self._apply_part_sounds(dialog.sounds())
+        self._fit_applied = True
         self._refresh_fit_summary()
+
+    def _apply_part_sounds(self, sounds: dict[int, tuple[int, int]]) -> None:
+        """
+        Give the parts their sounds (Fit to the JD-Xi): on each part's channel
+        the file's program changes and bank selects go, and the part's main
+        track starts with the chosen JD-Xi preset; sent to the JD-Xi too.
+
+        :param sounds: part channel (1-based) -> (preset number, main track index)
+        """
+        if not sounds:
+            return
+        from jdxi_editor.midi.track import gm_map
+        from jdxi_editor.ui.editors.midi_player.fit_jdxi import part_presets, preset_wire
+        from jdxi_editor.ui.v2.history import paused
+
+        viewer = self.midi_file.midi_track_viewer
+        tracks = dict(enumerate(viewer.midi_file.tracks))
+        changed: dict[int, mido.MidiTrack] = {}
+        for channel, (number, main) in sounds.items():
+            ch = channel + Midi.channel.DISPLAY_TO_BINARY
+            msb, lsb, program = preset_wire(part_presets(channel)[number - 1])
+            for index, track in tracks.items():
+                if any(getattr(msg, "channel", None) == ch and (
+                        msg.type == "program_change"
+                        or (msg.type == "control_change" and msg.control in (0, 32)))
+                       for msg in track):
+                    tracks[index] = changed[index] = gm_map.strip_program_changes(track, ch)
+            if main in tracks:
+                tracks[main] = changed[main] = gm_map.with_sound(tracks[main], ch, msb, lsb, program)
+            if self.midi_helper is not None:
+                with paused():  # the file's sounds: played, not asked
+                    self.midi_helper.send_bank_select_and_program_change(
+                        channel=ch, bank_msb=msb, bank_lsb=lsb, program=program)
+        if changed:
+            viewer._update_tracks_in_place(changed)
 
     def _refresh_fit_summary(self) -> None:
         """What the JD-Xi plays of the file, in the Fit to the JD-Xi group."""
@@ -996,6 +1039,14 @@ class MidiFilePlayer(SynthEditor):
         # Update player's muted channels state
         self.midi_state.muted_channels = self.get_muted_channels()
 
+    def _toggle_channel_solo(self, channel: int, is_solo: bool) -> None:
+        """
+        Solo or un-solo a MIDI channel (1-16): with any channel soloed only the soloed ones play.
+        """
+        if self.midi_file and self.midi_file.midi_track_viewer:
+            self.midi_file.midi_track_viewer.toggle_channel_solo(channel, is_solo)
+        self.midi_state.muted_channels = self.get_muted_channels()
+
     def _sync_mute_buttons_from_track_viewer(self) -> None:
         """
         Sync mute channel buttons in the USB file controls with the track viewer's state.
@@ -1011,6 +1062,9 @@ class MidiFilePlayer(SynthEditor):
                 btn.blockSignals(True)
                 btn.setChecked(channel in muted_channels)
                 btn.blockSignals(False)
+            self.mute_channels_group.set_soloed_channels(
+                set(self.midi_file.midi_track_viewer.soloed_channels)
+            )
         midi_file = self.midi_state.file
         self._refresh_fit_summary()
         if midi_file is not None:
@@ -1153,6 +1207,11 @@ class MidiFilePlayer(SynthEditor):
         )
         self._sync_transport_settings()
 
+    def on_block_foreign_program_changes_toggled(self, state: Qt.CheckState) -> None:
+        """Block the file's program changes that do not choose a JD-Xi sound (General MIDI ones)."""
+        self.midi_state.block_foreign_program_changes = state == JDXi.UI.Constants.CHECKED
+        self._sync_transport_settings()
+
     def on_suppress_control_changes_toggled(self, state: Qt.CheckState):
         """
         on_suppress_control_changes_toggled
@@ -1292,6 +1351,7 @@ class MidiFilePlayer(SynthEditor):
         self.midi_state.events = []
         self._midi_file_path = None
         self._edited = False
+        self._fit_applied = False
         viewer = self.midi_file.midi_track_viewer
         viewer.clear()
         self._loop_points = (None, None)
@@ -1465,6 +1525,7 @@ class MidiFilePlayer(SynthEditor):
         if notify_pattern_sequencer:
             self._notify_pattern_sequencer_file_loaded()
         self._edited = False
+        self._fit_applied = False
         self._file_state_changed()
 
         # Add to recent files if parent has recent_files_manager
@@ -1929,6 +1990,7 @@ class MidiFilePlayer(SynthEditor):
         self.transport_controller.set_suppression(
             program_changes=self.midi_state.suppress_program_changes,
             control_changes=self.midi_state.suppress_control_changes,
+            foreign_program_changes=self.midi_state.block_foreign_program_changes,
         )
 
     def _on_transport_state_changed(self, state: TransportState) -> None:
@@ -1989,10 +2051,9 @@ class MidiFilePlayer(SynthEditor):
         """
         get_muted_channels
 
-        :return: None
-        Get the muted channels from the MIDI track viewer.
+        :return: the channels (1-16) that do not play: muted, or silenced by another channel's solo
         """
-        muted_channels_raw = self.midi_file.midi_track_viewer.get_muted_channels()
+        muted_channels_raw = self.midi_file.midi_track_viewer.get_silenced_channels()
         muted_channels = {int(c) for c in muted_channels_raw if not isinstance(c, set)}
         log.parameter("Muted channels", muted_channels)
         for channel in muted_channels:

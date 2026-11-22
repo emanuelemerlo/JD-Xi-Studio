@@ -133,3 +133,46 @@ def test_the_identity_reply_through_the_midi_input_reaches_the_connection(app):
     finally:
         helper.midi_out, helper.midi_in = saved
         c.set_state_for_tests(conn.OFFLINE)
+
+
+def test_a_jdxi_switched_off_goes_offline_and_comes_back(app, monkeypatch):
+    """Switched off, the JD-Xi's ports stayed open: the badge said «JD-Xi connected»."""
+    monkeypatch.setattr(conn, "SILENCE_CHECK", True)
+    helper = Helper()
+    c = _connection(helper)
+    now = [100.0]
+    monkeypatch.setattr("time.monotonic", lambda: now[0])
+    c.poll()
+    c.identity_reply(JDXI_REPLY)
+    assert c.state == conn.ONLINE
+    asked = helper.asked
+    now[0] += 1
+    c.heard()  # it talks: nothing asked
+    now[0] += conn.SILENT_ASK_S - 0.5
+    c.poll()
+    assert helper.asked == asked and c.state == conn.ONLINE
+    now[0] += 1  # silent: asked who it is
+    c.poll()
+    assert helper.asked == asked + 1 and c.state == conn.ONLINE
+    now[0] += conn.LOST_AFTER_S  # no answer: off-line, ports still open
+    c.poll()
+    assert c.state == conn.OFFLINE and not c.can_talk()
+    now[0] += conn.VERIFY_RETRY_MS / 1000 + 0.1
+    c.poll()  # asked again, quietly: still OFFLINE, not «verifying»
+    assert c.state == conn.OFFLINE and helper.asked == asked + 2
+    c.identity_reply(JDXI_REPLY)  # switched on again
+    assert c.state == conn.ONLINE
+    now[0] += 1
+    c.poll()
+    assert c.state == conn.ONLINE
+
+
+def test_any_midi_from_the_jdxi_counts_as_heard(app):
+    from jdxi_editor.midi.io.input_handler import MidiInHandler
+
+    c = _connection(Helper())
+    handler = Mock()
+    handler._jdxi_connection = c
+    handler._handle_midi_message = Mock()
+    MidiInHandler.midi_callback(handler, ([0xF8], 0.0), None)
+    assert c._last_heard is not None

@@ -17,8 +17,8 @@ Typical Workflow
 
 1. **Load a MIDI file** in the MIDI Player (its Load button, File › MIDI Player › Open…, or drag-and-drop)
 2. **Fit to the JD-Xi** (for a general MIDI file): **Assign tracks to parts…**, check the
-   proposal, Apply; or a track's channel in its header. **Starting sounds** gives the parts a sound
-   to start from
+   proposal and the **Sounds of the parts** (the JD-Xi presets closest to the file's General MIDI
+   instruments), Apply; or a track's channel in its header
 3. **Play**: Start playback on the JD-Xi
 4. **Edit in Pattern Editor** (optional): Load into Pattern Editor → edit steps → Save Pattern
 

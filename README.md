@@ -175,10 +175,10 @@ macOS and Linux use `install.sh` (above).
 
 ### Releasing
 
-1. Set the version in `jdxi_editor/project.py` (`__version__ = "1.0.0b1"`, PEP 440) and add its
+1. Set the version in `jdxi_editor/project.py` (`__version__ = "1.0.0rc1"`, PEP 440) and add its
    section to `CHANGELOG.md`; merge into `main`.
 2. **Actions › Release › Run workflow** on `main`. The workflow runs the tests, builds the Windows
-   installer, the portable app and the Python wheel, creates the tag (`v1.0.0-beta.1`) and the
+   installer, the portable app and the Python wheel, creates the tag (`v1.0.0-rc.1`) and the
    release (a pre-release for alpha, beta and rc), attaches every file and publishes it.
 3. Verify it on the instrument: [`doc/hardware-test-plan.md`](doc/hardware-test-plan.md) (the
    automatic part, with the app closed: `python scripts/hardware_check.py` and

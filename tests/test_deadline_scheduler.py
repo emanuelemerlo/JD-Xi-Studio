@@ -50,15 +50,21 @@ def test_plays_every_note_and_ends(app, monkeypatch, kind):
     transport = tp.TransportController(send=sent.append)
     finished = []
     transport.finished.connect(lambda: finished.append(True))  # on the UI thread
-    transport.load(_song())
-    assert transport.play()
-    _run(app, transport)
-    for _ in range(5):
-        app.processEvents()
-    notes = [m.note for m in sent if m.type == "note_on" and m.velocity > 0]
-    assert notes == list(range(60, 68))
-    assert finished and transport.position_seconds == 0.0
-    transport.shutdown()
+    try:
+        transport.load(_song())
+        assert transport.play()
+        _run(app, transport)
+        # «finished» comes queued from the scheduler: on a busy machine (the whole
+        # suite) after the 5 rounds of events it was given (the notes all played)
+        clock = QElapsedTimer()
+        clock.start()
+        while not finished and clock.elapsed() < 3000:
+            app.processEvents()
+        notes = [m.note for m in sent if m.type == "note_on" and m.velocity > 0]
+        assert notes == list(range(60, 68))
+        assert finished and transport.position_seconds == 0.0
+    finally:
+        transport.shutdown()  # its thread stopped even when an assert fails (else a crash at exit)
 
 
 def test_pause_and_play_again_wake_it(app, monkeypatch):
