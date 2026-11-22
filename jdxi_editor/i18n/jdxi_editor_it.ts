@@ -824,43 +824,43 @@
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/midi_player/automation.py" line="47" />
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="2219" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="2225" />
             <source>Insert Program Change at current position</source>
             <translation>Inserisci un Program Change nella posizione attuale</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1292" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1297" />
             <source>Close the MIDI file</source>
             <translation>Chiudi il file MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1293" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1298" />
             <source>The MIDI file has changes that are not saved.</source>
             <translation>Il file MIDI ha modifiche non salvate.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1294" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1299" />
             <source>Save…</source>
             <translation>Salva…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1295" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1300" />
             <source>Close without saving</source>
             <translation>Chiudi senza salvare</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1385" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1390" />
             <source>Loading: track {track} of {tracks}</source>
             <translation>Caricamento: traccia {track} di {tracks}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1357" />
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1359" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1362" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1364" />
             <source>Loading {name}…</source>
             <translation>Caricamento di {name}…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1369" />
+            <location filename="../../jdxi_editor/ui/editors/midi_player/editor.py" line="1374" />
             <source>{name}: {tracks} tracks, loaded in {seconds:.1f} s</source>
             <translation>{name}: {tracks} tracce, caricato in {seconds:.1f} s</translation>
         </message>
@@ -4071,7 +4071,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         <message>
             <location filename="../../jdxi_editor/ui/v2/names.py" line="22" />
             <location filename="../../jdxi_editor/ui/v2/names.py" line="23" />
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="484" />
+            <location filename="../../jdxi_editor/ui/v2/players.py" line="486" />
             <source>MIDI Player</source>
             <translation>MIDI Player</translation>
         </message>
@@ -4738,7 +4738,6 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/players.py" line="299" />
-            <location filename="../../jdxi_editor/ui/widgets/mute_channels_group.py" line="53" />
             <source>Mute</source>
             <translation>Mute</translation>
         </message>
@@ -4749,8 +4748,8 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/players.py" line="468" />
-            <source>Program changes (PC) and controllers (CC) of the file not sent to the JD-Xi.</source>
-            <translation>Program change (PC) e controller (CC) del file da non inviare al JD-Xi.</translation>
+            <source>What of the file is not sent to the JD-Xi: GM, the program changes that do not choose a JD-Xi sound (they would change the parts' sounds); PC, all program changes; CC, the controllers.</source>
+            <translation>Cosa del file non viene mandato al JD-Xi: GM, i program change che non scelgono un suono del JD-Xi (cambierebbero i suoni delle parti); PC, tutti i program change; CC, i controller.</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/players.py" line="341" />
@@ -7075,12 +7074,17 @@ Le modifiche che non avevi salvato andrebbero perse. Le rimando al JD-Xi?</trans
             <translation>Forma</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/event_suppression_group.py" line="84" />
+            <location filename="../../jdxi_editor/ui/widgets/event_suppression_group.py" line="85" />
+            <source>Block the program changes that do not choose a JD-Xi sound (General MIDI ones): they would change the parts' sounds</source>
+            <translation>Blocca i program change che non scelgono un suono del JD-Xi (quelli General MIDI): cambierebbero i suoni delle parti</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/widgets/event_suppression_group.py" line="93" />
             <source>Suppress MIDI Program Changes</source>
             <translation>Blocca i Program Change MIDI</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/event_suppression_group.py" line="91" />
+            <location filename="../../jdxi_editor/ui/widgets/event_suppression_group.py" line="100" />
             <source>Suppress MIDI Control Changes</source>
             <translation>Blocca i Control Change MIDI</translation>
         </message>
@@ -7175,33 +7179,28 @@ Le modifiche che non avevi salvato andrebbero perse. Le rimando al JD-Xi?</trans
             <translation>Chiudi il file MIDI (se ha modifiche non salvate chiede prima)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/mute_channels_group.py" line="142" />
+            <location filename="../../jdxi_editor/ui/widgets/mute_channels_group.py" line="156" />
             <source>no JD-Xi part plays it</source>
             <translation>nessuna parte del JD-Xi lo suona</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/mute_channels_group.py" line="53" />
-            <source>Solo</source>
-            <translation>Solo</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/widgets/mute_channels_group.py" line="143" />
+            <location filename="../../jdxi_editor/ui/widgets/mute_channels_group.py" line="157" />
             <source>Solo channel {ch} ({part}): only the soloed channels play, the others are silenced</source>
             <translation>Solo canale {ch} ({part}): suonano solo i canali in solo, gli altri sono silenziati</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/mute_channels_group.py" line="135" />
+            <location filename="../../jdxi_editor/ui/widgets/mute_channels_group.py" line="149" />
             <source>Mute channel {ch}: {part}</source>
             <translation>Muta il canale {ch}: {part}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/mute_channels_group.py" line="136" />
+            <location filename="../../jdxi_editor/ui/widgets/mute_channels_group.py" line="150" />
             <source>Mute channel {ch}: no JD-Xi part plays it</source>
             <translation>Muta il canale {ch}: nessuna parte del JD-Xi lo suona</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/widgets/mute_channels_group.py" line="137" />
-            <location filename="../../jdxi_editor/ui/widgets/mute_channels_group.py" line="128" />
+            <location filename="../../jdxi_editor/ui/widgets/mute_channels_group.py" line="151" />
+            <location filename="../../jdxi_editor/ui/widgets/mute_channels_group.py" line="142" />
             <source>(not used in this file)</source>
             <translation>(non usato in questo file)</translation>
         </message>
@@ -8739,6 +8738,14 @@ Il suono sul JD-Xi viene sostituito: se vuoi tenerlo, salvalo prima sul JD-Xi (W
             <location filename="../../jdxi_editor/ui/windows/selftest.py" line="865" />
             <source>report not saved: {error}</source>
             <translation>resoconto non salvato: {error}</translation>
+        </message>
+        <message>
+            <source>Program changes (PC) and controllers (CC) of the file not sent to the JD-Xi.</source>
+            <translation type="vanished">Program change (PC) e controller (CC) del file da non inviare al JD-Xi.</translation>
+        </message>
+        <message>
+            <source>Solo</source>
+            <translation type="vanished">Solo</translation>
         </message>
         <message>
             <source>Mute channels</source>

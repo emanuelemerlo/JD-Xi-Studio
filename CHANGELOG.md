@@ -81,6 +81,11 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   mid-song comes with its bank select; a track's velocity scale at 0 silences it.
 
 ### Fixed
+- MIDI Player: playing a General MIDI file changed the parts' sounds — its program changes, with
+  no JD-Xi Bank Select, picked a sound of whatever bank each part was in, and the edits not saved
+  were lost. Event filter › **GM** (on by default) does not send the program changes that do not
+  choose a JD-Xi sound; those after a JD-Xi bank (a file made for the JD-Xi, the Automation's)
+  still go. **PC** still blocks them all.
 - MIDI Player › Assign the tracks to the parts: opened again after Apply it showed its proposal
   again, as if nothing had been applied. Once applied (or with a file already on the JD-Xi's
   parts) it shows each track on the part it is on now; **As now** and **Proposal** switch between

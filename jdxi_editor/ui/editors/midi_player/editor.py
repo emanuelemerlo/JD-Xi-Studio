@@ -1170,6 +1170,11 @@ class MidiFilePlayer(SynthEditor):
         )
         self._sync_transport_settings()
 
+    def on_block_foreign_program_changes_toggled(self, state: Qt.CheckState) -> None:
+        """Block the file's program changes that do not choose a JD-Xi sound (General MIDI ones)."""
+        self.midi_state.block_foreign_program_changes = state == JDXi.UI.Constants.CHECKED
+        self._sync_transport_settings()
+
     def on_suppress_control_changes_toggled(self, state: Qt.CheckState):
         """
         on_suppress_control_changes_toggled
@@ -1948,6 +1953,7 @@ class MidiFilePlayer(SynthEditor):
         self.transport_controller.set_suppression(
             program_changes=self.midi_state.suppress_program_changes,
             control_changes=self.midi_state.suppress_control_changes,
+            foreign_program_changes=self.midi_state.block_foreign_program_changes,
         )
 
     def _on_transport_state_changed(self, state: TransportState) -> None:
