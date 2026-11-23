@@ -19,6 +19,10 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   menu) goes back to the start with no recipe chosen.
 - The pop-up menus (Recipes, Programs, New sound) highlight the item under the mouse: nothing
   showed which one would be chosen.
+- Recipes in Italian follow the manual's words: *passo* for a step (the editor said *passaggio*),
+  «Escludi le righe da correggere e importa» (it said *da sistemare*, the status is *da correggere*).
+- Docs: a **Recipes** page (the library, with an AI, the check, the editor, the guide, the
+  template) with screenshots; README, What's new, hardware test plan (section 10).
 - Recipes › New recipe › **With an AI**, the way recipes are meant to be made: describe the sound,
   choose the part (or let the AI choose), **Copy the request** — the sound, the format, the rules
   and the list of the parameters it may set, with their ranges and choices — and paste it into an

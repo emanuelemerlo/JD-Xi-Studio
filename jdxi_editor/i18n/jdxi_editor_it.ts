@@ -5754,7 +5754,7 @@ TONE: FILTER	Cutoff KF	+50</translation>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="907" />
             <source>Exclude the rows to fix and import</source>
-            <translation>Escludi le righe da sistemare e importa</translation>
+            <translation>Escludi le righe da correggere e importa</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="909" />
@@ -5799,7 +5799,7 @@ TONE: FILTER	Cutoff KF	+50</translation>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1295" />
             <source>Double-click a step to rename it</source>
-            <translation>Doppio clic su un passaggio per rinominarlo</translation>
+            <translation>Doppio clic su un passo per rinominarlo</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1338" />
@@ -6009,8 +6009,8 @@ TONE: FILTER	Cutoff KF	+50</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="680" />
-            <source>No recipes yet: import one or fill in the template (on the right).</source>
-            <translation>Nessuna ricetta ancora: importane una o compila il modello (a destra).</translation>
+            <source>No recipes yet: import one, or create a new one.</source>
+            <translation>Ancora nessuna ricetta: importane una, o creane una nuova.</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="780" />
@@ -6147,32 +6147,32 @@ TONE: FILTER	Cutoff KF	+50</translation>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1290" />
             <source>STEPS</source>
-            <translation>PASSAGGI</translation>
+            <translation>PASSI</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1303" />
             <source>Add a step</source>
-            <translation>Aggiungi un passaggio</translation>
+            <translation>Aggiungi un passo</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1304" />
             <source>Duplicate the step</source>
-            <translation>Duplica il passaggio</translation>
+            <translation>Duplica il passo</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1305" />
             <source>Move the step up</source>
-            <translation>Sposta su il passaggio</translation>
+            <translation>Sposta su il passo</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1306" />
             <source>Move the step down</source>
-            <translation>Sposta giù il passaggio</translation>
+            <translation>Sposta giù il passo</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1307" />
             <source>Delete the step and its rows</source>
-            <translation>Elimina il passaggio e le sue righe</translation>
+            <translation>Elimina il passo e le sue righe</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1335" />
@@ -6287,7 +6287,7 @@ TONE: FILTER	Cutoff KF	+50</translation>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="745" />
             <source>{steps} steps · {rows} parameters</source>
-            <translation>{steps} passaggi · {rows} parametri</translation>
+            <translation>{steps} passi · {rows} parametri</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="794" />
@@ -6323,12 +6323,12 @@ TONE: FILTER	Cutoff KF	+50</translation>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1545" />
             <source>All steps ({n})</source>
-            <translation>Tutti i passaggi ({n})</translation>
+            <translation>Tutti i passi ({n})</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1633" />
             <source>Delete step</source>
-            <translation>Elimina passaggio</translation>
+            <translation>Elimina passo</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1681" />
@@ -6453,14 +6453,14 @@ TONE: FILTER	Cutoff KF	+50</translation>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1551" />
             <source>Step {n} · {rows} rows</source>
-            <translation>Passaggio {n} · {rows} righe</translation>
+            <translation>Passo {n} · {rows} righe</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1597" />
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1549" />
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="749" />
             <source>Step {n}</source>
-            <translation>Passaggio {n}</translation>
+            <translation>Passo {n}</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1908" />
@@ -6505,7 +6505,7 @@ TONE: FILTER	Cutoff KF	+50</translation>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="1633" />
             <source>Delete the step and its {n} rows?</source>
-            <translation>Eliminare il passaggio e le sue {n} righe?</translation>
+            <translation>Eliminare il passo e le sue {n} righe?</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="750" />
@@ -9216,6 +9216,10 @@ Il suono sul JD-Xi viene sostituito: se vuoi tenerlo, salvalo prima sul JD-Xi (W
             <location filename="../../jdxi_editor/ui/windows/selftest.py" line="865" />
             <source>report not saved: {error}</source>
             <translation>resoconto non salvato: {error}</translation>
+        </message>
+        <message>
+            <source>No recipes yet: import one or fill in the template (on the right).</source>
+            <translation type="vanished">Nessuna ricetta ancora: importane una o compila il modello (a destra).</translation>
         </message>
         <message>
             <source>New</source>

@@ -435,6 +435,8 @@ class RecipesEditor(QWidget):
         self.detail_steps.setStyleSheet("QListWidget { background: #121214; color: #c9cbd1; border: 1px solid #2a2d33; }"
                                         "QListWidget::item { padding: 5px; }")
         self.detail_steps.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
+        self.detail_steps.setWordWrap(True)  # a step with many groups: two lines, not a scroll bar
+        self.detail_steps.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         detail.body.addWidget(self.detail_steps, 1)
         line = QHBoxLayout()
         use = _button(tr("Open the guide"), True)
@@ -677,7 +679,7 @@ class RecipesEditor(QWidget):
         if empty:  # say what goes here, not an empty box
             text = (tr("No recipe matches «{text}».").format(text=self.search.text().strip())
                     if self.search.text().strip() else
-                    tr("No recipes yet: import one or fill in the template (on the right)."))
+                    tr("No recipes yet: import one, or create a new one."))
             item = QListWidgetItem(text)
             item.setFlags(Qt.ItemFlag.NoItemFlags)
             self.library_list.addItem(item)
