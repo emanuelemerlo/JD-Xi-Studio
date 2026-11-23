@@ -1257,12 +1257,52 @@ class RecipesEditor(QWidget):
         line.addWidget(_label(tr("Category"), 12))
         line.addWidget(self.ed_category, 1)
         col.addLayout(line)
+        # the steps on the left (the recipe's order), the chosen step's rows on the right
+        work = QHBoxLayout()
+        steps_col = QVBoxLayout()
+        steps_col.addWidget(_label(tr("STEPS"), 11, ACCENT, True))
+        self.ed_steps = QListWidget()
+        self.ed_steps.setStyleSheet("QListWidget { background: #121214; color: #e6e6e6; border: 1px solid #2a2d33; }"
+                                    "QListWidget::item { padding: 5px; } QListWidget::item:selected { background: #2a3a30; }")
+        self.ed_steps.setFixedWidth(200)
+        self.ed_steps.setToolTip(tr("Double-click a step to rename it"))
+        self.ed_steps.currentItemChanged.connect(lambda _c, _p: self._show_step())
+        self.ed_steps.itemChanged.connect(self._step_renamed)
+        steps_col.addWidget(self.ed_steps, 1)
+        step_buttons = QHBoxLayout()
+        step_buttons.setSpacing(4)
+        import qtawesome as qta
+
+        for icon, tip, slot in (("mdi.plus", tr("Add a step"), self.add_step),
+                                ("mdi.content-copy", tr("Duplicate the step"), self.duplicate_step),
+                                ("mdi.arrow-up", tr("Move the step up"), lambda: self.move_step(-1)),
+                                ("mdi.arrow-down", tr("Move the step down"), lambda: self.move_step(1)),
+                                ("mdi.delete-outline", tr("Delete the step and its rows"), self.delete_step)):
+            b = _button("")
+            b.setIcon(qta.icon(icon, color="#e6e6e6"))
+            b.setToolTip(tip)
+            b.setFixedWidth(36)
+            b.clicked.connect(lambda _c=False, slot=slot: slot())
+            step_buttons.addWidget(b)
+        step_buttons.addStretch()
+        steps_col.addLayout(step_buttons)
+        work.addLayout(steps_col)
         self.ed_table = QTableWidget(0, len(COLUMNS) + 1)
         self.ed_table.setHorizontalHeaderLabels(COLUMNS + [tr("Check")])
         self.ed_table.setStyleSheet(TABLE)
         self.ed_table.verticalHeader().setVisible(False)
+        self.ed_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.ed_table.itemChanged.connect(lambda _item: self._editor_changed())
-        col.addWidget(self.ed_table, 1)
+        self.ed_table.currentCellChanged.connect(lambda r, _c, _pr, _pc: self._explain_editor_row(r))
+        work.addWidget(self.ed_table, 1)
+        col.addLayout(work, 1)
+        from PySide6.QtGui import QKeySequence, QShortcut
+
+        for keys, slot in ((QKeySequence.StandardKey.Copy, self.copy_editor_rows),
+                           (QKeySequence.StandardKey.Paste, self.paste_editor_rows)):
+            shortcut = QShortcut(QKeySequence(keys), self.ed_table)
+            shortcut.setContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+            shortcut.activated.connect(slot)
         self.ed_status = _label("", 12)
         col.addWidget(self.ed_status)
         col.addWidget(_label(tr("The menus show only what exists: choosing the part AN, the group offers COMMON, OSC, PITCH, FILTER, AMP, LFO, "
@@ -1272,6 +1312,19 @@ class RecipesEditor(QWidget):
         add.clicked.connect(self.add_editor_row)
         remove = _button(tr("Remove row"))
         remove.clicked.connect(self.remove_editor_row)
+        rows_menu = _button(tr("Rows") + "  ▾")
+        menu = QMenu(rows_menu)
+        for text, slot in ((tr("Duplicate the rows"), self.duplicate_editor_rows),
+                           (tr("Move up"), lambda: self.move_editor_rows(-1)),
+                           (tr("Move down"), lambda: self.move_editor_rows(1)),
+                           (None, None),
+                           (tr("Copy the rows (Ctrl+C)"), self.copy_editor_rows),
+                           (tr("Paste rows (Ctrl+V)"), self.paste_editor_rows)):
+            if text is None:
+                menu.addSeparator()
+            else:
+                menu.addAction(text).triggered.connect(lambda _c=False, slot=slot: slot())
+        rows_menu.setMenu(menu)
         capture = _button(tr("Take the values from the JD-Xi"))
         capture.setToolTip(tr("Writes in each row the value the parameter has now"))
         capture.clicked.connect(self.capture_current)
@@ -1281,10 +1334,20 @@ class RecipesEditor(QWidget):
         try_b.clicked.connect(lambda: (self._editor_to_recipe(), self.show_check()))
         save = _button(tr("Save recipe"), True)
         save.clicked.connect(self.save_from_editor)
-        for b in (add, remove, capture):
+        save_as = _button(tr("Save as…"))
+        save_as.setToolTip(tr("Save as a new recipe, the original as it was"))
+        save_as.clicked.connect(lambda: self.save_as_from_editor())
+        self.revert_button = _button(tr("Undo changes"))
+        self.revert_button.setToolTip(tr("Back to the recipe as it was saved"))
+        self.revert_button.clicked.connect(self.revert_editor)
+        # two rows: the rows' tools, then what is done with the recipe (one row did not fit at 1280 px)
+        for b in (add, remove, rows_menu, capture):
             bottom.addWidget(b)
         bottom.addStretch()
-        for b in (export, try_b, save):
+        col.addLayout(bottom)
+        bottom = QHBoxLayout()
+        bottom.addStretch()
+        for b in (export, try_b, self.revert_button, save_as, save):
             bottom.addWidget(b)
         col.addLayout(bottom)
         return page
@@ -1297,17 +1360,18 @@ class RecipesEditor(QWidget):
         self.ed_description.setText(r.description)
         self.ed_category.setText(r.category)
         table = self.ed_table
-        table.blockSignals(True)
-        table.setRowCount(0)
-        for row in r.rows:
-            self._add_editor_row(row)
-        table.blockSignals(False)
-        for col, width in enumerate((48, 110, 80, 110, 70, 170, 110, 90, 56, 56)):
+        for col, width in enumerate((48, 110, 64, 100, 48, 150, 96, 80, 44, 44)):
             table.setColumnWidth(col, width)
         table.horizontalHeader().setSectionResizeMode(10, QHeaderView.ResizeMode.Stretch)
         table.setColumnWidth(11, 220)
-        self._editor_changed()
+        self._set_editor_rows(r.rows, step=None)
+        if self.ed_steps.count() > 1:
+            self.ed_steps.setCurrentRow(1)  # the first step (row 0: all of them)
         self._editor_snapshot = self._editor_state()
+        import copy
+
+        self._snapshot_recipe = copy.deepcopy(r)  # «Undo changes» of a recipe not saved yet
+        self.revert_button.setEnabled(False)
         self.pages.setCurrentWidget(self.editor_page)
 
     def _editor_state(self) -> tuple:
@@ -1412,25 +1476,262 @@ class RecipesEditor(QWidget):
             table.setItem(i, len(COLUMNS), item)
             bad += c.status == check.FIX
         table.blockSignals(False)
+        self._refresh_steps(rows)
+        self._show_step()  # a row moved to another step by its Step cell
+        self._show_where()  # «not saved» in the breadcrumb
+        if hasattr(self, "revert_button"):
+            self.revert_button.setEnabled(self.editor_has_changes())
         if not rows:
             self.ed_status.setText(tr("No rows yet: «Add row» to start"))
             return
         self.ed_status.setText(tr("All {n} rows are valid").format(n=len(rows)) if not bad
                                else tr("{bad} of {n} rows to fix").format(bad=bad, n=len(rows)))
 
-    def add_editor_row(self) -> None:
-        rows = self._editor_rows()
-        last = rows[-1] if rows else Row(1, "", "AN", "FILTER")
-        self.ed_table.blockSignals(True)
-        self._add_editor_row(Row(last.step, last.step_name, last.part, last.group, last.su, "", VALUE, "", "", "", ""))
-        self.ed_table.blockSignals(False)
+    # ------------------------------------------------------------ editor: steps
+    ALL_STEPS = -1  # the steps list's first line: every row
+
+    def _set_editor_rows(self, rows: list[Row], step: Optional[int] = None, select: Optional[int] = None) -> None:
+        """The table filled again with *rows* (in step order), *step* shown, row *select* chosen."""
+        table = self.ed_table
+        table.blockSignals(True)
+        table.setRowCount(0)
+        for row in sorted(rows, key=lambda r: r.step):  # stable: a step's rows keep their order
+            self._add_editor_row(row)
+        table.blockSignals(False)
         self._editor_changed()
+        if step is not None:
+            self._select_step(step)
+        self._show_step()
+        if select is not None and 0 <= select < table.rowCount():
+            table.setCurrentCell(select, 7)
+
+    def _refresh_steps(self, rows: list[Row]) -> None:
+        """The steps list from the rows: «n · name (rows)»; the chosen one kept."""
+        if not hasattr(self, "ed_steps"):
+            return
+        chosen = self.current_step()
+        steps = Recipe(rows=rows).steps()
+        self.ed_steps.blockSignals(True)
+        self.ed_steps.clear()
+        every = QListWidgetItem(tr("All steps ({n})").format(n=len(rows)))
+        every.setData(Qt.ItemDataRole.UserRole, self.ALL_STEPS)
+        self.ed_steps.addItem(every)
+        for number, name, step_rows in steps:
+            item = QListWidgetItem(name or tr("Step {n}").format(n=number))
+            item.setData(Qt.ItemDataRole.UserRole, number)
+            item.setToolTip(tr("Step {n} · {rows} rows").format(n=number, rows=len(step_rows)))
+            item.setFlags(item.flags() | Qt.ItemFlag.ItemIsEditable)
+            self.ed_steps.addItem(item)
+        self.ed_steps.blockSignals(False)
+        self._select_step(chosen if chosen is not None else self.ALL_STEPS, show=False)
+
+    def current_step(self) -> Optional[int]:
+        item = self.ed_steps.currentItem() if hasattr(self, "ed_steps") else None
+        return item.data(Qt.ItemDataRole.UserRole) if item else None
+
+    def _select_step(self, number: int, show: bool = True) -> None:
+        for i in range(self.ed_steps.count()):
+            if self.ed_steps.item(i).data(Qt.ItemDataRole.UserRole) == number:
+                self.ed_steps.blockSignals(not show)
+                self.ed_steps.setCurrentRow(i)
+                self.ed_steps.blockSignals(False)
+                return
+        if self.ed_steps.count():
+            self.ed_steps.blockSignals(not show)
+            self.ed_steps.setCurrentRow(0)
+            self.ed_steps.blockSignals(False)
+
+    def _show_step(self) -> None:
+        """Only the chosen step's rows (all with «All steps»); its Step columns hidden then."""
+        step = self.current_step()
+        every = step in (None, self.ALL_STEPS)
+        rows = self._editor_rows()
+        for i, row in enumerate(rows):
+            self.ed_table.setRowHidden(i, not every and row.step != step)
+        self.ed_table.setColumnHidden(0, not every)
+        self.ed_table.setColumnHidden(1, not every)
+
+    def _step_renamed(self, item: QListWidgetItem) -> None:
+        """A step renamed in the list: the name of each of its rows."""
+        number = item.data(Qt.ItemDataRole.UserRole)
+        if number == self.ALL_STEPS:
+            return
+        name = item.text().strip()
+        rows = [Row(**{**r.__dict__, "step_name": name}) if r.step == number else r for r in self._editor_rows()]
+        self._set_editor_rows(rows, step=number)
+
+    def add_step(self) -> int:
+        """A new step at the end, with an empty row like the last one."""
+        rows = self._editor_rows()
+        number = max((r.step for r in rows), default=0) + 1
+        last = rows[-1] if rows else Row(1, "", "AN", "FILTER")
+        rows.append(Row(number, tr("Step {n}").format(n=number), last.part, last.group, "", "", VALUE))
+        self._set_editor_rows(rows, step=number, select=len(rows) - 1)
+        return number
+
+    def duplicate_step(self) -> Optional[int]:
+        """A copy of the chosen step, right after it (the following steps move down by one)."""
+        step = self.current_step()
+        if step in (None, self.ALL_STEPS):
+            return None
+        rows = [Row(**{**r.__dict__, "step": r.step + 1}) if r.step > step else r for r in self._editor_rows()]
+        copies = [Row(**{**r.__dict__, "step": step + 1, "step_name": tr("{name} (copy)").format(name=r.step_name)
+                         if r.step_name else r.step_name}) for r in rows if r.step == step]
+        self._set_editor_rows(rows + copies, step=step + 1)
+        return step + 1
+
+    def move_step(self, delta: int) -> None:
+        """The chosen step one place up (-1) or down (+1): it swaps with its neighbour."""
+        step = self.current_step()
+        numbers = sorted({r.step for r in self._editor_rows()})
+        if step not in numbers:
+            return
+        i = numbers.index(step) + delta
+        if not 0 <= i < len(numbers):
+            return
+        other = numbers[i]
+        swap = {step: other, other: step}
+        rows = [Row(**{**r.__dict__, "step": swap.get(r.step, r.step)}) for r in self._editor_rows()]
+        self._set_editor_rows(rows, step=other)
+
+    def delete_step(self) -> None:
+        step = self.current_step()
+        if step in (None, self.ALL_STEPS):
+            return
+        rows = self._editor_rows()
+        count = sum(1 for r in rows if r.step == step)
+        if count and QMessageBox.question(
+                self, tr("Delete step"), tr("Delete the step and its {n} rows?").format(n=count)) \
+                != QMessageBox.StandardButton.Yes:
+            return
+        kept = [r for r in rows if r.step != step]
+        self._set_editor_rows(kept, step=max([r.step for r in kept if r.step < step], default=self.ALL_STEPS))
+
+    # ------------------------------------------------------------ editor: rows
+    def _chosen_rows(self) -> list[int]:
+        rows = sorted({i.row() for i in self.ed_table.selectionModel().selectedRows()})
+        if not rows and self.ed_table.currentRow() >= 0:
+            rows = [self.ed_table.currentRow()]
+        return [r for r in rows if not self.ed_table.isRowHidden(r)]
+
+    def duplicate_editor_rows(self) -> None:
+        chosen = self._chosen_rows()
+        if not chosen:
+            return
+        rows = self._editor_rows()
+        out = []
+        for i, row in enumerate(rows):
+            out.append(row)
+            if i == chosen[-1]:
+                out += [Row(**rows[j].__dict__) for j in chosen]
+        self._set_editor_rows(out, step=self.current_step(), select=chosen[-1] + 1)
+
+    def move_editor_rows(self, delta: int) -> None:
+        """The chosen row one place up or down among the rows shown (within its step)."""
+        chosen = self._chosen_rows()
+        if len(chosen) != 1:
+            return
+        i = chosen[0]
+        shown = [r for r in range(self.ed_table.rowCount()) if not self.ed_table.isRowHidden(r)]
+        k = shown.index(i) + delta
+        if not 0 <= k < len(shown):
+            return
+        j = shown[k]
+        rows = self._editor_rows()
+        if rows[i].step != rows[j].step:
+            return  # across steps: change the row's Step instead
+        rows[i], rows[j] = rows[j], rows[i]
+        self._set_editor_rows(rows, step=self.current_step(), select=j)
+
+    def copy_editor_rows(self) -> None:
+        """The chosen rows to the clipboard, as the template's columns separated by tabs."""
+        rows = self._editor_rows()
+        chosen = self._chosen_rows() or range(len(rows))
+        lines = ["\t".join(COLUMNS)] + ["\t".join(rows[i].cells()) for i in chosen]
+        QApplication.clipboard().setText("\n".join(lines) + "\n")
+        self.ed_status.setText(tr("{n} rows copied").format(n=len(lines) - 1))
+
+    def paste_editor_rows(self) -> None:
+        """Rows from the clipboard (copied here, from a sheet or an AI's answer) into the chosen step."""
+        recipe = reader.read_text(QApplication.clipboard().text())
+        if not recipe.rows:
+            self.ed_status.setText(tr("No rows in the clipboard"))
+            return
+        step = self.current_step()
+        rows = self._editor_rows()
+        if step not in (None, self.ALL_STEPS):
+            name = next((r.step_name for r in rows if r.step == step), "")
+            pasted = [Row(**{**r.__dict__, "step": step, "step_name": name}) for r in recipe.rows]
+        else:
+            pasted = recipe.rows
+        self._set_editor_rows(rows + pasted, step=step, select=len(rows))
+        self.ed_status.setText(tr("{n} rows pasted").format(n=len(pasted)))
+
+    def _explain_editor_row(self, index: int) -> None:
+        """The chosen row's parameter in the panel on the right: what it is, its range, the note."""
+        rows = self._editor_rows()
+        if not 0 <= index < len(rows):
+            return
+        row = rows[index]
+        c = check.check_row(row)
+        if c.target is None:
+            return
+        self._explain_row(c)
+
+    def revert_editor(self) -> None:
+        """Back to the recipe as saved (or as imported), after asking."""
+        if not self.editor_has_changes():
+            return
+        if QMessageBox.question(self, tr("Undo changes"), tr("Undo the changes not saved?")) \
+                != QMessageBox.StandardButton.Yes:
+            return
+        if self.recipe_path is not None:
+            self.recipe = library.load(self.recipe_path)
+        else:
+            import copy
+
+            self.recipe = copy.deepcopy(self._snapshot_recipe)
+        self.show_editor_page()
+
+    def save_as_from_editor(self, title: Optional[str] = None) -> Optional[Path]:
+        """Save as a new recipe (named by the user); the one opened stays as it was."""
+        if title is None:
+            from PySide6.QtWidgets import QInputDialog
+
+            title, ok = QInputDialog.getText(self, tr("Save as…"), tr("Name of the new recipe:"),
+                                             text=tr("{title} (copy)").format(title=self.ed_title.text().strip()))
+            if not ok:
+                return None
+        title = title.strip()
+        if not title:
+            return None
+        self.ed_title.setText(title)
+        recipe = self._editor_to_recipe()
+        recipe.created = ""
+        self.recipe_path = library.save(recipe, None)
+        self.refresh_library(self.recipe_path)
+        self._editor_snapshot = self._editor_state()
+        self._editor_changed()
+        self.ed_status.setText(tr("Saved as «{title}»").format(title=title))
+        return self.recipe_path
+
+    def add_editor_row(self) -> None:
+        """An empty row like the last of the chosen step (of the recipe with «All steps»), after it."""
+        rows = self._editor_rows()
+        step = self.current_step()
+        in_step = [i for i, r in enumerate(rows) if r.step == step] if step not in (None, self.ALL_STEPS) else []
+        at = (in_step[-1] if in_step else len(rows) - 1)
+        last = rows[at] if rows else Row(1, "", "AN", "FILTER")
+        new = Row(last.step, last.step_name, last.part, last.group, last.su, "", VALUE, "", "", "", "")
+        rows.insert(at + 1, new)
+        self._set_editor_rows(rows, step=step, select=at + 1)
 
     def remove_editor_row(self) -> None:
-        row = self.ed_table.currentRow()
-        if row >= 0:
-            self.ed_table.removeRow(row)
-            self._editor_changed()
+        chosen = self._chosen_rows()
+        if not chosen:
+            return
+        rows = [r for i, r in enumerate(self._editor_rows()) if i not in chosen]
+        self._set_editor_rows(rows, step=self.current_step(), select=min(chosen[0], len(rows) - 1))
 
     def capture_current(self) -> None:
         """Each row's value as the JD-Xi has it now (to write a recipe from a sound).
@@ -1573,7 +1874,9 @@ class RecipesEditor(QWidget):
             return
         title = (self.recipe.title if self.recipe is not None and page is not self.create_page else "") or ""
         self.back_button.show()
-        self.where.setText((f"›  {title}  " if title else "") + f"›  {names[page]}")
+        dirty = page is self.editor_page and hasattr(self, "_editor_snapshot") and self.editor_has_changes()
+        self.where.setText((f"›  {title}  " if title else "") + f"›  {names[page]}"
+                           + ("   ●  " + tr("not saved") if dirty else ""))
 
     def _may_leave(self) -> bool:
         """Leaving the editor with changes not saved: Save, Discard or stay (Cancel)."""

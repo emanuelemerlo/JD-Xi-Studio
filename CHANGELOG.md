@@ -21,6 +21,13 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   AI's chat (or **Save the request…** to attach it); then **Paste the answer**: the CSV in it is read
   and every row checked, ready to import and fine-tune by ear. A CSV pasted in «From a text» (with
   ; or , and in a code block or not) is read as a CSV.
+- Recipes › Editor works by **steps**: the steps on the left (double-click to rename; add,
+  duplicate, move up / down, delete), the chosen step's rows on the right (or «All steps»). Rows:
+  add (in the step), remove, and under **Rows ▾** duplicate, move up / down, copy (Ctrl+C) and paste
+  (Ctrl+V — rows copied here, from a sheet or from an AI's answer go into the chosen step). The
+  chosen row's parameter is explained in the panel on the right. **●  not saved** in the breadcrumb,
+  **Undo changes** back to the recipe as saved, **Save as…** a new recipe leaving the one opened as
+  it was.
 
 ### Fixed
 - Recipes in Italian: importing a recipe that sets an LFO depth (Pitch / Filter / Amp / Pan Depth)
