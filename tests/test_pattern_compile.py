@@ -182,7 +182,8 @@ def _enable(pattern, row, step):
     pattern._on_button_clicked(button, True)
 
 
-TIMING_MARGIN_S = 0.06 if sys.platform == "win32" else 0.03
+# Windows' timer (~15 ms) and macOS's (a shared VM, timers coalesced) need more room
+TIMING_MARGIN_S = 0.06 if sys.platform in ("win32", "darwin") else 0.03
 
 
 def _run(app, seconds):

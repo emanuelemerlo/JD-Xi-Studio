@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import gc
 import os
+import sys
 from typing import Callable, Optional
 
 import pytest
@@ -38,6 +39,15 @@ os.environ.setdefault("JDXI_FOLLOW", "0")
 # a JD-Xi silent for seconds is not taken for switched off: the simulated JD-Xis come and go
 # between tests on the one shared helper (tests/test_connection.py turns the check on)
 os.environ.setdefault("JDXI_SILENCE_CHECK", "0")
+
+# macOS: the whole test run is latency critical, as the app is while playing.
+# On the macOS runner the system throttled the timers (App Nap, timer
+# coalescing): a 50 ms wait took 95, a pattern's notes came up to 150 ms off
+# their beat, a reading's timeouts ran out.
+if sys.platform == "darwin":
+    from jdxi_editor.utils import macos_activity
+
+    _MAC_ACTIVITY = macos_activity.begin("JD-Xi Studio tests: timing measured")
 
 import rtmidi
 

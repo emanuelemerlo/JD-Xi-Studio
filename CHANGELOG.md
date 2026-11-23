@@ -5,6 +5,10 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Fixed
+- macOS: while playing (MIDI Player, Pattern) the app holds a *latency-critical* activity, so the
+  system does not throttle its timers (App Nap, timer coalescing) — on the macOS test runner notes
+  came up to 150 ms off their beat and a 50 ms wait took 95. Windows has had its 1 ms timer for the
+  same reason.
 - Recipes in Italian: importing a recipe that sets an LFO depth (Pitch / Filter / Amp / Pan Depth)
   or the Mode of D1 / D2 stopped with an error and did nothing — the editors' long names are
   translated, and the template's English names matched none of them. The names are matched in
