@@ -551,8 +551,9 @@ class JDXiSysExParser:
             log.message(scope="JDXiSysExParser", message=f"{device_info.to_string}")
         device_id = device_info.device_id
         manufacturer_id = device_info.manufacturer
-        # One format for the firmware version, the one DeviceInfo.to_string logs.
-        version_str = device_info.version_string if device_info else "unknown"
+        # The Identity Reply's software revision level, as DeviceInfo.to_string logs it;
+        # not the firmware version the JD-Xi shows (1.52 replies 00 03 00 00).
+        revision = device_info.revision_string if device_info else "unknown"
         # Use DeviceInfo.is_jdxi property to check if it's a JD-Xi device
         if device_info and device_info.is_jdxi:
             device_name = "JD-Xi"
@@ -573,7 +574,7 @@ class JDXiSysExParser:
         return {
             "device_id": device_id,
             "manufacturer_id": manufacturer_id,
-            "firmware_version": version_str,
+            "software_revision": revision,
         }
 
     def convert_to_mido_message(

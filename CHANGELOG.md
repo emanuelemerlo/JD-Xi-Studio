@@ -36,8 +36,9 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   chosen row's parameter is explained in the panel on the right. **●  not saved** in the breadcrumb,
   **Undo changes** back to the recipe as saved, **Save as…** a new recipe leaving the one opened as
   it was.
-- The log shows the JD-Xi's firmware version once and in one format (it was also written as raw
-  bytes, `0.3.0.0`, beside `v0.03`). The panel sliders and the NRPN messages they send are logged
+- The log no longer calls the Identity Reply's revision level a firmware version, in two formats
+  (`0.3.0.0` and `v0.03`): it is the software revision level, `00 03 00 00` on a JD-Xi with firmware
+  1.52 (its third release), written once as such. The panel sliders and the NRPN messages they send are logged
   at DEBUG level: a turned knob no longer fills the log.
 - The manual's pages build without docutils warnings (title underlines, a list in Installation).
 
