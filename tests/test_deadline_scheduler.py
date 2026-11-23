@@ -8,13 +8,16 @@ import pytest
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from PySide6.QtCore import QCoreApplication, QElapsedTimer
+from PySide6.QtWidgets import QApplication
 
 from jdxi_editor.midi.playback import transport as tp
 
 
 @pytest.fixture(scope="module")
 def app():
-    return QCoreApplication.instance() or QCoreApplication([])
+    # a QApplication, not a QCoreApplication: a later test in the same run
+    # that builds widgets would abort on a core-only instance
+    return QCoreApplication.instance() or QApplication([])
 
 
 def _song(notes: int = 8, step: int = 60) -> mido.MidiFile:
