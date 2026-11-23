@@ -84,6 +84,27 @@ def _dim(color: QColor, enabled: bool) -> QColor:
 
 
 # ---------------------------------------------------------------------- card
+# Pop-up menus (right click, ⋯, Rows ▾): the item under the mouse highlighted —
+# without ::item padding Qt drew no highlight, nothing showed which one had the focus
+MENU_STYLE = (
+    "QMenu { background: #17181b; color: #e6e6e6; border: 1px solid #3a3d44; padding: 4px; }"
+    "QMenu::item { padding: 5px 22px 5px 14px; border-radius: 4px; }"
+    "QMenu::item:selected { background: #2a3a30; color: #ffffff; }"
+    "QMenu::item:disabled { color: #5c5f66; }"
+    "QMenu::item:disabled:selected { background: transparent; }"
+    "QMenu::separator { height: 1px; background: #2a2d33; margin: 4px 8px; }"
+)
+
+
+def menu(parent=None) -> "QMenu":
+    """A pop-up menu with the editors' look (the item under the mouse highlighted)."""
+    from PySide6.QtWidgets import QMenu
+
+    m = QMenu(parent)
+    m.setStyleSheet(MENU_STYLE)
+    return m
+
+
 class Card(QFrame):
     """A titled panel; the title is the group name on the JD-Xi display."""
 

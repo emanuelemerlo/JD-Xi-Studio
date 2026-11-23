@@ -14,7 +14,11 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   check, the guide and the editor as before. On the right the explanation, open on the library and
   the guide, closed where the tables need the width (**Details** opens it; it opens by itself when a
   row is chosen). A recipe keeps a **category** and the dates it was created and changed; its name
-  is needed only to save it.
+  is needed only to save it. **Import recipe…** is the library's first button (the file an AI
+  filled in is the usual start), **+ New recipe** under it; **Close** (in the recipe's card and its
+  menu) goes back to the start with no recipe chosen.
+- The pop-up menus (Recipes, Programs, New sound) highlight the item under the mouse: nothing
+  showed which one would be chosen.
 - Recipes › New recipe › **With an AI**, the way recipes are meant to be made: describe the sound,
   choose the part (or let the AI choose), **Copy the request** — the sound, the format, the rules
   and the list of the parameters it may set, with their ranges and choices — and paste it into an

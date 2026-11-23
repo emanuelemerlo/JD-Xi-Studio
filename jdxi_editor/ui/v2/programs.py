@@ -418,6 +418,9 @@ class ProgramLibrary(QWidget):
     def build_menu(self, program_id: str) -> QMenu:
         """The actions for *program_id*; those it cannot have are off, with the reason."""
         menu = QMenu(self)
+        from jdxi_editor.ui.v2.widgets import MENU_STYLE
+
+        menu.setStyleSheet(MENU_STYLE)  # the item under the mouse highlighted
         menu.setToolTipsVisible(True)
         loaded = program_id == self.loaded_id
         user = program_id[:1].upper() in USER_BANKS

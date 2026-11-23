@@ -322,10 +322,20 @@ class RecipesEditor(QWidget):
         col.setContentsMargins(12, 12, 12, 12)
         col.setSpacing(8)
         col.addWidget(_label(tr("MY RECIPES"), 12, ACCENT, True))
-        self.new_button = _button("+  " + tr("New recipe"), True)
-        self.new_button.setToolTip(tr("From scratch, from a document or from a pasted text"))
+        # importing (the file an AI filled in) comes first; a new recipe next to it
+        self.import_button = _button(tr("Import recipe…"), True)
+        self.import_button.setToolTip(tr("A recipe file: the template filled in (by an AI or by hand), a .csv, "
+                                         "a text, a PDF; every row is checked before it is kept"))
+        self.import_button.clicked.connect(lambda: self.import_file())
+        self.new_button = _button("+  " + tr("New recipe"))
+        self.new_button.setToolTip(tr("With an AI, from scratch, from a document or from a pasted text"))
         self.new_button.clicked.connect(self.show_create_page)
-        col.addWidget(self.new_button)
+        top = QVBoxLayout()  # one under the other: side by side they were cut at 1280 px
+        top.setSpacing(6)
+        top.addWidget(self.import_button)
+        top.addWidget(self.new_button)
+        col.addLayout(top)
+        self.library_buttons = top
         self.search = QLineEdit()
         self.search.setPlaceholderText(tr("Search…"))
         self.search.setClearButtonEnabled(True)
@@ -364,11 +374,14 @@ class RecipesEditor(QWidget):
 
     def _recipe_menu(self) -> QMenu:
         """Duplicate, Export…, Delete: for the recipe chosen in the library."""
-        menu = QMenu(self)
+        from jdxi_editor.ui.v2.widgets import menu as popup
+
+        menu = popup(self)
         chosen = self._selected_path() is not None
         for text, slot in ((tr("Open"), self.open_selected), (tr("Edit"), lambda: self.open_selected(edit=True)),
                            (None, None), (tr("Duplicate"), self.duplicate_selected),
-                           (tr("Export…"), self.export_selected), (None, None), (tr("Delete…"), self.delete_selected)):
+                           (tr("Export…"), self.export_selected), (None, None), (tr("Delete…"), self.delete_selected),
+                           (None, None), (tr("Close"), self.close_recipe)):
             if text is None:
                 menu.addSeparator()
                 continue
@@ -397,12 +410,12 @@ class RecipesEditor(QWidget):
         sc.addWidget(self.start_text)
         line = QHBoxLayout()
         line.addStretch()
-        create = _button(tr("Create a new recipe"), True)
-        create.clicked.connect(self.show_create_page)
-        imp = _button(tr("Import a recipe…"))
+        imp = _button(tr("Import a recipe…"), True)
         imp.clicked.connect(lambda: self.import_file())
-        line.addWidget(create)
+        create = _button(tr("Create a new recipe"))
+        create.clicked.connect(self.show_create_page)
         line.addWidget(imp)
+        line.addWidget(create)
         line.addStretch()
         sc.addSpacing(12)
         sc.addLayout(line)
@@ -435,10 +448,14 @@ class RecipesEditor(QWidget):
         exp.clicked.connect(self.export_selected)
         delete = _button(tr("Delete…"))
         delete.clicked.connect(self.delete_selected)
+        close = _button(tr("Close"))
+        close.setToolTip(tr("Back to the start: no recipe chosen"))
+        close.clicked.connect(self.close_recipe)
         for b in (use, edit, dup, exp):
             line.addWidget(b)
         line.addStretch()
         line.addWidget(delete)
+        line.addWidget(close)
         detail.body.addLayout(line)
         self.home_stack.addWidget(detail)
         self.detail_card = detail
@@ -732,6 +749,16 @@ class RecipesEditor(QWidget):
             self.detail_steps.addItem(f"{number} · {name or tr('Step {n}').format(n=number)}   —   "
                                       + tr("{n} parameters").format(n=len(rows)) + (f"   ({groups})" if groups else ""))
         self.home_stack.setCurrentWidget(self.detail_card)
+
+    def close_recipe(self) -> None:
+        """Close: no recipe chosen, the start in the middle (asking first if the editor has changes)."""
+        if self.pages.currentWidget() is not self.home and not self._may_leave():
+            return
+        self.recipe_path = None
+        self.library_list.setCurrentItem(None)
+        self.library_list.clearSelection()
+        self.pages.setCurrentWidget(self.home)
+        self._library_selection_changed()
 
     def open_selected(self, edit: bool = False) -> None:
         path = self._selected_path()
@@ -1313,7 +1340,9 @@ class RecipesEditor(QWidget):
         remove = _button(tr("Remove row"))
         remove.clicked.connect(self.remove_editor_row)
         rows_menu = _button(tr("Rows") + "  ▾")
-        menu = QMenu(rows_menu)
+        from jdxi_editor.ui.v2.widgets import menu as popup
+
+        menu = popup(rows_menu)
         for text, slot in ((tr("Duplicate the rows"), self.duplicate_editor_rows),
                            (tr("Move up"), lambda: self.move_editor_rows(-1)),
                            (tr("Move down"), lambda: self.move_editor_rows(1)),

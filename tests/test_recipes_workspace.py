@@ -161,3 +161,32 @@ def test_the_title_is_at_the_top_left_as_in_the_other_editors(editor):
     title = editor.title.mapTo(editor, editor.title.rect().topLeft())
     library = editor.sidebar.mapTo(editor, editor.sidebar.rect().topLeft())
     assert title.x() <= library.x() + 2 and title.y() < library.y()
+
+
+def test_close_goes_back_to_the_start(editor):
+    editor.library_list.setCurrentRow(0)
+    assert editor.home_stack.currentWidget() is editor.detail_card
+    assert tr_texts(editor._recipe_menu())[-1] == "Close"
+    editor.close_recipe()
+    assert editor._selected_path() is None and editor.home_stack.currentWidget() is editor.start_page
+    editor.library_list.setCurrentRow(0)
+    editor.open_selected()  # from the guide too
+    editor.close_recipe()
+    assert editor.pages.currentWidget() is editor.home and editor.home_stack.currentWidget() is editor.start_page
+
+
+def test_the_menus_highlight_the_item_under_the_mouse(editor):
+    menu = editor._recipe_menu()
+    assert "QMenu::item:selected" in menu.styleSheet() and "QMenu::item {" in menu.styleSheet()
+
+
+def test_import_is_the_default_button(editor):
+    from jdxi_editor.ui.v2.recipes import PRIMARY
+
+    assert editor.import_button.styleSheet() == PRIMARY and editor.new_button.styleSheet() != PRIMARY
+    row = editor.library_buttons
+    assert row.indexOf(editor.import_button) < row.indexOf(editor.new_button)  # import first
+
+
+def tr_texts(menu):
+    return [a.text() for a in menu.actions() if not a.isSeparator()]
