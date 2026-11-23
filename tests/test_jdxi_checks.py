@@ -24,6 +24,7 @@ from __future__ import annotations
 import os
 import sys
 import time
+from typing import Optional
 
 import pytest
 from PySide6.QtWidgets import QApplication
@@ -83,6 +84,7 @@ class JDXi:
         self.helper = MidiIOHelper()
         self.fake = None
         self.slots: dict = {}
+        self.reads: list = []  # each read: complete, and the sections not read (for failure messages)
         if kind == "simulated":
             from test_ab_compare import FakeJDXi
 
@@ -110,9 +112,31 @@ class JDXi:
         from jdxi_editor.midi.sysex.request.read_session import start_read_session
 
         results = []
-        session = start_read_session(self.helper, self.requests, on_finished=lambda r: results.append(r))
+        # the app's 8 s are for a JD-Xi; the macOS CI runner (a VM) can take longer than
+        # that for the simulated one: these checks are about what is read, not how fast
+        session = start_read_session(self.helper, self.requests, on_finished=lambda r: results.append(r),
+                                     timeout_ms=30000)
+        started = time.monotonic()
         assert wait_for(lambda: results or getattr(session, "_done", False), 60), "the reading never ended"
-        return bool(results and results[0].complete)
+        complete = bool(results and results[0].complete)
+        missing = [f"{s.label}: {s.status.value}" for s in results[0].sections
+                   if s.status.value != "ok"] if results else ["no result"]
+        self.reads.append((complete, round(time.monotonic() - started, 2), missing))
+        return complete
+
+    def diagnosis(self, before: Optional[dict] = None) -> str:
+        """For a failure message: the reads (complete, seconds, sections not read) and the
+        bytes that differ from *before*."""
+        lines = [f"reads: {self.reads}"]
+        if before is not None:
+            now = self.snapshot()
+            for key in sorted(set(before) | set(now)):
+                a, b = before.get(key, b""), now.get(key, b"")
+                if a != b:
+                    offsets = [i for i in range(max(len(a), len(b)))
+                               if (a[i] if i < len(a) else None) != (b[i] if i < len(b) else None)]
+                    lines.append(f"{key}: {len(a)}/{len(b)} bytes, differ at {offsets[:12]}")
+        return "\n".join(lines[:16])
 
     def snapshot(self) -> dict:
         return self.device.state.snapshot()
@@ -227,7 +251,7 @@ def test_reconnection_with_a_part_changed_restores_it(jdxi):
                        ask=lambda parts: asked.append(parts) or True)
     net.start(before)
     assert asked == [["analog"]]
-    assert net.outcome == sn.RESTORED, net.parts
+    assert net.outcome == sn.RESTORED, f"{net.parts}\n{jdxi.diagnosis(before)}"
     assert jdxi.analog_byte(ANALOG_AMP_LEVEL) == old
 
 
@@ -283,7 +307,7 @@ def test_save_on_the_jdxi_is_checked_by_reading_the_slot(jdxi, monkeypatch):
     outcome = []
     session.finished.connect(lambda saved, message: outcome.append((saved, message)))
     session.verify(slot)
-    assert outcome and outcome[0][0], outcome
+    assert outcome and outcome[0][0], f"{outcome}\n{jdxi.diagnosis(session.expected)}"
 
 
 def test_a_write_not_done_is_not_confirmed(jdxi, monkeypatch):

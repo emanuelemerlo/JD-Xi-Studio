@@ -182,8 +182,11 @@ def _enable(pattern, row, step):
     pattern._on_button_clicked(button, True)
 
 
-# Windows' timer (~15 ms) and macOS's (a shared VM, timers coalesced) need more room
-TIMING_MARGIN_S = 0.06 if sys.platform in ("win32", "darwin") else 0.03
+# Windows' timer (~15 ms) needs more room. The macOS CI runner is a VM whose threads
+# stall for 40-180 ms even with the latency-critical activity held (2026-11-23 run):
+# there the check is that notes stay on their beat with no drift, not their precision,
+# which only a real Mac shows (hardware test plan).
+TIMING_MARGIN_S = {"win32": 0.06, "darwin": 0.2}.get(sys.platform, 0.03)
 
 
 def _run(app, seconds):

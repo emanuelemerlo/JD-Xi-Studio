@@ -111,14 +111,15 @@ def test_windows_wait_ends_on_time_and_wakes(monkeypatch):
     start = time.perf_counter()
     scheduler._wait_for_wake(0.05)
     elapsed = time.perf_counter() - start
-    # the Windows path's precision is Windows' (and Linux's); a macOS runner's
-    # 1 ms sleeps are coarser: there it must only end, not too early
-    assert 0.049 <= elapsed < (0.15 if real_platform == "darwin" else 0.06)
+    # the Windows path's precision is Windows' (and Linux's). On macOS this path is
+    # never used, and the CI runner (a VM) stalls threads for 100-200 ms: there it
+    # must only end, not too early
+    assert 0.049 <= elapsed < (0.5 if real_platform == "darwin" else 0.06)
     # a wake in the last 20 ms (pause, seek…) ends the wait at once
     threading.Timer(0.035, scheduler.wake).start()
     start = time.perf_counter()
     scheduler._wait_for_wake(0.5)
-    assert time.perf_counter() - start < 0.06
+    assert time.perf_counter() - start < (0.3 if real_platform == "darwin" else 0.06)
     assert not scheduler._wake.is_set()  # cleared for the next wait
 
 
