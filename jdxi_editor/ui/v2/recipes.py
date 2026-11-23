@@ -27,6 +27,7 @@ from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QAbstractItemView,
+    QApplication,
     QComboBox,
     QFileDialog,
     QFrame,
@@ -444,7 +445,7 @@ class RecipesEditor(QWidget):
         return page
 
     def _create_page(self) -> QWidget:
-        """New recipe: its name (needed only to save it), and three ways to start."""
+        """New recipe: its name (needed only to save it); with an AI, or three other ways to start."""
         page = QWidget()
         col = QVBoxLayout(page)
         col.setContentsMargins(0, 0, 0, 0)
@@ -470,6 +471,7 @@ class RecipesEditor(QWidget):
         info.body.addLayout(line)
         col.addWidget(info)
 
+        col.addWidget(self._ai_card())
         ways = QHBoxLayout()
         ways.setSpacing(12)
         scratch = Card(tr("FROM SCRATCH"), ACCENT)
@@ -530,12 +532,106 @@ class RecipesEditor(QWidget):
         col.addLayout(bottom)
         return page
 
+    def _ai_card(self) -> QWidget:
+        """
+        With an AI: the way the recipes are meant to be made. The request (the
+        sound, the part, the format, the rules and the parameter list) is copied
+        for a chat; its answer is pasted back and checked like any recipe.
+        """
+        card = Card(tr("WITH AN AI"), ACCENT)
+        line = QHBoxLayout()
+        line.setSpacing(12)
+        left = QVBoxLayout()
+        left.addWidget(_label(tr("Which sound should the JD-Xi reproduce?"), 12, "#ffffff", True))
+        self.ai_sound = QPlainTextEdit()
+        self.ai_sound.setPlaceholderText(tr("e.g. the lead of «Jungle Gardenia» by Peter Gabriel: soft, "
+                                            "flute-like, legato, with vibrato"))
+        self.ai_sound.setFixedHeight(66)
+        self.ai_sound.setStyleSheet("QPlainTextEdit { background: #121214; color: #e6e6e6; "
+                                    "border: 1px solid #3a3d44; border-radius: 5px; }")
+        left.addWidget(self.ai_sound)
+        part_line = QHBoxLayout()
+        part_line.addWidget(_label(tr("Part"), 12))
+        self.ai_part = QComboBox()
+        for text, code in ((tr("as the AI chooses"), ""), ("Digital 1", "D1"), ("Digital 2", "D2"),
+                           ("Analog", "AN"), ("Drums", "DR")):
+            self.ai_part.addItem(text, code)
+        self.ai_part.setStyleSheet("QComboBox { background: #121214; color: #e6e6e6; border: 1px solid #3a3d44; "
+                                   "border-radius: 5px; padding: 3px 6px; }")
+        part_line.addWidget(self.ai_part)
+        part_line.addStretch()
+        left.addLayout(part_line)
+        line.addLayout(left, 3)
+        right = QVBoxLayout()
+        right.addWidget(_label(tr("1. Copy the request and paste it into an AI's chat (Claude, ChatGPT…).\n"
+                                  "2. Copy its answer and paste it here: every row is checked.\n"
+                                  "3. Import, then fine-tune by ear with the guide and save."), 12, "#c9cbd1"))
+        buttons = QHBoxLayout()
+        self.ai_copy_button = _button(tr("Copy the request"), True)
+        self.ai_copy_button.setToolTip(tr("The sound, the part, the format, the rules and the list of the "
+                                          "parameters the AI may set"))
+        self.ai_copy_button.clicked.connect(self.copy_ai_request)
+        save = _button(tr("Save the request…"))
+        save.setToolTip(tr("As a text file, to attach to the chat"))
+        save.clicked.connect(lambda: self.save_ai_request())
+        self.ai_paste_button = _button(tr("Paste the answer"), True)
+        self.ai_paste_button.setToolTip(tr("Reads the AI's answer from the clipboard (the CSV in it)"))
+        self.ai_paste_button.clicked.connect(self.paste_ai_answer)
+        for b in (self.ai_copy_button, save, self.ai_paste_button):
+            buttons.addWidget(b)
+        buttons.addStretch()
+        right.addLayout(buttons)
+        self.ai_status = _label("", 11, "#8a8d94")
+        right.addWidget(self.ai_status)
+        right.addStretch()
+        line.addLayout(right, 4)
+        card.body.addLayout(line)
+        return card
+
+    def ai_request(self) -> str:
+        from jdxi_editor.i18n import current_language
+        from jdxi_editor.recipes import ai_request
+
+        return ai_request.build(self.ai_sound.toPlainText(), self.ai_part.currentData() or "", current_language())
+
+    def copy_ai_request(self) -> None:
+        QApplication.clipboard().setText(self.ai_request())
+        self.ai_status.setText(tr("Request copied: paste it into the AI's chat."))
+
+    def save_ai_request(self, target: Optional[str] = None) -> Optional[Path]:
+        if target is None:
+            target, _ = QFileDialog.getSaveFileName(self, tr("Save the request"),
+                                                    str(Path.home() / tr("JD-Xi recipe request.txt")),
+                                                    tr("Text (*.txt *.md)"))
+        if not target:
+            return None
+        Path(target).write_text(self.ai_request(), encoding="utf-8")
+        self.ai_status.setText(tr("Request saved in {path}.").format(path=target))
+        return Path(target)
+
+    def paste_ai_answer(self) -> None:
+        """The AI's answer from the clipboard: read and checked as a pasted text."""
+        text = QApplication.clipboard().text()
+        if not text.strip():
+            self.ai_status.setText(tr("The clipboard is empty: copy the AI's answer first."))
+            return
+        sound = self.ai_sound.toPlainText().strip()
+        self.paste.setPlainText(text)
+        recipe = reader.read_text(text)
+        if not recipe.rows:
+            self.ai_status.setText(tr("No recipe in the clipboard: copy the AI's whole answer (the CSV in it)."))
+            return
+        self.import_text()
+        if sound and not self.recipe.description:  # what was asked: the recipe's description
+            self.recipe.description = sound
+
     def show_create_page(self) -> None:
         """+ New recipe: the fields empty, the categories already used offered."""
         if not self._may_leave():
             return
         for w in (self.new_title, self.new_description):
             w.clear()
+        self.ai_status.setText("")
         self.new_category.clear()
         used = sorted({r.category for _p, r in library.entries() if r.category}, key=str.lower)
         self.new_category.addItems([""] + used)

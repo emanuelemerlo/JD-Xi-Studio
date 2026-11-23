@@ -15,6 +15,12 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   the guide, closed where the tables need the width (**Details** opens it; it opens by itself when a
   row is chosen). A recipe keeps a **category** and the dates it was created and changed; its name
   is needed only to save it.
+- Recipes › New recipe › **With an AI**, the way recipes are meant to be made: describe the sound,
+  choose the part (or let the AI choose), **Copy the request** — the sound, the format, the rules
+  and the list of the parameters it may set, with their ranges and choices — and paste it into an
+  AI's chat (or **Save the request…** to attach it); then **Paste the answer**: the CSV in it is read
+  and every row checked, ready to import and fine-tune by ear. A CSV pasted in «From a text» (with
+  ; or , and in a code block or not) is read as a CSV.
 
 ### Fixed
 - Recipes in Italian: importing a recipe that sets an LFO depth (Pitch / Filter / Amp / Pan Depth)

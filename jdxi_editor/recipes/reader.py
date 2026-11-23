@@ -125,13 +125,12 @@ def read_xlsx(path: Path) -> Recipe:
     return _read_rows(sheet.iter_rows(values_only=True))
 
 
-def read_csv_text(text: str) -> Recipe:
+def read_csv_text(text: str, delimiter: Optional[str] = None) -> Recipe:
     lines = text.splitlines()
     body = "\n".join(lines)
     sample = "\n".join(line for line in lines if not line.startswith("#"))[:4000]
     try:
-        dialect = csv.Sniffer().sniff(sample, delimiters=";,\t")
-        delimiter = dialect.delimiter
+        delimiter = delimiter or csv.Sniffer().sniff(sample, delimiters=";,\t").delimiter
     except csv.Error:
         delimiter = ";"
     return _read_rows(csv.reader(io.StringIO(body), delimiter=delimiter))
@@ -144,6 +143,11 @@ def _markdown_cells(line: str) -> list[str]:
 
 def read_text(text: str, source_prefix: str = "riga") -> Recipe:
     """A Markdown/tab table with the template's columns, or free text read line by line."""
+    from jdxi_editor.recipes.ai_request import csv_in_answer
+
+    found = csv_in_answer(text)  # an AI's answer: a CSV, often in a code block
+    if found is not None:
+        return read_csv_text(*found)
     lines = text.splitlines()
     table = [_markdown_cells(l) for l in lines if l.strip().startswith("|") and not re.match(r"^\s*\|[\s:|-]+\|\s*$", l)]
     if table and _header_map(table[0]):
