@@ -12,6 +12,7 @@ def send_nrpn(self, channel, msb, lsb, value):
     self.send_control_change(98, 127, channel)
 
 """
+import logging
 
 from decologr import Decologr as log
 
@@ -84,7 +85,7 @@ class ControlChangeSlider(Slider):
         :param value: int
         """
         self.setStyleSheet(JDXi.UI.Style.ADSR_DISABLED)
-        log.message(f"filter value: {value} for cutoff slider")
+        log.message(f"{self.label} value: {value}", level=logging.DEBUG)
 
         if self.min_value <= value <= self.max_value:
             self.current_value = value
@@ -94,7 +95,6 @@ class ControlChangeSlider(Slider):
         self.update_style(value)
 
         for partial in [1, 2, 3]:
-            log.message(self.nrpn_map)
             cc_number = self.nrpn_map.get(partial)
             if cc_number is None:
                 raise ValueError("Invalid partial number")

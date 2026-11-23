@@ -30,7 +30,7 @@ Core Structure
      Vocal Effect ``00 16``, Vocal Effect Number ``00 1C``, Vocal Effect Part ``00 1D``, Auto Note Switch ``00 1E``
 
 Key Parameters
-=============
+==============
 
 **Common**
    - **Vocal Effect Part**: Part 1 or Part 2 (which synth part feeds the vocal effect)

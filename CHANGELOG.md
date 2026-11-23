@@ -36,6 +36,10 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   chosen row's parameter is explained in the panel on the right. **●  not saved** in the breadcrumb,
   **Undo changes** back to the recipe as saved, **Save as…** a new recipe leaving the one opened as
   it was.
+- The log shows the JD-Xi's firmware version once and in one format (it was also written as raw
+  bytes, `0.3.0.0`, beside `v0.03`). The panel sliders and the NRPN messages they send are logged
+  at DEBUG level: a turned knob no longer fills the log.
+- The manual's pages build without docutils warnings (title underlines, a list in Installation).
 
 ### Fixed
 - Recipes in Italian: importing a recipe that sets an LFO depth (Pitch / Filter / Amp / Pan Depth)
@@ -54,6 +58,12 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   part) had every note cut and started again — the guard against hanging notes sent a note-off
   before the copy's note-on. The copy's note-on arriving at the same moment (within 30 ms) is
   dropped: the note is played once. A later note on a key still held is retriggered as before.
+- **Troubleshooting** in the manual was an empty page (it included a page that pointed back to
+  it). It now holds the solutions: installing and starting on Windows, macOS and Linux, the
+  connection to the JD-Xi (the badge, Off-line, Verifying), playing MIDI files (hanging notes,
+  program changes, silent parts) and what to include in a report. Installation links to it.
+- The pages of the editors and of Getting started are in the manual's contents (in a hidden
+  table of contents), not only reachable by their links.
 
 ### Removed
 - `doc/`: what no page, tool or test used. The 57 hand-written API pages (`jdxi_editor.*.rst`,
@@ -64,6 +74,7 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   `midi_parameters.txt` say the same); `nrpn.txt` and `NRPN.png`, which nothing used; the empty
   `program.rst` and `readme.rst`; an unused screenshot. All stay in the history.
 - `doc/README_CHORDS.md` is now `doc/midi-transcription-tools.md`, linked from `doc/dev-tools.md`.
+- `README.rst`, a copy of `README.md` that nothing used any more.
 
 # [1.0.0-rc.1] - 2026-11-22
 

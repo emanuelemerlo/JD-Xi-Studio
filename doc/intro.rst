@@ -15,7 +15,7 @@ Welcome to **JD-Xi Studio** (by Emanuele Merlo, based on JD-Xi Studio by Mark Br
    The keyboard window
 
 What is JD-Xi Studio?
-====================
+=====================
 
 JD-Xi Studio is a sophisticated graphical application that provides complete control over your Roland JD-Xi synthesizer through an intuitive, computer-based interface. Instead of navigating through the JD-Xi's small LCD screen and complex menu systems, you can access and modify every parameter with precision using sliders, knobs, and visual displays on your computer screen.
 
@@ -84,7 +84,7 @@ JD-Xi Studio is built on a robust, modular architecture that ensures reliability
    - **Status Monitoring**: Real-time feedback on MIDI communication and parameter changes
 
 Why Use JD-Xi Studio?
-====================
+=====================
 
 ** Efficiency**: Edit complex parameters in seconds instead of minutes
 ** Visualization**: See ADSR curves, waveforms, and parameter relationships

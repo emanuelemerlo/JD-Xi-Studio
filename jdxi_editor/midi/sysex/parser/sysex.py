@@ -551,11 +551,8 @@ class JDXiSysExParser:
             log.message(scope="JDXiSysExParser", message=f"{device_info.to_string}")
         device_id = device_info.device_id
         manufacturer_id = device_info.manufacturer
-        version = message.data[
-            JDXiSysExMessageLayout.ADDRESS.UMB : JDXiSysExMessageLayout.TONE_NAME.START
-        ]  # Extract firmware version bytes
-
-        version_str = ".".join(str(byte) for byte in version)
+        # One format for the firmware version, the one DeviceInfo.to_string logs.
+        version_str = device_info.version_string if device_info else "unknown"
         # Use DeviceInfo.is_jdxi property to check if it's a JD-Xi device
         if device_info and device_info.is_jdxi:
             device_name = "JD-Xi"
@@ -572,9 +569,6 @@ class JDXiSysExParser:
         log.message(
             message=f"🎹 Device ID: \t\t\t{hex(device_id)} \t{device_name}",
             scope="JDXiSysExParser",
-        )
-        log.message(
-            message=f"🔄 Firmware Version: \t{version_str}", scope="JDXiSysExParser"
         )
         return {
             "device_id": device_id,

@@ -9,3 +9,10 @@ Getting Started Guide
 * :doc:`Introduction <intro>` - Learn about JD-Xi Studio and its capabilities
 * :doc:`Installation <installation>` - Complete setup guide for all platforms
 * :doc:`Quick Start Guide <usage>` - Step-by-step tutorial to get you started
+
+.. toctree::
+   :hidden:
+
+   intro
+   installation
+   usage

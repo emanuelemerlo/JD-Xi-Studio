@@ -4,7 +4,7 @@ Playing MIDI Files
 JD-Xi Studio provides two main tools for working with MIDI files: the **Pattern Sequencer** for step-based editing and the **MIDI Player** for playback and track management.
 
 Overview
-=======
+========
 
 **MIDI Player**
    Load standard MIDI files (.mid, .midi), see which tracks the JD-Xi plays, fit them to its four parts (Digital 1, Digital 2, Analog, Drums) with **Assign tracks to parts…**, and play them on the synthesizer — recording its USB audio if you like.

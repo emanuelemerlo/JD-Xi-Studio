@@ -471,11 +471,11 @@ class MidiOutHandler(MidiIOController):
         :param use_14bit: bool If True, send both MSB and LSB for value (14-bit). If False, send only MSB (7-bit).
         :return: True if all messages were sent successfully, False otherwise.
         """
-        log.message(scope="MidiOutHandler", message="========sending nrpn=========")
-        log.parameter(scope="MidiOutHandler", message="parameter", parameter=parameter)
-        log.parameter(scope="MidiOutHandler", message="value", parameter=value)
-        log.parameter(scope="MidiOutHandler", message="channel", parameter=channel)
-        log.parameter(scope="MidiOutHandler", message="use_14bit", parameter=use_14bit)
+        log.message(
+            f"NRPN {parameter} = {value} on channel {channel} (14-bit: {use_14bit})",
+            level=logging.DEBUG,
+            scope="MidiOutHandler",
+        )
         if not 0 <= parameter <= 16383:
             log.message(f"Invalid NRPN parameter: {parameter}. Must be 0–16383.")
             return False

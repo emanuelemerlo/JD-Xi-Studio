@@ -98,7 +98,7 @@ Analog Synth Editor Features
       - **Performance Integration**: Optimized for live performance
 
 Analog Synthesis Characteristics
-===============================
+================================
 
 **Warm, Organic Sound**
    Dedicated analog modeling with vintage character:

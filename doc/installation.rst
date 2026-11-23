@@ -95,6 +95,7 @@ The simplest way to install JD-Xi Studio is using our pre-built packages. These 
    - 4GB RAM minimum, 8GB recommended
 
    **Windows Installation Notes:**
+
    - Both packages include Python, Qt and the MIDI libraries; nothing else is needed
    - The files are not signed: if SmartScreen warns, choose "More info" → "Run anyway"
    - Connect the JD-Xi by USB before starting the editor, then choose its MIDI ports in the
@@ -338,70 +339,7 @@ Post-Installation Setup
 Troubleshooting
 ===============
 
-**Common Installation Issues**
-
-**macOS Issues**
-   - **"App is damaged"**: Right-click the app and select "Open" to bypass Gatekeeper
-   - **Permission denied**: Check System Preferences > Security & Privacy
-   - **MIDI not working**: Ensure your JD-Xi is connected and powered on
-
-**Windows Issues**
-   - **Missing DLLs**: Install the Microsoft Visual C++ Redistributable (x64)
-   - **"Windows protected your PC"**: the build is not signed; choose "More info" → "Run anyway"
-   - **Antivirus blocking**: Add JD-Xi Studio to your antivirus exceptions
-   - **MIDI not detected**: Check Device Manager for MIDI devices
-
-**Linux Issues**
-   - **AppImage won't run**: Install FUSE: ``sudo apt install fuse``
-   - **MIDI permissions**: Add your user to the audio group: ``sudo usermod -a -G audio $USER``
-   - **"MIDI not available" at startup**: the system has no ALSA sequencer, so the editor
-     runs Off-line: everything can be tried and patches opened, nothing is sent to the JD-Xi or
-     saved as its settings until it is connected and answers as a JD-Xi.
-     Load it with ``sudo modprobe snd-seq`` and restart the editor; containers, VMs and
-     WSL often lack it
-   - **Qt issues**: Install Qt5 libraries: ``sudo apt install qt5-default``
-
-**Python Installation Issues**
-   - **Permission denied**: Use ``--user`` flag: ``pip install --user git+https://github.com/emanuelemerlo/JD-Xi-Studio.git``
-   - **Virtual environment issues**: Ensure you're using Python 3.10 or later
-   - **Dependency conflicts**: Use a fresh virtual environment
-
-**MIDI Connection Issues**
-   - **No MIDI devices found**: Check USB connection and JD-Xi power
-   - **MIDI not responding**: Try different USB ports or cables
-   - **Latency issues**: Check your system's audio/MIDI settings
-
-**Performance Issues**
-   - **Slow response**: Close other MIDI applications
-   - **High CPU usage**: Check for background processes
-   - **Memory issues**: Ensure you have at least 4GB RAM available
-
-Getting Help
-============
-
-**Documentation**
-   - **User Guide**: Complete documentation in the ``doc/`` directory
-   - **API Reference**: Auto-generated API documentation
-   - **Video Tutorials**: Available on the project's YouTube channel
-
-**Community Support**
-   - **GitHub Issues**: Report bugs and request features
-   - **Discussions**: Community discussions and Q&A
-   - **Discord**: Real-time community chat (if available)
-
-**Professional Support**
-   - **Email Support**: Contact the development team
-   - **Custom Development**: Request custom features or modifications
-   - **Training**: Professional training and workshops
-
-**System Information**
-   When reporting issues, please include:
-   - Operating system and version
-   - Python version (if applicable)
-   - JD-Xi Studio version
-   - JD-Xi firmware version
-   - Error messages or logs
-   - Steps to reproduce the issue
+Installation problems and their solutions are in :doc:`troubleshooting`.
 
 The JD-Xi Studio installation process is designed to be as smooth as possible, with multiple installation methods to suit different user needs and technical comfort levels. Choose the method that works best for you, and don't hesitate to reach out for help if you encounter any issues!
 

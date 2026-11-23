@@ -617,3 +617,17 @@ def test_parser_convert_to_mido_message_delegates_to_factory():
     assert message.channel == 1
     assert message.control == 7
     assert message.value == 64
+
+
+def test_identity_reply_firmware_version_has_one_format():
+    """The firmware version returned is the one DeviceInfo logs (not a second, dotted format)."""
+    import mido
+
+    from jdxi_editor.midi.sysex.device import DeviceInfo
+
+    reply = [0x7E, 0x10, 0x06, 0x02, 0x41, 0x0E, 0x03, 0x00, 0x00, 0x01, 0x03, 0x00, 0x00]
+    message = mido.Message("sysex", data=reply)
+    details = JDXiSysExParser().parse_identity_request(message)
+    info = DeviceInfo.from_identity_reply([0xF0, *reply, 0xF7])
+    assert info is not None and info.is_jdxi
+    assert details["firmware_version"] == info.version_string

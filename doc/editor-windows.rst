@@ -46,3 +46,12 @@ Switching windows
 editors window's tabs bring the other window to the front, also on another screen, without
 Alt+Tab. With the keyboard *always on top* the editors come in front of every other window but,
 where the two overlap, stay under the keyboard (the Editors button's tooltip says so).
+
+.. toctree::
+   :hidden:
+
+   instrument
+   editor
+   digital_synth
+   analog_synth
+   drum_kit
