@@ -4,6 +4,39 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+### Changes
+- **Recipes** is one workspace in three areas. On the left, always, the library: **+ New recipe**,
+  a search, each recipe with its category and the day it was last changed; Open, Edit and, under
+  ⋯ (or a right click), Duplicate, Export… and Delete… (asked first). In the middle the work: the
+  chosen recipe (its steps, how many parameters, created / changed) with Open the guide, Edit,
+  Duplicate, Export, Delete; **New recipe** with name, category and description and three ways to
+  start side by side — from scratch, from a document (with the templates), from a text; then the
+  check, the guide and the editor as before. On the right the explanation, open on the library and
+  the guide, closed where the tables need the width (**Details** opens it; it opens by itself when a
+  row is chosen). A recipe keeps a **category** and the dates it was created and changed; its name
+  is needed only to save it. **Import recipe…** is the library's first button (the file an AI
+  filled in is the usual start), **+ New recipe** under it; **Close** (in the recipe's card and its
+  menu) goes back to the start with no recipe chosen.
+- The pop-up menus (Recipes, Programs, New sound) highlight the item under the mouse: nothing
+  showed which one would be chosen.
+- Recipes in Italian follow the manual's words: *passo* for a step (the editor said *passaggio*),
+  «Escludi le righe da correggere e importa» (it said *da sistemare*, the status is *da correggere*).
+- Docs: a **Recipes** page (the library, with an AI, the check, the editor, the guide, the
+  template) with screenshots; README, What's new, hardware test plan (section 10).
+- Recipes › New recipe › **With an AI**, the way recipes are meant to be made: describe the sound,
+  choose the part (or let the AI choose), **Copy the request** — the sound, the format, the rules
+  and the list of the parameters it may set, with their ranges and choices — and paste it into an
+  AI's chat (or **Save the request…** to attach it); then **Paste the answer**: the CSV in it is read
+  and every row checked, ready to import and fine-tune by ear. A CSV pasted in «From a text» (with
+  ; or , and in a code block or not) is read as a CSV.
+- Recipes › Editor works by **steps**: the steps on the left (double-click to rename; add,
+  duplicate, move up / down, delete), the chosen step's rows on the right (or «All steps»). Rows:
+  add (in the step), remove, and under **Rows ▾** duplicate, move up / down, copy (Ctrl+C) and paste
+  (Ctrl+V — rows copied here, from a sheet or from an AI's answer go into the chosen step). The
+  chosen row's parameter is explained in the panel on the right. **●  not saved** in the breadcrumb,
+  **Undo changes** back to the recipe as saved, **Save as…** a new recipe leaving the one opened as
+  it was.
+
 ### Fixed
 - macOS: while playing (MIDI Player, Pattern) the app holds a *latency-critical* activity, so the
   system does not throttle its timers (App Nap, timer coalescing) — on the macOS test runner notes

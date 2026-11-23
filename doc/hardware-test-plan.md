@@ -256,8 +256,10 @@ TC-xx della proposta; gli stessi casi girano in automatico con un JD-Xi simulato
 
 | | Fai | Deve succedere |
 |---|---|---|
-| 10.1 | Importa `JD-Xi recipe - example.csv` | I passi della ricetta, con i valori del JD-Xi accanto |
-| 10.2 | Applica due passi; *Verifica* | ✓ sui passi applicati; lo senti |
+| 10.1 | Ricette › **Importa ricetta…** › `JD-Xi recipe - example.csv`; nel controllo **Importa la ricetta** | La ricetta compare in «Le mie ricette», scelta, con i suoi passi |
+| 10.2 | **Apri la guida**; applica due passi | I valori del JD-Xi accanto a quelli della ricetta; ✓ sui passi applicati; lo senti |
+| 10.3 | **+ Nuova ricetta › Con un'IA**: descrivi un suono, **Copia la richiesta**, incollala in una chat di IA; copia la risposta e **Incolla la risposta** | Il controllo con le righe della risposta; nessuna da correggere, o quasi |
+| 10.4 | Nell'editor: rinomina un passo, sposta una riga, regola un valore sul JD-Xi e **Prendi i valori dal JD-Xi**; **Salva ricetta** | «● non salvata» finché non salvi; il valore nuovo nella riga |
 
 ---
 

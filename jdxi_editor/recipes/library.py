@@ -37,7 +37,28 @@ def saved() -> list[tuple[str, Path]]:
     return sorted(out, key=lambda item: item[0].lower())
 
 
+def entries() -> list[tuple[Path, Recipe]]:
+    """(path, recipe) of every saved recipe, by title."""
+    out = []
+    for path in folder().glob("*.json"):
+        try:
+            recipe = Recipe.from_json(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError, TypeError):
+            continue
+        if not recipe.modified:  # saved before the dates were kept: the file's
+            from datetime import datetime
+
+            recipe.modified = datetime.fromtimestamp(path.stat().st_mtime).isoformat(timespec="seconds")
+        out.append((path, recipe))
+    return sorted(out, key=lambda item: (item[1].title or item[0].stem).lower())
+
+
 def save(recipe: Recipe, path: Path | None = None) -> Path:
+    from datetime import datetime
+
+    now = datetime.now().isoformat(timespec="seconds")
+    recipe.created = recipe.created or now
+    recipe.modified = now
     if path is None:
         base = folder() / slug(recipe.title)
         path = base.with_suffix(".json")
@@ -47,6 +68,14 @@ def save(recipe: Recipe, path: Path | None = None) -> Path:
             n += 1
     path.write_text(recipe.to_json(), encoding="utf-8")
     return path
+
+
+def duplicate(path: Path, title: str) -> Path:
+    """A copy of the recipe in *path*, a recipe of its own named *title*."""
+    recipe = load(path)
+    recipe.title = title
+    recipe.created = ""
+    return save(recipe)
 
 
 def load(path: Path) -> Recipe:

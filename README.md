@@ -45,8 +45,10 @@ computer screen instead of the JD-Xi's menus.
 - **Pattern sequencer**: four parts × 16 steps, measures, copy and paste, MIDI files, USB recording.
 - **MIDI Player**: says which tracks the JD-Xi plays and fits them to its four parts; plays on the
   JD-Xi, records its USB audio on every Play.
-- **Recipes**: import a sound recipe (template .xlsx/.csv, Markdown, text, PDF or a pasted table) and
-  follow it step by step with the JD-Xi's values beside the recipe's.
+- **Recipes**: describe a sound, let an AI write the recipe (JD-Xi Studio prepares the request
+  with the parameters it may set), import its answer — every row checked — and follow it step by
+  step on the JD-Xi, then fine-tune by ear. A library with search and categories, an editor by
+  steps; also from the template (.xlsx/.csv), Markdown, text or PDF.
 - **Settings**: the JD-Xi's system settings, the MIDI connection, files and tools.
 - **Undo, Redo and Reload** in every editor (Ctrl+Z / Ctrl+Y, a drag is one step), a pencil on
   the tab of a modified editor and a question before unsaved changes are lost to a preset, a program, a patch or closing.
