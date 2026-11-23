@@ -98,8 +98,6 @@ The editor **saves from the current UI control values**. The keyboard window rea
 start and reads the part shown every two seconds, so the values follow the instrument; an editor
 also reads its own area when it is shown, and «Read from JD-Xi» reads it on request.
 
-For more detail, see [Patch Saving Gap Analysis](patch-saving-gap-analysis.md).
-
 ---
 
 ### Screen sizes
@@ -174,6 +172,5 @@ information panel: what it changes, how the sound changes, an example.
 
 ## Related Documentation
 
-- [Patch Saving Gap Analysis](patch-saving-gap-analysis.md) — Detailed comparison with Perl editor, format notes
 - [MSZ Bundle Format](msz-bundle-format.md) — Music bundle structure
 - [CHANGELOG](../CHANGELOG.md) — Full changelog

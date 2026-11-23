@@ -19,7 +19,7 @@ gets several features rather than one score:
   its own level in the surrounding second.
 
 This module only measures. Combining the features with the repeats is
-midi_parts.refine (not yet built); see doc/CRITIQUE_FT.md.
+midi_parts.refine (not yet built); see doc/midi-transcription-tools.md.
 """
 
 from __future__ import annotations

@@ -876,7 +876,7 @@ transcription noise.
 
 `scripts/midi_parts/evidence.py` measures, for any pitch over one step,
 whether the recording supports a note starting there. This is Phase 1 of
-the plan in `doc/CRITIQUE_FT.md`. It is a measuring tool only: nothing uses
+a spectrogram-guided arpeggio reconstruction plan. It is a measuring tool only: nothing uses
 it to change MIDI yet.
 
 - **Spectrogram:** constant-Q, three bins per semitone, tuned to the
@@ -1375,7 +1375,7 @@ The plots are in `OxygeneV parts/musicality/`.
 
 ### Refinements: partial credit, coverage, sections and built-in controls
 
-These follow `doc/CRITIQUE_MUSICALITY.md`. What `musicality` measures is
+What `musicality` measures is
 **musical fidelity**, the MIDI against the recording. **Plausibility**, the
 MIDI judged on its own, is a separate question it doesn't answer.
 

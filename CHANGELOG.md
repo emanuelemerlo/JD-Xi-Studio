@@ -55,6 +55,16 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   before the copy's note-on. The copy's note-on arriving at the same moment (within 30 ms) is
   dropped: the note is played once. A later note on a key still held is retriggered as before.
 
+### Removed
+- `doc/`: what no page, tool or test used. The 57 hand-written API pages (`jdxi_editor.*.rst`,
+  `modules.rst`; 12 named modules that no longer exist) — the API reference is the one sphinx-autoapi
+  builds from the code; the two implemented specifications in `doc/proposals/`; two design critiques
+  for the transcription tools; the gap analysis and the effects address map against the Perl editor
+  (whose sources are no longer here); the vocal effects address map (the code and
+  `midi_parameters.txt` say the same); `nrpn.txt` and `NRPN.png`, which nothing used; the empty
+  `program.rst` and `readme.rst`; an unused screenshot. All stay in the history.
+- `doc/README_CHORDS.md` is now `doc/midi-transcription-tools.md`, linked from `doc/dev-tools.md`.
+
 # [1.0.0-rc.1] - 2026-11-22
 
 The release candidate. The MIDI Player fits a General MIDI file to the JD-Xi — its tracks on the
