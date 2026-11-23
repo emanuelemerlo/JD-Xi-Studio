@@ -1,3 +1,29 @@
+What's New in 1.0.0
+===================
+
+Since the release candidate: **Recipes** made to be written by an AI and fine-tuned by ear, in
+one workspace; and the fixes from trying rc 1 on the JD-Xi.
+
+Recipes
+-------
+
+* One workspace: the library on the left (Import recipe…, + New recipe, search, categories,
+  Duplicate, Export, Delete, Close), the work in the middle, the explanation on the right.
+* **With an AI**: describe the sound, copy the request — format, rules and the parameters it may
+  set — into an AI's chat, paste its answer: every row is checked. See :doc:`recipes`.
+* The editor works by **steps**: rename, add, duplicate, move, delete; rows copied and pasted
+  (also from an AI's answer); Save as…, Undo changes, «not saved».
+* In Italian, a recipe setting an LFO depth no longer stops the import; Mono/Poly, a negative
+  Bend Range D and a Pan of «C» are understood.
+
+Fixes
+-----
+
+* The JD-Xi switched off and on again: every reconnection opens new MIDI ports (the badge stayed
+  «Verifying the JD-Xi…»).
+* MIDI Player: a part doubled by two identical tracks plays each note once.
+* The pop-up menus highlight the item under the mouse.
+
 What's New in 1.0.0 rc 1
 ========================
 

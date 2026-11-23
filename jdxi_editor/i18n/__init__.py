@@ -27,6 +27,8 @@ To add or update strings, see ``building/i18n.py`` and README.md here.
 
 from __future__ import annotations
 
+from contextlib import contextmanager
+
 import os
 from pathlib import Path
 from typing import Optional
@@ -105,6 +107,20 @@ def tr(text: str, disambiguation: Optional[str] = None) -> str:
         return text
     translated = _translator.translate(CONTEXT, text, disambiguation)
     return translated or text
+
+
+@contextmanager
+def untranslated():
+    """tr() returns the English texts inside the block (names matched against English ones)."""
+    global _translator
+    if _language is None:
+        set_language()
+    saved = _translator
+    _translator = None
+    try:
+        yield
+    finally:
+        _translator = saved
 
 
 def install_qt_translators(app) -> list[QTranslator]:

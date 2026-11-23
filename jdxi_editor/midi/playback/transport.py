@@ -247,7 +247,7 @@ class TransportController(QObject):
         self.send = send
         self.engine.on_event = self._on_engine_event
         # (channel, note) keys sounding on the instrument: one voice per key
-        self._sounding: set[tuple[int, int]] = set()
+        self._sounding: dict[tuple[int, int], float] = {}  # -> when it started (perf_counter)
         # program changes that do not choose a JD-Xi sound are not sent (see
         # _jdxi_program_change); the last Bank Select MSB sent on each channel
         self.block_foreign_program_changes = True
@@ -541,7 +541,11 @@ class TransportController(QObject):
             return self._bank_msb.get(msg.channel) in JDXI_BANK_MSB
         return True
 
-    def _one_voice_per_key(self, msg: mido.Message) -> list[mido.Message]:
+    # a second note-on this soon after the first on the same key is the same note
+    # played by a doubled track (left/right copies): dropped, not retriggered
+    DOUBLED_WITHIN_S = 0.03
+
+    def _one_voice_per_key(self, msg: mido.Message, now: Optional[float] = None) -> list[mido.Message]:
         """
         Never start a second voice on a key that is already sounding.
 
@@ -549,20 +553,32 @@ class TransportController(QObject):
         moved onto one channel, the left/right copies of a lead…) send two
         note-ons and, by design of the engine, a single note-off when the last
         one ends. The JD-Xi starts a voice per note-on and a note-off may end
-        only one of them: the other one hangs until Panic. So a note-on for a
-        key already sounding is preceded by its note-off (the note is
-        retriggered), and the instrument never holds more voices than the
-        single note-off the engine will send can end.
+        only one of them: the other one hangs until Panic.
+
+        - the same note started at the same moment by another track (within
+          DOUBLED_WITHIN_S): the second note-on is dropped — one voice, as if
+          the part were played once. Retriggering it (note-off + note-on) cut
+          every note of a doubled bass on the mono Analog part: it sounded
+          staccato.
+        - a later note-on on a key still sounding (another track's note
+          starting while the first one holds): the note is retriggered, its
+          note-off first — still one voice, ended by the one note-off to come.
         """
+        if now is None:
+            now = time.perf_counter()
         if msg.type == "note_on" and msg.velocity > 0:
             key = (msg.channel, msg.note)
-            if key in self._sounding:
+            started = self._sounding.get(key)
+            self._sounding[key] = now
+            if started is not None:
+                if now - started < self.DOUBLED_WITHIN_S:
+                    self._sounding[key] = started
+                    return []
                 return [mido.Message("note_off", channel=msg.channel, note=msg.note, velocity=0), msg]
-            self._sounding.add(key)
         elif msg.type == "note_off" or msg.type == "note_on":
-            self._sounding.discard((msg.channel, msg.note))
+            self._sounding.pop((msg.channel, msg.note), None)
         elif msg.type == "control_change" and msg.control in (120, 123):  # All Sound / Notes Off
-            self._sounding = {key for key in self._sounding if key[0] != msg.channel}
+            self._sounding = {key: t for key, t in self._sounding.items() if key[0] != msg.channel}
         return [msg]
 
     def _ensure_scheduler(self) -> None:

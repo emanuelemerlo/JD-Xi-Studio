@@ -16,6 +16,7 @@ JD-Xi Studio
    whats-new
    editor-windows
    additional-editors
+   recipes
    playing-midi-files
    troubleshooting
    legal

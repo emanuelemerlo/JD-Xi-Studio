@@ -103,6 +103,8 @@ def _number(text: str, proto: Proto) -> Optional[int]:
     number *= scale
     if getattr(info, "show_negative", False):
         number = abs(number)
+    elif number < 0 <= proto.lo and ("DOWN" in str(info.long).upper() or str(info.label).upper().endswith(" D")):
+        number = abs(number)  # «Bend Range D -2»: two semitones down (the JD-Xi stores 2)
     return int(round(number))
 
 
@@ -205,10 +207,18 @@ def parse_su(target: Target, su: str) -> tuple[list[int], list[int], str, str]:
 
 
 # ---------------------------------------------------------------- rows
+def _is_one_parameter(name: str) -> bool:
+    """A name with a slash that is one parameter («Mono/Poly»), not a list of them."""
+    from jdxi_editor.recipes.vocabulary import R
+
+    key = re.sub(r"\s*/\s*", "/", name.strip()).upper()
+    return any(entry[2].upper() == key for entry in R)
+
+
 def _split_multi(row: Row) -> list[Row]:
     """'Attack / Decay / Sustain / Release' = '0 / 40 / 100 / 30' -> four rows."""
     names = [n.strip() for n in row.param.split("/")]
-    if len(names) < 2 or row.kind == "a orecchio":
+    if len(names) < 2 or row.kind == "a orecchio" or _is_one_parameter(row.param):
         return [row]
     values = [v.strip() for v in row.value.split("/")]
     if len(values) != len(names):
@@ -273,6 +283,8 @@ def check_row(row: Row, default_part: str = "") -> Checked:
             return Checked(row, FIX, msg, suggestions=suggestions)
     elif norm_differs(target, group):
         status, message = CONFIRM, tr("Found in group {group}.").format(group=target.group)
+    if not target.protos:  # a template name no editor parameter answers to: said, not an error
+        return Checked(row, FIX, tr("\"{name}\" cannot be set from here.").format(name=row.param), target)
     indexes, waves, su_status, su_message = parse_su(target, su)
     if su_status == FIX:
         return Checked(row, FIX, su_message, target)

@@ -178,6 +178,9 @@ class NewSoundButton(QToolButton):
         self.setToolTip(tr("Start a new sound for this part: from scratch, from a preset or from a recipe"))
         self.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         menu = QMenu(self)
+        from jdxi_editor.ui.v2.widgets import MENU_STYLE
+
+        menu.setStyleSheet(MENU_STYLE)  # the item under the mouse highlighted
         menu.setToolTipsVisible(True)
         init = menu.addAction(tr("From scratch (Init)"))
         init.setToolTip(tr("This part only: a plain sawtooth, filter open, no LFO. Undo brings back the sound before."))

@@ -15,8 +15,9 @@ from typing import Optional
 
 COLUMNS = ["Passo", "Nome del passo", "Parte", "Gruppo", "Su", "Parametro", "Tipo di valore", "Valore", "Da", "A", "Nota"]
 META = {"titolo": "title", "descrizione": "description", "autore": "author", "tono di partenza": "base_tone",
-        "programma utente": "user_program", "title": "title", "description": "description", "author": "author",
-        "starting tone": "base_tone", "base tone": "base_tone", "user program": "user_program"}
+        "programma utente": "user_program", "categoria": "category", "title": "title", "description": "description",
+        "author": "author", "starting tone": "base_tone", "base tone": "base_tone", "user program": "user_program",
+        "category": "category"}
 # The English template (sheet "Recipe") writes these in English
 ENGLISH_KINDS = {"valore": "value", "intervallo": "range", "a orecchio": "by ear"}
 ENGLISH_PARTS = {"EFFETTI": "EFFECTS", "VOCE": "VOCAL"}
@@ -50,6 +51,9 @@ class Recipe:
     author: str = ""
     base_tone: str = ""
     user_program: str = ""
+    category: str = ""  # a word to group the recipes by: «Lead», «Pad», «Bass»…
+    created: str = ""  # ISO date-time, set by the library when first saved
+    modified: str = ""  # ISO date-time of the last save
     rows: list[Row] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)  # text that is not a row
 
@@ -76,7 +80,8 @@ class Recipe:
     def header_lines(self) -> list[str]:
         out = []
         for label, attr in (("Titolo", "title"), ("Descrizione", "description"), ("Autore", "author"),
-                            ("Tono di partenza", "base_tone"), ("Programma utente", "user_program")):
+                            ("Tono di partenza", "base_tone"), ("Programma utente", "user_program"),
+                            ("Categoria", "category")):
             if getattr(self, attr):
                 out.append(f"# {label}: {getattr(self, attr)}")
         out.append("# Versione del modello: 1")
