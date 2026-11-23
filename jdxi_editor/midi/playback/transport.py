@@ -60,7 +60,8 @@ def scheduler_kind() -> str:
 
 class _WindowsTimerResolution:
     """
-    1 ms timer resolution on Windows while playing.
+    1 ms timer resolution on Windows while playing; on macOS a latency-critical
+    activity (no App Nap or timer coalescing: notes were up to 150 ms late).
 
     A thread's timed wait on Windows ends on the system timer's tick, about
     15.6 ms by default: the deadline scheduler would wake up to 15 ms late
@@ -71,9 +72,22 @@ class _WindowsTimerResolution:
 
     def __init__(self) -> None:
         self._on = False
+        self._activity = None
 
     def set(self, on: bool) -> None:
-        if on == self._on or sys.platform != "win32":
+        if on == self._on:
+            return
+        if sys.platform == "darwin":  # macOS: no App Nap / timer coalescing while playing
+            from jdxi_editor.utils import macos_activity
+
+            if on:
+                self._activity = macos_activity.begin("JD-Xi Studio is playing MIDI")
+            else:
+                macos_activity.end(getattr(self, "_activity", None))
+                self._activity = None
+            self._on = on
+            return
+        if sys.platform != "win32":
             return
         try:
             import ctypes
