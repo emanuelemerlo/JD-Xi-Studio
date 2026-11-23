@@ -1,7 +1,10 @@
 # Developer tools
 
 Tools used while developing JD-Xi Studio's MIDI analysis (track classification,
-transcription repair). They are not needed to use the editor.
+transcription repair). They are not needed to use the editor. The full guide to
+`scripts/classify_midi_parts.py` and its measuring tools is in
+[midi-transcription-tools.md](midi-transcription-tools.md); the playback architecture is in
+[midi-playback-contract.md](midi-playback-contract.md).
 
 ## Converting audio files to MIDI
 

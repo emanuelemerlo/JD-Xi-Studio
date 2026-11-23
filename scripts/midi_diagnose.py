@@ -60,7 +60,7 @@ class Finding:
     outcome: "defect" (strong evidence of an error), "anomaly" (unusual,
     worth investigating) or "variation" (unusual but possibly intended).
     The outcome and confidence of each kind of finding follow what the
-    controls and repairs on Oxygene V showed (README_CHORDS.md)."""
+    controls and repairs on Oxygene V showed (doc/midi-transcription-tools.md)."""
 
     section: str
     start: float

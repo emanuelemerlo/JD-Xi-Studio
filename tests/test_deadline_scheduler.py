@@ -8,13 +8,16 @@ import pytest
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from PySide6.QtCore import QCoreApplication, QElapsedTimer
+from PySide6.QtWidgets import QApplication
 
 from jdxi_editor.midi.playback import transport as tp
 
 
 @pytest.fixture(scope="module")
 def app():
-    return QCoreApplication.instance() or QCoreApplication([])
+    # a QApplication, not a QCoreApplication: a later test in the same run
+    # that builds widgets would abort on a core-only instance
+    return QCoreApplication.instance() or QApplication([])
 
 
 def _song(notes: int = 8, step: int = 60) -> mido.MidiFile:
@@ -102,12 +105,15 @@ def test_windows_wait_ends_on_time_and_wakes(monkeypatch):
 
     from picomidi.playback.engine import PlaybackEngine
 
+    real_platform = tp.sys.platform
     monkeypatch.setattr(tp.sys, "platform", "win32")
     scheduler = tp._PreciseWaitScheduler(PlaybackEngine(), lock=threading.RLock())
     start = time.perf_counter()
     scheduler._wait_for_wake(0.05)
     elapsed = time.perf_counter() - start
-    assert 0.049 <= elapsed < 0.06
+    # the Windows path's precision is Windows' (and Linux's); a macOS runner's
+    # 1 ms sleeps are coarser: there it must only end, not too early
+    assert 0.049 <= elapsed < (0.15 if real_platform == "darwin" else 0.06)
     # a wake in the last 20 ms (pause, seek…) ends the wait at once
     threading.Timer(0.035, scheduler.wake).start()
     start = time.perf_counter()

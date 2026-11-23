@@ -11,6 +11,7 @@ def send_nrpn(self, channel, msb, lsb, value):
     self.send_control_change(98, 127, channel)
 
 """
+import logging
 
 import threading
 
@@ -101,7 +102,7 @@ class NRPNSlider(Slider):
 
         :param value: int
         """
-        log.message(f"{self.label} value changed to {value}")
+        log.message(f"{self.label} value changed to {value}", level=logging.DEBUG)
 
         if not self.min_value <= value <= self.max_value:
             raise ValueError("Value out of range.")

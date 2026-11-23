@@ -36,8 +36,17 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   chosen row's parameter is explained in the panel on the right. **●  not saved** in the breadcrumb,
   **Undo changes** back to the recipe as saved, **Save as…** a new recipe leaving the one opened as
   it was.
+- The log no longer calls the Identity Reply's revision level a firmware version, in two formats
+  (`0.3.0.0` and `v0.03`): it is the software revision level, `00 03 00 00` on a JD-Xi with firmware
+  1.52 (its third release), written once as such. The panel sliders and the NRPN messages they send are logged
+  at DEBUG level: a turned knob no longer fills the log.
+- The manual's pages build without docutils warnings (title underlines, a list in Installation).
 
 ### Fixed
+- macOS: while playing (MIDI Player, Pattern) the app holds a *latency-critical* activity, so the
+  system does not throttle its timers (App Nap, timer coalescing) — on the macOS test runner notes
+  came up to 150 ms off their beat and a 50 ms wait took 95. Windows has had its 1 ms timer for the
+  same reason.
 - Recipes in Italian: importing a recipe that sets an LFO depth (Pitch / Filter / Amp / Pan Depth)
   or the Mode of D1 / D2 stopped with an error and did nothing — the editors' long names are
   translated, and the template's English names matched none of them. The names are matched in
@@ -54,6 +63,23 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   part) had every note cut and started again — the guard against hanging notes sent a note-off
   before the copy's note-on. The copy's note-on arriving at the same moment (within 30 ms) is
   dropped: the note is played once. A later note on a key still held is retriggered as before.
+- **Troubleshooting** in the manual was an empty page (it included a page that pointed back to
+  it). It now holds the solutions: installing and starting on Windows, macOS and Linux, the
+  connection to the JD-Xi (the badge, Off-line, Verifying), playing MIDI files (hanging notes,
+  program changes, silent parts) and what to include in a report. Installation links to it.
+- The pages of the editors and of Getting started are in the manual's contents (in a hidden
+  table of contents), not only reachable by their links.
+
+### Removed
+- `doc/`: what no page, tool or test used. The 57 hand-written API pages (`jdxi_editor.*.rst`,
+  `modules.rst`; 12 named modules that no longer exist) — the API reference is the one sphinx-autoapi
+  builds from the code; the two implemented specifications in `doc/proposals/`; two design critiques
+  for the transcription tools; the gap analysis and the effects address map against the Perl editor
+  (whose sources are no longer here); the vocal effects address map (the code and
+  `midi_parameters.txt` say the same); `nrpn.txt` and `NRPN.png`, which nothing used; the empty
+  `program.rst` and `readme.rst`; an unused screenshot. All stay in the history.
+- `doc/README_CHORDS.md` is now `doc/midi-transcription-tools.md`, linked from `doc/dev-tools.md`.
+- `README.rst`, a copy of `README.md` that nothing used any more.
 
 # [1.0.0-rc.1] - 2026-11-22
 

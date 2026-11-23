@@ -21,14 +21,6 @@ JD-Xi Studio
    troubleshooting
    legal
 
-.. only:: html
-   .. toctree::
-      :maxdepth: 6
-      :caption: API Reference:
-
-      modules
-
-
 Indices and tables
 ==================
 

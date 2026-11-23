@@ -14,3 +14,12 @@ Available Editors
 
 **Program Editor Tabs**
    The Program Editor includes a **System Settings** tab for Master Tune, Master Level, Key Shift, RX/TX Program Change/Bank Select, Keyboard Velocity, and Velocity Curve.
+
+.. toctree::
+   :hidden:
+
+   arpeggiator
+   effects
+   vocal_effects
+   pattern_sequencer
+   midi_file_player
