@@ -6,7 +6,7 @@ from __future__ import annotations
 import random
 
 import pytest
-from PySide6.QtCore import QSettings
+from PySide6.QtCore import QEvent, QSettings
 from PySide6.QtWidgets import QApplication
 
 from jdxi_editor.ui.v2 import partial_tools as pt
@@ -16,6 +16,16 @@ from jdxi_editor.ui.v2 import wave_browser as wb
 @pytest.fixture(scope="module")
 def app():
     return QApplication.instance() or QApplication([])
+
+
+def dispose(editor) -> None:
+    """Gone for good: nothing queued to send, no timers left for the next tests."""
+    editor._pending.clear()
+    editor._send_timer.stop()
+    editor.history.mark_saved()
+    editor.close()
+    editor.deleteLater()
+    QApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
 
 
 @pytest.fixture
@@ -30,7 +40,7 @@ def digital(app):
         pv.blockSignals(False)
     yield editor
     pt.clear_clip()
-    editor.deleteLater()
+    dispose(editor)
 
 
 @pytest.fixture
@@ -39,7 +49,7 @@ def digital2(app):
 
     editor = Digital2ToneEditor()
     yield editor
-    editor.deleteLater()
+    dispose(editor)
 
 
 def values(editor, name):
