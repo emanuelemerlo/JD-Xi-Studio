@@ -1978,14 +1978,14 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/analog.py" line="138" />
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="319" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="318" />
             <source>Tone Name</source>
             <translation>Nome del tono</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/analog.py" line="141" />
             <location filename="../../jdxi_editor/ui/v2/analog.py" line="77" />
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="323" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="322" />
             <location filename="../../jdxi_editor/ui/v2/digital.py" line="67" />
             <source>Name of the tone (12 characters).</source>
             <translation>Nome del tono (12 caratteri).</translation>
@@ -2547,70 +2547,64 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>ON: il portamento procede a semitoni.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="316" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="315" />
             <source>Parameter Guide, p. 15</source>
             <translation>Parameter Guide, p. 15</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="379" />
-            <source>PARTIALS</source>
-            <translation>PARTIAL</translation>
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="386" />
+            <source>Link 1·2·3</source>
+            <translation>Collega 1·2·3</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="390" />
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="411" />
-            <source>Link partials</source>
-            <translation>Collega i partial</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="393" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="389" />
             <source>ON: a change to the partial shown is made on the other partials that are on too, in one Undo step. Waveform, PCM wave, pitch and detune stay each partial's own.</source>
             <translation>ON: una modifica al partial mostrato viene fatta anche sugli altri partial accesi, in un solo passo di Annulla. Forma d'onda, onda PCM, intonazione e detune restano di ciascun partial.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="399" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="396" />
             <source>Partial ▾</source>
             <translation>Partial ▾</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="401" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="398" />
             <source>Copy, paste, swap or randomize the partial shown</source>
             <translation>Copia, incolla, scambia o rendi casuale il partial mostrato</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="423" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="426" />
             <location filename="../../jdxi_editor/ui/v2/players.py" line="288" />
             <source>Copy section</source>
             <translation>Copia sezione</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="438" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="441" />
             <source>Randomize…</source>
             <translation>Casuale…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="515" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="518" />
             <source>Parameter Guide, p. 16-17</source>
             <translation>Parameter Guide, p. 16-17</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="529" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="532" />
             <source>Parameter Guide, p. 17-18</source>
             <translation>Parameter Guide, p. 17-18</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="542" />
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="555" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="545" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="558" />
             <source>Parameter Guide, p. 18</source>
             <translation>Parameter Guide, p. 18</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="548" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="551" />
             <source>AFTERTOUCH</source>
             <translation>AFTERTOUCH</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="570" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="573" />
             <source>Parameter Guide, p. 19 (whole tone)</source>
             <translation>Parameter Guide, p. 19 (tutto il tono)</translation>
         </message>
@@ -3099,7 +3093,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Positivo: il volume sale con la pressione dell'aftertouch; negativo: scende.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="310" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="309" />
             <location filename="../../jdxi_editor/ui/v2/drums.py" line="419" />
             <location filename="../../jdxi_editor/ui/v2/effects.py" line="495" />
             <location filename="../../jdxi_editor/ui/v2/program.py" line="419" />
@@ -3107,27 +3101,22 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Le modifiche si sentono subito e restano nel programma corrente finché non se ne sceglie un altro. Per conservarle salva il programma sul JD-Xi con [Menu/Write]: via MIDI non si può scrivere nella sua memoria.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="411" />
-            <source>Linked: 1·2·3</source>
-            <translation>Collegati: 1·2·3</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="493" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="496" />
             <source>OSC · FILTER · AMP</source>
             <translation>OSC · FILTER · AMP</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="493" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="496" />
             <source>LFO · MOD LFO · MISC</source>
             <translation>LFO · MOD LFO · MISC</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="422" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="425" />
             <source>Copy partial {n}</source>
             <translation>Copia il partial {n}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="555" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="558" />
             <source>Parameter Guide, p. 19 (modulation lever)</source>
             <translation>Parameter Guide, p. 19 (leva di modulazione)</translation>
         </message>
@@ -3167,33 +3156,43 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Digital Synth {n}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="348" />
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="365" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="347" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="364" />
             <source>PARTIAL {n}</source>
             <translation>PARTIAL {n}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="355" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="354" />
             <source>Edit partial {n}</source>
             <translation>Modifica il partial {n}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="429" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="414" />
+            <source>Partials linked</source>
+            <translation>Partial collegati</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="414" />
+            <source>Link partials</source>
+            <translation>Collega i partial</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="432" />
             <source>Paste into partial {n}: {what}</source>
             <translation>Incolla nel partial {n}: {what}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="430" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="433" />
             <source>Paste into partial {n}</source>
             <translation>Incolla nel partial {n}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="436" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="439" />
             <source>Swap with partial {m}</source>
             <translation>Scambia con il partial {m}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="467" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="470" />
             <source>Digital {n} · partial {p}: PCM wave</source>
             <translation>Digital {n} · partial {p}: onda PCM</translation>
         </message>
@@ -9577,6 +9576,14 @@ Il suono sul JD-Xi viene sostituito: se vuoi tenerlo, salvalo prima sul JD-Xi (W
             <location filename="../../jdxi_editor/ui/windows/selftest.py" line="865" />
             <source>report not saved: {error}</source>
             <translation>resoconto non salvato: {error}</translation>
+        </message>
+        <message>
+            <source>PARTIALS</source>
+            <translation type="vanished">PARTIAL</translation>
+        </message>
+        <message>
+            <source>Linked: 1·2·3</source>
+            <translation type="vanished">Collegati: 1·2·3</translation>
         </message>
         <message>
             <source>Open a tab: Program settings, Recipes, Settings</source>

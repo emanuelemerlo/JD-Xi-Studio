@@ -299,7 +299,6 @@ class DigitalToneEditor(tone_editor_base()):
     # --- layout
     def build_panels(self) -> None:
         self.panels_layout.addWidget(self._common_card())
-        self.panels_layout.addLayout(self._partial_tools())
         self.panels_layout.addLayout(self._partial_strip())
         self.partial_pages = QStackedWidget()
         for partial in range(3):
@@ -363,23 +362,20 @@ class DigitalToneEditor(tone_editor_base()):
             row.addLayout(box)
             switch = self.pv(f"PARTIAL{n}_SWITCH")
             switch.watch(lambda v, b=button, n=n: b.setText(tr("PARTIAL {n}").format(n=n) + ("" if v else "  ·  OFF")))
-        row.addStretch()
+        row.addLayout(self._partial_tools())
         self.partial_buttons.idClicked.connect(self.show_partial)
         return row
 
     # --- the three partials together: link, copy / paste / swap, randomize
-    def _partial_tools(self) -> QHBoxLayout:
+    def _partial_tools(self) -> QVBoxLayout:
         import qtawesome as qta
         from PySide6.QtWidgets import QToolButton
 
         from jdxi_editor.ui.v2.widgets import menu
 
-        box = QHBoxLayout()
-        box.setSpacing(6)
-        hint = QLabel(tr("PARTIALS"))
-        hint.setStyleSheet(f"color: {self.ACCENT}; font-size: 11px; font-weight: 700; letter-spacing: 2px; background: transparent;")
-        box.addWidget(hint)
-        box.addStretch()
+        # two small buttons at the end of the partial strip (one above the other: no extra row)
+        box = QVBoxLayout()
+        box.setSpacing(4)
         style = (
             "QPushButton, QToolButton { background: #1b1c1f; color: #c9cbd1; border: 1px solid #3a3d44;"
             " border-radius: 6px; padding: 5px 10px; }"
@@ -387,13 +383,14 @@ class DigitalToneEditor(tone_editor_base()):
             "QPushButton:hover, QToolButton:hover { border-color: #6b6f78; }"
             "QToolButton::menu-indicator { image: none; }"
         )
-        self.link_button = QPushButton(qta.icon("mdi.link-variant", color="#c9cbd1"), tr("Link partials"))
+        self.link_button = QPushButton(qta.icon("mdi.link-variant", color="#c9cbd1"), tr("Link 1·2·3"))
         self.link_button.setCheckable(True)
         self.link_button.setStyleSheet(style)
         self.link_button.setToolTip(tr(
             "ON: a change to the partial shown is made on the other partials that are on too, in one Undo step. "
             "Waveform, PCM wave, pitch and detune stay each partial's own."))
         self.link_button.toggled.connect(self._set_linked)
+        self._set_linked(False)
         box.addWidget(self.link_button)
         self.partial_menu_button = QToolButton()
         self.partial_menu_button.setText(tr("Partial ▾"))
@@ -407,8 +404,14 @@ class DigitalToneEditor(tone_editor_base()):
         return box
 
     def _set_linked(self, on: bool) -> None:
-        self.partial_link.enabled = on
-        self.link_button.setText(tr("Linked: 1·2·3") if on else tr("Link partials"))
+        import qtawesome as qta
+
+        if hasattr(self, "partial_link"):
+            self.partial_link.enabled = on
+        self.link_button.setIcon(qta.icon("mdi.link-variant", color="#0e0f11" if on else "#c9cbd1"))
+        tip = self.link_button.property("baseTip") or self.link_button.toolTip()
+        self.link_button.setProperty("baseTip", tip)
+        self.link_button.setToolTip((tr("Partials linked") + ". " if on else tr("Link partials") + ". ") + tip)
 
     def current_partial(self) -> int:
         return max(0, self.partial_pages.currentIndex()) if hasattr(self, "partial_pages") else 0

@@ -104,8 +104,8 @@ A SuperNATURAL synth tone has three partials. **PARTIAL 1 / 2 / 3** chooses the 
 under each, **P ON** turns it on or off and **P SEL** says whether the panel knobs edit it (the
 [05]–[07] and [01]–[03] buttons of the JD-Xi). Above them:
 
-**Link partials**
-   When it is on, a change to the partial shown is made on the other partials that are on too
+**Link 1·2·3**
+   It links the three partials of this part (not Digital 1 with Digital 2). When it is on, a change to the partial shown is made on the other partials that are on too
    (the value you set, not a shift: Cutoff 80 is 80 on all of them), in one Undo step. The
    oscillator stays each partial's own: waveform, variation, PCM wave and gain, pitch, detune and
    Super Saw detune. It is off when the editor opens.

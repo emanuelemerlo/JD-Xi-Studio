@@ -56,6 +56,8 @@ def test_linked_edits_go_to_the_partials_that_are_on_in_one_step(digital):
     assert len(digital.history._undo) == 1
     digital.history.undo()
     assert values(digital, "FILTER_CUTOFF") == [0, 0, 0]
+    digital.history.redo()
+    assert values(digital, "FILTER_CUTOFF") == [90, 90, 0]
 
 
 def test_the_oscillator_stays_each_partials_own(digital):
@@ -114,6 +116,8 @@ def test_swap_partials_in_one_step(digital):
     assert len(digital.history._undo) == steps + 1
     digital.history.undo()
     assert values(digital, "AMP_LEVEL")[:2] == [100, 20]
+    digital.history.redo()
+    assert values(digital, "AMP_LEVEL")[:2] == [20, 100]
 
 
 def test_the_menu_acts_on_the_partial_shown(digital):
@@ -153,8 +157,11 @@ def test_randomize_dialog(digital):
     dialog.partial_radio.setChecked(True)
     assert dialog.chosen_scope() == "partial" and dialog.chosen_amount() == "medium"
     assert dialog.randomize() > 0
+    after = {n: digital.partial(n, 0).value() for n in pt.PARTIAL_PARAMS}
     dialog.undo()
     assert not digital.history._undo
+    digital.history.redo()
+    assert {n: digital.partial(n, 0).value() for n in pt.PARTIAL_PARAMS} == after
 
 
 # --------------------------------------------------------------- PCM waves
