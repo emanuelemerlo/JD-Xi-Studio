@@ -736,13 +736,16 @@ def show_category_card(editor, accent: str) -> None:
     picked from its name: poor at this size, and it suggested compatibility with
     instruments the JD-Xi only imitates.)
     """
+    from jdxi_editor.ui.text_size import scale
+
     label = getattr(editor, "instrument_image_label", None)
     if label is not None:
-        if density.compact():  # a low screen: a lower card
-            label.setFixedHeight(78)
-            label.setPixmap(sound_card(selected_category(editor), accent, height=70))
+        if density.compact():  # a low screen: a lower card (taller with larger text)
+            height = int(round(70 * scale()))
+            label.setFixedHeight(height + 8)
+            label.setPixmap(sound_card(selected_category(editor), accent, height=height))
         else:
-            label.setPixmap(sound_card(selected_category(editor), accent))
+            label.setPixmap(sound_card(selected_category(editor), accent, height=int(round(96 * scale()))))
 
 
 # The preset categories' icons (MDI / Font Awesome through qtawesome)
@@ -803,22 +806,30 @@ def sound_card(category: str, accent: str, width: int = 268, height: int = 96):
     p.drawRoundedRect(tile, 14, 14)
     icon = qta.icon(category_icon(category), color=accent)
     icon.paint(p, tile.adjusted(12, 12, -12, -12).toRect())
+    from jdxi_editor.ui.text_size import px as text_px
+
     text_left = tile.right() + 16
     small = QFont()
-    small.setPixelSize(11)
+    small.setPixelSize(text_px(11))
     small.setBold(True)
     small.setLetterSpacing(QFont.SpacingType.AbsoluteSpacing, 1.5)
     p.setFont(small)
     p.setPen(QColor(accent))
-    p.drawText(QRectF(text_left, 22, width - text_left - 10, 16), Qt.AlignmentFlag.AlignLeft, tr("CATEGORY"))
+    # «CATEGORY» and the name under it, placed by the card's height (the low card of a
+    # compact screen cut a two-line name: Classic Roland Drum Machines)
+    head_top = max(8.0, height * 0.18)
+    head_height = small.pixelSize() + 4
+    p.drawText(QRectF(text_left, head_top, width - text_left - 10, head_height), Qt.AlignmentFlag.AlignLeft,
+               tr("CATEGORY"))
     big = QFont()
     big.setBold(True)
     p.setPen(QColor("#f2f2f2"))
     name = category or tr("All sounds")
-    room = QRectF(text_left, 40, width - text_left - 10, 44)
+    top = head_top + head_height + 2
+    room = QRectF(text_left, top, width - text_left - 10, height - top - 6)
     flags = int(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop | Qt.TextFlag.TextWordWrap)
-    for px in (19, 17, 15, 13):  # long names (drum kit groups) on two lines, a little smaller
-        big.setPixelSize(px)
+    for size in (19, 17, 15, 13, 12):  # long names (drum kit groups) on two lines, a little smaller
+        big.setPixelSize(text_px(size))
         p.setFont(big)
         if room.contains(p.fontMetrics().boundingRect(room.toRect(), flags, name).toRectF()):
             break
