@@ -5,6 +5,14 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- **macOS disk image and Linux .deb** on the releases page, next to the Windows installer:
+  `JD-Xi-Studio-<version>-macos-arm64.dmg` (Apple silicon) and `…-macos-x86_64.dmg` (Intel),
+  macOS 11 or later (not signed with a Developer ID yet: the first time, System Settings ›
+  Privacy & Security › Open Anyway), and `jd-xi-studio_<version>_amd64.deb` (Ubuntu 22.04 /
+  Debian 12 or later: menu entry, `jd-xi-studio` command). Built by CI with PyInstaller
+  (`building/desktop/`, Actions › Desktop packages), each started on its runner before it is
+  attached; the .deb is also installed there first. The Mac app declares its use of the
+  audio input (USB recorder): without it macOS records silence (as the original project found).
 - Editors window: Program settings, Recipes and Settings are always in the tab bar, no longer
   opened from a «+» menu. Each can be reduced to a small bar in its colour (**◂** on the tab, the
   name under the mouse) and opens again with a click on the bar, as some browsers do; which are
