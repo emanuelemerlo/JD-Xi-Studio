@@ -7,10 +7,9 @@ Installation
 ============
 
 .. note::
-   This is the guide of the independent fork https://github.com/emanuelemerlo/JD-Xi-Studio
-   (version 0.10.0 beta). The fork publishes Windows builds only for now; on macOS and Linux
-   use Method 2 or 3, or build a package yourself. The macOS and Linux packages below are
-   produced by ``python -m building.buildsys``.
+   This is the guide of JD-Xi Studio, https://github.com/emanuelemerlo/JD-Xi-Studio. Each
+   release has a Windows installer and portable app, macOS disk images and a Linux .deb
+   (Method 1); on other systems use Method 2 or 3.
 
 Welcome to the comprehensive installation guide for **JD-Xi Studio**! This guide will walk you through multiple installation methods, from simple pre-built packages to advanced development setups. Choose the method that best suits your needs and technical comfort level.
 
@@ -66,9 +65,11 @@ The simplest way to install JD-Xi Studio is using our pre-built packages. These 
      silicon, through Rosetta).
 
    **macOS Requirements:**
+
    - macOS 11 (Big Sur) or later.
 
    **macOS Installation Notes:**
+
    - The app is not signed with a Developer ID yet, so macOS stops it the first time. Open it
      once, then in System Settings › Privacy & Security choose **Open Anyway** (on macOS 14 and
      earlier, right-click the app and choose **Open** also works). After that it opens as usual.
@@ -89,6 +90,7 @@ The simplest way to install JD-Xi Studio is using our pre-built packages. These 
      ``JD-Xi-Studio\JD-Xi-Studio.exe``. Nothing is installed; delete the folder to remove it.
 
    **Windows Requirements:**
+
    - Windows 10 or 11 (64-bit)
    - 4GB RAM minimum, 8GB recommended
 
@@ -114,83 +116,11 @@ The simplest way to install JD-Xi Studio is using our pre-built packages. These 
    stay). apt installs the few system libraries it needs (ALSA, the X11/Wayland ones Qt uses).
 
    **Linux Requirements:**
+
    - Ubuntu 22.04, Debian 12, Linux Mint 21 or later (64-bit PC). Other distributions: the
      one-command install of the README (``install.sh``) or the Python package.
    - To use the JD-Xi over USB your user must be in the ``audio`` group on some systems
      (``sudo usermod -a -G audio $USER``, then log in again).
-
-Method 2: Python Package Installation**
-   For users who prefer pip-based installation.
-
-**Method 3: Source Code Installation**
-   For developers and advanced users who want the latest features.
-
-**Method 4: Development Setup**
-   For contributors and developers working on JDXI-Editor.
-
-Method 1: Pre-Built Packages (Recommended)
-==========================================
-
-The simplest way to install JD-Xi Studio is using our pre-built packages. These include all dependencies and are ready to run immediately.
-
-**macOS Installation**
-   Download ``JD-Xi-Studio-<version>-macos-arm64.dmg`` from the releases page
-   (https://github.com/emanuelemerlo/JD-Xi-Studio/releases), open it and drag
-   **JD-Xi Studio** onto **Applications**.
-
-   **macOS Requirements:**
-   - macOS 11 (Big Sur) or later, on Apple silicon (M1 and later). For an Intel Mac use the
-     one-command install of the README (``install.sh``) or the Python package.
-
-   **macOS Installation Notes:**
-   - The app is not signed with a Developer ID yet: the first time, right-click it in
-     Applications and choose **Open**, then **Open** again (or allow it in System Settings ›
-     Privacy & Security). After that it opens as usual.
-   - The first time the USB recorder records, macOS asks to let JD-Xi Studio use the audio input
-     (the JD-Xi's audio over USB): allow it, or the recordings are silent.
-   - The app includes Python, Qt and the MIDI and audio libraries; nothing else is needed.
-
-**Windows Installation**
-   Download the installer or the portable zip from the releases page
-   (https://github.com/emanuelemerlo/JD-Xi-Studio/releases):
-
-   - ``JD-Xi-Studio-<version>-setup-win64.exe``: run it and follow the wizard (English or
-     Italian). It installs for the current user in ``%LOCALAPPDATA%\Programs\jdxi_editor``,
-     without administrator rights, and adds a Start menu entry (desktop icon optional).
-   - ``JD-Xi-Studio-<version>-win64-portable.zip``: unzip it to a folder and run
-     ``JD-Xi-Studio\JD-Xi-Studio.exe``. Nothing is installed; delete the folder to remove it.
-
-   **Windows Requirements:**
-   - Windows 10 or 11 (64-bit)
-   - 4GB RAM minimum, 8GB recommended
-
-   **Windows Installation Notes:**
-
-   - Both packages include Python, Qt and the MIDI libraries; nothing else is needed
-   - The files are not signed: if SmartScreen warns, choose "More info" → "Run anyway"
-   - Connect the JD-Xi by USB before starting the editor, then choose its MIDI ports in the
-     MIDI configuration dialog. Without a JD-Xi the editor opens anyway (Off-line, with a badge in every window)
-   - The interface language is chosen in File › Preferences › Interface language
-     (English, Italiano, or the system's); it applies at the next start
-
-**Linux Installation**
-   Download and install the AppImage package:
-
-   .. code-block:: console
-
-      # Download the AppImage from the releases page
-      # https://github.com/emanuelemerlo/JD-Xi-Studio/releases
-      
-      # Make the AppImage executable (version may vary; check releases page)
-      $ chmod +x JD-Xi-Editor-0.9-x86_64.AppImage
-      
-      # Run the application
-      $ ./JD-Xi-Editor-0.8-x86_64.AppImage
-
-   **Linux Requirements:**
-   - Ubuntu 18.04+ or equivalent distribution
-   - 4GB RAM minimum, 8GB recommended
-   - FUSE support for AppImage (usually pre-installed)
 
 Method 2: Python Package Installation
 =====================================

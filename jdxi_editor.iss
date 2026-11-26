@@ -4,7 +4,7 @@
 ; replaced by) the original JDXI-Editor: the two can be installed side by side.
 #define MyAppName "JD-Xi Studio"
 #ifndef MyAppVersion
-  #define MyAppVersion "1.0.0rc1"
+  #define MyAppVersion "1.0.0"
 #endif
 #define MyAppPublisher "Emanuele Merlo"
 #define MyAppURL "https://github.com/emanuelemerlo/JD-Xi-Studio"

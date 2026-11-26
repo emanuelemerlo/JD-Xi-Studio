@@ -44,7 +44,8 @@ computer screen instead of the JD-Xi's menus.
   and whether it is original, modified and temporary, saved to a file or saved in the JD-Xi.
 - **Pattern sequencer**: four parts × 16 steps, measures, copy and paste, MIDI files, USB recording.
 - **MIDI Player**: says which tracks the JD-Xi plays and fits them to its four parts; plays on the
-  JD-Xi, records its USB audio on every Play.
+  JD-Xi, records its USB audio on every Play; a ruler in the file's own bars and time signatures,
+  and one part's notes lit on the keyboard window.
 - **Recipes**: describe a sound, let an AI write the recipe (JD-Xi Studio prepares the request
   with the parameters it may set), import its answer — every row checked — and follow it step by
   step on the JD-Xi, then fine-tune by ear. A library with search and categories, an editor by
@@ -80,7 +81,8 @@ computer screen instead of the JD-Xi's menus.
 ## 🚀 Download and install
 
 The builds are on the [releases page](https://github.com/emanuelemerlo/JD-Xi-Studio/releases).
-Alpha and beta versions are marked as pre-releases. The app checks that page for updates
+Windows, macOS and Linux each have their package; alpha, beta and release-candidate versions are
+marked as pre-releases. The app checks that page for updates
 (Help › Check for Updates).
 
 ### Windows 📦
@@ -193,11 +195,15 @@ the original project and are not maintained here.
 
 ### Releasing
 
-1. Set the version in `jdxi_editor/project.py` (`__version__ = "1.0.0rc1"`, PEP 440) and add its
-   section to `CHANGELOG.md`; merge into `main`.
+1. Set the version in `jdxi_editor/project.py` (`__version__ = "1.0.1"`, PEP 440; `"1.1.0rc1"`
+   for a release candidate) and in `jdxi_editor.iss`, and add its section to `CHANGELOG.md`;
+   merge into `main`.
 2. **Actions › Release › Run workflow** on `main`. The workflow runs the tests, builds the Windows
-   installer, the portable app and the Python wheel, creates the tag (`v1.0.0-rc.1`) and the
-   release (a pre-release for alpha, beta and rc), attaches every file and publishes it.
+   installer and portable app, the macOS disk images, the Linux .deb and the Python wheel, creates
+   the tag (`v1.0.1`, or `v1.1.0-rc.1`) and the release (a pre-release for alpha, beta and rc),
+   attaches every file and publishes it. macOS runners can be scarce: with no disk image at all
+   nothing is published (re-run the failed jobs later); with one of the two, the release says
+   which is missing.
 3. Verify it on the instrument: [`doc/hardware-test-plan.md`](doc/hardware-test-plan.md) (the
    automatic part, with the app closed: `python scripts/hardware_check.py` and
    `pytest -m hardware tests/test_jdxi_checks.py`).
