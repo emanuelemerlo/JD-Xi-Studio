@@ -62,9 +62,10 @@ jobs:
     needs: tests
     uses: ./.github/workflows/windows-build.yml
 
-  # macOS disk image and Linux .deb. When no macOS runner comes within the hour
-  # the job fails and nothing is published (the tag does not exist yet):
-  # «Re-run failed jobs» later builds it and publishes the release.
+  # Linux .deb and macOS disk images (Apple silicon, Intel). The .deb and at
+  # least one disk image are needed: when no macOS runner comes for either,
+  # nothing is published (the tag does not exist yet) and «Re-run failed jobs»
+  # later finishes the release. A missing one of the two is reported.
   desktop:
     needs: tests
     uses: ./.github/workflows/desktop-build.yml
@@ -90,6 +91,8 @@ jobs:
 
   publish:
     needs: [prepare, windows, desktop, python]
+    # also when one of the two macOS images could not be built (see desktop)
+    if: ${{ !cancelled() && needs.prepare.result == 'success' && needs.windows.result == 'success' && needs.python.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -106,9 +109,21 @@ jobs:
           (cd "$portable" && zip -qr "$GITHUB_WORKSPACE/release/JD-Xi-Studio-$version-win64-portable.zip" .)
           find artifacts -path '*-win64-setup*' -name '*.exe' -exec cp {} release/ \;
           cp artifacts/python-packages/* release/
-          cp artifacts/linux-deb/*.deb artifacts/macos-dmg/*.dmg release/
+          if ! ls artifacts/linux-deb/*.deb > /dev/null 2>&1; then
+            echo "::error title=Linux::the .deb was not built"; exit 1
+          fi
+          cp artifacts/linux-deb/*.deb release/
+          dmgs=$(find artifacts -path 'artifacts/macos-dmg-*' -name '*.dmg')
+          if [ -z "$dmgs" ]; then
+            echo "::error title=macOS::no disk image was built (no macOS runner?): re-run the failed jobs"; exit 1
+          fi
+          cp $dmgs release/
+          for arch in arm64 x86_64; do
+            ls release/*-macos-$arch.dmg > /dev/null 2>&1 || \
+              echo "::warning title=macOS::no $arch disk image in this release"
+          done
           ls -l release
-          # portable zip, installer, wheel, sdist, .deb, .dmg
+          # portable zip, installer, wheel, sdist, .deb, at least one .dmg
           test "$(ls release | wc -l)" -ge 6
       # RELEASE_TOKEN (Settings › Secrets and variables › Actions), when set: a fine-grained
       # token for this repository with Contents and Workflows read and write (a tag on a

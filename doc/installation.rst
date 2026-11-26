@@ -57,13 +57,16 @@ Method 1: Pre-Built Packages (Recommended)
 The simplest way to install JD-Xi Studio is using our pre-built packages. These include all dependencies and are ready to run immediately.
 
 **macOS Installation**
-   Download ``JD-Xi-Studio-<version>-macos-arm64.dmg`` from the releases page
+   Download the disk image from the releases page
    (https://github.com/emanuelemerlo/JD-Xi-Studio/releases), open it and drag
-   **JD-Xi Studio** onto **Applications**.
+   **JD-Xi Studio** onto **Applications**:
+
+   - ``JD-Xi-Studio-<version>-macos-arm64.dmg`` for Apple silicon (M1 and later);
+   - ``JD-Xi-Studio-<version>-macos-x86_64.dmg`` for an Intel Mac (it also runs on Apple
+     silicon, through Rosetta).
 
    **macOS Requirements:**
-   - macOS 11 (Big Sur) or later, on Apple silicon (M1 and later). For an Intel Mac use the
-     one-command install of the README (``install.sh``) or the Python package.
+   - macOS 11 (Big Sur) or later.
 
    **macOS Installation Notes:**
    - The app is not signed with a Developer ID yet, so macOS stops it the first time. Open it

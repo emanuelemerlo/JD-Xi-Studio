@@ -59,6 +59,8 @@ MANIFEST
 *.spec
 # The Windows build spec is part of the project
 !building/windows/jdxi_editor.spec
+# and the macOS / Linux one
+!building/desktop/jdxi_studio.spec
 
 # Installer logs
 pip-log.txt

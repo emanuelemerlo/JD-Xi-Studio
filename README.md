@@ -94,8 +94,8 @@ Windows 10 or 11, 64-bit. The files are not signed yet: if SmartScreen warns, ch
 "More info" → "Run anyway".
 
 ### macOS 🍎
-`JD-Xi-Studio-<version>-macos-arm64.dmg`: open it and drag **JD-Xi Studio** onto
-**Applications**. macOS 11 or later on Apple silicon. The app is not signed with a Developer ID
+`JD-Xi-Studio-<version>-macos-arm64.dmg` (Apple silicon) or `…-macos-x86_64.dmg` (Intel): open
+it and drag **JD-Xi Studio** onto **Applications**. macOS 11 or later. The app is not signed with a Developer ID
 yet: the first time macOS stops it; then choose **Open Anyway** in System Settings › Privacy &
 Security (more in the manual's Troubleshooting).
 
@@ -105,7 +105,7 @@ Debian 12 or later): `sudo apt install ./jd-xi-studio_<version>_amd64.deb`. It a
 to the applications menu and the `jd-xi-studio` command.
 
 ### macOS and Linux: one command
-For an Intel Mac or another Linux distribution, one command installs the newest release in its own Python environment and adds JD-Xi Studio to
+For another Linux distribution (or to run from source), one command installs the newest release in its own Python environment and adds JD-Xi Studio to
 the applications (the menu on Linux, `~/Applications` on macOS); nothing goes system-wide and no
 `sudo` is needed:
 

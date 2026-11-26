@@ -12,10 +12,12 @@ name: Desktop packages
 # - Linux: built on Ubuntu 22.04, so the .deb runs on that and later
 #   (Debian 12, Ubuntu 24.04, Mint 21+…): a build on a newer system would need
 #   its newer C library. The .deb is installed on the runner and started.
-# - macOS: built on macos-latest (Apple silicon, arm64). The app is signed ad
-#   hoc only (Developer ID signing and notarisation come later): the first time
-#   it opens with right-click › Open. macOS runners can be slow to come: the
-#   job waits at most 60 minutes for one.
+# - macOS: two disk images, built on Apple silicon (arm64, macos-latest) and
+#   on Intel (x86_64, macos-15-intel: it also runs on Apple silicon through
+#   Rosetta). Signed ad hoc only (Developer ID signing and notarisation come
+#   later). macOS runners are often scarce (GitHub gives up on a job that no
+#   runner takes in ~15 minutes): each image is built on its own, and a
+#   release needs at least one of them.
 on:
   workflow_dispatch:
   workflow_call:
@@ -92,9 +94,17 @@ jobs:
           if-no-files-found: error
 
   macos:
-    name: macOS disk image
-    runs-on: macos-latest
+    name: macOS disk image (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-latest
+            arch: arm64
+          - runner: macos-15-intel
+            arch: x86_64
     steps:
       - uses: actions/checkout@v5
 
@@ -141,7 +151,7 @@ jobs:
 
       - uses: actions/upload-artifact@v6
         with:
-          name: macos-dmg
+          name: macos-dmg-${{ matrix.arch }}
           path: dist/*.dmg
           compression-level: 0
           if-no-files-found: error
