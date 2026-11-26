@@ -65,9 +65,11 @@ The simplest way to install JD-Xi Studio is using our pre-built packages. These 
      silicon, through Rosetta).
 
    **macOS Requirements:**
+
    - macOS 11 (Big Sur) or later.
 
    **macOS Installation Notes:**
+
    - The app is not signed with a Developer ID yet, so macOS stops it the first time. Open it
      once, then in System Settings › Privacy & Security choose **Open Anyway** (on macOS 14 and
      earlier, right-click the app and choose **Open** also works). After that it opens as usual.
@@ -88,6 +90,7 @@ The simplest way to install JD-Xi Studio is using our pre-built packages. These 
      ``JD-Xi-Studio\JD-Xi-Studio.exe``. Nothing is installed; delete the folder to remove it.
 
    **Windows Requirements:**
+
    - Windows 10 or 11 (64-bit)
    - 4GB RAM minimum, 8GB recommended
 
@@ -113,6 +116,7 @@ The simplest way to install JD-Xi Studio is using our pre-built packages. These 
    stay). apt installs the few system libraries it needs (ALSA, the X11/Wayland ones Qt uses).
 
    **Linux Requirements:**
+
    - Ubuntu 22.04, Debian 12, Linux Mint 21 or later (64-bit PC). Other distributions: the
      one-command install of the README (``install.sh``) or the Python package.
    - To use the JD-Xi over USB your user must be in the ``audio`` group on some systems
