@@ -51,6 +51,9 @@ Tracks
   **Restore** brings them back.
 * The grip under the Tracks card sets its height (remembered; double click: the usual height).
 * Loading a big file shows its progress on the player's display (*Loading: track 12 of 45*).
+* The ruler above the tracks numbers the bars as the player counts them, following the file's
+  time signatures and tempo changes; where a time signature starts it shows it (*5  3/4*), unless
+  the whole file is in 4/4.
 
 Playback
 ========

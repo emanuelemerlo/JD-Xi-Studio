@@ -69,6 +69,11 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   program changes, silent parts) and what to include in a report. Installation links to it.
 - The pages of the editors and of Getting started are in the manual's contents (in a hidden
   table of contents), not only reachable by their links.
+- MIDI Player: the ruler drew every file in 4/4 at its first tempo, so in 3/4, 6/8 or with a
+  change of tempo or time signature its bars did not match the position shown (bar / beat) nor
+  the A / B points snapped to bars. It now follows the file's time signatures and tempo changes,
+  counts bars as the player does, and shows the time signature where it starts (when the file is
+  not 4/4 throughout).
 
 ### Removed
 - `doc/`: what no page, tool or test used. The 57 hand-written API pages (`jdxi_editor.*.rst`,
