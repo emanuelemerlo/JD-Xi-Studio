@@ -1,8 +1,10 @@
 What's New in 1.0.0
 ===================
 
-Since the release candidate: **Recipes** made to be written by an AI and fine-tuned by ear, in
-one workspace; and the fixes from trying rc 1 on the JD-Xi.
+The first official release. Since the release candidate: **Recipes** made to be written by an AI
+and fine-tuned by ear, in one workspace; a MIDI Player that counts bars as the file does and shows
+a part on the keyboard; the optional tabs always at hand; ready-made packages for **macOS** and
+**Linux**; and the fixes from trying rc 1 on the JD-Xi.
 
 Recipes
 -------
@@ -16,13 +18,47 @@ Recipes
 * In Italian, a recipe setting an LFO depth no longer stops the import; Mono/Poly, a negative
   Bend Range D and a Pan of «C» are understood.
 
+MIDI Player
+-----------
+
+* The **ruler** follows the file's time signatures and tempo changes: its bars are the ones the
+  position shows and «Snap to bars» uses, in 3/4, 6/8 or when the time signature changes; where a
+  time signature starts it is written on the ruler (*5  3/4*).
+* **Keyboard** (Playback): the keyboard of the main window shows the notes one part of the file
+  plays — Digital 1, Digital 2, Analog or Drums — in the part's colour, at the part's octave; a
+  triangle on the first or last key means notes beyond the 37 keys.
+* A part doubled by two identical tracks plays each note once.
+
+Editors window
+--------------
+
+* **Program settings**, **Recipes** and **Settings** are always in the tab bar (no more «+»
+  menu). Each can be reduced to a small bar in its colour with **◂**; a click on the bar opens it
+  again. Which are open is remembered.
+* The pop-up menus highlight the item under the mouse.
+
+Installing
+----------
+
+* Next to the Windows installer and portable app, the releases now have a **macOS disk image**
+  (Apple silicon and Intel; drag the app to Applications) and a **Linux .deb** (Ubuntu 22.04,
+  Debian 12 or later: ``sudo apt install ./jd-xi-studio_1.0.0_amd64.deb``). See
+  :doc:`installation`; the first opening on macOS is explained in :doc:`troubleshooting`.
+
 Fixes
 -----
 
 * The JD-Xi switched off and on again: every reconnection opens new MIDI ports (the badge stayed
   «Verifying the JD-Xi…»).
-* MIDI Player: a part doubled by two identical tracks plays each note once.
-* The pop-up menus highlight the item under the mouse.
+* macOS: while playing, the app asks the system not to slow its timers, so the notes stay on time.
+* The Program editor no longer logs false failures for a Partial Switch sent back by the JD-Xi.
+* The log calls the JD-Xi's Identity Reply value a *software revision*, not a firmware version.
+
+The manual
+----------
+
+* **Troubleshooting** holds the solutions (installing, the connection, playing MIDI files, what to
+  put in a report); old pages no one used are gone.
 
 What's New in 1.0.0 rc 1
 ========================

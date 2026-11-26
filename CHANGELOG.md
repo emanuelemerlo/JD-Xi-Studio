@@ -4,6 +4,13 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+# [1.0.0] - 2026-11-26
+
+The first official release of JD-Xi Studio. Since rc 1: **Recipes** written by an AI and
+fine-tuned by ear, the MIDI Player's ruler in the file's real time signatures and a part's notes
+on the keyboard, the optional tabs always in the bar, a **macOS disk image** and a **Linux .deb**
+next to the Windows installer, and the fixes from trying rc 1 on the JD-Xi and on macOS.
+
 ### Changes
 - **macOS disk image and Linux .deb** on the releases page, next to the Windows installer:
   `JD-Xi-Studio-<version>-macos-arm64.dmg` (Apple silicon) and `…-macos-x86_64.dmg` (Intel),
@@ -59,6 +66,11 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - The manual's pages build without docutils warnings (title underlines, a list in Installation).
 
 ### Fixed
+- Manual › Installation held a second, outdated copy of its macOS, Windows and Linux instructions
+  (left by the edit that added the disk images and the .deb); its note still spoke of a beta and
+  of Windows builds only.
+- Screenshots of the manual and README taken again for 1.0.0 (the tab bar without «+»; the MIDI
+  Player with a file loaded, its tracks and a ruler that changes to 3/4).
 - Program editor: a Partial Switch sent back by the JD-Xi was also taken as a generic switch with
   no control and logged as a failure; the parser's own keys (`parameter_block`, `block_name`) are
   not taken as parameters (from markxbrooks/JDXI-Editor 356fc1c9).

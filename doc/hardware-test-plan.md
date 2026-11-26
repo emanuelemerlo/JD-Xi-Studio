@@ -21,7 +21,7 @@ script e, se ci sono KO, il log (Strumenti › Visualizzatore log, Ctrl+Maiusc+L
 | 0.1 | JD-Xi acceso, collegato via **USB** al PC; driver Roland installato (Windows) | Le porte MIDI "JD-Xi" devono comparire |
 | 0.2 | **Salva sul JD-Xi** (WRITE) quello che ti serve: i test cambiano programma e suoni temporanei | Nulla viene scritto nella memoria utente, ma il suono corrente si perde |
 | 0.3 | Cuffie o monitor a volume **basso**, poi lo alzi | Alcuni passi cambiano livelli e filtri |
-| 0.4 | Installa il rilascio da verificare (installer o portatile) e annota versione e schermo (risoluzione e scala di Windows) | Il resoconto deve dire *cosa* è stato provato *dove* |
+| 0.4 | Installa il rilascio da verificare (Windows: installer o portatile; macOS: il `.dmg`; Linux: il `.deb` con `sudo apt install ./…`) e annota versione, sistema e schermo (risoluzione e scala) | Il resoconto deve dire *cosa* è stato provato *dove* |
 | 0.5 | Tieni a portata: un file `.jsz` o `.syx` di prova, un file MIDI breve, una ricetta (`JD-Xi recipe - example.csv`) | Servono nelle sezioni 7, 9, 10 |
 
 ---
@@ -92,7 +92,7 @@ al tuo resoconto.
 
 | | Fai | Deve succedere |
 |---|---|---|
-| 2.1 | Avvia JD-Xi Studio | Splash con il logo, «Versione 1.0.0-rc.N» uguale a quella installata; nessun messaggio d'errore |
+| 2.1 | Avvia JD-Xi Studio | Splash con il logo, la versione (es. «Versione 1.0.0») uguale a quella installata; nessun messaggio d'errore |
 | 2.2 | Finestra MIDI all'avvio (o JD-Xi › Configurazione MIDI) | Ingresso e uscita **JD-Xi** già scelti; la finestra è davanti alle altre, anche con la tastiera fissata in primo piano |
 | 2.3 | Guarda la barra in alto a destra dell'editor | «JD-Xi collegato» in verde; il nome del programma corrente del JD-Xi nel display |
 | 2.4 | Strumenti › Visualizzatore log | Il log di questa sessione (con data e ora nel nome); scheda *Avvisi ed errori* vuota o quasi; **nessuna** riga «MIDI output port is not open» o «No reply to RQ1» |
@@ -249,6 +249,8 @@ TC-xx della proposta; gli stessi casi girano in automatico con un JD-Xi simulato
 | 9.5 ★ | Un file MIDI «generale» (molte tracce, canali oltre il 3): **Adatta al JD-Xi › Assegna le tracce alle parti…**, controlla la proposta, Applica; Play | La riga dice quante tracce non si sentono prima, «Pronto» o meno dopo; batteria su Drums, una traccia per Digital 1, Digital 2, Analog; nessuna nota appesa |
 | 9.6 | **Suoni di partenza**, poi Play | Digital 1 Picked Bass, Digital 2 Piano, Analog JP8 Strings (un preset Digital sulla parte Analog) |
 | 9.7 | Un file grande (40+ tracce): Carica | Il display mostra «Caricamento: traccia N di M», nessuna finestrella; pochi secondi |
+| 9.8 | Un file in 3/4 o con un cambio di tempo musicale: guarda il **righello** mentre suona | Le misure del righello sono quelle della posizione (misura / movimento); dove cambia il tempo musicale c'è scritto (es. «9  3/4»); con **Aggancia alle misure** A e B cadono sulle linee del righello |
+| 9.9 ★ | Riproduzione › **Tastiera**: Analog; Play | Sulla tastiera della finestra principale si accendono, nel colore dell'Analog, i tasti delle note della parte Analog (all'ottava della parte: cambia Octave sul JD-Xi e i tasti si spostano); un triangolo sul primo o sull'ultimo tasto se ci sono note oltre; Stop: si spengono. Torna a **Nessuna** |
 
 ---
 
@@ -270,7 +272,8 @@ TC-xx della proposta; gli stessi casi girano in automatico con un JD-Xi simulato
 | 11.1 | Preferenze (Ctrl+, oppure File › Preferenze): livello di log WARNING, OK; riaprile | Resta WARNING; dopo il riavvio il log contiene solo avvisi ed errori |
 | 11.2 | Riporta il livello a INFO | — |
 | 11.3 | Strumenti › Visualizzatore log, scheda *Avvisi ed errori* | Annota ogni riga presente: è la lista dei problemi visti dal programma |
-| 11.4 | Chiudi il programma | Si chiude entro qualche secondo; la porta MIDI torna libera (lo script `--list` la vede) |
+| 11.4 | Finestra degli editor: **◂** su Impostazioni; poi clic sulla barretta; riduci Ricette, chiudi e riapri il programma | La scheda diventa una barretta colorata (il nome passando il mouse) e il programma passa a un'altra scheda; un clic la riapre; alla riapertura le schede sono come le avevi lasciate |
+| 11.5 | Chiudi il programma | Si chiude entro qualche secondo; la porta MIDI torna libera (lo script `--list` la vede) |
 
 ---
 
@@ -292,7 +295,7 @@ Ripeti 4.1, 4.5, 4.7, 6.1 e 8.1 su ogni schermo che usi (es. 1080p al 125%, 2496
 Copia e compila (una riga per passo eseguito):
 
 ```
-Versione: 1.0.0-rc.N    Data:            Schermo: 1920x1080 125%   Firmware JD-Xi:
+Versione: 1.0.0         Data:            Schermo: 1920x1080 125%   Firmware JD-Xi:
 Script: OK __ / KO __ / saltati __        (allega il file .md)
 
 | Passo | Esito | Note |

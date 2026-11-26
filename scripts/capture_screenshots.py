@@ -89,6 +89,55 @@ def readme_name_for(doc_name: str) -> str:
     return f"readme-{doc_name}"
 
 
+def demo_midi_file(path: Path) -> Path:
+    """A short original song for the MIDI Player's screenshot: drums (ch 10), bass
+    (ch 3, Analog), chords (ch 2) and a lead (ch 1), eight bars of 4/4 then four
+    of 3/4, so the ruler shows a change of time signature."""
+    import mido
+
+    tpb = 480
+    bars = [(4, 4)] * 8 + [(3, 4)] * 4
+    roots = [45, 41, 48, 43] * 3  # A F C G
+    events: dict[int, list] = {ch: [] for ch in (0, 1, 2, 9)}
+
+    def note(ch, start, length, pitch, vel=96):
+        events[ch].append((start, mido.Message("note_on", channel=ch, note=pitch, velocity=vel)))
+        events[ch].append((start + length, mido.Message("note_off", channel=ch, note=pitch, velocity=0)))
+
+    tick = 0
+    melody = [0, 3, 7, 10, 7, 3, 12, 10]
+    for bar, ((beats, _), root) in enumerate(zip(bars, roots)):
+        for beat in range(beats):
+            t = tick + beat * tpb
+            note(9, t, tpb // 4, 36 if beat == 0 else (38 if beat % 2 else 36))  # kick / snare
+            for half in (0, tpb // 2):
+                note(9, t + half, tpb // 8, 42, 70)  # closed hi-hat
+            note(2, t, tpb // 2, root - 12 + (7 if beat == 2 else 0))  # bass
+            note(0, t + tpb // 2, tpb // 2, root + 24 + melody[(bar * 3 + beat) % len(melody)], 90)
+        for interval in (0, 3, 7):
+            note(1, tick, beats * tpb - 20, root + 12 + interval, 70)  # chords
+        tick += beats * tpb
+
+    song = mido.MidiFile(type=1, ticks_per_beat=tpb)
+    conductor = mido.MidiTrack()
+    conductor.append(mido.MetaMessage("track_name", name="Demo", time=0))
+    conductor.append(mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(112), time=0))
+    conductor.append(mido.MetaMessage("time_signature", numerator=4, denominator=4, time=0))
+    conductor.append(mido.MetaMessage("time_signature", numerator=3, denominator=4, time=8 * 4 * tpb))
+    song.tracks.append(conductor)
+    names = {0: "Lead", 1: "Chords", 2: "Bass", 9: "Drums"}
+    for ch, evs in events.items():
+        track = mido.MidiTrack()
+        track.append(mido.MetaMessage("track_name", name=names[ch], time=0))
+        last = 0
+        for t, msg in sorted(evs, key=lambda e: (e[0], e[1].type == "note_on")):
+            track.append(msg.copy(time=t - last))
+            last = t
+        song.tracks.append(track)
+    song.save(str(path))
+    return path
+
+
 def capture_name(names: tuple) -> str:
     """The capture's file name: the doc image's, else the README image's."""
     doc_name, readme_name = names
@@ -126,6 +175,14 @@ def capture(out_dir: Path) -> list[Path]:
         doc_name = capture_name(names)
         window.show_editor(editor_type)
         _settle(app)
+        if editor_type == "midi_player":
+            # a file loaded: tracks, ruler (with its 3/4), the Fit to the JD-Xi parts
+            import tempfile
+
+            player = editor_window.editor_tab_widget.currentWidget()
+            demo = demo_midi_file(Path(tempfile.mkdtemp()) / "Demo song.mid")
+            player.midi_load_file_from_path(str(demo))
+            _settle(app, 1200)
         path = out_dir / doc_name
         editor_window.grab().save(str(path))
         written.append(path)
