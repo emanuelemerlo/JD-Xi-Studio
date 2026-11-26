@@ -9,7 +9,7 @@ from typing import Any, Callable, Optional
 import mido
 from decologr import Decologr as log
 from mido import Message, MidiFile, bpm2tempo
-from PySide6.QtCore import QMargins, Qt, QTimer
+from PySide6.QtCore import QMargins, QSettings, Qt, QTimer
 from PySide6.QtGui import QCloseEvent, QDragEnterEvent, QDropEvent, QKeySequence, QShortcut
 from PySide6.QtWidgets import (
     QButtonGroup,
@@ -100,6 +100,8 @@ from picoui.specs.widgets import (
     get_file_save_from_spec,
 )
 from jdxi_editor.i18n import tr
+from jdxi_editor.ui.editors.midi_player.keyboard_feed import SETTING as KEYBOARD_SETTING
+from jdxi_editor.ui.editors.midi_player.keyboard_feed import KeyboardFeed
 
 # Expose Qt symbols for tests that patch via jdxi_editor.ui.editors.io.player
 # Tests expect these names to exist at module level
@@ -172,7 +174,15 @@ class MidiFilePlayer(SynthEditor):
         self.automation = AutomationWidget(self.midi_state, parent=self)
         self.ui = MidiPlayerWidgets()
         self.transport: TransportWidget = TransportWidget(parent=self)
+        # the notes of a part of the file on the main window's keyboard (Playback: Keyboard)
+        self.keyboard_feed = KeyboardFeed(
+            self.transport_controller.notes_on,
+            lambda: getattr(self.parent, "piano_keyboard", None),
+            self._part_octave,
+            parent=self,
+        )
         self.playback_options = PlaybackOptionsWidget(parent=self)
+        self.keyboard_feed.set_channel(self.playback_options.keyboard_channel)
         self._loop_points: tuple[Optional[float], Optional[float]] = (None, None)
         self._loading_file = False
         self._edited = False  # changed since loaded or saved (Close asks first)
@@ -1926,6 +1936,21 @@ class MidiFilePlayer(SynthEditor):
         """Speed spin box (percent of the file's tempo)."""
         self.transport_controller.set_speed(percent / 100.0)
         self.update_upper_display_with_tempo_and_bar()
+
+    def on_keyboard_part_changed(self, channel) -> None:
+        """Playback › Keyboard: the part whose notes the main window's keyboard shows."""
+        self.keyboard_feed.set_channel(channel)
+        from jdxi_editor.project import __organization_name__, __program__
+
+        settings = QSettings(__organization_name__, __program__)
+        settings.setValue(KEYBOARD_SETTING, -1 if channel is None else int(channel))
+
+    def _part_octave(self, channel: int) -> int:
+        """Octave shift of the part on *channel* (0-based), as the window lights its keys."""
+        follower = getattr(self.parent, "follower", None)
+        if follower is not None and hasattr(follower, "part_octave"):
+            return follower.part_octave(channel)
+        return 0
 
     def on_send_clock_toggled(self, checked: bool) -> None:
         """Send MIDI Clock / Start / Stop / Song Position to the JD-Xi."""

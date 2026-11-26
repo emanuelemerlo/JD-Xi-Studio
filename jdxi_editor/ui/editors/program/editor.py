@@ -1162,7 +1162,10 @@ class ProgramEditor(BasicEditor):
                     """self._update_partial_selection_switch(
                         param, param_value, successes, failures
                     )"""
-                if param.name in [
+                # elif: a partial switch is handled above and must not fall through to
+                # the generic "SWITCH" branch, which has no control for it and recorded
+                # a failure (from markxbrooks/JDXI-Editor 356fc1c9)
+                elif param.name in [
                     PartialSelectState.PARTIAL1_SELECT,
                     PartialSelectState.PARTIAL2_SELECT,
                     PartialSelectState.PARTIAL3_SELECT,

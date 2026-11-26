@@ -262,6 +262,9 @@ class TransportController(QObject):
         self.engine.on_event = self._on_engine_event
         # (channel, note) keys sounding on the instrument: one voice per key
         self._sounding: dict[tuple[int, int], float] = {}  # -> when it started (perf_counter)
+        # (channel, note) -> when its last note-on went out: a note shorter than one
+        # look of the keyboard (notes_on) is still shown for a moment
+        self._struck: dict[tuple[int, int], float] = {}
         # program changes that do not choose a JD-Xi sound are not sent (see
         # _jdxi_program_change); the last Bank Select MSB sent on each channel
         self.block_foreign_program_changes = True
@@ -559,6 +562,20 @@ class TransportController(QObject):
     # played by a doubled track (left/right copies): dropped, not retriggered
     DOUBLED_WITHIN_S = 0.03
 
+    def notes_on(self, channel: int, hold_s: float = 0.08) -> set[int]:
+        """The notes sounding on *channel* (0-based) as sent to the JD-Xi, and those
+        struck in the last *hold_s* seconds. Safe from any thread: a copy is retried
+        when the playback thread changes the tables meanwhile."""
+        now = time.perf_counter()
+        for _ in range(3):
+            try:
+                sounding = [key for key in list(self._sounding) if key[0] == channel]
+                struck = [key for key, t in list(self._struck.items()) if key[0] == channel and now - t < hold_s]
+                return {note for _ch, note in sounding + struck}
+            except RuntimeError:  # changed during the copy
+                continue
+        return set()
+
     def _one_voice_per_key(self, msg: mido.Message, now: Optional[float] = None) -> list[mido.Message]:
         """
         Never start a second voice on a key that is already sounding.
@@ -584,6 +601,7 @@ class TransportController(QObject):
             key = (msg.channel, msg.note)
             started = self._sounding.get(key)
             self._sounding[key] = now
+            self._struck[key] = now
             if started is not None:
                 if now - started < self.DOUBLED_WITHIN_S:
                     self._sounding[key] = started

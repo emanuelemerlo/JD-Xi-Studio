@@ -29,6 +29,8 @@ Usage Example:
 This module requires PySide6 and proper integration with the JD-Xi Manager's signal handling for note events.
 """
 
+from typing import Optional
+
 from decologr import Decologr as log
 from PySide6.QtCore import QPoint, Qt
 from PySide6.QtGui import QColor
@@ -220,6 +222,24 @@ class PianoKeyboard(QWidget):
             marked = note == target
             if key.middle_c != marked:
                 key.middle_c = marked
+                key.update()
+
+    def show_file_notes(self, notes: set[int], color: Optional[str] = None) -> None:
+        """Show *notes* (the keys that play them) in *color*: the notes a part of the
+        MIDI file is playing. Notes beyond the 37 keys mark the edge key with a
+        triangle. An empty set clears them."""
+        lowest, highest = min(self._keys_by_note), max(self._keys_by_note)
+        below = any(n < lowest for n in notes)
+        above = any(n > highest for n in notes)
+        tint = QColor(color) if color and notes else None
+        for note, key in self._keys_by_note.items():
+            file_color = tint if note in notes else None
+            beyond = "<" if (below and note == lowest) else (">" if (above and note == highest) else "")
+            beyond_color = tint if beyond else None
+            if (key.file_color, key.beyond, key.beyond_color) != (file_color, beyond, beyond_color):
+                key.file_color = file_color
+                key.beyond = beyond
+                key.beyond_color = beyond_color
                 key.update()
 
     def set_midi_channel(self, channel: int) -> None:
