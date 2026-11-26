@@ -59,6 +59,9 @@ Playback
 ========
 
 * Play, Pause, Stop, Panic; speed in percent of the file's tempo.
+* **Keyboard**: the keyboard of the main window shows the notes a part of the file plays
+  (Digital 1, Digital 2, Analog or Drums), in the part's colour, on the keys that play them at
+  the part's octave; a triangle on the first or last key means notes beyond the 37 keys.
 * **Loop** repeats the A–B range, or the whole song when none is set. **A** and **B** take the
   playback position (snapped to bars if chosen); A shows on the ruler at once, the range when B
   is set. **Trim** keeps only a part of the file.

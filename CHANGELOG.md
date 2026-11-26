@@ -5,6 +5,10 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- MIDI Player › Playback › **Keyboard**: the keyboard of the main window shows the notes one part
+  of the file plays (Digital 1, Digital 2, Analog or Drums; Off by default, remembered), in the
+  part's colour, on the keys that play them at the part's octave. A triangle on the first or last
+  key: notes beyond the 37 keys. The keys pressed on the JD-Xi still show as before.
 - **Recipes** is one workspace in three areas. On the left, always, the library: **+ New recipe**,
   a search, each recipe with its category and the day it was last changed; Open, Edit and, under
   ⋯ (or a right click), Duplicate, Export… and Delete… (asked first). In the middle the work: the
