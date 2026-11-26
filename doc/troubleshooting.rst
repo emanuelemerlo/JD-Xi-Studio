@@ -15,11 +15,18 @@ Installing and starting
    - **Antivirus blocking**: add JD-Xi Studio to your antivirus exceptions.
 
 **macOS**
-   - **"App is damaged" / cannot be opened**: the app is not signed; right-click it and choose
-     "Open", or allow it in System Settings › Privacy & Security.
+   - **Cannot be opened** (the developer cannot be verified): the app is not signed with a
+     Developer ID yet. Open it once, then choose **Open Anyway** in System Settings › Privacy &
+     Security.
+   - **"JD-Xi Studio is damaged and can't be opened"**: remove the download's quarantine flag,
+     ``xattr -dr com.apple.quarantine "/Applications/JD-Xi Studio.app"``, and open it again.
+   - **Recordings are silent** (USB recorder): allow JD-Xi Studio in System Settings › Privacy &
+     Security › Microphone.
 
 **Linux**
-   - **AppImage won't run**: install FUSE (``sudo apt install fuse``).
+   - **The .deb does not install** (missing dependencies): install it with ``sudo apt install
+     ./jd-xi-studio_<version>_amd64.deb`` (``apt``, not ``dpkg -i``: apt brings what it needs).
+     It needs Ubuntu 22.04 / Debian 12 or later.
    - **MIDI permissions**: add your user to the audio group
      (``sudo usermod -a -G audio $USER``), then log in again.
    - **"MIDI not available" at startup**: the system has no ALSA sequencer, so the editor runs

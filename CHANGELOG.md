@@ -5,6 +5,13 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- **macOS disk image and Linux .deb** on the releases page, next to the Windows installer:
+  `JD-Xi-Studio-<version>-macos-arm64.dmg` (Apple silicon, macOS 11 or later; not signed with a
+  Developer ID yet: the first time, System Settings › Privacy & Security › Open Anyway) and `jd-xi-studio_<version>_amd64.deb`
+  (Ubuntu 22.04 / Debian 12 or later: menu entry, `jd-xi-studio` command). Built by CI with
+  PyInstaller (`building/desktop/`, Actions › Desktop packages), each started on its runner before
+  it is attached; the .deb is also installed there first. The Mac app declares its use of the
+  audio input (USB recorder): without it macOS records silence (as the original project found).
 - **Recipes** is one workspace in three areas. On the left, always, the library: **+ New recipe**,
   a search, each recipe with its category and the day it was last changed; Open, Edit and, under
   ⋯ (or a right click), Duplicate, Export… and Delete… (asked first). In the middle the work: the

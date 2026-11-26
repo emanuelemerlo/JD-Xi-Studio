@@ -14,7 +14,7 @@ computer screen instead of the JD-Xi's menus.
 > [JDXI-Editor](https://github.com/markxbrooks/JDXI-Editor) by **Mark Brooks**, on which it is based
 > (MIT licence). It goes its own way: a new interface for desktop screens with every parameter of
 > Roland's manuals, presets and SysEx addresses checked against those manuals, offline mode (no JD-Xi
-> needed), English and Italian, Windows builds from CI and a one-command install on Linux and macOS. Releases, issues and the app's update
+> needed), English and Italian, a Windows installer, a macOS disk image and a Linux .deb built by CI. Releases, issues and the app's update
 > check use [this repository](https://github.com/emanuelemerlo/JD-Xi-Studio).
 
 <p align="center">
@@ -93,8 +93,19 @@ Each release offers two downloads; take the one you want:
 Windows 10 or 11, 64-bit. The files are not signed yet: if SmartScreen warns, choose
 "More info" → "Run anyway".
 
-### macOS and Linux
-One command installs the newest release in its own Python environment and adds JD-Xi Studio to
+### macOS 🍎
+`JD-Xi-Studio-<version>-macos-arm64.dmg`: open it and drag **JD-Xi Studio** onto
+**Applications**. macOS 11 or later on Apple silicon. The app is not signed with a Developer ID
+yet: the first time macOS stops it; then choose **Open Anyway** in System Settings › Privacy &
+Security (more in the manual's Troubleshooting).
+
+### Linux 🐧
+`jd-xi-studio_<version>_amd64.deb` for Debian, Ubuntu, Mint and the like (Ubuntu 22.04 /
+Debian 12 or later): `sudo apt install ./jd-xi-studio_<version>_amd64.deb`. It adds JD-Xi Studio
+to the applications menu and the `jd-xi-studio` command.
+
+### macOS and Linux: one command
+For an Intel Mac or another Linux distribution, one command installs the newest release in its own Python environment and adds JD-Xi Studio to
 the applications (the menu on Linux, `~/Applications` on macOS); nothing goes system-wide and no
 `sudo` is needed:
 
@@ -171,9 +182,14 @@ cd <repo>
 iscc /DMyAppVersion=<version> jdxi_editor.iss        # -> dist\installer\
 ```
 
-macOS (`--dmg`, `--app`, `--pkg`) and Linux (.deb and AppImage): `python -m building.buildsys`.
-These come from the original project and are not maintained yet (names, paths): to install on
-macOS and Linux use `install.sh` (above).
+macOS (disk image) and Linux (.deb), on that system (CI: **Actions › Desktop packages**):
+```bash
+python -m pip install . pyinstaller        # macOS: brew install portaudio first
+cd /tmp && pyinstaller --noconfirm --clean --distpath <repo>/dist <repo>/building/desktop/jdxi_studio.spec
+cd <repo> && python -m building.desktop.package dmg    # or: deb
+```
+`python -m building.buildsys` and the scripts in `building/apple` and `building/linux` come from
+the original project and are not maintained here.
 
 ### Releasing
 

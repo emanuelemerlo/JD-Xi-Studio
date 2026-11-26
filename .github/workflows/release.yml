@@ -4,8 +4,8 @@ name: Release
 #   Actions > Release > Run workflow (on main)
 # No tag to push by hand: the version comes from jdxi_editor/project.py
 # (__version__ = "1.0.0a1" -> tag v1.0.0-alpha.1, a pre-release; "1.0.0" -> v1.0.0).
-# It runs the tests, builds the Windows installer and portable app and the
-# Python packages, then creates the tag and the release as a draft, attaches
+# It runs the tests, builds the Windows installer and portable app, the macOS
+# disk image, the Linux .deb and the Python packages, then creates the tag and the release as a draft, attaches
 # every file and only then publishes it (a published release cannot be
 # changed when immutable releases are on).
 on:
@@ -62,6 +62,13 @@ jobs:
     needs: tests
     uses: ./.github/workflows/windows-build.yml
 
+  # macOS disk image and Linux .deb. When no macOS runner comes within the hour
+  # the job fails and nothing is published (the tag does not exist yet):
+  # «Re-run failed jobs» later builds it and publishes the release.
+  desktop:
+    needs: tests
+    uses: ./.github/workflows/desktop-build.yml
+
   python:
     needs: tests
     runs-on: ubuntu-latest
@@ -82,7 +89,7 @@ jobs:
           if-no-files-found: error
 
   publish:
-    needs: [prepare, windows, python]
+    needs: [prepare, windows, desktop, python]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -99,8 +106,10 @@ jobs:
           (cd "$portable" && zip -qr "$GITHUB_WORKSPACE/release/JD-Xi-Studio-$version-win64-portable.zip" .)
           find artifacts -path '*-win64-setup*' -name '*.exe' -exec cp {} release/ \;
           cp artifacts/python-packages/* release/
+          cp artifacts/linux-deb/*.deb artifacts/macos-dmg/*.dmg release/
           ls -l release
-          test "$(ls release | wc -l)" -ge 4
+          # portable zip, installer, wheel, sdist, .deb, .dmg
+          test "$(ls release | wc -l)" -ge 6
       # RELEASE_TOKEN (Settings › Secrets and variables › Actions), when set: a fine-grained
       # token for this repository with Contents and Workflows read and write (a tag on a
       # commit that changes .github/workflows needs Workflows). GitHub refused the Actions
