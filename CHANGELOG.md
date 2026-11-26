@@ -5,6 +5,10 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- Editors window: Program settings, Recipes and Settings are always in the tab bar, no longer
+  opened from a «+» menu. Each can be reduced to a small bar in its colour (**◂** on the tab, the
+  name under the mouse) and opens again with a click on the bar, as some browsers do; which are
+  open is remembered. Program settings still builds its cards the first time it is shown.
 - MIDI Player › Playback › **Keyboard**: the keyboard of the main window shows the notes one part
   of the file plays (Digital 1, Digital 2, Analog or Drums; Off by default, remembered), in the
   part's colour, on the keys that play them at the part's octave. A triangle on the first or last

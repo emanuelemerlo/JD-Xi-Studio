@@ -1013,8 +1013,12 @@ class JDXiInstrument(JDXiWindow):
         # Editor types opened at startup, in tab order. Not self.editors: that
         # holds the editor objects register_editor() adds while these open
         # the core tabs, always there, then the optional ones open at the last closing
-        startup_editors = list(self.CORE_TABS) + self._saved_optional_tabs()
+        # the core tabs, then the optional ones, always there (reduced to a bar or not)
+        startup_editors = list(self.CORE_TABS) + list(self.OPTIONAL_TABS)
         for editor_type in startup_editors:
+            if editor_type == "program_parts":
+                # made without its cards: they are built the first time its tab is shown
+                self.program_settings_editor()
             self.show_editor(editor_type)
         self._init_optional_tabs()
         self.main_editor.editor_tab_widget.setCurrentIndex(0)
@@ -1058,74 +1062,53 @@ class JDXiInstrument(JDXiWindow):
         return getattr(self, f"{config.editor_class.__name__.lower()}_instance", None)
 
     def open_optional_tabs(self) -> list[str]:
-        tabs = self.main_editor.editor_tab_widget
-        return [
-            name for name in self.OPTIONAL_TABS
-            if (editor := self._tab_editor(name)) is not None and tabs.indexOf(editor) >= 0
-        ]
+        """The optional tabs expanded now (the others are reduced to a bar)."""
+        bar = self.main_editor.editor_tab_widget.tabBar()
+        expanded = set(bar.expanded_keys()) if hasattr(bar, "expanded_keys") else set()
+        return [name for name in self.OPTIONAL_TABS if name in expanded]
 
     def _init_optional_tabs(self) -> None:
-        """Close buttons on the optional tabs only, and the "+" menu to open them."""
-        tabs = self.main_editor.editor_tab_widget
+        """The optional tabs are always in the bar: those expanded at the last closing
+        as tabs, the others reduced to a bar (a click opens them)."""
         if getattr(self, "_optional_tabs_ready", False):
-            self._mark_closable_tabs()
             return
-        self._optional_tabs_ready = True
-        self.main_editor.set_tab_menu(self._fill_tab_menu)
-        self._mark_closable_tabs()
-
-    def _mark_closable_tabs(self) -> None:
-        """A small × on the optional tabs; nothing on the core ones."""
-        from PySide6.QtWidgets import QTabBar, QToolButton
-
         tabs = self.main_editor.editor_tab_widget
-        side = QTabBar.ButtonPosition.RightSide
+        bar = tabs.tabBar()
+        if not hasattr(bar, "set_collapsible"):
+            return
+        expanded = set(self._saved_optional_tabs())
+        current = tabs.currentWidget()
         for name in self.OPTIONAL_TABS:
             editor = self._tab_editor(name)
             index = tabs.indexOf(editor) if editor is not None else -1
-            if index < 0 or tabs.tabBar().tabButton(index, side) is not None:
+            if index < 0:
                 continue
-            button = QToolButton()
-            button.setText("×")
-            button.setToolTip(tr("Close the tab (it opens again from +)"))
-            button.setFixedSize(16, 16)
-            button.setStyleSheet(
-                "QToolButton { color: #a3a6ad; border: none; background: transparent; font-size: 14px;"
-                " font-weight: 700; padding: 0; } QToolButton:hover { color: #ffffff; background: #ff2a1a;"
-                " border-radius: 8px; }"
-            )
-            button.clicked.connect(lambda _c=False, e=editor: self.close_tab(tabs.indexOf(e)))
-            tabs.tabBar().setTabButton(index, side, button)
+            bar.set_collapsible(index, name, self._tab_accent(editor))
+            bar.set_collapsed(name, name not in expanded)
+        if current is not None and tabs.indexOf(current) >= 0:
+            tabs.setCurrentWidget(current)
+        bar.collapsed_changed.connect(lambda *_: self._save_optional_tabs())
+        self._optional_tabs_ready = True
 
-    def close_tab(self, index: int) -> None:
-        """Close an optional tab (the editor stays, with its values, for when it opens again)."""
-        tabs = self.main_editor.editor_tab_widget
-        editor = tabs.widget(index)
-        if editor is None or not any(self._tab_editor(n) is editor for n in self.OPTIONAL_TABS):
-            return
-        tabs.removeTab(index)
-        self._save_optional_tabs()
+    @staticmethod
+    def _tab_accent(editor) -> str:
+        """The editor's colour, for its reduced tab."""
+        accent = getattr(editor, "ACCENT", None)
+        if not accent and editor is not None:
+            import sys
 
-    def _fill_tab_menu(self, menu) -> None:
-        """The "+" menu: every optional tab, ticked when open; choosing it opens or shows it."""
-        names = {
-            "program_parts": tr("Program settings"),
-            "recipes": tr("Recipes"),
-            "settings": tr("Settings"),
-        }
-        menu.clear()
-        open_now = set(self.open_optional_tabs())
-        for name in self.OPTIONAL_TABS:
-            action = menu.addAction(names[name])
-            action.setCheckable(True)
-            action.setChecked(name in open_now)
-            action.triggered.connect(lambda _checked=False, n=name: self.open_tab(n))
+            accent = getattr(sys.modules.get(type(editor).__module__), "ACCENT", None)
+        return accent if isinstance(accent, str) and accent.startswith("#") else "#8a8d94"
+
+    def collapse_tab(self, editor_type: str) -> None:
+        """Reduce an optional tab to its bar (the editor stays, with its values)."""
+        bar = self.main_editor.editor_tab_widget.tabBar()
+        if editor_type in self.OPTIONAL_TABS and hasattr(bar, "set_collapsed"):
+            bar.set_collapsed(editor_type, True)
 
     def open_tab(self, editor_type: str) -> None:
+        """Show a tab; an optional one reduced to a bar opens (and is remembered so)."""
         self.show_editor(editor_type)
-        if editor_type in self.OPTIONAL_TABS:
-            self._mark_closable_tabs()
-            self._save_optional_tabs()
 
     # --- Window menu: the editor windows minimise and come back with the keyboard
 
@@ -1250,8 +1233,10 @@ class JDXiInstrument(JDXiWindow):
             config.title, config.editor_class, config.icon, **merged_kwargs
         )
         if editor_type in self.OPTIONAL_TABS and getattr(self, "_optional_tabs_ready", False):
-            self._mark_closable_tabs()  # opened from a menu: closable, remembered
-            self._save_optional_tabs()
+            # chosen from a menu: a tab reduced to a bar opens (selecting it does that)
+            bar = self.main_editor.editor_tab_widget.tabBar()
+            if hasattr(bar, "set_collapsed"):
+                bar.set_collapsed(editor_type, False)
         # Bring the editors forward (not while the startup editors open)
         if self.main_editor is not None and self.main_editor.updatesEnabled():
             self._show_main_editor()
@@ -1346,8 +1331,6 @@ class JDXiInstrument(JDXiWindow):
                     index = self.main_editor.editor_tab_widget.addTab(existing_editor, short_name(title))
                     self.main_editor.editor_tab_widget.setTabToolTip(index, tab_tip(title))
                     index = self._place_tab(existing_editor, index)
-                    if getattr(self, "_optional_tabs_ready", False):
-                        self._mark_closable_tabs()
                 if index != -1:
                     self.main_editor.editor_tab_widget.setCurrentIndex(index)
                     # Update tab bar property for styling
