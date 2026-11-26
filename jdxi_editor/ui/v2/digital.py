@@ -354,9 +354,22 @@ class DigitalToneEditor(tone_editor_base()):
             button.setToolTip(tr("Edit partial {n}").format(n=n))
             self.partial_buttons.addButton(button, partial)
             box.addWidget(button)
+            # each name right against its switch, a wider gap between the two: «P1 ON» must
+            # not read as the label of the switch on its left
+            from jdxi_editor.ui.v2.widgets import report_to
+
             line = QHBoxLayout()
-            line.addWidget(ChoiceButtons(self.pv(f"PARTIAL{n}_SWITCH"), self.ACCENT, self.info_hub))
-            line.addWidget(ChoiceButtons(self.pv(f"PARTIAL{n}_SELECT"), self.ACCENT, self.info_hub))
+            line.setSpacing(0)
+            for index, key in enumerate((f"PARTIAL{n}_SWITCH", f"PARTIAL{n}_SELECT")):
+                pv = self.pv(key)
+                if index:
+                    line.addSpacing(18)
+                name = QLabel(pv.info.label)
+                name.setStyleSheet("color: #c9cbd1; font-size: 11px; background: transparent;")
+                report_to(self.info_hub, name, pv)
+                line.addWidget(name)
+                line.addSpacing(6)
+                line.addWidget(ChoiceButtons(pv, self.ACCENT, self.info_hub, show_name=False))
             line.addStretch()
             box.addLayout(line)
             row.addLayout(box)

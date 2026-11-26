@@ -5,6 +5,8 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 # [Unreleased]
 
 ### Changes
+- Digital Synth: under each PARTIAL button, «P1 ON» and «P1 SEL» sit right against their
+  switches, with a wider gap between the two (they read as the labels of the switch on their left).
 - **Digital Synth: the three partials together.** *Link partials* makes a change to the partial
   shown on the other partials that are on (the oscillator stays each one's own), in one Undo step.
   *Partial ▾* copies, pastes and swaps a partial or one section of it (Oscillator, Filter,
