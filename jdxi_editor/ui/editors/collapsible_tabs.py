@@ -72,6 +72,11 @@ class CollapsibleTabBar(QTabBar):
         key = self.tabData(index) if 0 <= index < self.count() else None
         return key if key in self._keys else None
 
+    def tab_name(self, index: int) -> str:
+        """The tab's name, also when it is reduced to a bar (its text is empty then)."""
+        key = self.key_at(index)
+        return self._keys[key]["text"] if key else self.tabText(index)
+
     def is_collapsed(self, index: int) -> bool:
         key = self.key_at(index)
         return bool(key and self._keys[key]["collapsed"])
