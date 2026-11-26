@@ -7,8 +7,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
 
+from PySide6.QtCore import QSettings
 from PySide6.QtWidgets import (
     QCheckBox,
+    QComboBox,
     QGroupBox,
     QHBoxLayout,
     QLabel,
@@ -21,6 +23,8 @@ from jdxi_editor.ui.editors.helpers.widgets import (
     create_jdxi_button_from_spec,
     create_jdxi_row,
 )
+from jdxi_editor.ui.editors.midi_player.keyboard_feed import KEYBOARD_PARTS
+from jdxi_editor.ui.editors.midi_player.keyboard_feed import SETTING as KEYBOARD_SETTING
 from jdxi_editor.ui.editors.midi_player.utils import format_time
 from jdxi_editor.ui.widgets.editor.helper import create_group_with_layout
 from jdxi_editor.ui.widgets.jdxi.midi_group import JDXiMidiGroup
@@ -29,6 +33,16 @@ from jdxi_editor.i18n import tr
 
 if TYPE_CHECKING:
     from jdxi_editor.ui.editors.midi_player.editor import MidiFilePlayer
+
+def _saved_keyboard_channel() -> Optional[int]:
+    from jdxi_editor.project import __organization_name__, __program__
+
+    try:
+        value = int(QSettings(__organization_name__, __program__).value(KEYBOARD_SETTING, -1))
+    except (TypeError, ValueError):
+        return None
+    return value if value in KEYBOARD_PARTS else None
+
 
 SPEED_PERCENT_MIN = 25
 SPEED_PERCENT_MAX = 200
@@ -45,6 +59,7 @@ class PlaybackOptionsWidget(JDXiMidiGroup):
         self.speed_spin: Optional[QSpinBox] = None
         self.clock_checkbox: Optional[QCheckBox] = None
         self.snap_checkbox: Optional[QCheckBox] = None
+        self.keyboard_combo: Optional[QComboBox] = None
         self.setup_ui()
 
     def _build_button_specs(self) -> dict:
@@ -148,8 +163,37 @@ class PlaybackOptionsWidget(JDXiMidiGroup):
         JDXi.UI.Theme.apply_button_mini_style(self.clock_checkbox)
         self.clock_checkbox.toggled.connect(self.parent.on_send_clock_toggled)
         options.addWidget(self.clock_checkbox)
+
+        # the notes of a part of the file on the main window's keyboard
+        keyboard_label = QLabel(tr("Keyboard"))
+        keyboard_label.setStyleSheet(JDXi.UI.Style.STYLE_FOREGROUND)
+        options.addWidget(keyboard_label)
+        self.keyboard_combo = QComboBox()
+        self.keyboard_combo.addItem(tr("Off"), -1)
+        for channel, name in KEYBOARD_PARTS.items():
+            self.keyboard_combo.addItem(tr(name), channel)
+        self.keyboard_combo.setToolTip(
+            tr("Show the notes this part of the file plays on the keyboard of the main window, "
+               "in the part's colour (the keys that play them at the part's octave; a triangle on "
+               "the first or last key: notes beyond the 37 keys)")
+        )
+        saved = _saved_keyboard_channel()
+        index = self.keyboard_combo.findData(-1 if saved is None else saved)
+        self.keyboard_combo.setCurrentIndex(max(0, index))
+        self.keyboard_combo.currentIndexChanged.connect(
+            lambda _i: self.parent.on_keyboard_part_changed(self.keyboard_channel)
+        )
+        options.addWidget(self.keyboard_combo)
         layout.addLayout(options)
         return group
+
+    @property
+    def keyboard_channel(self) -> Optional[int]:
+        """The part shown on the keyboard (0-based channel), or None."""
+        if self.keyboard_combo is None:
+            return None
+        data = self.keyboard_combo.currentData()
+        return None if data is None or int(data) < 0 else int(data)
 
     @property
     def snap_to_bar(self) -> bool:

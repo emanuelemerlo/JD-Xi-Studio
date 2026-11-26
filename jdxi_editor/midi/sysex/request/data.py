@@ -14,6 +14,9 @@ PROGRAM_COMMON_RQ11_HEADER = (
 )
 IGNORED_KEYS = {
     SysExSection.TEMPORARY_AREA,
+    # the parser's own keys, not parameters (from markxbrooks/JDXI-Editor 356fc1c9)
+    "parameter_block",
+    "block_name",
     "TONE_NAME_1",
     "TONE_NAME_2",
     "TONE_NAME_3",

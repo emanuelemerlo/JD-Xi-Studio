@@ -35,6 +35,10 @@ class MainEditor(QMainWindow):
         self.editor_registry = None
         self.editors = []
         self.editor_tab_widget = QTabWidget()
+        # optional tabs (Program settings, Recipes, Settings) reduce to a bar
+        from jdxi_editor.ui.editors.collapsible_tabs import CollapsibleTabBar
+
+        self.editor_tab_widget.setTabBar(CollapsibleTabBar(self.editor_tab_widget))
         self.editor_tab_widget.setTabsClosable(False)
         self.setCentralWidget(self.editor_tab_widget)  # if this is a QMainWindow
         JDXi.UI.Theme.apply_editor_style(self)
@@ -62,16 +66,6 @@ class MainEditor(QMainWindow):
         QTabBar QToolButton {{ background: #1b1c1f; border: 1px solid #2a2d33; border-radius: 6px; color: #ffffff; }}
     """
 
-    def set_tab_menu(self, fill) -> None:
-        """`fill(menu)` fills the "+" menu each time it opens; also on a right click on the tabs."""
-        self._tab_menu.aboutToShow.connect(lambda: fill(self._tab_menu))
-        self.tab_menu_button.setVisible(True)
-        bar = self.editor_tab_widget.tabBar()
-        bar.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        bar.customContextMenuRequested.connect(
-            lambda pos: self._tab_menu.exec(bar.mapToGlobal(pos))
-        )
-
     def _build_header(self) -> None:
         from jdxi_editor.i18n import tr
 
@@ -91,23 +85,6 @@ class MainEditor(QMainWindow):
         self.program_chip.setToolTip(tr("The program and the tone last received from the JD-Xi"))
         self.connection_label = QLabel()
         self.connection_label.setStyleSheet("color: #a3a6ad; font-size: 12px;")
-        # "+": the tabs that open and close (Program settings, Recipes, Settings), from this window
-        from PySide6.QtWidgets import QMenu, QToolButton
-
-        self.tab_menu_button = QToolButton()
-        self.tab_menu_button.setText("+")
-        self.tab_menu_button.setToolTip(tr("Open a tab: Program settings, Recipes, Settings"))
-        self.tab_menu_button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
-        self.tab_menu_button.setStyleSheet(
-            "QToolButton { color: #ffffff; font-size: 16px; font-weight: 700; padding: 0 8px;"
-            " border: 1px solid #2a2d33; border-radius: 6px; background: #1b1c1f; }"
-            "QToolButton:hover { border-color: #ff2a1a; }"
-            "QToolButton::menu-indicator { image: none; width: 0; }"
-        )
-        self._tab_menu = QMenu(self.tab_menu_button)
-        self.tab_menu_button.setMenu(self._tab_menu)
-        self.tab_menu_button.setVisible(False)  # until the main window gives it its tabs
-        row.addWidget(self.tab_menu_button)
         row.addWidget(self.program_chip)
         row.addWidget(self.connection_label)
         # «Keyboard»: the keyboard window in front, wherever it is (no Alt+Tab)

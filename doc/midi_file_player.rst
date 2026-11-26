@@ -51,11 +51,17 @@ Tracks
   **Restore** brings them back.
 * The grip under the Tracks card sets its height (remembered; double click: the usual height).
 * Loading a big file shows its progress on the player's display (*Loading: track 12 of 45*).
+* The ruler above the tracks numbers the bars as the player counts them, following the file's
+  time signatures and tempo changes; where a time signature starts it shows it (*5  3/4*), unless
+  the whole file is in 4/4.
 
 Playback
 ========
 
 * Play, Pause, Stop, Panic; speed in percent of the file's tempo.
+* **Keyboard**: the keyboard of the main window shows the notes a part of the file plays
+  (Digital 1, Digital 2, Analog or Drums), in the part's colour, on the keys that play them at
+  the part's octave; a triangle on the first or last key means notes beyond the 37 keys.
 * **Loop** repeats the A–B range, or the whole song when none is set. **A** and **B** take the
   playback position (snapped to bars if chosen); A shows on the ruler at once, the range when B
   is set. **Trim** keeps only a part of the file.

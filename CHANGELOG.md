@@ -7,12 +7,20 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 ### Changes
 - **macOS disk image and Linux .deb** on the releases page, next to the Windows installer:
   `JD-Xi-Studio-<version>-macos-arm64.dmg` (Apple silicon) and `…-macos-x86_64.dmg` (Intel),
-  macOS 11 or later (not signed with a
-  Developer ID yet: the first time, System Settings › Privacy & Security › Open Anyway) and `jd-xi-studio_<version>_amd64.deb`
-  (Ubuntu 22.04 / Debian 12 or later: menu entry, `jd-xi-studio` command). Built by CI with
-  PyInstaller (`building/desktop/`, Actions › Desktop packages), each started on its runner before
-  it is attached; the .deb is also installed there first. The Mac app declares its use of the
+  macOS 11 or later (not signed with a Developer ID yet: the first time, System Settings ›
+  Privacy & Security › Open Anyway), and `jd-xi-studio_<version>_amd64.deb` (Ubuntu 22.04 /
+  Debian 12 or later: menu entry, `jd-xi-studio` command). Built by CI with PyInstaller
+  (`building/desktop/`, Actions › Desktop packages), each started on its runner before it is
+  attached; the .deb is also installed there first. The Mac app declares its use of the
   audio input (USB recorder): without it macOS records silence (as the original project found).
+- Editors window: Program settings, Recipes and Settings are always in the tab bar, no longer
+  opened from a «+» menu. Each can be reduced to a small bar in its colour (**◂** on the tab, the
+  name under the mouse) and opens again with a click on the bar, as some browsers do; which are
+  open is remembered. Program settings still builds its cards the first time it is shown.
+- MIDI Player › Playback › **Keyboard**: the keyboard of the main window shows the notes one part
+  of the file plays (Digital 1, Digital 2, Analog or Drums; Off by default, remembered), in the
+  part's colour, on the keys that play them at the part's octave. A triangle on the first or last
+  key: notes beyond the 37 keys. The keys pressed on the JD-Xi still show as before.
 - **Recipes** is one workspace in three areas. On the left, always, the library: **+ New recipe**,
   a search, each recipe with its category and the day it was last changed; Open, Edit and, under
   ⋯ (or a right click), Duplicate, Export… and Delete… (asked first). In the middle the work: the
@@ -51,6 +59,9 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - The manual's pages build without docutils warnings (title underlines, a list in Installation).
 
 ### Fixed
+- Program editor: a Partial Switch sent back by the JD-Xi was also taken as a generic switch with
+  no control and logged as a failure; the parser's own keys (`parameter_block`, `block_name`) are
+  not taken as parameters (from markxbrooks/JDXI-Editor 356fc1c9).
 - macOS: while playing (MIDI Player, Pattern) the app holds a *latency-critical* activity, so the
   system does not throttle its timers (App Nap, timer coalescing) — on the macOS test runner notes
   came up to 150 ms off their beat and a 50 ms wait took 95. Windows has had its 1 ms timer for the
@@ -77,6 +88,11 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
   program changes, silent parts) and what to include in a report. Installation links to it.
 - The pages of the editors and of Getting started are in the manual's contents (in a hidden
   table of contents), not only reachable by their links.
+- MIDI Player: the ruler drew every file in 4/4 at its first tempo, so in 3/4, 6/8 or with a
+  change of tempo or time signature its bars did not match the position shown (bar / beat) nor
+  the A / B points snapped to bars. It now follows the file's time signatures and tempo changes,
+  counts bars as the player does, and shows the time signature where it starts (when the file is
+  not 4/4 throughout).
 
 ### Removed
 - `doc/`: what no page, tool or test used. The 57 hand-written API pages (`jdxi_editor.*.rst`,

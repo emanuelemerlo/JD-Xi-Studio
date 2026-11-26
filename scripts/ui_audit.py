@@ -77,7 +77,12 @@ def audit_navigation(app, window, problems: list[str], timings: dict[str, list[f
 
     def timed(source: str, key: str, action) -> None:
         config = window.editor_registry[key]
-        exists = any(type(tabs.widget(i)) is config.editor_class for i in range(tabs.count()))
+        # an editor in its tab but not built yet (Program settings builds its cards the first
+        # time it is shown) is built by this showing: it counts as the first time
+        exists = any(
+            type(tabs.widget(i)) is config.editor_class and getattr(tabs.widget(i), "panels_built", True)
+            for i in range(tabs.count())
+        )
         start = time.perf_counter()
         action()
         spin(app)

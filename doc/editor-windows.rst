@@ -26,7 +26,9 @@ ending in «…» opens a dialog.
   *Parts*: Digital 1, Digital 2,
   Analog, Drums (Ctrl+1–4); *Effects*: Effects, Vocal FX (Ctrl+5, 6);
   *Playback*: Arpeggio, Pattern, MIDI Player (Ctrl+7, 8, 9); Recipes; Settings. The tabs are in
-  the same order, Program settings, Recipes and Settings when open.
+  the same order. Program settings, Recipes and Settings are always there too, but can be reduced
+  to a small bar in their colour (the **◂** on the tab; the name shows under the mouse): a click
+  on the bar, or the menu, opens them again. Which are open is remembered.
 * **JD-Xi** — done on the instrument: **Save the program…** (the guided WRITE into a user slot),
   **Send all…** (every value of the open editors into its current program; asks first, writes
   nothing in its memory), **Read the user programs (E–H)…** (loads the 256 user slots one by one

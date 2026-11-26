@@ -1,9 +1,12 @@
-"""Core tabs always there; Program settings, Recipes and Settings open and close from the editors window."""
+"""Core tabs always there; Program settings, Recipes and Settings always there too,
+reduced to a bar or expanded, from the editors window."""
 
 from __future__ import annotations
 
 import pytest
 from PySide6.QtWidgets import QApplication, QTabBar
+
+from jdxi_editor.ui.editors.collapsible_tabs import COLLAPSED_WIDTH
 
 
 @pytest.fixture(scope="module")
@@ -19,67 +22,62 @@ def window():
     w.close()
 
 
-def _names(window):
-    tabs = window.main_editor.editor_tab_widget
-    return [tabs.tabToolTip(i) for i in range(tabs.count())]
+def _bar(window):
+    return window.main_editor.editor_tab_widget.tabBar()
 
 
-def test_core_tabs_have_no_close_button(window):
+def test_core_tabs_cannot_be_reduced(window):
     tabs = window.main_editor.editor_tab_widget
     program = window._tab_editor("program")
     index = tabs.indexOf(program)
     assert index >= 0
     assert tabs.tabBar().tabButton(index, QTabBar.ButtonPosition.RightSide) is None
-    window.close_tab(index)  # ignored
-    assert tabs.indexOf(program) == index
+    window.collapse_tab("program")  # ignored
+    assert not _bar(window).is_collapsed(index) and tabs.tabText(index)
 
 
-def test_open_close_and_reopen_keeps_the_editor(window):
+def test_the_optional_tabs_are_always_in_the_bar(window):
     tabs = window.main_editor.editor_tab_widget
+    for name in window.OPTIONAL_TABS:
+        assert tabs.indexOf(window._tab_editor(name)) >= 0, name
+    assert not hasattr(window.main_editor, "tab_menu_button")  # no "+" any more
+
+
+def test_reduce_and_expand_keeps_the_editor(window):
+    tabs = window.main_editor.editor_tab_widget
+    bar = _bar(window)
     window.open_tab("recipes")
     recipes = window._tab_editor("recipes")
     index = tabs.indexOf(recipes)
-    assert index >= 0 and "recipes" in window.open_optional_tabs()
-    close = tabs.tabBar().tabButton(index, QTabBar.ButtonPosition.RightSide)
-    assert close is not None
-    close.click()  # the × on the tab
-    assert tabs.indexOf(recipes) == -1 and "recipes" not in window.open_optional_tabs()
-    window.open_tab("recipes")
-    assert window._tab_editor("recipes") is recipes and tabs.indexOf(recipes) >= 0  # the same editor
-    assert tabs.currentWidget() is recipes
+    assert tabs.currentWidget() is recipes and not bar.is_collapsed(index)
+    assert "recipes" in window.open_optional_tabs()
+    reduce = bar.tabButton(index, QTabBar.ButtonPosition.RightSide)
+    assert reduce is not None and reduce.text() == "◂"
+    reduce.click()
+    assert bar.is_collapsed(index) and tabs.indexOf(recipes) == index  # still there, as a bar
+    assert tabs.tabText(index) == "" and bar.tabSizeHint(index).width() == COLLAPSED_WIDTH
+    assert tabs.currentWidget() is not recipes  # the window moved off it
+    assert "Recipes" in tabs.tabToolTip(index)  # its name when the mouse is on the bar
+    assert "recipes" not in window.open_optional_tabs()
+    tabs.setCurrentIndex(index)  # a click on the bar
+    assert not bar.is_collapsed(index) and tabs.tabText(index) == "Recipes"
+    assert window._tab_editor("recipes") is recipes and tabs.currentWidget() is recipes
 
 
-def test_the_plus_menu_lists_the_optional_tabs(window):
-    from PySide6.QtWidgets import QMenu
-
-    menu = QMenu()
-    window._fill_tab_menu(menu)
-    actions = menu.actions()
-    assert len(actions) == len(window.OPTIONAL_TABS)
-    ticked = {a.text() for a in actions if a.isChecked()}
-    assert ticked  # recipes is open (previous test) at least
-    assert window.main_editor.tab_menu_button.isVisibleTo(window.main_editor)
-
-
-def test_open_tabs_are_remembered(window):
+def test_the_state_is_remembered(window):
     window.open_tab("program_parts")
     assert "program_parts" in window._saved_optional_tabs()
-    tabs = window.main_editor.editor_tab_widget
-    window.close_tab(tabs.indexOf(window._tab_editor("program_parts")))
+    window.collapse_tab("program_parts")
     assert "program_parts" not in window._saved_optional_tabs()
 
 
-def test_program_settings_opens_after_programs(window):
+def test_program_settings_sits_after_programs(window):
     tabs = window.main_editor.editor_tab_widget
-    window.open_tab("program_parts")
     settings = window._tab_editor("program_parts")
     assert tabs.indexOf(settings) == tabs.indexOf(window._tab_editor("program")) + 1
+    window.open_tab("program_parts")
     assert tabs.tabText(tabs.indexOf(settings)) == "Program settings"
-    window.close_tab(tabs.indexOf(settings))
-    window.open_tab("recipes")  # another tab added at the end meanwhile
-    window.open_tab("program_parts")  # back: again right after Programs
-    assert tabs.indexOf(settings) == tabs.indexOf(window._tab_editor("program")) + 1
-    window.close_tab(tabs.indexOf(settings))
+    window.collapse_tab("program_parts")
 
 
 def test_the_programs_mixer_has_pan_and_sends_of_program_settings(window):

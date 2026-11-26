@@ -18,6 +18,8 @@ Usage Example:
 Requires: PySide6.QtWidgets, PySide6.QtCore, PySide6.QtGui
 """
 
+from typing import Optional
+
 from PySide6.QtCore import QEasingCurve, QPointF, QPropertyAnimation, QRect, QRectF, Qt, Signal
 from PySide6.QtGui import (
     QColor,
@@ -26,6 +28,7 @@ from PySide6.QtGui import (
     QPainter,
     QPaintEvent,
     QPen,
+    QPolygonF,
     QShowEvent,
 )
 from PySide6.QtWidgets import QGraphicsOpacityEffect, QLabel, QPushButton, QWidget
@@ -50,6 +53,9 @@ class PianoKey(QPushButton):
         self.is_black = is_black
         self.is_pressed = False
         self.middle_c = False  # this key sounds middle C (C4) at the current octave
+        self.file_color: Optional[QColor] = None  # a note of the MIDI file plays here
+        self.beyond = ""  # "<" / ">": file notes below / above the 37 keys (edge keys only)
+        self.beyond_color: Optional[QColor] = None
         self.setFixedSize(width, height)
         self.setFlat(True)
 
@@ -156,6 +162,12 @@ class PianoKey(QPushButton):
 
         painter.fillRect(0, 0, self.width(), self.height(), gradient)
 
+        if self.file_color is not None:
+            # the file's note: the part's colour over the key, lighter than a key pressed
+            colour = QColor(self.file_color)
+            colour.setAlpha(150 if self.is_black else 120)
+            painter.fillRect(1, 1, self.width() - 2, self.height() - 2, colour)
+
         if self.is_pressed:
             painter.fillRect(
                 0, self.height() - 4, self.width(), 4, QColor(255, 0, 0, 100)
@@ -166,6 +178,22 @@ class PianoKey(QPushButton):
 
         if self.middle_c:
             self._paint_middle_c(painter)
+        if self.beyond:
+            self._paint_beyond(painter)
+
+    def _paint_beyond(self, painter: QPainter) -> None:
+        """A small triangle at the bottom of an edge key: file notes beyond the keys."""
+        colour = QColor(self.beyond_color or "#8a8d94")
+        colour.setAlpha(230)
+        w, h = self.width(), self.height()
+        y = h - 26
+        if self.beyond == "<":
+            points = [QPointF(5, y), QPointF(13, y - 6), QPointF(13, y + 6)]
+        else:
+            points = [QPointF(w - 5, y), QPointF(w - 13, y - 6), QPointF(w - 13, y + 6)]
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(colour)
+        painter.drawPolygon(QPolygonF(points))
 
     MIDDLE_C_COLOR = "#d0473b"  # a quieter JD-Xi red (MIDDLE_C_GREY: the neutral option)
     MIDDLE_C_GREY = "#8a8d94"
