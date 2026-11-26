@@ -74,13 +74,14 @@ def transaction():
 
 
 class _Edit:
-    __slots__ = ("changes", "time", "id", "tx")
+    __slots__ = ("changes", "time", "id", "tx", "linked")
 
     def __init__(self, value, old: int, new: int):
         self.changes = {value: [old, new]}
         self.time = time.monotonic()
         self.id = next(_ids)
         self.tx = None  # the transaction it belongs to (None: this editor only)
+        self.linked = False  # it holds the changes a linked edit made follow (see attached)
 
     def record(self, value, old: int, new: int) -> None:
         change = self.changes.get(value)
@@ -115,7 +116,19 @@ class EditHistory(QObject):
         self._baseline: dict = {}
         self._floor_id = 0  # the id of the last step dropped (MAX_STEPS): an empty Undo is not the start
         self._modified = False
+        self._attach = 0  # inside attached(): changes join the last step
         _histories.add(self)
+
+    @contextmanager
+    def attached(self):
+        """The changes made inside join the step just recorded (the one of the change that
+        caused them): «Link partials» sets the other partials with the one edited, and
+        Undo takes them back together. Outside a gesture's group only."""
+        self._attach += 1
+        try:
+            yield
+        finally:
+            self._attach -= 1
 
     # ------------------------------------------------------------ recording
     def watch(self, values: Iterable) -> None:
@@ -142,8 +155,15 @@ class EditHistory(QObject):
             self._update()
             return
         top = self._undo[-1] if self._undo else None
-        if (top is not None and not self._sealed and len(top.changes) == 1
-                and pv in top.changes
+        if self._attach and top is not None:
+            top.record(pv, old, new)
+            top.linked = True
+            self._redo.clear()
+            _last_edited = weakref.ref(self)
+            self._update()
+            return
+        if (top is not None and not self._sealed and pv in top.changes
+                and (len(top.changes) == 1 or top.linked)
                 and time.monotonic() - top.time < MERGE_SECONDS):
             top.record(pv, old, new)
             top.time = time.monotonic()

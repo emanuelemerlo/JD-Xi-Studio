@@ -97,53 +97,50 @@ Digital Synth Editor Features
       - **Preset Management**: Save and recall effect settings
       - **Performance Integration**: Optimized for live performance
 
-Partial Management System
-=========================
+Working with the Three Partials
+===============================
 
-**Individual Partial Control**
-   Complete control over each of the 3 partials:
+A SuperNATURAL synth tone has three partials. **PARTIAL 1 / 2 / 3** chooses the one shown;
+under each, **P ON** turns it on or off and **P SEL** says whether the panel knobs edit it (the
+[05]–[07] and [01]–[03] buttons of the JD-Xi). Above them:
 
-   **Partial Selection**
-      - **Active/Inactive**: Enable or disable individual partials
-      - **Partial Mixing**: Balance between partials
-      - **Partial Routing**: Flexible audio routing options
-      - **Partial Effects**: Individual effects per partial
+**Link partials**
+   When it is on, a change to the partial shown is made on the other partials that are on too
+   (the value you set, not a shift: Cutoff 80 is 80 on all of them), in one Undo step. The
+   oscillator stays each partial's own: waveform, variation, PCM wave and gain, pitch, detune and
+   Super Saw detune. It is off when the editor opens.
 
-   **Partial Parameters**
-      - **Oscillator Settings**: Individual oscillator control per partial
-      - **Filter Settings**: Separate filter control per partial
-      - **Envelope Settings**: Individual envelope control per partial
-      - **Effect Settings**: Separate effects per partial
+**Partial ▾**
+   On the partial shown:
 
-**Layer Blending**
-   Sophisticated mixing and blending:
+   - **Copy partial**, or **Copy section** (Oscillator, Filter, Amplifier, LFO, Modulation LFO);
+   - **Paste into partial**: what was copied, also from the other Digital part (the copy is shared
+     by Digital 1 and Digital 2); the menu says what it is (*Filter of Digital 1 · partial 2*);
+   - **Swap with partial** 1, 2 or 3;
+   - **Randomize…**: a section of the partial, the partial or the whole tone (the three partials,
+     Wave Shape and Analog Feel), by a little (each value moves by up to 10% of its range), a
+     medium amount (30%) or much (anything, also the waveforms, filter types and LFO shapes). The
+     name, category, playing style and which partials are on stay; a partial stays audible.
 
-   **Mixing Controls**
-      - **Volume Balance**: Individual partial volume control
-      - **Pan Control**: Stereo positioning per partial
-      - **Crossfading**: Smooth transitions between partials
-      - **Mute/Solo**: Individual partial isolation
+   Each of these is one Undo step.
 
-   **Blending Modes**
-      - **Additive**: Simple addition of partials
-      - **Multiplicative**: Complex partial interactions
-      - **Modulation**: Partial-to-partial modulation
-      - **Cross-Modulation**: Advanced modulation routing
+**PCM waves**
+   With the waveform **PCM**, **Wave Number** opens the list of the 160 waves by family (Synth &
+   Lead, Bass, Bell & Metallic, Voice & Formant, Pad & Strings, FX & Noise, Hit & Drum, Keys &
+   Organ, Guitar, Brass & Wind, Ethnic), with a search by name or number and ★ favourites. With
+   **Try** on, each wave chosen is set on the partial and plays a short C4 on the part's channel:
+   the arrow keys go through the waves by ear. Cancel puts the wave back; OK keeps the one chosen
+   (one Undo step).
 
-**Cross-Modulation**
-   Advanced modulation routing between partials:
+**Envelope loop**
+   With *Loop Mode* (MISC) set to FREE-RUN or TEMPO-SYNC, the filter and amplifier envelopes show
+   the attack and decay starting again while the key is held, with *loop* (or *loop 1/4*, the
+   Sync Note).
 
-   **Modulation Sources**
-      - **LFO**: Low-frequency oscillator modulation
-      - **Envelope**: Envelope follower modulation
-      - **External**: MIDI controller modulation
-      - **Internal**: Partial-to-partial modulation
-
-   **Modulation Destinations**
-      - **Pitch**: Frequency modulation
-      - **Filter**: Cutoff and resonance modulation
-      - **Amplitude**: Volume modulation
-      - **Effects**: Effect parameter modulation
+**Take from A or B**
+   In the top bar, after the A/B photos and the disk, the button with two arrows joining lists the sections where a photo differs
+   from the current sound (*FILTER P1: 3 different*): tick the ones to bring in, the rest stays as
+   it is. One Undo step takes them back. It also works in the Analog editor.
 
 Performance Features
 ====================
