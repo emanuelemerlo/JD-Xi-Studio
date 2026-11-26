@@ -416,34 +416,34 @@
             <translation>Suoni di partenza</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="262" />
+            <location filename="../../jdxi_editor/main.py" line="267" />
             <source>Visual Sound Design, Editing &amp; Librarian</source>
             <translation>Visual Sound Design, Editing &amp; Librarian</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="269" />
+            <location filename="../../jdxi_editor/main.py" line="274" />
             <location filename="../../jdxi_editor/ui/dialogs/about.py" line="147" />
             <source>An independent, unofficial tool: not affiliated with, endorsed or sponsored by Roland Corporation. Roland and JD-Xi are trademarks of Roland Corporation in the United States and/or other countries; all other names belong to their owners.</source>
             <translation>Uno strumento indipendente e non ufficiale: non è affiliato, approvato né sponsorizzato da Roland Corporation. Roland e JD-Xi sono marchi di Roland Corporation negli Stati Uniti e/o in altri paesi; tutti gli altri nomi appartengono ai rispettivi proprietari.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="168" />
+            <location filename="../../jdxi_editor/main.py" line="173" />
             <source>Initializing MIDI subsystem…</source>
             <translation>Avvio del sistema MIDI…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="178" />
+            <location filename="../../jdxi_editor/main.py" line="183" />
             <source>Ready</source>
             <translation>Pronto</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="278" />
+            <location filename="../../jdxi_editor/main.py" line="283" />
             <location filename="../../jdxi_editor/ui/dialogs/about.py" line="102" />
             <source>Version {version}</source>
             <translation>Versione {version}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/main.py" line="319" />
+            <location filename="../../jdxi_editor/main.py" line="324" />
             <source>{home}  •  MIT licence</source>
             <translation>{home}  •  licenza MIT</translation>
         </message>
@@ -665,16 +665,41 @@
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="280" />
+            <source>Text size</source>
+            <translation>Dimensione del testo</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="282" />
+            <source>Normal</source>
+            <translation>Normale</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="282" />
+            <source>Large</source>
+            <translation>Grande</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="282" />
+            <source>Larger</source>
+            <translation>Più grande</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="288" />
+            <source>The new text size is used from the next start.</source>
+            <translation>La nuova dimensione del testo si applica dal prossimo avvio.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="297" />
             <source>Ask before losing unsaved changes</source>
             <translation>Chiedi prima di perdere modifiche non salvate</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="285" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="302" />
             <source>Logs</source>
             <translation>Log</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="283" />
+            <location filename="../../jdxi_editor/ui/dialogs/settings.py" line="300" />
             <source>Before a preset, a program or a patch file replaces edited sounds, and at closing</source>
             <translation>Quando un preset, un programma o una patch sostituiscono suoni modificati, e alla chiusura</translation>
         </message>
@@ -739,7 +764,7 @@
             <translation>Download: {asset_name}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/collapsible_tabs.py" line="130" />
+            <location filename="../../jdxi_editor/ui/editors/collapsible_tabs.py" line="135" />
             <source>Reduce the tab to a bar (a click on the bar opens it again)</source>
             <translation>Riduci la scheda a una barretta (un clic sulla barretta la riapre)</translation>
         </message>
@@ -785,24 +810,34 @@
             <translation>Preset successivo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="79" />
-            <source>Import .syx</source>
-            <translation>Importa .syx</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="82" />
+            <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="85" />
             <source>Load a single-part SysEx file into this editor</source>
             <translation>Carica in questo editor un file SysEx di una parte</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="85" />
-            <source>Export .syx</source>
-            <translation>Esporta .syx</translation>
+            <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="91" />
+            <source>Save this part as a SysEx file</source>
+            <translation>Salva questa parte come file SysEx</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="82" />
+            <source>Import</source>
+            <translation>Importa</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="82" />
+            <source>Import .syx</source>
+            <translation>Importa .syx</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="88" />
-            <source>Save this part as a SysEx file</source>
-            <translation>Salva questa parte come file SysEx</translation>
+            <source>Export</source>
+            <translation>Esporta</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/editors/helpers/edit_buffer_ops.py" line="88" />
+            <source>Export .syx</source>
+            <translation>Esporta .syx</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/editors/main.py" line="80" />
@@ -4031,17 +4066,17 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Numeri dei parametri presi da JD-Xi Manager, da verificare sullo strumento: {which}.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/framework.py" line="813" />
+            <location filename="../../jdxi_editor/ui/v2/framework.py" line="868" />
             <source>CATEGORY</source>
             <translation>CATEGORIA</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/framework.py" line="817" />
+            <location filename="../../jdxi_editor/ui/v2/framework.py" line="872" />
             <source>All sounds</source>
             <translation>Tutti i suoni</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/framework.py" line="934" />
+            <location filename="../../jdxi_editor/ui/v2/framework.py" line="1007" />
             <source>Reloading restores the values from before the changes in this editor.</source>
             <translation>Ricarica i valori precedenti alle modifiche di questo editor.</translation>
         </message>
@@ -6536,27 +6571,27 @@ TONE: FILTER	Cutoff KF	+50</translation>
             <translation>tono di partenza {tone}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/restyle.py" line="257" />
+            <location filename="../../jdxi_editor/ui/v2/restyle.py" line="261" />
             <source>Changes not saved to a file: changing the sound from the program asks first</source>
             <translation>Modifiche non salvate su file: prima di cambiare suono dal programma viene chiesta conferma</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/restyle.py" line="276" />
+            <location filename="../../jdxi_editor/ui/v2/restyle.py" line="280" />
             <source>Undo the last change (Ctrl+Z)</source>
             <translation>Annulla l'ultima modifica (Ctrl+Z)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/restyle.py" line="277" />
+            <location filename="../../jdxi_editor/ui/v2/restyle.py" line="281" />
             <source>Redo (Ctrl+Y)</source>
             <translation>Ripeti (Ctrl+Y)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/restyle.py" line="254" />
+            <location filename="../../jdxi_editor/ui/v2/restyle.py" line="258" />
             <source>Modified</source>
             <translation>Modificato</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/restyle.py" line="280" />
+            <location filename="../../jdxi_editor/ui/v2/restyle.py" line="284" />
             <source>Restore the original values and discard this editor's changes</source>
             <translation>Ripristina i valori originali e annulla le modifiche di questo editor</translation>
         </message>
@@ -7512,15 +7547,15 @@ Le modifiche che non avevi salvato andrebbero perse. Le rimando al JD-Xi?</trans
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="169" />
-            <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="243" />
-            <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="426" />
+            <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="245" />
+            <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="428" />
             <source>All Categories</source>
             <translation>Tutte le categorie</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="180" />
-            <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="460" />
-            <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="248" />
+            <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="462" />
+            <location filename="../../jdxi_editor/ui/widgets/combo_box/searchable_filterable.py" line="250" />
             <source>All Banks</source>
             <translation>Tutti i banchi</translation>
         </message>

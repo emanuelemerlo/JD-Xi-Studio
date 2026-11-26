@@ -279,8 +279,9 @@ class UiPreferencesDialog(QDialog):
 
         self.text_size_label = QLabel(tr("Text size"))
         self.text_size_combo = QComboBox()
-        for value, name in text_size.SIZES.items():
-            self.text_size_combo.addItem(f"{tr(name)} ({value}%)", value)
+        names = {100: tr("Normal"), 112: tr("Large"), 125: tr("Larger")}  # (text_size.SIZES)
+        for value in text_size.SIZES:
+            self.text_size_combo.addItem(f"{names[value]} ({value}%)", value)
         current = int(self.settings.value(text_size.SETTING, 100) or 100)
         self.text_size_combo.setCurrentIndex(max(0, self.text_size_combo.findData(current)))
         choice(grid, self.text_size_label, self.text_size_combo)

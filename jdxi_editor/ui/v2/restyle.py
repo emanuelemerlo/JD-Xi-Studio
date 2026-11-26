@@ -106,7 +106,7 @@ def stylesheet(root_class: str, accent: str) -> str:
     QPushButton:checked {{ background: {accent}; color: #0e0f11; border-color: {accent}; }}
     QPushButton:disabled {{ color: #5a5d64; }}
     QComboBox, QSpinBox, QDoubleSpinBox, QLineEdit {{
-        background: #121214; color: #ffffff; border: 1px solid #3a3d44; border-radius: 5px; padding: 3px 6px;
+        background: #121214; color: #ffffff; border: 1px solid #3a3d44; border-radius: 5px; padding: 2px 6px;
         font-size: 13px;
     }}
     QComboBox QAbstractItemView {{ background: #1b1c1f; color: #e6e6e6; selection-background-color: #333333;
