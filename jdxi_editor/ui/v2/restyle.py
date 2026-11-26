@@ -126,7 +126,9 @@ def stylesheet(root_class: str, accent: str) -> str:
 def _is_round(button: QPushButton) -> bool:
     from jdxi_editor.ui.style.jdxi import JDXiUIStyle
 
-    return button.styleSheet() == JDXiUIStyle.BUTTON_ROUND
+    from jdxi_editor.ui.text_size import scale_style
+
+    return button.styleSheet() in (JDXiUIStyle.BUTTON_ROUND, scale_style(JDXiUIStyle.BUTTON_ROUND))
 
 
 def _layout_of(widget: QWidget) -> tuple[QLayout, int] | tuple[None, int]:
@@ -318,7 +320,9 @@ class _MessageBoxLook(QObject):
         from PySide6.QtWidgets import QMessageBox
 
         if event.type() == QEvent.Type.Show and isinstance(watched, QMessageBox):
-            if watched.styleSheet() != MESSAGE_BOX_STYLE:
+            from jdxi_editor.ui.text_size import scale_style
+
+            if watched.styleSheet() not in (MESSAGE_BOX_STYLE, scale_style(MESSAGE_BOX_STYLE)):
                 watched.setStyleSheet(MESSAGE_BOX_STYLE)
             fit_buttons(watched)
         if event.type() == QEvent.Type.Show:
@@ -378,6 +382,8 @@ def apply_tooltip_style(app) -> None:
     palette.setColor(QPalette.ColorRole.Window, QColor("#1f2025"))
     palette.setColor(QPalette.ColorRole.WindowText, QColor("#e8e8ea"))
     QToolTip.setPalette(palette)
-    if TOOLTIP_STYLE not in app.styleSheet():
+    from jdxi_editor.ui.text_size import scale_style
+
+    if TOOLTIP_STYLE not in app.styleSheet() and scale_style(TOOLTIP_STYLE) not in app.styleSheet():
         app.setStyleSheet(app.styleSheet() + "\n" + TOOLTIP_STYLE)
     apply_message_box_style(app)
