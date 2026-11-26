@@ -47,6 +47,9 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 - The manual's pages build without docutils warnings (title underlines, a list in Installation).
 
 ### Fixed
+- Program editor: a Partial Switch sent back by the JD-Xi was also taken as a generic switch with
+  no control and logged as a failure; the parser's own keys (`parameter_block`, `block_name`) are
+  not taken as parameters (from markxbrooks/JDXI-Editor 356fc1c9).
 - macOS: while playing (MIDI Player, Pattern) the app holds a *latency-critical* activity, so the
   system does not throttle its timers (App Nap, timer coalescing) — on the macOS test runner notes
   came up to 150 ms off their beat and a 50 ms wait took 95. Windows has had its 1 ms timer for the
