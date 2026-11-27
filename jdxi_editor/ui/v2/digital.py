@@ -367,9 +367,14 @@ class DigitalToneEditor(tone_editor_base()):
                 name = QLabel(pv.info.label)
                 name.setStyleSheet("color: #c9cbd1; font-size: 11px; background: transparent;")
                 report_to(self.info_hub, name, pv)
+                # both as wide as their content: the room left goes to the stretch at the
+                # end, not between a name and its switch
+                name.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
                 line.addWidget(name)
                 line.addSpacing(6)
-                line.addWidget(ChoiceButtons(pv, self.ACCENT, self.info_hub, show_name=False))
+                buttons = ChoiceButtons(pv, self.ACCENT, self.info_hub, show_name=False)
+                buttons.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
+                line.addWidget(buttons)
             line.addStretch()
             box.addLayout(line)
             row.addLayout(box)
