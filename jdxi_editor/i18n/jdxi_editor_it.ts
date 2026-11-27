@@ -192,6 +192,7 @@
         </message>
         <message>
             <location filename="../../jdxi_editor/i18n/ui_strings.py" line="18" />
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="70" />
             <source>Bass</source>
             <translation>Basso</translation>
         </message>
@@ -279,7 +280,7 @@
         <message>
             <location filename="../../jdxi_editor/i18n/ui_strings.py" line="23" />
             <location filename="../../jdxi_editor/ui/v2/framework.py" line="329" />
-            <location filename="../../jdxi_editor/ui/v2/history.py" line="371" />
+            <location filename="../../jdxi_editor/ui/v2/history.py" line="391" />
             <source>Program</source>
             <translation>Programma</translation>
         </message>
@@ -540,6 +541,8 @@
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/dialogs/about.py" line="156" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="961" />
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="104" />
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="453" />
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="384" />
             <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="371" />
@@ -739,7 +742,7 @@
             <translation>Download: {asset_name}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/editors/collapsible_tabs.py" line="130" />
+            <location filename="../../jdxi_editor/ui/editors/collapsible_tabs.py" line="135" />
             <source>Reduce the tab to a bar (a click on the bar opens it again)</source>
             <translation>Riduci la scheda a una barretta (un clic sulla barretta la riapre)</translation>
         </message>
@@ -1616,7 +1619,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         <message>
             <location filename="../../jdxi_editor/ui/editors/synth/base.py" line="357" />
             <location filename="../../jdxi_editor/ui/editors/synth/base.py" line="383" />
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="777" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="790" />
             <source>SysEx Files (*.syx);;All Files (*)</source>
             <translation>File SysEx (*.syx);;Tutti i file (*)</translation>
         </message>
@@ -1672,261 +1675,317 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Nota: {note_name}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="202" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="209" />
             <source>its parameters do not match this editor's</source>
             <translation>i suoi parametri non corrispondono a quelli di questo editor</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="204" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="211" />
             <source>it is incomplete or damaged</source>
             <translation>è incompleta o danneggiata</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="206" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="213" />
             <source>it was taken without the JD-Xi and some of its data is not known: capture it again with the JD-Xi connected</source>
             <translation>è stata scattata senza JD-Xi e alcuni suoi dati non sono noti: scattala di nuovo con il JD-Xi collegato</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="736" />
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="751" />
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="735" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="749" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="764" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="748" />
             <source>A/B compare</source>
             <translation>Confronto A/B</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="738" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="751" />
             <source>Save first…</source>
             <translation>Salva prima…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="739" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="752" />
             <source>Replace</source>
             <translation>Sostituisci</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="635" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="925" />
+            <source>Take from a photo</source>
+            <translation>Prendi da una foto</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="933" />
+            <source>Bring sections of a photo into the current sound: the rest stays as it is. Only the sections that differ are listed; one Undo step takes them back.</source>
+            <translation>Porta nel suono attuale alcune sezioni di una foto: il resto rimane com'è. Sono elencate solo le sezioni diverse; un solo Annulla le toglie.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="957" />
+            <source>Take</source>
+            <translation>Prendi</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="642" />
             <source>Click to close</source>
             <translation>Clic per chiudere</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="732" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="745" />
             <source>{slot} already holds «{name}» ({time}). Replace it with the current Tone?</source>
             <translation>{slot} contiene già «{name}» ({time}). Sostituirla con il Tone attuale?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="737" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="750" />
             <source>It has not been saved to a file.</source>
             <translation>Non è stata salvata su file.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="811" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="824" />
             <source>read from the JD-Xi</source>
             <translation>letta dal JD-Xi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="811" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="824" />
             <source>local: taken from the editor</source>
             <translation>locale: presa dall'editor</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="813" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="826" />
             <source>not saved to a file</source>
             <translation>non salvata su file</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="831" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="844" />
             <source>Switch between A and B: connect the JD-Xi</source>
             <translation>Scambia A e B: collega il JD-Xi</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="197" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="854" />
+            <source>Take sections (filter, envelopes...) from A or B into the current sound</source>
+            <translation>Prendi sezioni (filtro, inviluppi...) da A o da B nel suono attuale</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="855" />
+            <source>Take from A or B: capture a photo first</source>
+            <translation>Prendi da A o da B: prima scatta una foto</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="982" />
+            <source>The sound is the same as this photo.</source>
+            <translation>Il suono è uguale a questa foto.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="994" />
+            <source>Tick the sections to take.</source>
+            <translation>Spunta le sezioni da prendere.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="204" />
             <source>it was taken with another version of JD-Xi Studio (format {theirs}, this one reads {ours})</source>
             <translation>è stata presa con un'altra versione di JD-Xi Studio (formato {theirs}, questa legge il {ours})</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="200" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="207" />
             <source>it belongs to {part}</source>
             <translation>appartiene a {part}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="428" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="435" />
             <source>Capturing {slot}: reading the Tone from the JD-Xi…</source>
             <translation>Acquisizione di {slot}: lettura del Tone dal JD-Xi…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="495" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="502" />
             <source>Recalling {slot}…</source>
             <translation>Richiamo di {slot}…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="515" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="522" />
             <source>{slot} recalled</source>
             <translation>{slot} richiamata</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="518" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="525" />
             <source>A/B: photo {slot}</source>
             <translation>A/B: foto {slot}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="733" />
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="815" />
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="754" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="746" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="828" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="767" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="943" />
             <source>no name</source>
             <translation>senza nome</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="767" />
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="776" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="780" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="789" />
             <source>Save {slot}</source>
             <translation>Salva {slot}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="768" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="781" />
             <source>Name of {slot} (12 characters, written as Tone Name):</source>
             <translation>Nome di {slot} (12 caratteri, scritto come Tone Name):</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="782" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="795" />
             <source>{slot} saved: {file}</source>
             <translation>{slot} salvata: {file}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="814" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="827" />
             <source>{slot}: «{name}», {time}, {where}, {saved}.</source>
             <translation>{slot}: «{name}», {time}, {where}, {saved}.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="833" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="846" />
             <source>Switch between A and B: capture both first</source>
             <translation>Scambia A e B: prima acquisiscile entrambe</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="436" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="983" />
+            <source>No photo to take from.</source>
+            <translation>Nessuna foto da cui prendere.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="997" />
+            <source>{n} values taken from {slot}</source>
+            <translation>{n} valori presi da {slot}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="443" />
             <source>{slot} not captured: the JD-Xi did not send the whole Tone ({detail}). Try again.</source>
             <translation>{slot} non acquisita: il JD-Xi non ha mandato tutto il Tone ({detail}). Riprova.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="440" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="447" />
             <source>{slot} captured</source>
             <translation>{slot} acquisita</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="451" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="458" />
             <source>{slot} captured, but it could not be written to disk: it will be lost when JD-Xi Studio closes</source>
             <translation>{slot} acquisita, ma non è stato possibile scriverla su disco: andrà persa alla chiusura di JD-Xi Studio</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="468" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="475" />
             <source>{slot} cannot be recalled: {problem}</source>
             <translation>{slot} non si può richiamare: {problem}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="471" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="478" />
             <source>{slot} not recalled: connect the JD-Xi to hear it</source>
             <translation>{slot} non richiamata: collega il JD-Xi per sentirla</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="503" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="510" />
             <source>{slot} sent, but the JD-Xi did not confirm it ({detail}): its Tone is uncertain. Read it again or recall {slot} once more.</source>
             <translation>{slot} inviata, ma il JD-Xi non l'ha confermata ({detail}): il suo Tone è incerto. Rileggilo o richiama {slot} un'altra volta.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="509" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="516" />
             <source>{slot} sent, but the JD-Xi holds {n} different values: its Tone is uncertain. Recall {slot} once more.</source>
             <translation>{slot} inviata, ma il JD-Xi ha {n} valori diversi: il suo Tone è incerto. Richiama {slot} un'altra volta.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="752" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="765" />
             <source>{slot} («{name}», {time}) was taken with another program, or before JD-Xi Studio was restarted. Send it to the {part} part of the current program?</source>
             <translation>{slot} («{name}», {time}) è stata presa con un altro programma, o prima di riavviare JD-Xi Studio. Inviarla alla parte {part} del programma attuale?</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="764" />
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="842" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="777" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="860" />
             <source>{slot} cannot be saved: it was taken without the JD-Xi and some of its data is not known</source>
             <translation>{slot} non si può salvare: è stata scattata senza JD-Xi e alcuni suoi dati non sono noti</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="812" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="825" />
             <source>saved as {file}</source>
             <translation>salvata come {file}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="817" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="830" />
             <source>The JD-Xi plays it, with changes since.</source>
             <translation>Il JD-Xi la sta suonando, con modifiche fatte dopo.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="818" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="831" />
             <source>The JD-Xi plays it.</source>
             <translation>Il JD-Xi la sta suonando.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="820" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="833" />
             <source>Press to recall it.</source>
             <translation>Premi per richiamarla.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="822" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="835" />
             <source>Connect the JD-Xi to recall it.</source>
             <translation>Collega il JD-Xi per richiamarla.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="827" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="840" />
             <source>Capture the current Tone in {slot} (read from the JD-Xi)</source>
             <translation>Acquisisci il Tone attuale in {slot} (letto dal JD-Xi)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="828" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="841" />
             <source>Capture the editor's values in {slot} (JD-Xi not connected: a local photo)</source>
             <translation>Acquisisci i valori dell'editor in {slot} (JD-Xi non collegato: fotografia locale)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="835" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="848" />
             <source>Switch between A and B: capture again with the JD-Xi connected the photo taken without it</source>
             <translation>Passa tra A e B: scatta di nuovo, con il JD-Xi collegato, la foto presa senza</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="844" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="862" />
             <source>Save {slot} as a .syx file, with a name</source>
             <translation>Salva {slot} come file .syx, con un nome</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="492" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="943" />
+            <source>From {slot}: «{name}»</source>
+            <translation>Da {slot}: «{name}»</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="977" />
+            <source>{section}: {n} different</source>
+            <translation>{section}: {n} diversi</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="499" />
             <source>{slot} not recalled: sending to the JD-Xi failed. Its Tone may be partly changed: read it again or recall {slot} once more.</source>
             <translation>{slot} non richiamata: l'invio al JD-Xi non è riuscito. Il suo Tone potrebbe essere cambiato in parte: rileggilo o richiama {slot} un'altra volta.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="809" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="822" />
             <source>{slot} is empty: choose it and press the camera to capture the current Tone</source>
             <translation>{slot} è vuota: sceglila e premi la fotocamera per acquisire il Tone attuale</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="423" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="430" />
             <source>{slot} captured from the editor, without the JD-Xi: some of its data is not known, so it cannot be recalled or saved until captured again with the JD-Xi connected</source>
             <translation>{slot} acquisita dall'editor, senza JD-Xi: alcuni suoi dati non sono noti, quindi non si può richiamare né salvare finché non la scatti di nuovo con il JD-Xi collegato</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="425" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="432" />
             <source>{slot} captured from the editor: the JD-Xi is not connected (local photo)</source>
             <translation>{slot} acquisita dall'editor: il JD-Xi non è collegato (fotografia locale)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="837" />
+            <location filename="../../jdxi_editor/ui/v2/ab_compare.py" line="850" />
             <source>Switch between A and B ({keys})</source>
             <translation>Scambia A e B ({keys})</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/analog.py" line="138" />
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="315" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="318" />
             <source>Tone Name</source>
             <translation>Nome del tono</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/analog.py" line="141" />
             <location filename="../../jdxi_editor/ui/v2/analog.py" line="77" />
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="319" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="322" />
             <location filename="../../jdxi_editor/ui/v2/digital.py" line="67" />
             <source>Name of the tone (12 characters).</source>
             <translation>Nome del tono (12 caratteri).</translation>
@@ -2206,7 +2265,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <location filename="../../jdxi_editor/ui/v2/program.py" line="443" />
             <location filename="../../jdxi_editor/ui/v2/settings.py" line="22" />
             <location filename="../../jdxi_editor/ui/v2/vocal.py" line="38" />
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="991" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="1041" />
             <source>MIDI Implementation</source>
             <translation>MIDI Implementation</translation>
         </message>
@@ -2488,33 +2547,64 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>ON: il portamento procede a semitoni.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="312" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="315" />
             <source>Parameter Guide, p. 15</source>
             <translation>Parameter Guide, p. 15</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="411" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="386" />
+            <source>Link 1·2·3</source>
+            <translation>Collega 1·2·3</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="389" />
+            <source>ON: a change to the partial shown is made on the other partials that are on too, in one Undo step. Waveform, PCM wave, pitch and detune stay each partial's own.</source>
+            <translation>ON: una modifica al partial mostrato viene fatta anche sugli altri partial accesi, in un solo passo di Annulla. Forma d'onda, onda PCM, intonazione e detune restano di ciascun partial.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="396" />
+            <source>Partial ▾</source>
+            <translation>Partial ▾</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="398" />
+            <source>Copy, paste, swap or randomize the partial shown</source>
+            <translation>Copia, incolla, scambia o rendi casuale il partial mostrato</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="426" />
+            <location filename="../../jdxi_editor/ui/v2/players.py" line="288" />
+            <source>Copy section</source>
+            <translation>Copia sezione</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="441" />
+            <source>Randomize…</source>
+            <translation>Casuale…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="518" />
             <source>Parameter Guide, p. 16-17</source>
             <translation>Parameter Guide, p. 16-17</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="423" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="532" />
             <source>Parameter Guide, p. 17-18</source>
             <translation>Parameter Guide, p. 17-18</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="435" />
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="448" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="545" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="558" />
             <source>Parameter Guide, p. 18</source>
             <translation>Parameter Guide, p. 18</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="441" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="551" />
             <source>AFTERTOUCH</source>
             <translation>AFTERTOUCH</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="463" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="573" />
             <source>Parameter Guide, p. 19 (whole tone)</source>
             <translation>Parameter Guide, p. 19 (tutto il tono)</translation>
         </message>
@@ -3003,7 +3093,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Positivo: il volume sale con la pressione dell'aftertouch; negativo: scende.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="306" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="309" />
             <location filename="../../jdxi_editor/ui/v2/drums.py" line="419" />
             <location filename="../../jdxi_editor/ui/v2/effects.py" line="495" />
             <location filename="../../jdxi_editor/ui/v2/program.py" line="419" />
@@ -3011,17 +3101,22 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Le modifiche si sentono subito e restano nel programma corrente finché non se ne sceglie un altro. Per conservarle salva il programma sul JD-Xi con [Menu/Write]: via MIDI non si può scrivere nella sua memoria.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="389" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="496" />
             <source>OSC · FILTER · AMP</source>
             <translation>OSC · FILTER · AMP</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="389" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="496" />
             <source>LFO · MOD LFO · MISC</source>
             <translation>LFO · MOD LFO · MISC</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="448" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="425" />
+            <source>Copy partial {n}</source>
+            <translation>Copia il partial {n}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="558" />
             <source>Parameter Guide, p. 19 (modulation lever)</source>
             <translation>Parameter Guide, p. 19 (leva di modulazione)</translation>
         </message>
@@ -3061,15 +3156,45 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Digital Synth {n}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="344" />
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="361" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="347" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="364" />
             <source>PARTIAL {n}</source>
             <translation>PARTIAL {n}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/digital.py" line="351" />
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="354" />
             <source>Edit partial {n}</source>
             <translation>Modifica il partial {n}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="414" />
+            <source>Partials linked</source>
+            <translation>Partial collegati</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="414" />
+            <source>Link partials</source>
+            <translation>Collega i partial</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="432" />
+            <source>Paste into partial {n}: {what}</source>
+            <translation>Incolla nel partial {n}: {what}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="433" />
+            <source>Paste into partial {n}</source>
+            <translation>Incolla nel partial {n}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="439" />
+            <source>Swap with partial {m}</source>
+            <translation>Scambia con il partial {m}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/digital.py" line="470" />
+            <source>Digital {n} · partial {p}: PCM wave</source>
+            <translation>Digital {n} · partial {p}: onda PCM</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/drums.py" line="82" />
@@ -3123,7 +3248,7 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/drums.py" line="323" />
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="753" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="801" />
             <source>key off</source>
             <translation>rilascio</translation>
         </message>
@@ -4056,22 +4181,22 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Lettura completata</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/history.py" line="481" />
+            <location filename="../../jdxi_editor/ui/v2/history.py" line="501" />
             <source>Unsaved changes</source>
             <translation>Modifiche non salvate</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/history.py" line="484" />
+            <location filename="../../jdxi_editor/ui/v2/history.py" line="504" />
             <source>Save to file…</source>
             <translation>Salva su file…</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/history.py" line="485" />
+            <location filename="../../jdxi_editor/ui/v2/history.py" line="505" />
             <source>Discard the changes</source>
             <translation>Scarta le modifiche</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/history.py" line="486" />
+            <location filename="../../jdxi_editor/ui/v2/history.py" line="506" />
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="547" />
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="905" />
             <location filename="../../jdxi_editor/ui/v2/write_wizard.py" line="277" />
@@ -4084,22 +4209,22 @@ Maiusc+clic: aggiungi/togli la nota scelta · Clic destro: modifica le note</tra
             <translation>Annulla</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/history.py" line="488" />
+            <location filename="../../jdxi_editor/ui/v2/history.py" line="508" />
             <source>Do not ask again (Preferences can turn it back on)</source>
             <translation>Non chiedere più (si riattiva dalle Preferenze)</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/history.py" line="547" />
+            <location filename="../../jdxi_editor/ui/v2/history.py" line="567" />
             <source>Changing the program replaces every part's sound.</source>
             <translation>Cambiando programma, il suono di tutte le parti viene sostituito.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/history.py" line="549" />
+            <location filename="../../jdxi_editor/ui/v2/history.py" line="569" />
             <source>Changing the sound replaces them.</source>
             <translation>Cambiando suono, vengono sostituite.</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/history.py" line="482" />
+            <location filename="../../jdxi_editor/ui/v2/history.py" line="502" />
             <source>{parts}: the changes are not saved.</source>
             <translation>{parts}: le modifiche non sono salvate.</translation>
         </message>
@@ -4609,6 +4734,46 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
             <translation>Nella MIDI Implementation; il display del JD-Xi non lo mostra.</translation>
         </message>
         <message>
+            <location filename="../../jdxi_editor/ui/v2/partial_tools.py" line="93" />
+            <source>Partial</source>
+            <translation>Partial</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/partial_tools.py" line="114" />
+            <source>Digital {n} · partial {p}</source>
+            <translation>Digital {n} · partial {p}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/partial_tools.py" line="79" />
+            <source>Oscillator</source>
+            <translation>Oscillatore</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/partial_tools.py" line="79" />
+            <source>Filter</source>
+            <translation>Filtro</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/partial_tools.py" line="79" />
+            <source>Amplifier</source>
+            <translation>Amplificatore</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/partial_tools.py" line="80" />
+            <source>LFO</source>
+            <translation>LFO</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/partial_tools.py" line="80" />
+            <source>Modulation LFO</source>
+            <translation>LFO di modulazione</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/partial_tools.py" line="94" />
+            <source>{what} of {source}</source>
+            <translation>{what} di {source}</translation>
+        </message>
+        <message>
             <location filename="../../jdxi_editor/ui/v2/players.py" line="197" />
             <source>New steps</source>
             <translation>Nuovi passi</translation>
@@ -4620,7 +4785,7 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/players.py" line="272" />
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="934" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="984" />
             <source>Point at a control</source>
             <translation>Punta un controllo</translation>
         </message>
@@ -4759,11 +4924,6 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
             <location filename="../../jdxi_editor/ui/v2/players.py" line="287" />
             <source>New measures start as a copy of the one before.</source>
             <translation>Le nuove misure partono come copia di quella precedente.</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/v2/players.py" line="288" />
-            <source>Copy section</source>
-            <translation>Copia sezione</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/players.py" line="288" />
@@ -5515,6 +5675,92 @@ Per tenerle, salvale ora in un file: potrai caricarlo e inviarlo al JD-Xi in seg
             <location filename="../../jdxi_editor/ui/v2/programs.py" line="815" />
             <source>Redo: {what} (Ctrl+Y)</source>
             <translation>Ripeti: {what} (Ctrl+Y)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="38" />
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="96" />
+            <source>Randomize</source>
+            <translation>Casuale</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="47" />
+            <source>Section</source>
+            <translation>Sezione</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="58" />
+            <source>The whole tone (three partials, Wave Shape, Analog Feel)</source>
+            <translation>Tutto il tono (i tre partial, Wave Shape, Analog Feel)</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="84" />
+            <source>The name, category, playing style (mono, portamento, bend) and which partials are on stay as they are; a partial randomized stays audible. Each press is one Undo step.</source>
+            <translation>Nome, categoria, modo di suonare (mono, portamento, bend) e partial accesi restano come sono; un partial reso casuale resta udibile. Ogni pressione è un passo di Annulla.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="101" />
+            <source>Undo</source>
+            <translation>Annulla</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="44" />
+            <source>What</source>
+            <translation>Cosa</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="67" />
+            <source>How much</source>
+            <translation>Quanto</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="71" />
+            <source>A little</source>
+            <translation>Poco</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="71" />
+            <source>Each value moves by up to 10% of its range: a variation of the sound.</source>
+            <translation>Ogni valore si sposta al massimo del 10% del suo intervallo: una variazione del suono.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="72" />
+            <source>Medium</source>
+            <translation>Medio</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="72" />
+            <source>Up to 30%: the same character, clearly different.</source>
+            <translation>Fino al 30%: lo stesso carattere, ma chiaramente diverso.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="73" />
+            <source>Much</source>
+            <translation>Molto</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="73" />
+            <source>Anything, also the waveforms, filter types and LFO shapes: a new sound.</source>
+            <translation>Tutto, anche forme d'onda, tipi di filtro e forme degli LFO: un suono nuovo.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="126" />
+            <source>Taken back.</source>
+            <translation>Annullato.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="57" />
+            <source>Partial {n}</source>
+            <translation>Partial {n}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="120" />
+            <source>{n} values changed.</source>
+            <translation>{n} valori cambiati.</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/randomize_dialog.py" line="54" />
+            <source>of partial {n}</source>
+            <translation>del partial {n}</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/v2/recipes.py" line="121" />
@@ -7309,22 +7555,133 @@ Le modifiche che non avevi salvato andrebbero perse. Le rimando al JD-Xi?</trans
             <translation>Solo con Scale su Maj(Min).</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="671" />
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="143" />
+            <source>Search by name or number…</source>
+            <translation>Cerca per nome o numero…</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="165" />
+            <source>Try: set it and play a note</source>
+            <translation>Prova: impostala e suona una nota</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="166" />
+            <source>Each wave chosen is set on the partial and plays C4 on the part's channel</source>
+            <translation>Ogni onda scelta viene impostata sul partial e suona un C4 sul canale della parte</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="172" />
+            <source>Add to or remove from the favourites</source>
+            <translation>Aggiungi ai preferiti o togli dai preferiti</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="300" />
+            <source>Wave Number</source>
+            <translation>Wave Number</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="306" />
+            <source>Browse the PCM waves by family, search them and try them by ear</source>
+            <translation>Sfoglia le onde PCM per famiglia, cercale e provale ad ascolto</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="319" />
+            <location filename="../../jdxi_editor/ui/widgets/transport/playback_options.py" line="172" />
+            <source>Off</source>
+            <translation>Nessuna</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="70" />
+            <source>Synth &amp; Lead</source>
+            <translation>Synth e lead</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="70" />
+            <source>Bell &amp; Metallic</source>
+            <translation>Campane e metallici</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="71" />
+            <source>Voice &amp; Formant</source>
+            <translation>Voci e formanti</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="71" />
+            <source>Pad &amp; Strings</source>
+            <translation>Pad e archi</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="72" />
+            <source>FX &amp; Noise</source>
+            <translation>Effetti e rumore</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="72" />
+            <source>Hit &amp; Drum</source>
+            <translation>Hit e percussioni</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="72" />
+            <source>Keys &amp; Organ</source>
+            <translation>Tastiere e organi</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="73" />
+            <source>Guitar</source>
+            <translation>Chitarra</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="73" />
+            <source>Brass &amp; Wind</source>
+            <translation>Ottoni e fiati</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="73" />
+            <source>Ethnic</source>
+            <translation>Etnici</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="137" />
+            <source>PCM wave</source>
+            <translation>Onda PCM</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="150" />
+            <source>All waves</source>
+            <translation>Tutte le onde</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="219" />
+            <source>{n} waves</source>
+            <translation>{n} onde</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/wave_browser.py" line="150" />
+            <source>Favourites</source>
+            <translation>Preferiti</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="688" />
+            <source>loop</source>
+            <translation>loop</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="674" />
             <source>Drag the points to change the envelope</source>
             <translation>Trascina i punti per cambiare l'inviluppo</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="766" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="816" />
             <source>Drag sideways for Cutoff, up and down for Resonance</source>
             <translation>Trascina di lato per Cutoff, in alto e in basso per Resonance</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="928" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="978" />
             <source>PARAMETER</source>
             <translation>PARAMETRO</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="948" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="998" />
             <source>Its name on the display, range and explanation appear here, with what it depends on.</source>
             <translation>Qui compaiono il nome sul display, l'intervallo e la spiegazione, con ciò da cui dipende.</translation>
         </message>
@@ -7334,37 +7691,42 @@ Le modifiche che non avevi salvato andrebbero perse. Le rimando al JD-Xi?</trans
             <translation>Cosa fa questa sezione, con un esempio</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="844" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="894" />
             <source>BYPASS: no filter</source>
             <translation>BYPASS: nessun filtro</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="907" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="957" />
             <source>full depth</source>
             <translation>piena profondità</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="868" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="687" />
+            <source>loop {note}</source>
+            <translation>loop {note}</translation>
+        </message>
+        <message>
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="918" />
             <source>1 cycle = {note}</source>
             <translation>1 ciclo = {note}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="871" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="921" />
             <source>Rate {rate}</source>
             <translation>Rate {rate}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="985" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="1035" />
             <source>Range: {range}</source>
             <translation>Intervallo: {range}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="1001" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="1051" />
             <source>Inactive now. {reason}</source>
             <translation>Ora inattivo. {reason}</translation>
         </message>
         <message>
-            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="991" />
+            <location filename="../../jdxi_editor/ui/v2/widgets.py" line="1041" />
             <source>Parameter Guide, p. {page}</source>
             <translation>Parameter Guide, p. {page}</translation>
         </message>
@@ -7742,11 +8104,6 @@ Le modifiche che non avevi salvato andrebbero perse. Le rimando al JD-Xi?</trans
 Note: if the JD-Xi Sync setting is MIDI or AUTO, Start also starts its pattern sequencer.</source>
             <translation>Invia MIDI Clock, Start/Stop/Continue e Song Position perché arpeggio ed effetti a tempo del JD-Xi seguano il file.
 Nota: se il Sync del JD-Xi è MIDI o AUTO, Start avvia anche il suo pattern sequencer.</translation>
-        </message>
-        <message>
-            <location filename="../../jdxi_editor/ui/widgets/transport/playback_options.py" line="172" />
-            <source>Off</source>
-            <translation>Nessuna</translation>
         </message>
         <message>
             <location filename="../../jdxi_editor/ui/widgets/transport/playback_options.py" line="176" />
@@ -9221,6 +9578,14 @@ Il suono sul JD-Xi viene sostituito: se vuoi tenerlo, salvalo prima sul JD-Xi (W
             <translation>resoconto non salvato: {error}</translation>
         </message>
         <message>
+            <source>PARTIALS</source>
+            <translation type="vanished">PARTIAL</translation>
+        </message>
+        <message>
+            <source>Linked: 1·2·3</source>
+            <translation type="vanished">Collegati: 1·2·3</translation>
+        </message>
+        <message>
             <source>Open a tab: Program settings, Recipes, Settings</source>
             <translation type="vanished">Apri una scheda: Impostazioni programma, Ricette, Impostazioni</translation>
         </message>
@@ -9875,10 +10240,6 @@ Finché non si risolve, gli elenchi dei preset restano quelli del JD-Xi.</transl
         <message>
             <source>Kit common: name, level, tuning</source>
             <translation type="vanished">Parte comune del kit: nome, livello, intonazione</translation>
-        </message>
-        <message>
-            <source>Partial</source>
-            <translation type="vanished">Partial</translation>
         </message>
         <message>
             <source>Pitch Env</source>

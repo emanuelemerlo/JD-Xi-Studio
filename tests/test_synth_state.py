@@ -167,6 +167,7 @@ def test_reconnection_against_a_simulated_jdxi_restores_the_part_that_changed(ap
     def send(key, data):
         return bool(helper.send_raw_message(list(build_dt1(bytes.fromhex(key), list(data)))))
 
+    pump(lambda: False, 0.3)  # what editors of earlier tests still had queued goes out first
     results = []
     read(results.append)
     assert results == [True]

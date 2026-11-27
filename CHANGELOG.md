@@ -4,6 +4,22 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+### Changes
+- Digital Synth: under each PARTIAL button, «P1 ON» and «P1 SEL» sit right against their
+  switches, with a wider gap between the two (they read as the labels of the switch on their left).
+- **Digital Synth: the three partials together.** *Link partials* makes a change to the partial
+  shown on the other partials that are on (the oscillator stays each one's own), in one Undo step.
+  *Partial ▾* copies, pastes and swaps a partial or one section of it (Oscillator, Filter,
+  Amplifier, LFO, Modulation LFO), also between Digital 1 and Digital 2.
+- **Digital Synth: Randomize** a section, a partial or the whole tone by a little (10%), a medium
+  amount (30%) or much (also waveforms, filter types, LFO shapes); it stays playable and audible,
+  one Undo step per press.
+- **PCM waves by family**: Wave Number opens the 160 waves in eleven families, with a search, ★
+  favourites and *Try*, which sets the wave and plays a note so the waves can be compared by ear.
+- **A/B: Take from a photo**: the sections where a photo differs from the current sound, to bring
+  in one by one (Digital and Analog).
+- The filter and amplifier envelopes show the **Envelope Loop** (FREE-RUN, TEMPO-SYNC).
+
 # [1.0.0] - 2026-11-26
 
 The first official release of JD-Xi Studio. Since rc 1: **Recipes** written by an AI and
