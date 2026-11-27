@@ -113,6 +113,7 @@ from picoui.specs.widgets import (
 from picoui.widget.helper import get_file_path_from_spec
 from picoui.widget.setters import set_spinbox_value
 from jdxi_editor.i18n import tr
+from jdxi_editor.ui.style.editor_style import repolish
 
 
 def copy_note_attrs_from_event(button: SequencerButton, event: PatternLearnerEvent):
@@ -1990,8 +1991,7 @@ class PatternSequenceEditor(PatternUI):
                     if bool(button.property("muted")) == muted:
                         continue
                     button.setProperty("muted", muted)
-                    button.style().unpolish(button)
-                    button.style().polish(button)
+                    repolish(button)
         if self.pattern_widget:
             self.pattern_widget.measure_strip.refresh()
 

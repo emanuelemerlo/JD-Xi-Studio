@@ -130,6 +130,7 @@ from jdxi_editor.i18n import tr
 DOCUMENTATION_URL = "https://github.com/emanuelemerlo/JD-Xi-Studio#readme"
 from picomidi.constant import Midi
 from picoui.specs.widgets import MessageBoxSpec
+from jdxi_editor.ui.style.editor_style import repolish
 
 if TYPE_CHECKING:
     from jdxi_editor.ui.editors.synth.editor import SynthEditor
@@ -1495,8 +1496,7 @@ class JDXiInstrument(JDXiWindow):
         else:
             tab_bar.setProperty("analogTabSelected", False)
         # Force style update
-        tab_bar.style().unpolish(tab_bar)
-        tab_bar.style().polish(tab_bar)
+        repolish(tab_bar)
 
     def _show_editor(self, title: str, editor_class, **kwargs) -> None:
         """

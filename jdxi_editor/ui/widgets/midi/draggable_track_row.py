@@ -7,6 +7,7 @@ This widget wraps a track row and enables drag-and-drop reordering.
 from PySide6.QtCore import QMimeData, Qt, Signal
 from PySide6.QtGui import QDrag, QPainter
 from PySide6.QtWidgets import QHBoxLayout, QWidget
+from jdxi_editor.ui.style.editor_style import repolish
 
 
 class DraggableTrackRow(QWidget):
@@ -78,8 +79,7 @@ class DraggableTrackRow(QWidget):
 
     def set_row_selected(self, selected: bool) -> None:
         self.setProperty("selected", "true" if selected else "false")
-        self.style().unpolish(self)
-        self.style().polish(self)
+        repolish(self)
 
     def mousePressEvent(self, event):
         """Handle mouse press to start drag operation."""
