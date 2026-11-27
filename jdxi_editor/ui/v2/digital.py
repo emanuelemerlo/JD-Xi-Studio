@@ -289,6 +289,9 @@ class DigitalToneEditor(tone_editor_base()):
         self.synth_number = synth_number
         self.preset_helper = preset_helper
         self._link_dependencies()
+        from jdxi_editor.ui.v2.partial_tools import PartialLink
+
+        self.partial_link = PartialLink(self)  # «Link partials»: off until chosen
 
     def partial(self, name: str, partial: int) -> ParamValue:
         return self.pv(name, f"PARTIAL_{partial + 1}")
@@ -351,17 +354,139 @@ class DigitalToneEditor(tone_editor_base()):
             button.setToolTip(tr("Edit partial {n}").format(n=n))
             self.partial_buttons.addButton(button, partial)
             box.addWidget(button)
+            # each name right against its switch, a wider gap between the two: «P1 ON» must
+            # not read as the label of the switch on its left
+            from jdxi_editor.ui.v2.widgets import report_to
+
             line = QHBoxLayout()
-            line.addWidget(ChoiceButtons(self.pv(f"PARTIAL{n}_SWITCH"), self.ACCENT, self.info_hub))
-            line.addWidget(ChoiceButtons(self.pv(f"PARTIAL{n}_SELECT"), self.ACCENT, self.info_hub))
+            line.setSpacing(0)
+            for index, key in enumerate((f"PARTIAL{n}_SWITCH", f"PARTIAL{n}_SELECT")):
+                pv = self.pv(key)
+                if index:
+                    line.addSpacing(18)
+                name = QLabel(pv.info.label)
+                name.setStyleSheet("color: #c9cbd1; font-size: 11px; background: transparent;")
+                report_to(self.info_hub, name, pv)
+                # both as wide as their content: the room left goes to the stretch at the
+                # end, not between a name and its switch
+                name.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
+                line.addWidget(name)
+                line.addSpacing(6)
+                buttons = ChoiceButtons(pv, self.ACCENT, self.info_hub, show_name=False)
+                buttons.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
+                line.addWidget(buttons)
             line.addStretch()
             box.addLayout(line)
             row.addLayout(box)
             switch = self.pv(f"PARTIAL{n}_SWITCH")
             switch.watch(lambda v, b=button, n=n: b.setText(tr("PARTIAL {n}").format(n=n) + ("" if v else "  ·  OFF")))
-        row.addStretch()
+        row.addLayout(self._partial_tools())
         self.partial_buttons.idClicked.connect(self.show_partial)
         return row
+
+    # --- the three partials together: link, copy / paste / swap, randomize
+    def _partial_tools(self) -> QVBoxLayout:
+        import qtawesome as qta
+        from PySide6.QtWidgets import QToolButton
+
+        from jdxi_editor.ui.v2.widgets import menu
+
+        # two small buttons at the end of the partial strip (one above the other: no extra row)
+        box = QVBoxLayout()
+        box.setSpacing(4)
+        style = (
+            "QPushButton, QToolButton { background: #1b1c1f; color: #c9cbd1; border: 1px solid #3a3d44;"
+            " border-radius: 6px; padding: 5px 10px; }"
+            f"QPushButton:checked {{ background: {self.ACCENT}; color: #0e0f11; border-color: {self.ACCENT}; }}"
+            "QPushButton:hover, QToolButton:hover { border-color: #6b6f78; }"
+            "QToolButton::menu-indicator { image: none; }"
+        )
+        self.link_button = QPushButton(qta.icon("mdi.link-variant", color="#c9cbd1"), tr("Link 1·2·3"))
+        self.link_button.setCheckable(True)
+        self.link_button.setStyleSheet(style)
+        self.link_button.setToolTip(tr(
+            "ON: a change to the partial shown is made on the other partials that are on too, in one Undo step. "
+            "Waveform, PCM wave, pitch and detune stay each partial's own."))
+        self.link_button.toggled.connect(self._set_linked)
+        self._set_linked(False)
+        box.addWidget(self.link_button)
+        self.partial_menu_button = QToolButton()
+        self.partial_menu_button.setText(tr("Partial ▾"))
+        self.partial_menu_button.setStyleSheet(style)
+        self.partial_menu_button.setToolTip(tr("Copy, paste, swap or randomize the partial shown"))
+        self.partial_menu_button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+        self.partial_menu = menu(self)
+        self.partial_menu.aboutToShow.connect(self._fill_partial_menu)
+        self.partial_menu_button.setMenu(self.partial_menu)
+        box.addWidget(self.partial_menu_button)
+        return box
+
+    def _set_linked(self, on: bool) -> None:
+        import qtawesome as qta
+
+        if hasattr(self, "partial_link"):
+            self.partial_link.enabled = on
+        self.link_button.setIcon(qta.icon("mdi.link-variant", color="#0e0f11" if on else "#c9cbd1"))
+        tip = self.link_button.property("baseTip") or self.link_button.toolTip()
+        self.link_button.setProperty("baseTip", tip)
+        self.link_button.setToolTip((tr("Partials linked") + ". " if on else tr("Link partials") + ". ") + tip)
+
+    def current_partial(self) -> int:
+        return max(0, self.partial_pages.currentIndex()) if hasattr(self, "partial_pages") else 0
+
+    def _fill_partial_menu(self) -> None:
+        from jdxi_editor.ui.v2 import partial_tools as pt
+
+        m = self.partial_menu
+        m.clear()
+        n = self.current_partial()
+        m.addAction(tr("Copy partial {n}").format(n=n + 1), lambda: pt.copy(self, n))
+        copy_section = m.addMenu(tr("Copy section"))
+        copy_section.setStyleSheet(m.styleSheet())
+        for section in pt.SECTIONS:
+            copy_section.addAction(pt.section_name(section), lambda s=section: pt.copy(self, n, s))
+        clip = pt.clip()
+        paste = m.addAction(
+            tr("Paste into partial {n}: {what}").format(n=n + 1, what=clip.describe()) if clip
+            else tr("Paste into partial {n}").format(n=n + 1),
+            lambda: self._paste(n))
+        paste.setEnabled(clip is not None)
+        m.addSeparator()
+        for other in range(3):
+            if other != n:
+                m.addAction(tr("Swap with partial {m}").format(m=other + 1), lambda o=other: pt.swap(self, n, o))
+        m.addSeparator()
+        m.addAction(tr("Randomize…"), self.open_randomize)
+
+    def _paste(self, partial: int) -> None:
+        from jdxi_editor.ui.v2 import partial_tools as pt
+
+        pt.paste(self, partial)
+
+    def open_randomize(self) -> None:
+        from jdxi_editor.ui.v2.randomize_dialog import RandomizeDialog
+
+        RandomizeDialog(self, self.current_partial(), parent=self).exec()
+
+    # --- PCM waves
+    def play_test_note(self, note: int, velocity: int) -> None:
+        """A note on this part's channel (Digital 1: channel 1, Digital 2: channel 2)."""
+        helper = getattr(self, "_midi_helper", None) or getattr(self, "midi_helper", None)
+        if helper is None:
+            return
+        channel = 0 if self.synth_number == 1 else 1
+        status = (0x90 if velocity else 0x80) | channel
+        try:
+            helper.send_raw_message([status, note, velocity])
+        except Exception:  # no port: nothing to hear
+            pass
+
+    def open_wave_browser(self, partial: int) -> None:
+        from jdxi_editor.ui.v2.wave_browser import WaveBrowser
+
+        WaveBrowser(self.partial("WAVE_NUMBER", partial), play_note=self.play_test_note,
+                    title=tr("Digital {n} · partial {p}: PCM wave").format(n=self.synth_number, p=partial + 1),
+                    accent=self.ACCENT, history=getattr(self, "history", None), parent=self).exec()
 
     def show_partial(self, index: int) -> None:
         for i in range(self.partial_pages.count()):
@@ -411,7 +536,9 @@ class DigitalToneEditor(tone_editor_base()):
         osc = self.card("OSC", tr("Parameter Guide, p. 16-17"))
         osc.body.addWidget(WaveButtons(v("OSC_WAVE"), self.ACCENT, self.info_hub, pulse_width=v("OSC_PULSE_WIDTH"), button_width=44))
         osc.body.addWidget(self.control(s("OSC_WAVE_VARIATION")))
-        osc.body.addWidget(self.control(s("WAVE_NUMBER")))
+        from jdxi_editor.ui.v2.wave_browser import WaveField
+
+        osc.body.addWidget(WaveField(v("WAVE_NUMBER"), lambda partial=partial: self.open_wave_browser(partial)))
         osc.body.addWidget(self.control(s("WAVE_GAIN")))
         osc.body.addLayout(self.knob_row([s("OSC_PITCH"), s("OSC_DETUNE"), s("SUPER_SAW_DETUNE")]))
         osc.body.addLayout(self.knob_row([s("OSC_PULSE_WIDTH"), s("OSC_PULSE_WIDTH_MOD_DEPTH"), s("OSC_PULSE_WIDTH_SHIFT")]))
@@ -425,8 +552,9 @@ class DigitalToneEditor(tone_editor_base()):
         flt.body.addWidget(self.control(s("FILTER_SLOPE")))
         flt.body.addWidget(DigitalFilterView(self.ACCENT, self.info_hub, v("FILTER_CUTOFF"), v("FILTER_RESONANCE"), v("FILTER_MODE"), v("FILTER_SLOPE")))
         flt.body.addLayout(self.knob_row([s("FILTER_CUTOFF"), s("FILTER_RESONANCE"), s("FILTER_CUTOFF_KEYFOLLOW"), s("HPF_CUTOFF")]))
+        loop = dict(loop_mode=self.pv("ENVELOPE_LOOP_MODE"), loop_note=self.pv("ENVELOPE_LOOP_SYNC_NOTE"))
         flt.body.addWidget(EnvelopeView(self.ACCENT, self.info_hub, v("FILTER_ENV_ATTACK_TIME"), v("FILTER_ENV_DECAY_TIME"),
-                                        v("FILTER_ENV_SUSTAIN_LEVEL"), v("FILTER_ENV_RELEASE_TIME")))
+                                        v("FILTER_ENV_SUSTAIN_LEVEL"), v("FILTER_ENV_RELEASE_TIME"), **loop))
         flt.body.addLayout(self.knob_row([s("FILTER_ENV_ATTACK_TIME"), s("FILTER_ENV_DECAY_TIME"), s("FILTER_ENV_SUSTAIN_LEVEL"),
                                           s("FILTER_ENV_RELEASE_TIME")]))
         flt.body.addLayout(self.knob_row([s("FILTER_ENV_DEPTH"), s("FILTER_ENV_VELOCITY_SENS")]))
@@ -434,7 +562,7 @@ class DigitalToneEditor(tone_editor_base()):
 
         amp = self.card("AMP", tr("Parameter Guide, p. 18"))
         amp.body.addWidget(EnvelopeView(self.ACCENT, self.info_hub, v("AMP_ENV_ATTACK_TIME"), v("AMP_ENV_DECAY_TIME"),
-                                        v("AMP_ENV_SUSTAIN_LEVEL"), v("AMP_ENV_RELEASE_TIME")))
+                                        v("AMP_ENV_SUSTAIN_LEVEL"), v("AMP_ENV_RELEASE_TIME"), **loop))
         amp.body.addLayout(self.knob_row([s("AMP_ENV_ATTACK_TIME"), s("AMP_ENV_DECAY_TIME"), s("AMP_ENV_SUSTAIN_LEVEL"),
                                           s("AMP_ENV_RELEASE_TIME")]))
         amp.body.addLayout(self.knob_row([s("AMP_LEVEL"), s("AMP_VELOCITY"), s("AMP_PAN"), s("AMP_LEVEL_KEYFOLLOW")]))

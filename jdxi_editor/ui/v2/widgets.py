@@ -24,7 +24,7 @@ import random
 from typing import Optional, Sequence
 
 from PySide6.QtCore import QEvent, QObject, QPointF, QRectF, QSize, Qt, Signal
-from PySide6.QtGui import QColor, QFont, QPainter, QPainterPath, QPen
+from PySide6.QtGui import QColor, QFont, QPainter, QPainterPath, QPen, QPolygonF
 from PySide6.QtWidgets import (
     QComboBox,
     QFrame,
@@ -661,10 +661,13 @@ class _Graph(QWidget):
 class EnvelopeView(_Graph):
     """ADSR (attack, decay, sustain, release) or pitch (attack, decay, depth)."""
 
-    def __init__(self, accent: str, hub, attack, decay, sustain=None, release=None, depth=None, parent=None):
+    def __init__(self, accent: str, hub, attack, decay, sustain=None, release=None, depth=None, parent=None,
+                 loop_mode=None, loop_note=None):
         super().__init__(accent, hub, 110, parent)
         self.a, self.d, self.s, self.r, self.depth = attack, decay, sustain, release, depth
-        for pv in (attack, decay, sustain, release, depth):
+        # Envelope Loop (Digital, Modify): OFF / FREE-RUN / TEMPO-SYNC, drawn as a return to the attack
+        self.loop_mode, self.loop_note = loop_mode, loop_note
+        for pv in (attack, decay, sustain, release, depth, loop_mode, loop_note):
             if pv is not None:
                 pv.watch(lambda _v: self.update())
                 pv.watch_enabled(lambda _e: self.update())
@@ -672,6 +675,51 @@ class EnvelopeView(_Graph):
 
     def _x(self, r: QRectF, frac: float, slot: int, slots: int) -> float:
         return r.left() + r.width() * (slot + frac) / slots
+
+    def loop_text(self) -> str:
+        """«loop» (FREE-RUN), «loop 1/4» (TEMPO-SYNC), "" (OFF or no loop here)."""
+        if self.loop_mode is None or self.depth is not None:
+            return ""
+        mode = self.loop_mode.value()
+        if not mode:
+            return ""
+        if mode == 2 and self.loop_note is not None:
+            return tr("loop {note}").format(note=self.loop_note.text())
+        return tr("loop")
+
+    def _draw_loop(self, p: QPainter, pts: list, r: QRectF, color: QColor) -> None:
+        """After the decay the envelope goes back to the attack until the key is released:
+        a dashed arrow from the end of the decay back to the start, and the attack-decay
+        repeated, lighter, in the sustain stretch."""
+        start, peak, end, held = pts[0], pts[1], pts[2], pts[3]
+        ghost = QColor(color)
+        ghost.setAlphaF(0.45)
+        p.setPen(QPen(ghost, 1.4, Qt.PenStyle.DashLine))
+        width = peak.x() - start.x() + (end.x() - peak.x())
+        if width > 4 and held.x() - end.x() > 6:  # the next cycles in the time the key is held
+            x = end.x()
+            while x + 2 < held.x():
+                scale = min(1.0, (held.x() - x) / max(width, 1))
+                rise = QPointF(x + (peak.x() - start.x()) * scale, r.top() + (end.y() - r.top()) * (1 - scale))
+                fall = QPointF(min(held.x(), x + width * scale), end.y())
+                path = QPainterPath(QPointF(x, end.y()))
+                path.lineTo(rise)
+                path.lineTo(fall)
+                p.drawPath(path)
+                x += max(width, 6)
+        arc = QPainterPath(end)
+        top = r.top() - 2
+        arc.cubicTo(QPointF(end.x(), top), QPointF(start.x() + 6, top), QPointF(start.x() + 4, r.top() + 10))
+        p.drawPath(arc)
+        p.setPen(Qt.PenStyle.NoPen)
+        p.setBrush(ghost)
+        tip = QPointF(start.x() + 4, r.top() + 12)
+        p.drawPolygon(QPolygonF([tip, QPointF(tip.x() - 4, tip.y() - 6), QPointF(tip.x() + 4, tip.y() - 6)]))
+        p.setPen(QPen(color, 1))
+        p.setFont(QFont(self.font().family(), 7))
+        label_x = max(end.x() + 4, min(held.x() - 4, r.right() - 60))
+        p.drawText(QPointF(label_x, r.top() + 9), self.loop_text())
+        p.setBrush(Qt.BrushStyle.NoBrush)
 
     def points(self) -> list[QPointF]:
         r = self.plot_rect()
@@ -751,6 +799,8 @@ class EnvelopeView(_Graph):
             p.drawLine(QPointF(pts[3].x(), r.top()), QPointF(pts[3].x(), r.bottom()))
             p.setFont(QFont(self.font().family(), 7))
             p.drawText(QPointF(pts[3].x() + 3, r.bottom() + 12), tr("key off"))
+            if self.loop_text():
+                self._draw_loop(p, pts, r, color)
         self._draw_handles(p)
         p.end()
 

@@ -138,6 +138,11 @@ Per ognuno: apri la scheda, aspetta la lettura (i controlli si allineano allo st
 | 4.2 ★ | Digital 1 | Cutoff e Resonance del FILTER di un partial; trascina un punto dell'inviluppo nel grafico | Lo senti cambiare subito; il grafico e le manopole restano allineati |
 | 4.3 | Digital 1 | Partial 2 e 3 on/off; selezione del partial | Si sentono/spariscono gli strati; le schede *OSC · FILTER · AMP* / *LFO · MOD LFO · MISC* (schermo basso) restano sulla stessa per tutti i partial |
 | 4.4 | Digital 2 | Come 4.1 su Digital 2 | Cambia solo Digital 2 (canale 2) |
+| 4.4a ★ | Digital 1 | Partial 1 e 2 accesi, 3 spento; **Collega 1·2·3** (lega i tre partial di questa parte, non Digital 1 con Digital 2); gira il Cutoff del partial 1; poi Annulla | Il Cutoff cambia anche sul partial 2 (si sente su entrambi), non sul 3; forma d'onda e pitch restano diversi; un solo Annulla riporta tutti e due |
+| 4.4b | Digital 1 › Digital 2 | **Partial ▾ › Copia sezione › Filtro** su Digital 1; in Digital 2 **Partial ▾ › Incolla**; poi **Scambia con il partial 2** | Il filtro di Digital 2 diventa quello copiato; lo scambio inverte i due partial; ognuna è un Annulla |
+| 4.4c ★ | Digital 1 | Partial su **PCM**, clic su *Wave Number*; famiglia *Campane e metallici*, **Prova** acceso; scorri con le frecce; Annulla, poi riapri e OK | Ogni onda suona un C4 breve sul canale 1; Annulla rimette l'onda di prima; OK tiene quella scelta |
+| 4.4d | Digital 1 | **Partial ▾ › Casuale…**: Sezione Filtro, Poco; poi Tutto il tono, Molto; premi più volte; Annulla | Il suono cambia ma resta udibile; nome e categoria non cambiano; Annulla torna indietro di una pressione |
+| 4.4e | Digital 1 | MISC › *Loop Mode* TEMPO-SYNC, *Sync Note* 1/4 | Sui grafici di FILTER e AMP l'attacco-decadimento si ripete con «loop 1/4»; lo senti pulsare a tempo |
 | 4.5 ★ | **Analog** | Preset, poi Cutoff, Resonance, LFO Rate; trascina il grafico del filtro; Annulla (Ctrl+Z); scrivi un nome in *Tone Name* | Lo senti cambiare e tornare indietro con Annulla; badge «ANALOG» in alto a sinistra; il nuovo nome sul display del JD-Xi |
 | 4.6 ★ | **Drums** | Scegli un kit; clicca un pad, cambia Pitch e Level del pad | Suona il pad scelto e cambia solo lui |
 | 4.7 | Effetti | Effect 1 su Distortion, poi Thru; Delay Time; Reverb tipo HALL1 | Lo senti; il riquadro di Effect 1 è alto quanto il tipo scelto (Thru: piccolo) |
@@ -186,6 +191,7 @@ TC-xx della proposta; gli stessi casi girano in automatico con un JD-Xi simulato
 | 5b.9 | Scegli A (già piena, mai salvata) e premi la fotocamera | Chiede: Salva prima… / Sostituisci / Annulla (TC-16) |
 | 5b.10 | Chiudi e riapri JD-Xi Studio | A e B ci sono ancora per ogni parte; non viene inviato nulla finché non premi A o B (TC-17) |
 | 5b.11 | Dopo un richiamo: cambia un valore, Annulla, Ripeti, Reload | Funzionano come sempre (TC-18) |
+| 5b.12 ★ | Con A e B piene e diverse, B attiva: il pulsante **Prendi** (due frecce che si uniscono), da A spunta solo *FILTER P1* | Il filtro del partial 1 diventa quello di A, il resto resta B; un Annulla lo toglie |
 
 ---
 

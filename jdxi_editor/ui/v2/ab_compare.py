@@ -45,12 +45,19 @@ from decologr import Decologr as log
 from PySide6.QtCore import QObject, QPoint, QPointF, QRectF, QSize, Qt, QTimer, Signal
 from PySide6.QtGui import QColor, QKeySequence, QPainter, QPen, QShortcut
 from PySide6.QtWidgets import (
+    QButtonGroup,
+    QDialog,
     QFileDialog,
     QHBoxLayout,
     QInputDialog,
     QLabel,
+    QListWidget,
+    QListWidgetItem,
     QMessageBox,
+    QPushButton,
+    QRadioButton,
     QToolButton,
+    QVBoxLayout,
     QWidget,
 )
 
@@ -690,6 +697,7 @@ class ABControl(QWidget):
         self.camera = tool("mdi.camera", self.capture)
         self.swap = tool("mdi.swap-horizontal", self.switch)
         self.disk = tool("mdi.content-save", self.save)
+        self.take = tool("mdi.call-merge", self.open_take)
         self.toast = Toast(editor)
         self.shortcut = QShortcut(QKeySequence(SWITCH_SHORTCUT), editor)
         self.shortcut.setContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
@@ -712,6 +720,11 @@ class ABControl(QWidget):
         session.selected = slot
         if session.slots.get(slot) is not None and session.connected() and session.active != slot:
             session.recall(slot, confirm_context=self._confirm_context)
+        self.refresh()
+
+    def open_take(self) -> None:
+        """Take sections from a photo into the current sound."""
+        TakeDialog(self, self.editor).exec()
         self.refresh()
 
     def capture(self) -> None:
@@ -835,6 +848,11 @@ class ABControl(QWidget):
             self.swap.setToolTip(tr("Switch between A and B: capture again with the JD-Xi connected the photo taken without it"))
         else:
             self.swap.setToolTip(tr("Switch between A and B ({keys})").format(keys=SWITCH_SHORTCUT))
+        usable = [slot for slot in SLOTS if session.slots.get(slot) is not None
+                  and session.slots[slot].problem_for(self.editor) is None]
+        self.take.setEnabled(not session.busy and bool(usable))
+        self.take.setToolTip(tr("Take sections (filter, envelopes...) from A or B into the current sound") if usable
+                             else tr("Take from A or B: capture a photo first"))
         target = self.target()
         photo = session.slots.get(target)
         self.disk.setEnabled(not session.busy and photo is not None and not photo.unknown)
@@ -842,6 +860,142 @@ class ABControl(QWidget):
             self.disk.setToolTip(tr("{slot} cannot be saved: it was taken without the JD-Xi and some of its data is not known").format(slot=target))
         else:
             self.disk.setToolTip(tr("Save {slot} as a .syx file, with a name").format(slot=target))
+
+
+# ---------------------------------------------------------------- take from a photo
+def section_of(editor, spec) -> str:
+    """The section a parameter is shown in («OSC P1», «FILTER», «COMMON»...)."""
+    pv = editor.values[spec]
+    return pv.info.group or editor.block_of[spec].group
+
+
+def differing_sections(editor, snapshot: Snapshot) -> list[tuple[str, list, int]]:
+    """The sections where the photo and the editor differ: (section, its parameters, how
+    many differ), in the editor's order. The name is not a section: it stays."""
+    raw = snapshot.raw_values(editor)
+    order: dict[str, list] = {}
+    for spec in editor.values:
+        if spec.name.startswith("TONE_NAME_") or spec not in raw:
+            continue
+        order.setdefault(section_of(editor, spec), []).append(spec)
+    out = []
+    for section, specs in order.items():
+        count = sum(1 for spec in specs if spec.convert_to_midi(editor.values[spec].value()) != raw[spec])
+        if count:
+            out.append((section, specs, count))
+    return out
+
+
+def take_sections(editor, snapshot: Snapshot, sections: list[str]) -> int:
+    """Set the photo's values of these sections in the editor (sent to the JD-Xi as if
+    turned by hand), in one Undo step; how many values changed."""
+    raw = snapshot.raw_values(editor)
+    wanted = set(sections)
+    history = getattr(editor, "history", None)
+    changed = 0
+    if history is not None:
+        history.begin_group()
+    try:
+        from jdxi_editor.ui.v2.partial_tools import unlinked
+
+        with unlinked(editor):
+            for spec, pv in editor.values.items():
+                if spec.name.startswith("TONE_NAME_") or spec not in raw:
+                    continue
+                if section_of(editor, spec) not in wanted:
+                    continue
+                value = spec.convert_from_midi(raw[spec])
+                if pv.value() != pv.clamp(value):
+                    pv.setValue(value)
+                    changed += 1
+    finally:
+        if history is not None:
+            history.end_group()
+    return changed
+
+
+class TakeDialog(QDialog):
+    """«Take from A / B»: the sections where a photo differs, to bring into the sound."""
+
+    def __init__(self, control: "ABControl", parent=None):
+        super().__init__(parent)
+        self.control = control
+        self.editor = control.editor
+        session = control.session
+        self.setWindowTitle(tr("Take from a photo"))
+        self.setStyleSheet(
+            "QDialog { background: #121214; color: #e6e6e6; } QLabel { color: #c9cbd1; background: transparent; }"
+            "QRadioButton, QCheckBox { color: #e6e6e6; }"
+            "QListWidget { background: #17181b; color: #e6e6e6; border: 1px solid #2e3036; border-radius: 8px; }"
+            "QPushButton { background: #1b1c1f; color: #e6e6e6; border: 1px solid #3a3d44; border-radius: 6px; padding: 6px 14px; }"
+        )
+        root = QVBoxLayout(self)
+        intro = QLabel(tr("Bring sections of a photo into the current sound: the rest stays as it is. "
+                          "Only the sections that differ are listed; one Undo step takes them back."))
+        intro.setWordWrap(True)
+        root.addWidget(intro)
+        self.sources = QButtonGroup(self)
+        row = QHBoxLayout()
+        usable = [slot for slot in SLOTS
+                  if session.slots.get(slot) is not None and session.slots[slot].problem_for(self.editor) is None]
+        default = session.other() if session.other() in usable else (usable[0] if usable else None)
+        for slot in usable:
+            radio = QRadioButton(tr("From {slot}: «{name}»").format(slot=slot, name=session.slots[slot].name or tr("no name")))
+            radio.setProperty("slot", slot)
+            radio.setChecked(slot == default)
+            radio.toggled.connect(self.refresh)
+            self.sources.addButton(radio)
+            row.addWidget(radio)
+        row.addStretch()
+        root.addLayout(row)
+        self.list = QListWidget()
+        root.addWidget(self.list, 1)
+        self.status = QLabel("")
+        root.addWidget(self.status)
+        buttons = QHBoxLayout()
+        buttons.addStretch()
+        self.take_button = QPushButton(tr("Take"))
+        self.take_button.setDefault(True)
+        self.take_button.clicked.connect(self.take)
+        buttons.addWidget(self.take_button)
+        cancel = QPushButton(tr("Close"))
+        cancel.clicked.connect(self.reject)
+        buttons.addWidget(cancel)
+        root.addLayout(buttons)
+        self.resize(460, 420)
+        self.refresh()
+
+    def source(self) -> Optional[Snapshot]:
+        button = self.sources.checkedButton()
+        return self.control.session.slots.get(button.property("slot")) if button is not None else None
+
+    def refresh(self, *_args) -> None:
+        self.list.clear()
+        snapshot = self.source()
+        sections = differing_sections(self.editor, snapshot) if snapshot is not None else []
+        for section, _specs, count in sections:
+            item = QListWidgetItem(tr("{section}: {n} different").format(section=section, n=count))
+            item.setData(Qt.ItemDataRole.UserRole, section)
+            item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+            item.setCheckState(Qt.CheckState.Unchecked)
+            self.list.addItem(item)
+        self.status.setText(tr("The sound is the same as this photo.") if snapshot is not None and not sections
+                            else "" if snapshot is not None else tr("No photo to take from."))
+        self.take_button.setEnabled(bool(sections))
+
+    def checked(self) -> list[str]:
+        return [self.list.item(i).data(Qt.ItemDataRole.UserRole) for i in range(self.list.count())
+                if self.list.item(i).checkState() == Qt.CheckState.Checked]
+
+    def take(self) -> None:
+        snapshot = self.source()
+        sections = self.checked()
+        if snapshot is None or not sections:
+            self.status.setText(tr("Tick the sections to take."))
+            return
+        changed = take_sections(self.editor, snapshot, sections)
+        self.control.show_message(tr("{n} values taken from {slot}").format(n=changed, slot=snapshot.slot))
+        self.accept()
 
 
 def _file_stem(name: str) -> str:
