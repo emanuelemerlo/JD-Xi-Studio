@@ -127,11 +127,34 @@ def mark_sheen_panels(editor) -> None:
             mark_sheen(widget)
 
 
+def repolish(widget) -> None:
+    """Apply the style sheet again to *widget*, after one of its properties changed.
+
+    ``widget.style()`` is the usual way, but PySide can hand back a stale Python
+    object: a style sheet style lives at an address where another object (a layout
+    item) lived before, and the old wrapper answers. Seen on macOS:
+    «'QWidgetItem' object has no attribute 'unpolish'». Then the widget's own
+    style sheet is set again, or the application's style polishes it."""
+    from PySide6.QtWidgets import QApplication, QStyle
+
+    style = widget.style()
+    if isinstance(style, QStyle):
+        style.unpolish(widget)
+        style.polish(widget)
+        return
+    if widget.styleSheet():  # its own style sheet, set again: applied again
+        widget.setStyleSheet(widget.styleSheet())
+        return
+    style = QApplication.style()  # the app's style sheet style, for a sheet of the app or a parent
+    if isinstance(style, QStyle):
+        style.unpolish(widget)
+        style.polish(widget)
+
+
 def mark_sheen(widget) -> None:
     """Give *widget* (a QGroupBox or QTabWidget panel) the Instrument window's glossy sheen."""
     widget.setProperty(SHEEN_PROPERTY, True)
-    widget.style().unpolish(widget)
-    widget.style().polish(widget)
+    repolish(widget)
 
 
 def mark_flat(widget) -> None:
@@ -140,8 +163,7 @@ def mark_flat(widget) -> None:
     panel, as sections; a tab widget's pane is drawn flat too.
     """
     widget.setProperty(FLAT_PROPERTY, True)
-    widget.style().unpolish(widget)
-    widget.style().polish(widget)
+    repolish(widget)
 
 
 def _jdxi_slider_rules(analog: bool = False) -> str:

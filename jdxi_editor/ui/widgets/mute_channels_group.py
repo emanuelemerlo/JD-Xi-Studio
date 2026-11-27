@@ -22,6 +22,7 @@ from jdxi_editor.ui.widgets.editor.helper import create_group_with_layout
 from jdxi_editor.ui.widgets.jdxi.midi_group import JDXiMidiGroup
 from picoui.specs.widgets import ButtonSpec
 from jdxi_editor.i18n import tr
+from jdxi_editor.ui.style.editor_style import repolish
 
 # the channels the JD-Xi's parts play (1-based)
 JDXI_PART_CHANNELS = {1: "Digital 1", 2: "Digital 2", 3: "Analog", 10: "Drums"}
@@ -118,8 +119,7 @@ class MuteChannelsGroup(JDXiMidiGroup):
             for widget in (btn, self.channel_labels[ch]):
                 if widget.property("silenced") != silenced:
                     widget.setProperty("silenced", silenced)
-                    widget.style().unpolish(widget)
-                    widget.style().polish(widget)
+                    repolish(widget)
 
     def set_used_channels(self, channels: set[int]) -> None:
         """
@@ -131,17 +131,14 @@ class MuteChannelsGroup(JDXiMidiGroup):
             unused = ch not in channels
             btn.setProperty("unused", unused)
             btn.setToolTip(self._tooltip(ch, unused))
-            btn.style().unpolish(btn)
-            btn.style().polish(btn)
+            repolish(btn)
             label = self.channel_labels[ch]
             label.setProperty("unused", unused)
-            label.style().unpolish(label)
-            label.style().polish(label)
+            repolish(label)
             solo = self.solo_channel_buttons[ch]
             solo.setProperty("unused", unused)
             solo.setToolTip(self._solo_tooltip(ch) + (" " + tr("(not used in this file)") if unused else ""))
-            solo.style().unpolish(solo)
-            solo.style().polish(solo)
+            repolish(solo)
 
     @staticmethod
     def _tooltip(ch: int, unused: bool) -> str:
