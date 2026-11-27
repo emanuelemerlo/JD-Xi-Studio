@@ -111,6 +111,16 @@ def test_a_bigger_window_keeps_the_instrument_as_it_is(window):
     centre = stage.mapTo(window, stage.rect().center()).x()
     assert abs(centre - window.width() // 2) <= 2
     assert window.parts_container.parentWidget() is window.panel_container
+    # with room around it, the instrument is drawn as a body with an edge
+    body = window.centralWidget().body_rect()
+    assert body is not None and body.contains(stage.geometry().toRectF())
+
+
+def test_at_its_own_size_the_window_is_the_instrument(window):
+    window.fit_to_instrument()
+    for _ in range(5):
+        _APP.processEvents()
+    assert window.centralWidget().body_rect() is None
 
 
 def test_starts_and_comes_back_at_its_own_size(window):
