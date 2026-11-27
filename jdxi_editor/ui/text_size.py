@@ -1,5 +1,5 @@
 """
-Readable text (proof of concept): a minimum size, more contrast for the grey
+Readable text: a minimum size, more contrast for the grey
 text, and Preferences › Text size (Normal, Large, Larger) for the text only.
 
 The app's style sheets write their sizes by hand (``font-size: 11px``), about

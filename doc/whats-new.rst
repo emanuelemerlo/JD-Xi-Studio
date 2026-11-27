@@ -1,3 +1,39 @@
+What's New in 1.1.0
+===================
+
+Deeper editing of the SuperNATURAL synth tones, and text that is easier to read.
+
+Digital Synth
+-------------
+
+* **Link 1·2·3**: a change to the partial shown goes to the other partials that are on, in one
+  Undo step. The oscillator (waveform, PCM wave, pitch, detune) stays each partial's own.
+* **Partial ▾**: copy, paste and swap a partial or one section of it (Oscillator, Filter,
+  Amplifier, LFO, Modulation LFO), also between Digital 1 and Digital 2.
+* **Randomize** a section, a partial or the whole tone by a little, a medium amount or much; the
+  tone stays playable and audible, and each press is one Undo step.
+* **PCM waves by family**: Wave Number opens the 160 waves in eleven families, with a search,
+  ★ favourites and *Try*, which plays a note with each wave so they can be compared by ear.
+* The filter and amplifier envelopes show the **Envelope Loop** (FREE-RUN, TEMPO-SYNC).
+* The partial switches (P1 ON, P1 SEL…) sit next to their own switch.
+
+See :doc:`digital_synth` (*Working with the Three Partials*).
+
+A/B compare
+-----------
+
+* **Take from a photo**: the sections where a photo differs from the current sound, to bring in
+  one by one (Digital and Analog).
+
+Reading
+-------
+
+* **File › Preferences › Text size**: Normal, Large (112%) or Larger (125%), from the next start.
+  The text grows, the knobs and graphs keep their size. Text is never smaller than 12 px, and the
+  grey secondary text is lighter.
+* The LCD displays (tone, program, file) and the preset card follow the text size.
+* Maximised, the main window shows the instrument as a body on a darker surface, with an edge.
+
 What's New in 1.0.0
 ===================
 

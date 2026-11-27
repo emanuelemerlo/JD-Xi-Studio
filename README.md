@@ -26,7 +26,8 @@ computer screen instead of the JD-Xi's menus.
 - **Keyboard window** laid out as the instrument: part select, program and tone, octave, arpeggio,
   the panel's sliders and the 37 keys; keep it in front of the other windows with the pin.
 - **Digital Synth 1 and 2**: every SuperNATURAL parameter, the three partials with drawn waveforms,
-  filter curves, envelopes and LFOs.
+  filter curves, envelopes and LFOs; link the partials, copy, paste and swap them (also between
+  Digital 1 and 2), randomize, and browse the 160 PCM waves by family, trying each by ear.
 - **Analog Synth**: all 46 parameters on one page, the filter curve and envelopes to drag.
 - **Drum Kit**: the 37 drum partials as pads, each with its four waves, pitch, filter and amplifier
   envelopes.
@@ -39,7 +40,8 @@ computer screen instead of the JD-Xi's menus.
   playlists; **Save on the JD-Xi**, guided (name, slot, WRITE) and checked by reading the slot back.
 - **New sound** in the Digital and Analog editors: from scratch (Init, one Undo), from a preset or
   from a recipe; a **«?»** on each section says what it changes, how the sound changes, an example.
-- **A/B compare** (Digital 1, Digital 2, Analog): two photos of a tone, recalled and checked.
+- **A/B compare** (Digital 1, Digital 2, Analog): two photos of a tone, recalled and checked, or
+  taken in one section at a time.
 - **Where you are**: a line under each editor says program › part › tone, where the sound came from
   and whether it is original, modified and temporary, saved to a file or saved in the JD-Xi.
 - **Pattern sequencer**: four parts × 16 steps, measures, copy and paste, MIDI files, USB recording.
@@ -53,7 +55,8 @@ computer screen instead of the JD-Xi's menus.
 - **Settings**: the JD-Xi's system settings, the MIDI connection, files and tools.
 - **Undo, Redo and Reload** in every editor (Ctrl+Z / Ctrl+Y, a drag is one step), a pencil on
   the tab of a modified editor and a question before unsaved changes are lost to a preset, a program, a patch or closing.
-- **From 1080p to 4K**: a compact layout on low screens (1080p at 125%), the text the same size.
+- **From 1080p to 4K**: a compact layout on low screens (1080p at 125%), and a
+  larger text size in Preferences when the text is too small.
 - **Log viewer** with a tab for warnings and errors; the logs are kept two weeks.
 - **Follows the JD-Xi**: it reads the instrument at start and every two seconds, so a tone or an
   octave chosen on the JD-Xi shows in the window, the panel sliders show the tone's values, the
