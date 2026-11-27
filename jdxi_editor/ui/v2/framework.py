@@ -24,7 +24,7 @@ import json
 from dataclasses import dataclass, field
 from typing import Callable, Optional, Sequence
 
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import QEvent, QObject, Qt, QTimer
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
@@ -736,13 +736,61 @@ def show_category_card(editor, accent: str) -> None:
     picked from its name: poor at this size, and it suggested compatibility with
     instruments the JD-Xi only imitates.)
     """
+    from jdxi_editor.ui.text_size import scale
+
     label = getattr(editor, "instrument_image_label", None)
     if label is not None:
-        if density.compact():  # a low screen: a lower card
-            label.setFixedHeight(78)
-            label.setPixmap(sound_card(selected_category(editor), accent, height=70))
+        # as wide as the place it has (a wider card was cut at both sides: the label
+        # centres it), drawn again when the place changes
+        width = label.contentsRect().width()  # (640 before the layout: the card's own width)
+        width = max(180, min(CARD_WIDTH, width))
+        if density.compact():  # a low screen: a lower card (taller with larger text)
+            height = int(round(70 * scale()))
+            label.setFixedHeight(height + 8)
         else:
-            label.setPixmap(sound_card(selected_category(editor), accent))
+            height = int(round(96 * scale()))
+        label.setPixmap(sound_card(selected_category(editor), accent, width=width, height=height))
+        if not hasattr(label, "_card_redraw"):
+            from PySide6.QtWidgets import QSizePolicy
+
+            # the card follows the label's width, not the other way round
+            label.setMinimumWidth(0)
+            label.setSizePolicy(QSizePolicy.Policy.Ignored, label.sizePolicy().verticalPolicy())
+            label._card_redraw = _CardRedraw(label, lambda: show_category_card(editor, accent))
+            label.installEventFilter(label._card_redraw)
+
+
+CARD_WIDTH = 268
+
+
+class _KeepTall(QObject):
+    """As tall as its text needs at its width (the preset card, the MIDI line under its
+    list). With a larger text the MIDI line wraps; the layouts went by its one-line
+    height and squeezed the lists above it until their text was cut."""
+
+    def eventFilter(self, watched, event):  # noqa: N802 (Qt)
+        if event.type() in (QEvent.Type.Resize, QEvent.Type.LayoutRequest) and watched.hasHeightForWidth():
+            need = watched.heightForWidth(watched.width())
+            if need > 0 and need != watched.minimumHeight():
+                watched.setMinimumHeight(need)
+        return False
+
+
+class _CardRedraw(QObject):
+    """Draws the category card again when its label gets another width."""
+
+    def __init__(self, label, redraw):
+        super().__init__(label)
+        self._redraw = redraw
+        self._width = -1
+
+    def eventFilter(self, watched, event):  # noqa: N802 (Qt)
+        if event.type() in (QEvent.Type.Resize, QEvent.Type.Show):
+            width = watched.contentsRect().width()
+            if width != self._width:
+                self._width = width
+                self._redraw()
+        return False
 
 
 # The preset categories' icons (MDI / Font Awesome through qtawesome)
@@ -776,7 +824,7 @@ def category_icon(category: str) -> str:
     return "mdi.sine-wave"
 
 
-def sound_card(category: str, accent: str, width: int = 268, height: int = 96):
+def sound_card(category: str, accent: str, width: int = CARD_WIDTH, height: int = 96):
     """A card with the category's icon in the editor's colour and its name."""
     import qtawesome as qta
     from PySide6.QtCore import QRectF
@@ -803,22 +851,30 @@ def sound_card(category: str, accent: str, width: int = 268, height: int = 96):
     p.drawRoundedRect(tile, 14, 14)
     icon = qta.icon(category_icon(category), color=accent)
     icon.paint(p, tile.adjusted(12, 12, -12, -12).toRect())
+    from jdxi_editor.ui.text_size import px as text_px
+
     text_left = tile.right() + 16
     small = QFont()
-    small.setPixelSize(11)
+    small.setPixelSize(text_px(11))
     small.setBold(True)
     small.setLetterSpacing(QFont.SpacingType.AbsoluteSpacing, 1.5)
     p.setFont(small)
     p.setPen(QColor(accent))
-    p.drawText(QRectF(text_left, 22, width - text_left - 10, 16), Qt.AlignmentFlag.AlignLeft, tr("CATEGORY"))
+    # «CATEGORY» and the name under it, placed by the card's height (the low card of a
+    # compact screen cut a two-line name: Classic Roland Drum Machines)
+    head_top = max(8.0, height * 0.18)
+    head_height = small.pixelSize() + 4
+    p.drawText(QRectF(text_left, head_top, width - text_left - 10, head_height), Qt.AlignmentFlag.AlignLeft,
+               tr("CATEGORY"))
     big = QFont()
     big.setBold(True)
     p.setPen(QColor("#f2f2f2"))
     name = category or tr("All sounds")
-    room = QRectF(text_left, 40, width - text_left - 10, 44)
+    top = head_top + head_height + 2
+    room = QRectF(text_left, top, width - text_left - 10, height - top - 6)
     flags = int(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop | Qt.TextFlag.TextWordWrap)
-    for px in (19, 17, 15, 13):  # long names (drum kit groups) on two lines, a little smaller
-        big.setPixelSize(px)
+    for size in (19, 17, 15, 13, 12):  # long names (drum kit groups) on two lines, a little smaller
+        big.setPixelSize(text_px(size))
         p.setFont(big)
         if room.contains(p.fontMetrics().boundingRect(room.toRect(), flags, name).toRectF()):
             break
@@ -912,10 +968,27 @@ def tidy_preset_card(panel: QWidget) -> None:
             page = tabs.widget(i)
             if QWidget.layout(page) is not None:
                 QWidget.layout(page).setContentsMargins(10, 10, 10, 10)
+    from jdxi_editor.ui.widgets.midi.selection_info_bar import MidiSelectionInfoBar
+
     group = getattr(panel, "_preset_group", None)
+    for tall in panel.findChildren(MidiSelectionInfoBar) + ([group] if group is not None else []):
+        if not hasattr(tall, "_keep_tall"):
+            tall._keep_tall = _KeepTall(tall)
+            tall.installEventFilter(tall._keep_tall)
     if group is not None and QWidget.layout(group) is not None:
         QWidget.layout(group).setContentsMargins(12, 8, 12, 12)  # as the other cards
         QWidget.layout(group).setSpacing(8)
+    from PySide6.QtWidgets import QLineEdit
+
+    from jdxi_editor.ui.text_size import scale
+
+    # the search field and the lists as tall as their text needs (they were capped at
+    # 25 px, too low for a larger text size: the text was cut)
+    for field in panel.findChildren(QComboBox) + panel.findChildren(QLineEdit):
+        if field.parentWidget() is not None and isinstance(field.parentWidget(), QComboBox):
+            continue  # the line edit inside an editable list
+        if field.maximumHeight() < 60:
+            field.setMaximumHeight(max(field.maximumHeight(), int(round(32 * scale()))))
     title = getattr(panel, "instrument_title_label", None)
     if title is not None:  # the display: as wide as the card
         title.setMinimumWidth(0)

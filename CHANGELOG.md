@@ -4,10 +4,24 @@ All notable changes to JD-Xi Studio (and, before 1.0, to this fork of JDXI-Edito
 
 # [Unreleased]
 
+# [1.1.0] - 2026-11-27
+
+Deeper editing of the SuperNATURAL synth tones (link, copy and randomize the partials, the PCM
+waves by family, take sections from an A/B photo) and text that is easier to read (a text size
+in Preferences, larger LCD displays).
+
 ### Changes
+- **Preferences › Text size**: Normal, Large (112%) or Larger (125%), from the next start. The
+  text grows, the knobs, graphs and spacing keep their size; text is never smaller than 12 px and
+  the grey secondary text is lighter. The preset card follows: its lists and search field grow
+  with the text, the category card fits its place, Import / Export drop «.syx» when the text is
+  larger.
+- The LCD displays (tone, program, MIDI file, pattern) draw their text at the chosen size.
+- Main window: maximised, the instrument is drawn as a body on a darker surface (rounded
+  corners, a lit top edge, a soft shadow); before, its edges faded into the background.
 - Digital Synth: under each PARTIAL button, «P1 ON» and «P1 SEL» sit right against their
   switches, with a wider gap between the two (they read as the labels of the switch on their left).
-- **Digital Synth: the three partials together.** *Link partials* makes a change to the partial
+- **Digital Synth: the three partials together.** *Link 1·2·3* makes a change to the partial
   shown on the other partials that are on (the oscillator stays each one's own), in one Undo step.
   *Partial ▾* copies, pastes and swaps a partial or one section of it (Oscillator, Filter,
   Amplifier, LFO, Modulation LFO), also between Digital 1 and Digital 2.

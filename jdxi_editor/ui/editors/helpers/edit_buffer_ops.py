@@ -74,15 +74,18 @@ def create_part_syx_row(
     on_export: Callable[[], None],
 ) -> QWidget:
     """Import / Export per-part .syx librarian buttons."""
+    from jdxi_editor.ui.text_size import scale
+
     row = QHBoxLayout()
+    larger = scale() > 1  # with a larger text the two do not fit the card: shorter names
     import_row, _ = create_round_button_with_label(
-        tr("Import .syx"),
+        tr("Import") if larger else tr("Import .syx"),
         "mdi.file-import-outline",
         on_import,
         tr("Load a single-part SysEx file into this editor"),
     )
     export_row, _ = create_round_button_with_label(
-        tr("Export .syx"),
+        tr("Export") if larger else tr("Export .syx"),
         "mdi.file-export-outline",
         on_export,
         tr("Save this part as a SysEx file"),

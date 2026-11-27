@@ -50,7 +50,9 @@ def test_about_names_both_authors():
     dialog.setup_ui(dialog)
     text = " ".join(label.text() for label in dialog.findChildren(QLabel))
     assert "Emanuele Merlo" in text and "Mark Brooks" in text
-    assert "1.0.0" in dialog.version_label.text()
+    from jdxi_editor.project import __version__
+
+    assert __version__ in dialog.version_label.text()
     dialog.close()
 
 

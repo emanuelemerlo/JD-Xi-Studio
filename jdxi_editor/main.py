@@ -98,6 +98,11 @@ def main() -> None:
         # --- Create application
         app = QApplication(sys.argv)
 
+        # --- Readable text: minimum size, lighter greys, Preferences › Text size
+        from jdxi_editor.ui import text_size
+
+        text_size.install(app)
+
         # --- Garbage collection on the main thread only (see main_thread_gc)
         from jdxi_editor.ui import main_thread_gc
 

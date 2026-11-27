@@ -102,6 +102,8 @@ The simplest way to install JD-Xi Studio is using our pre-built packages. These 
      MIDI configuration dialog. Without a JD-Xi the editor opens anyway (Off-line, with a badge in every window)
    - The interface language is chosen in File › Preferences › Interface language
      (English, Italiano, or the system's); it applies at the next start
+   - Text too small on a large or high-resolution screen? File › Preferences › Text size:
+     Normal, Large (112%) or Larger (125%), from the next start
 
 **Linux Installation**
    Download ``jd-xi-studio_<version>_amd64.deb`` from the releases page and install it

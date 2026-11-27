@@ -274,6 +274,23 @@ class UiPreferencesDialog(QDialog):
         choice(grid, self.language_label, self.language_combo)
         self.language_note.setObjectName("prefHint")
         grid.addWidget(self.language_note, grid.rowCount(), 0, 1, 2)
+        # --- Text size: the text only (knobs, graphs and spacing stay); from the next start
+        from jdxi_editor.ui import text_size
+
+        self.text_size_label = QLabel(tr("Text size"))
+        self.text_size_combo = QComboBox()
+        names = {100: tr("Normal"), 112: tr("Large"), 125: tr("Larger")}  # (text_size.SIZES)
+        for value in text_size.SIZES:
+            self.text_size_combo.addItem(f"{names[value]} ({value}%)", value)
+        current = int(self.settings.value(text_size.SETTING, 100) or 100)
+        self.text_size_combo.setCurrentIndex(max(0, self.text_size_combo.findData(current)))
+        choice(grid, self.text_size_label, self.text_size_combo)
+        self.text_size_note = QLabel(tr("The new text size is used from the next start."))
+        self.text_size_note.setObjectName("prefHint")
+        self.text_size_note.setVisible(False)
+        self.text_size_combo.currentIndexChanged.connect(
+            lambda _: self.text_size_note.setVisible(self.text_size_combo.currentData() != current))
+        grid.addWidget(self.text_size_note, grid.rowCount(), 0, 1, 2)
         option(grid, self.update_check_checkbox, self.update_check_label)
         from jdxi_editor.ui.v2.history import asks_before_discarding
 
@@ -357,6 +374,9 @@ class UiPreferencesDialog(QDialog):
 
         settings = self.settings
         try:
+            from jdxi_editor.ui import text_size
+
+            settings.setValue(text_size.SETTING, int(self.text_size_combo.currentData() or 100))
             settings.setValue("logging", bool(self.logging_checkbox.isChecked()))
             settings.setValue(
                 SILENCE_MIDI_NOTE_LOGGING_KEY,
