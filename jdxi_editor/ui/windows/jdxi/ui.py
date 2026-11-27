@@ -145,18 +145,19 @@ class JDXiWindow(QMainWindow):
         """Create the main dashboard"""
         # The instrument (panel and keys) is one block of fixed size, centred:
         # a maximised window grows the body around it, the layout stays as is
+        # (in a bigger window it is drawn as a body on a darker surface: BodyArea)
         from jdxi_editor.ui.image.instrument import BODY_COLOR
+        from jdxi_editor.ui.windows.jdxi.body_area import BodyArea
 
         dims = JDXi.UI.Dimensions.INSTRUMENT
-        central = QWidget()
-        central.setObjectName("jdxiBodyArea")
-        central.setStyleSheet(f"QWidget#jdxiBodyArea {{ background-color: {BODY_COLOR}; }}")
+        central = BodyArea()
         self.setCentralWidget(central)
         outer = QVBoxLayout(central)
         outer.setContentsMargins(0, 0, 0, 0)
         outer.setSpacing(0)
         self.instrument_stage = QWidget()
         self.instrument_stage.setFixedSize(dims.WIDTH, dims.HEIGHT)
+        central.stage = self.instrument_stage
         outer.addStretch(1)
         outer.addWidget(self.instrument_stage, 0, Qt.AlignmentFlag.AlignHCenter)
         outer.addStretch(1)
